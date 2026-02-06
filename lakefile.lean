@@ -1,24 +1,11 @@
 import Lake
 open Lake DSL
 
-package «ZFCSetTheory» where
-  -- Add package configuration options here
-  moreServerArgs := #["-DautoImplicit=false"] -- Ejemplo de opción, puedes quitarla o ajustarla
+package «ZfcSetTheory» where
+  moreServerArgs := #["-DautoImplicit=false"]
 
 @[default_target]
-lean_lib «ZFCSetTheory» where
-  -- Add library configuration options here
-  -- Por defecto, buscará archivos .lean en un directorio con el mismo nombre que la biblioteca
-  -- (es decir, "ZFCSetTheory") o en la raíz si no existe tal directorio.
-  -- Si tus archivos están en la raíz (ZFCSetTheory.lean),
-  -- Lake debería encontrarlos.
-  -- Si los tienes en un subdirectorio, por ejemplo, "src", lo indicarías así:
-  -- rootDir := `ZFCSetTheory -- Esta línea se elimina o se corrige si se usa srcDir
+lean_lib «ZfcSetTheory» where
 
--- Opcional: si quieres importar Mathlib para tácticas u otras utilidades
 require mathlib from git
  "https://github.com/leanprover-community/mathlib4.git"
-
--- Opcional: si tuvieras un ejecutable
--- lean_exe «ZFCSetTheory» where
---   root := `Main -- Si tuvieras un Main.lean

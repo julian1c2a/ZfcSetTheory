@@ -1,9 +1,9 @@
 import Mathlib.Logic.ExistsUnique
 import Mathlib.Logic.Basic
 import Init.Classical
-import ZFCSetTheory.Extension
-import ZFCSetTheory.Existence
-import ZFCSetTheory.Specification
+import ZfcSetTheory.Extension
+import ZfcSetTheory.Existence
+import ZfcSetTheory.Specification
 
 namespace SetUniverse
   open Classical

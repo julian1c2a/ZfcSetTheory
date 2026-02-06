@@ -1,9 +1,9 @@
 import Mathlib.Logic.ExistsUnique
 import Init.Classical
-import ZFCSetTheory.Extension
-import ZFCSetTheory.Existence
-import ZFCSetTheory.Specification
-import ZFCSetTheory.Pairing
+import ZfcSetTheory.Extension
+import ZfcSetTheory.Existence
+import ZfcSetTheory.Specification
+import ZfcSetTheory.Pairing
 
 namespace SetUniverse
   open Classical
@@ -132,12 +132,6 @@ namespace SetUniverse
         exact False.elim (EmptySet_is_empty y hy)
 
     @[simp]
-    theorem Set_is_empty_3 (C : U)
-      (hC_not_empty : C ≠ (∅ : U))
-      (hC_not_singleton_empty : C ≠ ({∅} : U)) :
-        (⋃ C) ≠ (∅ : U)
-          := by
-@[simp]
     theorem Set_is_empty_3 (C : U)
       (hC_not_empty : C ≠ (∅ : U))
       (hC_not_singleton_empty : C ≠ ({∅} : U)) :
@@ -296,71 +290,68 @@ namespace SetUniverse
         (⋃ C) = ∅ ↔ C = ({ ∅ }: U)
           := by
       constructor
-      . intro h_union_empty
-        -- We want to show C = {∅}
+      · -- Forward direction: (⋃ C) = ∅ → C = {∅}
+        intro h_union_empty
         apply ExtSet
         intro x
         constructor
-        . intro hx_in_C
-          -- Show x ∈ {∅}
-          -- That is, x = ∅
-          have : ∀ y, y ∈ C → y = ∅ := by
-            intro y hy
+        · -- x ∈ C → x ∈ {∅}, i.e., x = ∅
+          intro hx_in_C
+          rw [Singleton_is_specified]
+          apply ExtSet
+          intro z
+          constructor
+          · intro hz_in_x
+            have hz_in_union : z ∈ (⋃ C) := (UnionSet_is_specified C z).mpr ⟨x, hx_in_C, hz_in_x⟩
+            rw [h_union_empty] at hz_in_union
+            exact False.elim (EmptySet_is_empty z hz_in_union)
+          · intro hz_in_empty
+            exact False.elim (EmptySet_is_empty z hz_in_empty)
+        · -- x ∈ {∅} → x ∈ C, i.e., x = ∅ → x ∈ C
+          intro hx_in_singleton
+          rw [Singleton_is_specified] at hx_in_singleton
+          subst hx_in_singleton
+          -- Need to show ∅ ∈ C
+          -- Since C ≠ ∅, there exists some element in C
+          have h_nonempty_C : ∃ y, y ∈ C := by
+            by_contra h_empty
+            apply hC_non_empty
             apply ExtSet
             intro z
             constructor
-            . intro hz
-              have hz_union : z ∈ (⋃ C) := (UnionSet_is_specified C z).mpr ⟨y, hy, hz⟩
-              rw [h_union_empty] at hz_union
-              exact False.elim (EmptySet_is_empty z hz_union)
-            . intro hz_empty
-              exact False.elim (EmptySet_is_empty z hz_empty)
-          -- x ∈ C, and every element of C is ∅, so x = ∅, so x ∈ {∅}
-          rw [Singleton_is_specified]
-          exact this x hx_in_C
-        . intro hx_in_singleton
-          -- x ∈ {∅} → x ∈ C
-          rw [Singleton_is_specified] at hx_in_singleton
-          subst hx_in_singleton
-          -- ∅ ∈ C follows since C is nonempty and every element of C is ∅
-          -- Since C ≠ ∅, there exists y ∈ C
-          have hC_nonempty' : ∃ y, y ∈ C :=
-            by
-              -- If C = ∅, this contradicts hC_non_empty
-              apply Classical.by_contradiction
-              intro h
-              -- Since h : ¬∃ y, y ∈ C, but we have ⟨y, hy⟩, contradiction
-              exact False.elim (h ⟨y, hy⟩)
-              apply hC_non_empty
-              apply ExtSet
-              intro z
-              constructor
-                · intro hz_in_C
-                  -- Since ¬∃y, y ∈ C, so all z ∉ C
-                  exfalso
-                  exact h ⟨z, hz_in_C⟩
-                · intro hz_in_empty
-                  exact False.elim (EmptySet_is_empty z hz_in_empty)
-          cases hC_nonempty' with
-          | intro y hy =>
-            -- every element of C is ∅, so y = ∅, so ∅ ∈ C
-            have h_all_empty : ∀ y, y ∈ C → y = ∅ := by
-              intro y' hy'
-              apply ExtSet
-              intro z
-              constructor
-              . intro hz
-                have hz_union : z ∈ (⋃ C) := (UnionSet_is_specified C z).mpr ⟨y', hy', hz⟩
-                rw [h_union_empty] at hz_union
-                exact False.elim (EmptySet_is_empty z hz_union)
-              . intro hz_empty
-                exact False.elim (EmptySet_is_empty z hz_empty)
-            have y_eq_empty := h_all_empty y hy
-            rw [←y_eq_empty]
-            exact hy
-      . intro hC_singleton
-        rw [hC_singleton] at h_union_empty
-        exact h_union_empty
+            · intro hz_in_C
+              exfalso
+              exact h_empty ⟨z, hz_in_C⟩
+            · intro hz_in_empty
+              exact False.elim (EmptySet_is_empty z hz_in_empty)
+          obtain ⟨y, hy_in_C⟩ := h_nonempty_C
+          -- Every element of C must be ∅ (since ⋃ C = ∅)
+          have y_eq_empty : y = ∅ := by
+            apply ExtSet
+            intro z
+            constructor
+            · intro hz_in_y
+              have hz_in_union : z ∈ (⋃ C) := (UnionSet_is_specified C z).mpr ⟨y, hy_in_C, hz_in_y⟩
+              rw [h_union_empty] at hz_in_union
+              exact hz_in_union
+            · intro hz_in_empty
+              exact False.elim (EmptySet_is_empty z hz_in_empty)
+          rw [←y_eq_empty]
+          exact hy_in_C
+      · -- Backward direction: C = {∅} → (⋃ C) = ∅
+        intro hC_is_singleton
+        rw [hC_is_singleton]
+        apply ExtSet
+        intro x
+        constructor
+        · intro hx_in_union
+          have : ∃ S, S ∈ ({ ∅ }: U) ∧ x ∈ S := (UnionSet_is_specified ({ ∅ }: U) x).mp hx_in_union
+          obtain ⟨S, hS_in_singleton, hx_in_S⟩ := this
+          rw [Singleton_is_specified] at hS_in_singleton
+          rw [hS_in_singleton] at hx_in_S
+          exact False.elim (EmptySet_is_empty x hx_in_S)
+        · intro hx_in_empty
+          exact False.elim (EmptySet_is_empty x hx_in_empty)
 
   end UnionAxiom
 end SetUniverse
