@@ -1,5 +1,5 @@
-import Mathlib.Logic.ExistsUnique
 import Init.Classical
+import ZfcSetTheory.Prelim
 import ZfcSetTheory.Extension
 import ZfcSetTheory.Existence
 import ZfcSetTheory.Specification
@@ -24,7 +24,7 @@ namespace SetUniverse
     /-! ### Teorema de Existencia Única para el Axioma de Unión ### -/
     @[simp]
     theorem UnionExistsUnique (C : U) :
-      ∃! (UC : U), ∀ (x : U), x ∈ UC ↔ ∃ (y : U), y ∈ C ∧ x ∈ y
+      ExistsUnique fun (UC : U) => ∀ (x : U), x ∈ UC ↔ ∃ (y : U), y ∈ C ∧ x ∈ y
         := by
       obtain ⟨UC, hUC⟩ := Union C
       apply ExistsUnique.intro UC

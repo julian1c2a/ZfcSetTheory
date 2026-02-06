@@ -1,5 +1,5 @@
-import Mathlib.Logic.ExistsUnique
 import Init.Classical
+import ZfcSetTheory.Prelim
 import ZfcSetTheory.Extension
 import ZfcSetTheory.Existence
 
@@ -23,7 +23,7 @@ namespace SetUniverse
     /-! ### SpecificationUnique : existe un único conjunto que cumple la especificación P ### -/
     @[simp]
     theorem SpecificationUnique (x : U) (P : U → Prop) :
-      ∃! (y : U), ∀ (z : U), z ∈ y ↔ (z ∈ x ∧ P z)
+      ExistsUnique fun (y : U) => ∀ (z : U), z ∈ y ↔ (z ∈ x ∧ P z)
         := by
       obtain ⟨y, hy⟩ := Specification x P
       apply ExistsUnique.intro y
@@ -77,7 +77,7 @@ namespace SetUniverse
 
     @[simp]
     theorem BinIntersectionUniqueSet (x y : U) :
-      ∃! (z : U), ∀ (w : U), w ∈ z ↔ (w ∈ x ∧ w ∈ y)
+      ExistsUnique fun (z : U) => ∀ (w : U), w ∈ z ↔ (w ∈ x ∧ w ∈ y)
         := by
       apply ExistsUnique.intro (BinIntersection x y)
       · -- Existencia del conjunto de intersección binaria
@@ -305,7 +305,7 @@ namespace SetUniverse
 
     @[simp]
     theorem DifferenceUniqueSet (x y : U) :
-      ∃! (z : U), ∀ (w : U), w ∈ z ↔ (w ∈ x ∧ w ∉ y)
+      ExistsUnique fun (z : U) => ∀ (w : U), w ∈ z ↔ (w ∈ x ∧ w ∉ y)
         := by
       apply ExistsUnique.intro (Difference x y)
       · -- Existencia de la diferencia binaria

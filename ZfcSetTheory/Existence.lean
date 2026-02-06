@@ -1,5 +1,5 @@
-import Mathlib.Logic.ExistsUnique
 import Init.Classical
+import ZfcSetTheory.Prelim
 import ZfcSetTheory.Extension
 
 namespace SetUniverse
@@ -19,7 +19,7 @@ namespace SetUniverse
     /-! ### ExistenceUnique : existe un único conjunto vacío en el universo U ### -/
     @[simp]
     theorem ExistsUniqueEmptySet :
-      ∃! (x : U), ∀ (y : U), y ∉ x
+      ExistsUnique fun (x : U) => ∀ (y : U), y ∉ x
         := by
       obtain ⟨x, hx⟩ := ExistsAnEmptySet
       apply ExistsUnique.intro x
@@ -41,13 +41,12 @@ namespace SetUniverse
 
     @[simp]
     noncomputable def EmptySet : U :=
-      choose (ExistsUnique.exists ExistsUniqueEmptySet)
+      ExistsUniqueEmptySet.choose
 
     @[simp]
     theorem EmptySet_is_empty : ∀ (y : U), y ∉ EmptySet := by
       intro y
-      have h := choose_spec (p := fun x => ∀ (y : U), y ∉ x) (ExistsUnique.exists ExistsUniqueEmptySet)
-      exact h y
+      exact ExistsUniqueEmptySet.choose_spec y
 
     @[simp]
     theorem EmptySet_unique : ∀ (x : U), (∀ (y : U), y ∉ x) → (x = EmptySet) := by

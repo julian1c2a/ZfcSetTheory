@@ -1,6 +1,5 @@
-import Mathlib.Logic.ExistsUnique
-import Mathlib.Logic.Basic
 import Init.Classical
+import ZfcSetTheory.Prelim
 import ZfcSetTheory.Extension
 import ZfcSetTheory.Existence
 import ZfcSetTheory.Specification
@@ -23,7 +22,7 @@ namespace SetUniverse
     /-! ### Teorema de Existencia Única para el Axioma de Pares ### -/
     @[simp]
     theorem PairingUniqueSet (x y : U) :
-    ∃! (z : U), ∀ (w : U), w ∈ z ↔ (w = x ∨ w = y)
+    ExistsUnique fun (z : U) => ∀ (w : U), w ∈ z ↔ (w = x ∨ w = y)
       := by
     apply ExistsUnique.intro (choose (Pairing x y))
     · -- Existencia del conjunto especificado por el Axioma de Pares
@@ -86,35 +85,33 @@ namespace SetUniverse
     /-! ### Definición del conjunto Intersección de una Familia de Conjuntos ### -/
     @[simp]
     noncomputable def Intersection (w : U) : U :=
-    if h : ∃ y, y ∈ w then
-      let y₀ := choose h
-      SpecSet y₀ (fun v => ∀ y, y ∈ w → v ∈ y)
-    else
-      ∅ -- convención, debería ser U
+      if h : ∃ y, y ∈ w then
+        let y₀ := choose h
+        SpecSet y₀ (fun v => ∀ y, y ∈ w → v ∈ y)
+      else
+        ∅
 
     /-! ### Notación estándar de la Intersección de una Familia de Conjuntos ### -/
-    notation " ⋂ " w => Intersection w
+    notation:100 "⋂ " w => Intersection w
 
     @[simp]
-    lemma nonempty_iff_exists_mem (w : U) : w ≠ ∅ ↔ ∃ y, y ∈ w := by
+    theorem nonempty_iff_exists_mem (w : U) : w ≠ ∅ ↔ ∃ y, y ∈ w := by
       constructor
-      · intro h
-        apply Classical.byContradiction
-        intro h_not_exists
-        apply h
-        apply ExtSet
-        intro y
-        constructor
-        · intro hy
-          exfalso
-          apply h_not_exists
-          exact ⟨y, hy⟩
-        · intro hy
-          exfalso
-          exact EmptySet_is_empty y hy
-      · intro h h_empty
-        obtain ⟨y, hy⟩ := h
-        rw [h_empty] at hy
+      · intro h_ne
+        by_cases h : ∃ y, y ∈ w
+        · exact h
+        · exfalso
+          apply h_ne
+          apply ExtSet
+          intro y
+          simp only [not_exists] at h
+          constructor
+          · intro hy
+            exact False.elim ((h y) hy)
+          · intro hy
+            exact False.elim (EmptySet_is_empty y hy)
+      · intro ⟨y, hy⟩ h_eq
+        rw [h_eq] at hy
         exact EmptySet_is_empty y hy
 
     /-! ### ⋂{A} = A ### -/
@@ -194,7 +191,7 @@ namespace SetUniverse
         let r := s_elem \ I
         ⋂ r
 
-    lemma intersection_of_ordered_pair (x y : U) : (⋂ ⟨x, y⟩) = {x} := by
+    theorem intersection_of_ordered_pair (x y : U) : (⋂ ⟨x, y⟩) = {x} := by
       apply ExtSet
       intro z
       constructor
@@ -234,28 +231,28 @@ namespace SetUniverse
     /-! ### Lemas auxiliares para las pruebas principales ### -/
     /-! ### Lemas auxiliares para las pruebas principales de fst y snd ### -/
 
-    lemma is_singleton_unique_elem (s a : U) :
+    theorem is_singleton_unique_elem (s a : U) :
       s = {a} → ∀ x, x ∈ s → x = a
         := by
           intro h_s_eq x hx_in_s
           rw [h_s_eq] at hx_in_s
           exact (Singleton_is_specified a x).mp hx_in_s
 
-    lemma pair_set_eq_singleton (x : U) :
+    theorem pair_set_eq_singleton (x : U) :
       ({x, x} : U) = ({x} : U)
         := by
           apply ExtSet
           intro z
           rw [PairSet_is_specified, Singleton_is_specified, or_self]
 
-    lemma ordered_pair_self_eq_singleton_singleton (x : U) :
+    theorem ordered_pair_self_eq_singleton_singleton (x : U) :
       (⟨x, x⟩ : U) = ({{x}} : U)
         := by
           unfold OrderedPair
           rw [pair_set_eq_singleton x] -- Simplifica {x, x} a {x}
           rw [pair_set_eq_singleton ({x} : U)] -- Simplifica {{x}, {x}} a {{x}}
 
-    lemma diff_ordered_pair_neq (x y : U) (h_neq : x ≠ y) :
+    theorem diff_ordered_pair_neq (x y : U) (h_neq : x ≠ y) :
       ((⟨x, y⟩ : U) \ ({{x}} : U)) = {{x, y}}
         := by
           apply ExtSet
@@ -295,7 +292,7 @@ namespace SetUniverse
               -- Esto contradice h_neq
               exact h_neq h_y_eq_x.symm
 
-    lemma diff_pair_singleton (x y : U) (h_neq : x ≠ y) :
+    theorem diff_pair_singleton (x y : U) (h_neq : x ≠ y) :
       (({x, y} : U) \ ({x} : U)) = ({y} : U) := by
       apply ExtSet
       intro z
@@ -323,7 +320,7 @@ namespace SetUniverse
           intro h_eq
           exact h_neq (h_eq.symm ▸ hz_in_singleton_y)
 
-      lemma auxiliary_idempotence_of_or_in (x y : U) :
+      theorem auxiliary_idempotence_of_or_in (x y : U) :
         x ∈ y ↔ x ∈ y ∨ x ∈ y
         := by
         constructor
@@ -334,7 +331,7 @@ namespace SetUniverse
           | inl hx_in_y => exact hx_in_y
           | inr hx_in_y => exact hx_in_y
 
-    lemma auxiliary_idempotence_of_or_eq (x y : U) :
+    theorem auxiliary_idempotence_of_or_eq (x y : U) :
       x = y ↔ x = y ∨ x = y
         := by
       constructor
@@ -345,7 +342,7 @@ namespace SetUniverse
         | inl hx_eq_y => exact hx_eq_y
         | inr hx_eq_y => exact hx_eq_y
 
-    lemma ordered_pair_eq_mem (x y : U) (h_eq : x = y) :
+    theorem ordered_pair_eq_mem (x y : U) (h_eq : x = y) :
       ∀ (z : U), z ∈ (⟨x, y⟩ : U) → z = ({y} : U)
         := by
       -- Instead of subst, use the membership proof and OrderedPair_is_specified
@@ -384,7 +381,7 @@ namespace SetUniverse
         exact (Singleton_is_specified y y).mpr rfl;
       exact h_z_eq_sing_y
 
-    lemma diff_pair_sing_intersection (x y : U) :
+    theorem diff_pair_sing_intersection (x y : U) :
       (x = y) → (((⟨x, y⟩ : U) \ ({(⋂ (⟨x, y⟩ : U))})) = (∅ : U))
         := by
           intro h_eq
@@ -402,7 +399,7 @@ namespace SetUniverse
           -- Esto es cierto por la definición de diferencia de un conjunto consigo mismo.
           exact Difference_self_empty {{y}}
 
-    lemma ordered_pair_neq_mem (x y : U) :
+    theorem ordered_pair_neq_mem (x y : U) :
       ∀ (z : U), (z ∈ (⟨x, y⟩ : U)) → (z = ({x, y} : U) ∨ (z = ({x} : U)))
         := by
           intro z hz_in_pair
@@ -411,7 +408,7 @@ namespace SetUniverse
           | inl hx_eq_y => exact Or.inr hx_eq_y
           | inr hx_eq_y => exact Or.inl hx_eq_y
 
-    lemma intersection_of_ordered_pair_neq_mem (x y : U) (h_eq : x ≠ y) :
+    theorem intersection_of_ordered_pair_neq_mem (x y : U) (h_eq : x ≠ y) :
       (((⟨x, y⟩ : U)  \ ({((⋂ (⟨x, y⟩ : U)) : U)} : U)  : U) = ({{x, y}} : U))
         := by
           apply ExtSet
@@ -696,6 +693,7 @@ export SetUniverse.PairingAxiom (
     PairSet_is_specified
     Singleton
     Singleton_is_specified
+    nonempty_iff_exists_mem
     member_intersection
     Intersection
     OrderedPair
