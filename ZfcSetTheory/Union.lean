@@ -314,16 +314,20 @@ namespace SetUniverse
           -- Need to show ∅ ∈ C
           -- Since C ≠ ∅, there exists some element in C
           have h_nonempty_C : ∃ y, y ∈ C := by
-            by_contra h_empty
-            apply hC_non_empty
-            apply ExtSet
-            intro z
-            constructor
-            · intro hz_in_C
+            -- Proof by contradiction using absurd
+            by_cases h : ∃ y, y ∈ C
+            case pos => exact h
+            case neg =>
               exfalso
-              exact h_empty ⟨z, hz_in_C⟩
-            · intro hz_in_empty
-              exact False.elim (EmptySet_is_empty z hz_in_empty)
+              apply hC_non_empty
+              apply ExtSet
+              intro z
+              constructor
+              · intro hz_in_C
+                exfalso
+                exact h ⟨z, hz_in_C⟩
+              · intro hz_in_empty
+                exact False.elim (EmptySet_is_empty z hz_in_empty)
           obtain ⟨y, hy_in_C⟩ := h_nonempty_C
           -- Every element of C must be ∅ (since ⋃ C = ∅)
           have y_eq_empty : y = ∅ := by
