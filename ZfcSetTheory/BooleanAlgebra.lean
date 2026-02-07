@@ -4,6 +4,8 @@ import ZfcSetTheory.Extension
 import ZfcSetTheory.Existence
 import ZfcSetTheory.Specification
 import ZfcSetTheory.Pairing
+import ZfcSetTheory.BooleanAlgebra
+import ZfcSetTheory.Pairing
 import ZfcSetTheory.Union
 
 namespace SetUniverse

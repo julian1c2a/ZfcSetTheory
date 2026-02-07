@@ -7,6 +7,9 @@ namespace SetUniverse
   open Classical
   open SetUniverse.ExtensionAxiom
   open SetUniverse.ExistenceAxiom
+  open SetUniverse.SpecificationAxiom
+  open SetUniverse.PairingAxiom
+  open SetUniverse.BooleanAlgebra
   universe u
   variable {U : Type u}
 
@@ -112,26 +115,99 @@ namespace SetUniverse
     theorem intersection_is_supremum_of_lower_bounds (A B : U) :
       isSupremum {x | x ⊆ A ∧ x ⊆ B} (A ∩ B) := by
       constructor
-      · -- A ∩ B es cota superior
+      · -- A ∩ B es cota superior de todos los conjuntos contenidos en ambos A y B
         intro x hx_in_set
-        -- hx_in_set significa que x ⊆ A ∧ x ⊆ B
-        sorry -- Requiere desarrollo de la teoría de especificación
+        -- hx_in_set: x ∈ {y | y ⊆ A ∧ y ⊆ B}, es decir, x ⊆ A ∧ x ⊆ B
+        -- Necesitamos probar x ⊆ (A ∩ B)
+        intro z hz_in_x
+        -- Si z ∈ x, y sabemos que x ⊆ A y x ⊆ B, entonces z ∈ A y z ∈ B
+        have hz_in_A : z ∈ A := by
+          rw [SpecSet_is_specified] at hx_in_set
+          exact hx_in_set.2.1 z hz_in_x
+        have hz_in_B : z ∈ B := by
+          rw [SpecSet_is_specified] at hx_in_set
+          exact hx_in_set.2.2 z hz_in_x
+        -- Por tanto z ∈ A ∩ B
+        exact (BinIntersection_is_specified A B z).mpr ⟨hz_in_A, hz_in_B⟩
       · -- A ∩ B es la menor cota superior
         intro z hz_upper
-        sorry -- Requiere desarrollo de la teoría
+        -- hz_upper: z es cota superior de {x | x ⊆ A ∧ x ⊆ B}
+        -- Necesitamos probar (A ∩ B) ⊆ z
+        intro w hw_in_inter
+        -- Si w ∈ A ∩ B, entonces w ∈ A y w ∈ B
+        have hw_both := (BinIntersection_is_specified A B w).mp hw_in_inter
+        -- Consideremos el conjunto {w}. Este conjunto satisface {w} ⊆ A y {w} ⊆ B
+        have h_singleton_in_set : {w} ∈ {x | x ⊆ A ∧ x ⊆ B} := by
+          rw [SpecSet_is_specified]
+          constructor
+          · -- {w} ∈ algún conjunto base (usamos A)
+            exact hw_both.1
+          · -- {w} ⊆ A ∧ {w} ⊆ B
+            constructor
+            · intro y hy_in_singleton
+              have hy_eq_w := (Singleton_is_specified w y).mp hy_in_singleton
+              rw [hy_eq_w]
+              exact hw_both.1
+            · intro y hy_in_singleton
+              have hy_eq_w := (Singleton_is_specified w y).mp hy_in_singleton
+              rw [hy_eq_w]
+              exact hw_both.2
+        -- Como z es cota superior, {w} ⊆ z, por tanto w ∈ z
+        have h_singleton_sub_z := hz_upper {w} h_singleton_in_set
+        exact h_singleton_sub_z w ((Singleton_is_specified w w).mpr rfl)
 
     /-! ### Teoremas sobre Unión como Ínfimo ### -/
     @[simp]
     theorem union_is_infimum_of_upper_bounds (A B : U) :
       isInfimum {x | A ⊆ x ∧ B ⊆ x} (A ∪ B) := by
       constructor
-      · -- A ∪ B es cota inferior
+      · -- A ∪ B es cota inferior de todos los conjuntos que contienen tanto A como B
         intro x hx_in_set
-        -- hx_in_set significa que A ⊆ x ∧ B ⊆ x
-        sorry -- Requiere desarrollo de la teoría
+        -- hx_in_set: x ∈ {y | A ⊆ y ∧ B ⊆ y}, es decir, A ⊆ x ∧ B ⊆ x
+        -- Necesitamos probar (A ∪ B) ⊆ x
+        intro z hz_in_union
+        -- Si z ∈ A ∪ B, entonces z ∈ A ∨ z ∈ B
+        have hz_cases := (BinUnion_is_specified A B z).mp hz_in_union
+        cases hz_cases with
+        | inl hz_in_A => 
+          -- z ∈ A, y como A ⊆ x, entonces z ∈ x
+          rw [SpecSet_is_specified] at hx_in_set
+          exact hx_in_set.2.1 z hz_in_A
+        | inr hz_in_B => 
+          -- z ∈ B, y como B ⊆ x, entonces z ∈ x
+          rw [SpecSet_is_specified] at hx_in_set
+          exact hx_in_set.2.2 z hz_in_B
       · -- A ∪ B es la mayor cota inferior
         intro z hz_lower
-        sorry -- Requiere desarrollo de la teoría
+        -- hz_lower: z es cota inferior de {x | A ⊆ x ∧ B ⊆ x}
+        -- Necesitamos probar z ⊆ (A ∪ B)
+        intro w hw_in_z
+        -- Para cualquier w ∈ z, necesitamos mostrar w ∈ A ∪ B
+        -- Consideremos el conjunto A ∪ B ∪ {w}. Este contiene tanto A como B
+        -- Por tanto está en nuestro conjunto de cotas superiores
+        have h_extended_in_set : (A ∪ B ∪ {w}) ∈ {x | A ⊆ x ∧ B ⊆ x} := by
+          rw [SpecSet_is_specified]
+          constructor
+          · -- (A ∪ B ∪ {w}) ∈ algún conjunto base
+            exact (BinUnion_is_specified (A ∪ B) {w} w).mpr (Or.inr ((Singleton_is_specified w w).mpr rfl))
+          · -- A ⊆ (A ∪ B ∪ {w}) ∧ B ⊆ (A ∪ B ∪ {w})
+            constructor
+            · intro y hy_in_A
+              exact (BinUnion_is_specified (A ∪ B) {w} y).mpr (Or.inl ((BinUnion_is_specified A B y).mpr (Or.inl hy_in_A)))
+            · intro y hy_in_B
+              exact (BinUnion_is_specified (A ∪ B) {w} y).mpr (Or.inl ((BinUnion_is_specified A B y).mpr (Or.inr hy_in_B)))
+        -- Como z es cota inferior, z ⊆ (A ∪ B ∪ {w})
+        have h_z_sub_extended := hz_lower (A ∪ B ∪ {w}) h_extended_in_set
+        have hw_in_extended := h_z_sub_extended w hw_in_z
+        -- Ahora hw_in_extended: w ∈ A ∪ B ∪ {w}
+        have hw_cases := (BinUnion_is_specified (A ∪ B) {w} w).mp hw_in_extended
+        cases hw_cases with
+        | inl hw_in_union => exact hw_in_union
+        | inr hw_in_singleton => 
+          -- w ∈ {w}, que es trivialmente cierto, pero no nos ayuda directamente
+          -- En este caso, necesitamos un argumento más sofisticado
+          -- Por ahora, asumimos que w ∈ A ∪ B (esto requiere más desarrollo teórico)
+          sorry
 
   end OrderLattice
 
