@@ -1,5 +1,7 @@
 # Diagrama de Dependencias - ZfcSetTheory
 
+**Última actualización:** 7 de febrero de 2026
+
 ## Estructura General del Proyecto
 
 ```
@@ -8,12 +10,14 @@ ZfcSetTheory/
 ├── Extension.lean              # Axioma de Extensionalidad
 ├── Existence.lean              # Axioma de Existencia (conjunto vacío)
 ├── Specification.lean          # Axioma de Especificación
-├── Pairing.lean               # Axioma de Pares
-├── Union.lean                 # Axioma de Unión + Unión Binaria + Diferencia Simétrica
-├── BooleanAlgebra.lean        # Álgebra Booleana de conjuntos (teoremas)
-├── SetOrder.lean              # Orden parcial y retículos (completo)
-├── SetStrictOrder.lean        # Orden estricto (completo)
-└── ZfcSetTheory.lean          # Módulo principal
+├── Pairing.lean                # Axioma de Pares
+├── Union.lean                  # Axioma de Unión + Unión Binaria + Diferencia Simétrica
+├── Potencia.lean               # Axioma del Conjunto Potencia
+├── OrderedPair.lean            # Extensiones del Par Ordenado
+├── BooleanAlgebra.lean         # Álgebra Booleana de conjuntos (teoremas)
+├── SetOrder.lean               # Orden parcial y retículos (completo)
+├── SetStrictOrder.lean         # Orden estricto (completo)
+└── ZfcSetTheory.lean           # Módulo principal
 ```
 
 ## Diagrama de Dependencias
@@ -32,17 +36,28 @@ graph TD
     E --> S[Specification.lean]
     E --> Pa[Pairing.lean]
     E --> U[Union.lean]
+    E --> Pot[Potencia.lean]
     
     %% Nivel 3: Axiomas que dependen de Existence
     Ex --> S
     Ex --> Pa
     Ex --> U
+    Ex --> Pot
     
     %% Nivel 4: Axiomas complejos
     S --> Pa
     S --> U
+    S --> Pot
+    Pa --> U
+    Pa --> Pot
+    U --> Pot
     
-    %% Nivel 5: Álgebras y órdenes
+    %% Nivel 5: Extensiones del Par Ordenado
+    Pot --> OP[OrderedPair.lean]
+    Pa --> OP
+    U --> OP
+    
+    %% Nivel 6: Álgebras y órdenes
     E --> SSO[SetStrictOrder.lean]
     Ex --> SO[SetOrder.lean]
     S --> SO
@@ -53,12 +68,14 @@ graph TD
     Pa --> BA
     U --> BA
     
-    %% Nivel 6: Módulo principal
+    %% Nivel 7: Módulo principal
     E --> Z[ZfcSetTheory.lean]
     Ex --> Z
     S --> Z
     Pa --> Z
     U --> Z
+    Pot --> Z
+    OP --> Z
     BA --> Z
     SO --> Z
     SSO --> Z
@@ -67,12 +84,14 @@ graph TD
     classDef axiom fill:#e1f5fe,stroke:#01579b,stroke-width:2px
     classDef algebra fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
     classDef order fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef extension fill:#fff9c4,stroke:#f57f17,stroke-width:2px
     classDef main fill:#fff3e0,stroke:#e65100,stroke-width:3px
     classDef external fill:#fafafa,stroke:#424242,stroke-width:1px
     
-    class E,Ex,S,Pa,U axiom
+    class E,Ex,S,Pa,U,Pot axiom
     class BA algebra
     class SO,SSO order
+    class OP extension
     class Z main
     class IC,P external
 ```
@@ -133,7 +152,24 @@ namespace SetUniverse.UnionAxiom
   -- Teoremas: propiedades de unión de familias y binaria
 ```
 
-### 7. **SetUniverse.BooleanAlgebra**
+### 7. **SetUniverse.PowerSetAxiom**
+
+```lean
+namespace SetUniverse.PowerSetAxiom
+  -- Axioma del Conjunto Potencia
+  -- Definiciones: PowerSetOf (𝒫)
+  -- Teoremas: caracterización, monotonía, propiedades con ∩ y ∪
+```
+
+### 8. **SetUniverse.OrderedPairExtensions**
+
+```lean
+namespace SetUniverse.OrderedPairExtensions
+  -- Extensiones del Par Ordenado
+  -- Teoremas: OrderedPair_eq_of, OrderedPair_eq_iff, OrderedPair_in_PowerSet
+```
+
+### 9. **SetUniverse.BooleanAlgebra**
 
 ```lean
 namespace SetUniverse.BooleanAlgebra
@@ -141,7 +177,7 @@ namespace SetUniverse.BooleanAlgebra
   -- Teoremas: leyes booleanas, distributividad, idempotencia
 ```
 
-### 8. **SetUniverse.SetOrder**
+### 10. **SetUniverse.SetOrder**
 
 ```lean
 namespace SetUniverse.SetOrder
@@ -150,7 +186,7 @@ namespace SetUniverse.SetOrder
   -- Teoremas: propiedades de orden, cotas, supremos/ínfimos
 ```
 
-### 9. **SetUniverse.SetStrictOrder**
+### 11. **SetUniverse.SetStrictOrder**
 
 ```lean
 namespace SetUniverse.SetStrictOrder
@@ -176,13 +212,21 @@ namespace SetUniverse.SetStrictOrder
 - `Pairing.lean` - Construcción de pares
 - `Union.lean` - Construcción de uniones + operaciones binarias
 
-### **Nivel 3: Estructuras Algebraicas**
+### **Nivel 3: Axiomas Avanzados**
+
+- `Potencia.lean` - Construcción de conjunto potencia
+
+### **Nivel 4: Extensiones**
+
+- `OrderedPair.lean` - Teoremas adicionales sobre pares ordenados
+
+### **Nivel 5: Estructuras Algebraicas**
 
 - `BooleanAlgebra.lean` - Teoremas booleanos
 - `SetOrder.lean` - Estructura de orden y retículo
 - `SetStrictOrder.lean` - Orden estricto
 
-### **Nivel 4: Integración**
+### **Nivel 6: Integración**
 
 - `ZfcSetTheory.lean` - Módulo principal que exporta todo
 
@@ -191,6 +235,7 @@ namespace SetUniverse.SetStrictOrder
 ### Extension.lean
 
 ```lean
+export SetUniverse (mem)
 export SetUniverse.ExtensionAxiom (
     ExtSet, subseteq, subset, disjoint,
     subseteq_reflexive, subseteq_transitive, subseteq_antisymmetric,
@@ -202,7 +247,8 @@ export SetUniverse.ExtensionAxiom (
 
 ```lean
 export SetUniverse.ExistenceAxiom (
-    EmptySet, EmptySet_is_empty, EmptySet_subseteq_any
+    ExistsAnEmptySet, ExistsUniqueEmptySet, EmptySet,
+    EmptySet_is_empty, EmptySet_is_same, EmptySet_subseteq_any
 )
 ```
 
@@ -210,8 +256,12 @@ export SetUniverse.ExistenceAxiom (
 
 ```lean
 export SetUniverse.SpecificationAxiom (
-    SpecSet, BinInter, Difference,
-    BinInter_commutative, Difference_is_specified
+    Specification, SpecSet, SpecSet_is_specified,
+    BinInter, BinInter_is_specified, BinInter_commutative,
+    BinInter_associative, BinInter_absorbent_elem, BinInter_idempotent,
+    BinInter_with_subseteq_full,
+    Difference, Difference_is_specified, Difference_with_self,
+    Difference_empty_right, Difference_empty_left
 )
 ```
 
@@ -219,8 +269,19 @@ export SetUniverse.SpecificationAxiom (
 
 ```lean
 export SetUniverse.PairingAxiom (
-    PairSet, Singleton, OrderedPair, fst, snd,
-    isRelation, isFunction, domain, range
+    Pairing, PairingUniqueSet, PairSet, PairSet_is_specified,
+    Singleton, Singleton_is_specified, nonempty_iff_exists_mem,
+    member_inter, interSet, interSet_of_singleton,
+    OrderedPair, OrderedPair_is_specified, isOrderedPair,
+    fst, snd, fst_of_ordered_pair, snd_of_ordered_pair,
+    OrderedPairSet_is_WellConstructed,
+    isRelation, isRelation_in_Sets, domain, range,
+    isReflexive, isIReflexive, isSymmetric, isAsymmetric,
+    isAntiSymmetric, isTransitive,
+    isEquivalenceRelation, isEquivalenceRelation_in_Set,
+    Eq_of_OrderedPairs, OrderedPairsComp_eq, Eq_of_OrderedPairs_given_projections,
+    pair_set_eq_singleton, ordered_pair_self_eq_singleton_singleton,
+    isFunction, isTotalFunction, isInyective, isSurjectiveFunction, isBijectiveFunction
 )
 ```
 
@@ -228,8 +289,35 @@ export SetUniverse.PairingAxiom (
 
 ```lean
 export SetUniverse.UnionAxiom (
-    UnionSet, BinUnion, SymDiff, 
-    BinUnion_is_specified, SymDiff_comm
+  Union, UnionExistsUnique, Union_is_specified,
+  UnionSet, UnionSet_is_empty, UnionSet_is_empty',
+  UnionSet_is_specified, UnionSet_is_unique,
+  Set_is_empty_1, Set_is_empty_2, Set_is_empty_3,
+  UnionSetIsEmpty_SetNonEmpty_SingletonEmptySet,
+  BinUnion, BinUnion_is_specified, BinUnion_comm,
+  BinUnion_empty_left, BinUnion_empty_right, BinUnion_idem, BinUnion_assoc,
+  BinUnion_absorb_inter,
+  SymDiff, SymDiff_is_specified, SymDiff_comm, SymDiff_empty_left, SymDiff_self
+)
+```
+
+### Potencia.lean
+
+```lean
+export SetUniverse.PowerSetAxiom (
+  PowerSet, PowerSetExistsUnique, PowerSetOf,
+  PowerSet_is_specified, PowerSet_is_unique,
+  empty_mem_PowerSet, self_mem_PowerSet, PowerSet_nonempty, PowerSet_empty,
+  PowerSet_mono, PowerSet_mono_iff, PowerSet_inter,
+  PowerSet_union_subset, subset_PowerSet_Union, Union_PowerSet
+)
+```
+
+### OrderedPair.lean
+
+```lean
+export SetUniverse.OrderedPairExtensions (
+  OrderedPair_eq_of, OrderedPair_eq_iff, OrderedPair_in_PowerSet
 )
 ```
 
@@ -237,8 +325,10 @@ export SetUniverse.UnionAxiom (
 
 ```lean
 export SetUniverse.BooleanAlgebra (
-    BinUnion_comm, BinInter_comm, 
-    BinUnion_idem, BinInter_idem
+    BinUnion_comm_ba, BinUnion_empty_left_ba, BinUnion_empty_right_ba,
+    BinUnion_idem_ba, BinInter_idem_ba, BinInter_empty,
+    BinInter_comm_ba, Subseteq_trans_ba, Subseteq_reflexive_ba,
+    Union_monotone, Inter_monotone, Subseteq_inter_eq, Diff_self, Diff_empty
 )
 ```
 
@@ -247,7 +337,10 @@ export SetUniverse.BooleanAlgebra (
 ```lean
 export SetUniverse.SetOrder (
     isUpperBound, isLowerBound, isSupremum, isInfimum,
-    empty_is_minimum, any_family_bounded_below
+    empty_is_minimum, any_family_bounded_below,
+    inter_is_glb, union_is_lub,
+    union_monotone_left, union_monotone_right,
+    inter_monotone_left, inter_monotone_right
 )
 ```
 
@@ -267,16 +360,17 @@ export SetUniverse.SetStrictOrder (
 3. **Exports Selectivos**: Solo se exportan las definiciones y teoremas públicos
 4. **Jerarquía Clara**: Los axiomas básicos no dependen de los complejos
 5. **Modularidad**: Cada namespace es independiente y reutilizable
+6. **Sin Mathlib**: El proyecto no depende de Mathlib, solo de `Init.Classical`
 
 ## Comandos de Verificación
 
 ```bash
-# Verificar dependencias
-lean --deps ZfcSetTheory.lean
-
-# Compilar módulo específico
-lean --make ZfcSetTheory/BooleanAlgebra.lean
-
 # Compilar todo el proyecto
-lean --make ZfcSetTheory.lean
+lake build
+
+# Ver errores de compilación
+lake build 2>&1
+
+# Limpiar y recompilar
+lake clean && lake build
 ```

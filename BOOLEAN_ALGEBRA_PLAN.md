@@ -1,5 +1,7 @@
 # Plan: Álgebra de Boole Minimalista para ZfcSetTheory
 
+**Última actualización:** 7 de febrero de 2026
+
 ## Objetivo
 
 Implementar una fundamentación completa del **Álgebra de Boole** usando solo definiciones básicas de conjuntos (∪, ∩, \, ∅) sin necesidad de estructuras algebraicas abstractas.
@@ -12,22 +14,27 @@ Demostrar que los conjuntos con las operaciones de unión, intersección y compl
 
 ## Teoremas Completados ✅
 
-### En BooleanAlgebra.lean
+### En Union.lean
 
 1. **BinUnion_comm**: `(A ∪ B) = (B ∪ A)` - Conmutatividad de unión
 2. **BinUnion_empty_left**: `(∅ ∪ A) = A`
 3. **BinUnion_empty_right**: `(A ∪ ∅) = A`
 4. **BinUnion_idem**: `(A ∪ A) = A` - Idempotencia de unión
-5. **BinInter_idem**: `(A ∩ A) = A` - Idempotencia de intersección
-6. **BinInter_empty**: `(A ∩ ∅) = ∅`
-7. **BinInter_comm**: `(A ∩ B) = (B ∩ A)` - Conmutatividad de intersección
-8. **Subseteq_trans**: `A ⊆ B → B ⊆ C → A ⊆ C` - Transitividad
-9. **Subseteq_reflexive**: `A ⊆ A` - Reflexividad
-10. **Union_monotone**: `A ⊆ B → (A ∪ C) ⊆ (B ∪ C)` - Monotonía
-11. **Inter_monotone**: `A ⊆ B → (A ∩ C) ⊆ (B ∩ C)` - Monotonía intersección
-12. **Subseteq_inter_eq**: `(A ⊆ B) ↔ ((A ∩ B) = A)` - Equivalencia subseteq/intersección
-13. **Diff_self**: `(A \ A) = ∅` - Diferencia de sí mismo
-14. **Diff_empty**: `(A \ ∅) = A` - Diferencia con vacío
+5. **BinUnion_assoc**: `((A ∪ B) ∪ C) = (A ∪ (B ∪ C))` - Asociatividad
+6. **BinUnion_absorb_inter**: `(A ∪ (A ∩ B)) = A` - Absorción
+
+### En BooleanAlgebra.lean
+
+1. **BinInter_idem_ba**: `(A ∩ A) = A` - Idempotencia de intersección
+2. **BinInter_empty**: `(A ∩ ∅) = ∅`
+3. **BinInter_comm_ba**: `(A ∩ B) = (B ∩ A)` - Conmutatividad de intersección
+4. **Subseteq_trans_ba**: `A ⊆ B → B ⊆ C → A ⊆ C` - Transitividad
+5. **Subseteq_reflexive_ba**: `A ⊆ A` - Reflexividad
+6. **Union_monotone**: `A ⊆ B → (A ∪ C) ⊆ (B ∪ C)` - Monotonía
+7. **Inter_monotone**: `A ⊆ B → (A ∩ C) ⊆ (B ∩ C)` - Monotonía intersección
+8. **Subseteq_inter_eq**: `(A ⊆ B) ↔ ((A ∩ B) = A)` - Equivalencia subseteq/intersección
+9. **Diff_self**: `(A \ A) = ∅` - Diferencia de sí mismo
+10. **Diff_empty**: `(A \ ∅) = A` - Diferencia con vacío
 
 ### En Specification.lean
 
@@ -46,20 +53,13 @@ Demostrar que los conjuntos con las operaciones de unión, intersección y compl
 
 ## Teoremas por Implementar 📋
 
-### Grupo 1: Asociatividad de Unión (1 teorema)
+### Grupo 1: Absorción (1 teorema restante)
 
 ```lean
-theorem BinUnion_assoc (A B C : U) : ((A ∪ B) ∪ C) = (A ∪ (B ∪ C))
-```
-
-### Grupo 2: Absorción (2 teoremas)
-
-```lean
-theorem Union_absorb_inter (A B : U) : (A ∪ (A ∩ B)) = A
 theorem Inter_absorb_union (A B : U) : (A ∩ (A ∪ B)) = A
 ```
 
-### Grupo 3: Distributividad (2 teoremas - CRÍTICOS)
+### Grupo 2: Distributividad (2 teoremas - CRÍTICOS)
 
 ```lean
 theorem Union_distrib_inter (A B C : U) : 
@@ -71,7 +71,7 @@ theorem Inter_distrib_union (A B C : U) :
 
 **Nota**: Estos requieren análisis de casos explícitos, NO usar `simp` complejo.
 
-### Grupo 4: Complemento Relativo (2 teoremas)
+### Grupo 3: Complemento Relativo (2 teoremas)
 
 Se definen con complemento relativo: `A^c := C \ A` para un conjunto universal C fijo.
 
@@ -83,7 +83,7 @@ theorem Complement_inter (A C : U) :
   (A ∩ (C \ A)) = ∅
 ```
 
-### Grupo 5: Leyes de De Morgan (2 teoremas)
+### Grupo 4: Leyes de De Morgan (2 teoremas)
 
 ```lean
 theorem DeMorgan_union (A B C : U) : 
@@ -93,7 +93,7 @@ theorem DeMorgan_inter (A B C : U) :
   (C \ (A ∩ B)) = ((C \ A) ∪ (C \ B))
 ```
 
-**Total**: 9 teoremas restantes para completar el álgebra de Boole.
+**Total**: 7 teoremas restantes para completar el álgebra de Boole.
 
 ---
 
@@ -120,7 +120,7 @@ constructor
   exact ...
 ```
 
-✅ **Funciona mal**:
+❌ **Funciona mal**:
 
 ```lean
 intro ⟨x, y⟩  -- En modo tácticas, usar obtain
@@ -130,59 +130,11 @@ rw [lemma] at h  -- Si causa bucles, expandir manualmente
 
 ---
 
-## Estructura del Archivo
+## Estado Actual (Febrero 2026)
 
-```
-BooleanAlgebra.lean
-
-namespace SetUniverse
-  namespace BooleanAlgebra
-    
-    -- Binary Union Section ✅
-    BinUnion_comm, BinUnion_empty_left, BinUnion_empty_right, BinUnion_idem
-    
-    -- Inter Section ✅
-    BinInter_idem, BinInter_empty, BinInter_comm
-    
-    -- Subseteq/Order Section ✅
-    Subseteq_trans, Subseteq_reflexive, Subseteq_inter_eq
-    
-    -- Monotonicity Section ✅
-    Union_monotone, Inter_monotone
-    
-    -- Difference Section ✅
-    Diff_self, Diff_empty
-    
-    -- POR AGREGAR:
-    -- Associativity: BinUnion_assoc 📋
-    -- Absorption: Union_absorb_inter, Inter_absorb_union 📋
-    -- Distributivity: Union_distrib_inter, Inter_distrib_union 📋 CRÍTICO
-    -- Complement: Complement_union, Complement_inter 📋
-    -- De Morgan: DeMorgan_union, DeMorgan_inter 📋
-    
-  end BooleanAlgebra
-end SetUniverse
-```
-
----
-
-## Timeline Sugerido
-
-**Sesión 1** (~30 min):
-
-- Grupo 1: Asociatividad de unión (1 teorema)
-- Grupo 2: Absorción (2 teoremas)
-
-**Sesión 2** (~40 min):
-
-- Grupo 3: Distributividad (2 teoremas - requiere cuidado)
-
-**Sesión 3** (~30 min):
-
-- Grupo 4: Complemento (2 teoremas)
-- Grupo 5: De Morgan (2 teoremas)
-
-**Total estimado**: 1-2 sesiones para completar los 9 teoremas restantes.
+- ✅ **23 teoremas completados** en Union.lean, BooleanAlgebra.lean, Specification.lean, SetOrder.lean
+- 📋 **7 teoremas pendientes** para completar álgebra de Boole completa
+- 🎯 **Próximo paso**: Implementar `Inter_absorb_union` y distributividad
 
 ---
 
@@ -191,14 +143,4 @@ end SetUniverse
 - **Axioma utilizado**: Axioma de Especificación (para caracterizar intersecciones)
 - **Axioma utilizado**: Axioma de Unión (para caracterizar uniones)
 - **Axioma utilizado**: Axioma de Extensionalidad (para igualdad)
-- **No requiere**: Axioma de Potencia, Infinito, o Fundación
-
----
-
-## Estado Actual (Febrero 2026)
-
-- ✅ BooleanAlgebra.lean: 14 teoremas completados
-- ✅ Specification.lean: 3 teoremas adicionales (asociatividad ∩, etc.)
-- ✅ SetOrder.lean: 6 teoremas de orden (glb, lub, monotonía)
-- 📋 **9 teoremas restantes** para álgebra de Boole completa
-- 🎯 **LISTO PARA COMENZAR** - Las bases están sólidas
+- **No requiere**: Axioma de Infinito o Fundación
