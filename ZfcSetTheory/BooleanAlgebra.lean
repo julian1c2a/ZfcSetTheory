@@ -18,142 +18,177 @@ namespace SetUniverse
 
   namespace BooleanAlgebra
 
-    /-! Álgebra Booleana usando operaciones básicas -/
+    /-! ### Álgebra Booleana - Teoremas que mezclan ∪ y ∩ ### -/
 
-    theorem BinUnion_comm (A B : U) :
-      (A ∪ B) = (B ∪ A) := by
+    /-! Absorción -/
+    theorem BinUnion_absorb_inter (A B : U) :
+      (A ∪ (A ∩ B)) = A := by
       apply ExtSet
       intro x
-      simp [BinUnion_is_specified, or_comm]
-
-    theorem BinUnion_empty_left (A : U) :
-      (∅ ∪ A) = A := by
-      apply ExtSet
-      intro x
-      simp only [BinUnion_is_specified]
-      exact ⟨fun h => h.resolve_left (EmptySet_is_empty x), Or.inr⟩
-
-    theorem BinUnion_empty_right (A : U) :
-      (A ∪ ∅) = A := by
-      rw [BinUnion_comm, BinUnion_empty_left]
-
-    theorem BinUnion_idem (A : U) :
-      (A ∪ A) = A := by
-      apply ExtSet
-      intro x
-      simp only [BinUnion_is_specified]
       constructor
-      · intro h
-        cases h with
-        | inl hx => exact hx
-        | inr hx => exact hx
       · intro hx
-        exact Or.inl hx
+        rw [BinUnion_is_specified] at hx
+        cases hx with
+        | inl hA => exact hA
+        | inr hAB =>
+          rw [BinInter_is_specified] at hAB
+          exact hAB.1
+      · intro hA
+        rw [BinUnion_is_specified]
+        exact Or.inl hA
 
-    /-! Intersección Binaria -/
-    theorem BinIntersection_idem (A : U) :
-      (A ∩ A) = A := by
+    theorem BinInter_absorb_union (A B : U) :
+      (A ∩ (A ∪ B)) = A := by
       apply ExtSet
       intro x
-      simp only [BinIntersection_is_specified]
       constructor
-      · intro ⟨hx, _⟩
-        exact hx
       · intro hx
-        exact ⟨hx, hx⟩
+        rw [BinInter_is_specified] at hx
+        exact hx.1
+      · intro hA
+        rw [BinInter_is_specified, BinUnion_is_specified]
+        exact ⟨hA, Or.inl hA⟩
 
-    theorem BinIntersection_empty (A : U) :
-      (A ∩ ∅) = ∅ := by
+    /-! ### Distributividad ### -/
+
+    theorem BinUnion_distrib_inter (A B C : U) :
+      (A ∪ (B ∩ C)) = ((A ∪ B) ∩ (A ∪ C)) := by
       apply ExtSet
       intro x
-      simp only [BinIntersection_is_specified]
       constructor
-      · intro ⟨_, hx⟩
-        exact hx
       · intro hx
-        exact False.elim (EmptySet_is_empty x hx)
+        rw [BinUnion_is_specified] at hx
+        rw [BinInter_is_specified, BinUnion_is_specified, BinUnion_is_specified]
+        cases hx with
+        | inl hA => exact ⟨Or.inl hA, Or.inl hA⟩
+        | inr hBC =>
+          rw [BinInter_is_specified] at hBC
+          exact ⟨Or.inr hBC.1, Or.inr hBC.2⟩
+      · intro hx
+        rw [BinInter_is_specified, BinUnion_is_specified, BinUnion_is_specified] at hx
+        rw [BinUnion_is_specified]
+        cases hx.1 with
+        | inl hA => exact Or.inl hA
+        | inr hB =>
+          cases hx.2 with
+          | inl hA => exact Or.inl hA
+          | inr hC =>
+            rw [BinInter_is_specified]
+            exact Or.inr ⟨hB, hC⟩
 
-    theorem BinIntersection_comm (A B : U) :
-      (A ∩ B) = (B ∩ A) := by
+    theorem BinInter_distrib_union (A B C : U) :
+      (A ∩ (B ∪ C)) = ((A ∩ B) ∪ (A ∩ C)) := by
       apply ExtSet
       intro x
-      simp only [BinIntersection_is_specified]
       constructor
-      · intro ⟨hxA, hxB⟩
-        exact ⟨hxB, hxA⟩
-      · intro ⟨hxB, hxA⟩
-        exact ⟨hxA, hxB⟩
+      · intro hx
+        rw [BinInter_is_specified, BinUnion_is_specified] at hx
+        rw [BinUnion_is_specified]
+        cases hx.2 with
+        | inl hB =>
+          rw [BinInter_is_specified]
+          exact Or.inl ⟨hx.1, hB⟩
+        | inr hC =>
+          rw [BinInter_is_specified]
+          exact Or.inr ⟨hx.1, hC⟩
+      · intro hx
+        rw [BinUnion_is_specified] at hx
+        rw [BinInter_is_specified, BinUnion_is_specified]
+        cases hx with
+        | inl hAB =>
+          rw [BinInter_is_specified] at hAB
+          exact ⟨hAB.1, Or.inl hAB.2⟩
+        | inr hAC =>
+          rw [BinInter_is_specified] at hAC
+          exact ⟨hAC.1, Or.inr hAC.2⟩
 
+    /-! ### Leyes de De Morgan ### -/
 
-    /-! Transitividad -/
-    theorem Subseteq_trans (A B C : U) :
-      A ⊆ B → B ⊆ C → A ⊆ C := by
-      intro h1 h2 x hx
-      exact h2 x (h1 x hx)
-
-    theorem Subseteq_reflexive (A : U) :
-      A ⊆ A := by
-      intro x hx
-      exact hx
-
-
-    /-! Monotonía -/
-    theorem Union_monotone (A B C : U) :
-      A ⊆ B → (A ∪ C) ⊆ (B ∪ C) := by
-      intro h x hx
-      simp only [BinUnion_is_specified] at hx ⊢
-      rcases hx with hxA | hxC
-      · left; exact h x hxA
-      · right; exact hxC
-
-    theorem Inter_monotone (A B C : U) :
-      A ⊆ B → (A ∩ C) ⊆ (B ∩ C) := by
-      intro h x ⟨hx, hc⟩
-      exact ⟨h x hx, hc⟩
-
-    /-! Equivalencias -/
-    theorem Subseteq_inter_eq (A B : U) :
-      (A ⊆ B) ↔ ((A ∩ B) = A) := ⟨
-      fun h => by
-        apply ExtSet
-        intro x
+    theorem DeMorgan_union (A B C : U) :
+      (C \ (A ∪ B)) = ((C \ A) ∩ (C \ B)) := by
+      apply ExtSet
+      intro x
+      constructor
+      · intro hx
+        rw [Difference_is_specified, BinUnion_is_specified] at hx
+        rw [BinInter_is_specified, Difference_is_specified, Difference_is_specified]
         constructor
-        · intro ⟨ha, _⟩; exact ha
-        · intro ha; exact ⟨ha, h x ha⟩,
-      fun h x hx => by rw [← h]; exact hx⟩
+        · exact ⟨hx.1, fun hA => hx.2 (Or.inl hA)⟩
+        · exact ⟨hx.1, fun hB => hx.2 (Or.inr hB)⟩
+      · intro hx
+        rw [BinInter_is_specified, Difference_is_specified, Difference_is_specified] at hx
+        rw [Difference_is_specified, BinUnion_is_specified]
+        exact ⟨hx.1.1, fun h => h.elim hx.1.2 hx.2.2⟩
 
-    /-! Diferencia -/
-    theorem Diff_self (A : U) :
-      (A \ A) = ∅ := by
+    theorem DeMorgan_inter (A B C : U) :
+      (C \ (A ∩ B)) = ((C \ A) ∪ (C \ B)) := by
       apply ExtSet
       intro x
-      simp only [Difference_is_specified]
-      exact ⟨fun ⟨_, h⟩ => h rfl, EmptySet_is_empty x⟩
+      constructor
+      · intro hx
+        rw [Difference_is_specified, BinInter_is_specified] at hx
+        rw [BinUnion_is_specified]
+        by_cases hA : x ∈ A
+        · -- x ∈ A, entonces x ∉ B (de lo contrario x ∈ A ∩ B)
+          rw [Difference_is_specified]
+          exact Or.inr ⟨hx.1, fun hB => hx.2 ⟨hA, hB⟩⟩
+        · -- x ∉ A
+          rw [Difference_is_specified]
+          exact Or.inl ⟨hx.1, hA⟩
+      · intro hx
+        rw [BinUnion_is_specified] at hx
+        rw [Difference_is_specified, BinInter_is_specified]
+        cases hx with
+        | inl hCA =>
+          rw [Difference_is_specified] at hCA
+          exact ⟨hCA.1, fun ⟨hA, _⟩ => hCA.2 hA⟩
+        | inr hCB =>
+          rw [Difference_is_specified] at hCB
+          exact ⟨hCB.1, fun ⟨_, hB⟩ => hCB.2 hB⟩
 
-    theorem Diff_empty (A : U) :
-      (A \ ∅) = A := by
+    /-! ### Complemento Relativo ### -/
+
+    theorem Complement_union (A C : U) (h : A ⊆ C) :
+      (A ∪ (C \ A)) = C := by
       apply ExtSet
       intro x
-      simp only [Difference_is_specified]
-      exact ⟨fun ⟨hx, _⟩ => hx, fun hx => ⟨hx, fun h => EmptySet_is_empty x h⟩⟩
+      constructor
+      · intro hx
+        rw [BinUnion_is_specified] at hx
+        cases hx with
+        | inl hA => exact h x hA
+        | inr hCA =>
+          rw [Difference_is_specified] at hCA
+          exact hCA.1
+      · intro hC
+        rw [BinUnion_is_specified]
+        by_cases hA : x ∈ A
+        · exact Or.inl hA
+        · rw [Difference_is_specified]
+          exact Or.inr ⟨hC, hA⟩
+
+    theorem Complement_inter (A C : U) :
+      (A ∩ (C \ A)) = ∅ := by
+      apply ExtSet
+      intro x
+      constructor
+      · intro hx
+        rw [BinInter_is_specified, Difference_is_specified] at hx
+        exact False.elim (hx.2.2 hx.1)
+      · intro hEmpty
+        exact False.elim (EmptySet_is_empty x hEmpty)
 
   end BooleanAlgebra
 
 end SetUniverse
 
 export SetUniverse.BooleanAlgebra (
-  BinUnion_comm
-  BinUnion_empty_left
-  BinUnion_empty_right
-  BinUnion_idem
-  BinIntersection_idem
-  BinIntersection_empty
-  BinIntersection_comm
-  Subseteq_trans
-  Subseteq_reflexive
-  Union_monotone
-  Inter_monotone
-  Subseteq_inter_eq
-  Diff_self
-  Diff_empty
+  BinUnion_absorb_inter
+  BinInter_absorb_union
+  BinUnion_distrib_inter
+  BinInter_distrib_union
+  DeMorgan_union
+  DeMorgan_inter
+  Complement_union
+  Complement_inter
 )
