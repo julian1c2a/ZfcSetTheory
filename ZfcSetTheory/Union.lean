@@ -438,76 +438,6 @@ namespace SetUniverse
       · intro hx
         exact False.elim (EmptySet_is_empty x hx)
 
-    /-! ### Intersección de Familias ### -/
-    noncomputable def IntersectionSet (C : U) : U :=
-      if h : ∃ y, y ∈ C then
-        let y₀ := choose h
-        SpecSet y₀ (fun v => ∀ y, y ∈ C → v ∈ y)
-      else
-        ∅
-
-    notation " ⋂ " C: 100 => IntersectionSet C
-
-    theorem IntersectionSet_is_specified (C x : U) :
-      x ∈ (⋂ C) ↔ (C ≠ ∅ ∧ ∀ S, S ∈ C → x ∈ S) := by
-      unfold IntersectionSet
-      constructor
-      · intro hx
-        by_cases h : ∃ y, y ∈ C
-        · simp only [dif_pos h] at hx
-          rw [SpecSet_is_specified] at hx
-          constructor
-          · intro h_empty
-            have ⟨y, hy⟩ := h
-            rw [h_empty] at hy
-            exact EmptySet_is_empty y hy
-          · exact hx.2
-        · simp only [dif_neg h] at hx
-          exact False.elim (EmptySet_is_empty x hx)
-      · intro ⟨h_nonempty, h_all⟩
-        have h_exists : ∃ y, y ∈ C := by
-          apply Classical.byContradiction
-          intro h_not_exists
-          apply h_nonempty
-          apply ExtSet
-          intro y
-          constructor
-          · intro hy
-            exact False.elim (h_not_exists ⟨y, hy⟩)
-          · intro hy
-            exact False.elim (EmptySet_is_empty y hy)
-        simp only [dif_pos h_exists]
-        rw [SpecSet_is_specified]
-        constructor
-        · have ⟨y₀, hy₀⟩ := h_exists
-          exact h_all y₀ hy₀
-        · exact h_all
-
-    theorem IntersectionSet_singleton (A : U) : 
-      (⋂ {A}) = A := by
-      apply ExtSet
-      intro x
-      rw [IntersectionSet_is_specified]
-      constructor
-      · intro ⟨_, h_all⟩
-        exact h_all A ((Singleton_is_specified A A).mpr rfl)
-      · intro hx
-        constructor
-        · intro h_empty
-          have hA : A ∈ ({A} : U) := (Singleton_is_specified A A).mpr rfl
-          rw [h_empty] at hA
-          exact EmptySet_is_empty A hA
-        · intro S hS
-          have hS_eq : S = A := (Singleton_is_specified A S).mp hS
-          rw [hS_eq]
-          exact hx
-
-    theorem IntersectionSet_empty : 
-      (⋂ ∅) = ∅ := by
-      unfold IntersectionSet
-      simp only [dif_neg]
-      intro ⟨y, hy⟩
-      exact EmptySet_is_empty y hy
 
   end UnionAxiom
 end SetUniverse
@@ -532,10 +462,6 @@ export SetUniverse.UnionAxiom (
   SymDiff_comm
   SymDiff_empty_left
   SymDiff_self
-  IntersectionSet
-  IntersectionSet_is_specified
-  IntersectionSet_singleton
-  IntersectionSet_empty
 )
 
 /-!
