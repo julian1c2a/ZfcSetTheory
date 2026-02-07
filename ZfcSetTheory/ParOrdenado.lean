@@ -111,7 +111,9 @@ namespace SetUniverse
               rw [h_cd_eq_ab] at hd_in
               rw [PairSet_is_specified] at hd_in
               cases hd_in with
-              | inl hd_eq_a => rw [hb_eq_c, ha_eq_c, hd_eq_a]
+              | inl hd_eq_a => 
+                -- d = a, b = c, a = c, entonces b = d
+                rw [hb_eq_c, hd_eq_a, ha_eq_c]
               | inr hd_eq_b => exact hd_eq_b.symm
           | inr h_ab_eq_cd =>
             -- {a,b} = {c,d}
@@ -134,11 +136,11 @@ namespace SetUniverse
               rw [PairSet_is_specified] at hc_in
               cases hc_in with
               | inl hc_eq_a =>
-                -- c = a, d = a, entonces a = b = c = d
-                rw [←ha_eq_c, hd_eq_a]
+                -- c = a, d = a, entonces b = d
+                rw [hd_eq_a, hc_eq_a, ha_eq_c]
               | inr hc_eq_b =>
-                -- c = b, d = a
-                rw [←hc_eq_b, ←hd_eq_a, ha_eq_c, hc_eq_b]
+                -- c = b, d = a, entonces b = d  
+                rw [hd_eq_a, hc_eq_b]
             | inr hd_eq_b => exact hd_eq_b.symm
       | inr h_eq_pair =>
         -- {a} = {c,d}
@@ -180,8 +182,12 @@ namespace SetUniverse
             rw [h_ab_eq_cd] at hb_in
             rw [PairSet_is_specified] at hb_in
             cases hb_in with
-            | inl hb_eq_c => rw [hb_eq_c, hd_eq_a, hc_eq_a]
-            | inr hb_eq_d => rw [hb_eq_d, hd_eq_a, hc_eq_a]
+            | inl hb_eq_c => 
+              -- b = c, d = a, c = a, entonces b = d
+              rw [hb_eq_c, hd_eq_a, hc_eq_a]
+            | inr hb_eq_d => 
+              -- b = d, entonces b = d
+              exact hb_eq_d
 
     /-! ### Igualdad de pares ordenados (←) ###
         Si a = c ∧ b = d entonces (a, b) = (c, d) -/
@@ -238,7 +244,19 @@ namespace SetUniverse
         := by
       unfold OrderedPair
       -- PairSet a a = {a} (singleton)
-      have h : PairSet a a = ({a} : U) := PairSet_diag a
+      have h : PairSet a a = ({a} : U) := by
+        apply ExtSet
+        intro z
+        constructor
+        · intro hz
+          rw [PairSet_is_specified] at hz
+          cases hz with
+          | inl hz_eq => rw [hz_eq]; exact (Singleton_is_specified a a).mpr rfl
+          | inr hz_eq => rw [hz_eq]; exact (Singleton_is_specified a a).mpr rfl
+        · intro hz
+          rw [Singleton_is_specified] at hz
+          rw [PairSet_is_specified, hz]
+          exact Or.inl rfl
       rw [h]
 
   end OrderedPairAxiom
