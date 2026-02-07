@@ -61,7 +61,7 @@ namespace SetUniverse
     /-! ### Subset : x ⊆ y ∧ x ≠ y ### -/
     @[simp]
     def subset (x y : U) : Prop :=
-      (subseteq x y) ∧ (x ≠ y)
+      (x  ⊆  y) ∧ (x ≠ y)
 
     /-! ### Notación estándar de subconjunto propio ### -/
     notation:50 lhs:51 " ⊂ " rhs:51 => subset lhs rhs
@@ -182,9 +182,6 @@ namespace SetUniverse
       exact h_disj
       exact h_exists
 
-
-
-
     @[simp]
     noncomputable def isTransitiveSet (x : U) : Prop :=
       ∀ (y : U), (y ∈ x) → (y ⊂ x)
@@ -238,7 +235,7 @@ export SetUniverse.ExtensionAxiom (
     subseteq subseteq_reflexive subseteq_transitive subseteq_antisymmetric
     disjoint disjoint_symm disjoint_is_empty disjoint_is_empty_wc
     subset_irreflexive subset_asymmetric subset_transitive
-    isTransitiveSet isEmpty isNonEmpty isSingleton isPair 
-    isBinIntersection isBinUnion isBinDiff isBinSymDiff 
+    isTransitiveSet isEmpty isNonEmpty isSingleton isPair
+    isBinIntersection isBinUnion isBinDiff isBinSymDiff
     isUnion isIntersection subset subseteq
 )
