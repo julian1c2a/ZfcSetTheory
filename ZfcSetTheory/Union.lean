@@ -437,12 +437,12 @@ namespace SetUniverse
           -- hx: x ∈ A ∧ x ∉ A, contradicción
           have h_in : x ∈ A := hx.1
           have h_notin : x ∉ A := hx.2
-          exact h_notin h_in
+          exact False.elim (h_notin h_in)
         | inr hx => 
           -- hx: x ∈ A ∧ x ∉ A, contradicción  
           have h_in : x ∈ A := hx.1
           have h_notin : x ∉ A := hx.2
-          exact h_notin h_in
+          exact False.elim (h_notin h_in)
       · intro hx
         exact False.elim (EmptySet_is_empty x hx)
 
