@@ -12,5 +12,8 @@ import ZfcSetTheory.CartesianProduct
 import ZfcSetTheory.Relations
 import ZfcSetTheory.BooleanAlgebra
 import ZfcSetTheory.PowerSetAlgebra
+import ZfcSetTheory.GeneralizedDeMorgan
+import ZfcSetTheory.GeneralizedDistributive
 import ZfcSetTheory.SetOrder
 import ZfcSetTheory.SetStrictOrder
+import ZfcSetTheory.AtomicBooleanAlgebra
