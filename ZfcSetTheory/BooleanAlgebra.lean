@@ -102,6 +102,67 @@ namespace SetUniverse
       · intro ⟨hxB, hxA⟩
         exact ⟨hxA, hxB⟩
 
+    /-! Diferencia Simétrica -/
+    noncomputable def SymDiff (A B : U) : U :=
+      (A \ B) ∪ (B \ A)
+
+    notation:50 lhs:51 " △ " rhs:51 => SymDiff lhs rhs
+
+    theorem SymDiff_is_specified (A B x : U) :
+      x ∈ (A △ B) ↔ (x ∈ A ∧ x ∉ B) ∨ (x ∈ B ∧ x ∉ A) := by
+      unfold SymDiff
+      simp only [BinUnion_is_specified, Difference_is_specified]
+      constructor
+      · intro h
+        cases h with
+        | inl hx => exact Or.inl hx
+        | inr hx => exact Or.inr hx
+      · intro h
+        cases h with
+        | inl hx => exact Or.inl hx
+        | inr hx => exact Or.inr hx
+
+    theorem SymDiff_comm (A B : U) :
+      (A △ B) = (B △ A) := by
+      apply ExtSet
+      intro x
+      simp only [SymDiff_is_specified]
+      constructor
+      · intro h
+        cases h with
+        | inl hx => exact Or.inr hx
+        | inr hx => exact Or.inl hx
+      · intro h
+        cases h with
+        | inl hx => exact Or.inr hx
+        | inr hx => exact Or.inl hx
+
+    theorem SymDiff_empty_left (A : U) :
+      (∅ △ A) = A := by
+      apply ExtSet
+      intro x
+      simp only [SymDiff_is_specified]
+      constructor
+      · intro h
+        cases h with
+        | inl hx => exact False.elim (EmptySet_is_empty x hx.1)
+        | inr hx => exact hx.1
+      · intro hx
+        exact Or.inr ⟨hx, fun h => EmptySet_is_empty x h⟩
+
+    theorem SymDiff_self (A : U) :
+      (A △ A) = ∅ := by
+      apply ExtSet
+      intro x
+      simp only [SymDiff_is_specified]
+      constructor
+      · intro h
+        cases h with
+        | inl hx => exact hx.2 hx.1
+        | inr hx => exact hx.2 hx.1
+      · intro hx
+        exact False.elim (EmptySet_is_empty x hx)
+
     /-! Transitividad -/
     theorem Subseteq_trans (A B C : U) :
       A ⊆ B → B ⊆ C → A ⊆ C := by
@@ -168,6 +229,11 @@ export SetUniverse.BooleanAlgebra (
   BinIntersection_idem
   BinIntersection_empty
   BinIntersection_comm
+  SymDiff
+  SymDiff_is_specified
+  SymDiff_comm
+  SymDiff_empty_left
+  SymDiff_self
   Subseteq_trans
   Subseteq_reflexive
   Union_monotone
