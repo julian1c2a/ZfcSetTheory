@@ -7,7 +7,7 @@ import ZfcSetTheory.Specification
 import ZfcSetTheory.Pairing
 import ZfcSetTheory.Union
 import ZfcSetTheory.Potencia
-import ZfcSetTheory.ParOrdenado
+import ZfcSetTheory.OrderedPair
 import ZfcSetTheory.BooleanAlgebra
 import ZfcSetTheory.SetOrder
 import ZfcSetTheory.SetStrictOrder
