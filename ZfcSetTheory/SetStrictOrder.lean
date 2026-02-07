@@ -90,20 +90,17 @@ namespace SetUniverse
     /-! ### Relación entre Orden Parcial y Orden Estricto ### -/
     @[simp]
     theorem partial_to_strict_order (x y : U) :
-      (x ⊆ y ∧ x ≠ y) ↔ x ⊂ y := by
+      (( x ⊆ y ) ∧ ( x ≠ y )) ↔ x ⊂ y
+        := by
       constructor
-      · intro ⟨h_sub, h_neq⟩
-        exact ⟨h_sub, h_neq⟩
+      · intro h
+        exact ⟨h.1, h.2⟩
       · intro h_strict
         exact ⟨h_strict.1, h_strict.2⟩
 
     @[simp]
     theorem strict_implies_partial (x y : U) :
       x ⊂ y → x ⊆ y := subset_subseteq x y
-
-    @[simp]
-    theorem partial_cases (x y : U) :
-      x ⊆ y → (x ⊂ y ∨ x = y) := subseteq_subset_or_eq x y
 
     /-! ### Propiedades adicionales del orden estricto ### -/
     @[simp]
@@ -153,7 +150,7 @@ export SetUniverse.SetStrictOrder (
     subset_subseteq subseteq_subset_or_eq
     strict_order_irreflexive strict_order_asymmetric strict_order_transitive
     subset_transitive_mixed_left subset_transitive_mixed_right
-    partial_to_strict_order strict_implies_partial partial_cases
+    partial_to_strict_order strict_implies_partial
     strict_order_trichotomy_partial empty_strict_subset_nonempty
     strict_subset_nonempty
 )

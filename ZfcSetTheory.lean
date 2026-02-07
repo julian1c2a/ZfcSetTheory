@@ -6,6 +6,7 @@ import ZfcSetTheory.Existence
 import ZfcSetTheory.Specification
 import ZfcSetTheory.Pairing
 import ZfcSetTheory.Union
+import ZfcSetTheory.Potencia
 import ZfcSetTheory.BooleanAlgebra
 import ZfcSetTheory.SetOrder
 import ZfcSetTheory.SetStrictOrder

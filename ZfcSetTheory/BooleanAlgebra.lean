@@ -31,7 +31,7 @@ namespace SetUniverse
         cases hx with
         | inl hA => exact hA
         | inr hAB =>
-          rw [BinIntersection_is_specified] at hAB
+          rw [BinInter_is_specified] at hAB
           exact hAB.1
       · intro hA
         rw [BinUnion_is_specified]
@@ -46,7 +46,7 @@ namespace SetUniverse
         rw [BinInter_is_specified] at hx
         exact hx.1
       · intro hA
-        rw [BinIntersection_is_specified, BinUnion_is_specified]
+        rw [BinInter_is_specified, BinUnion_is_specified]
         exact ⟨hA, Or.inl hA⟩
 
     /-! ### Distributividad ### -/
@@ -58,7 +58,7 @@ namespace SetUniverse
       constructor
       · intro hx
         rw [BinUnion_is_specified] at hx
-        rw [BinIntersection_is_specified, BinUnion_is_specified, BinUnion_is_specified]
+        rw [BinInter_is_specified, BinUnion_is_specified, BinUnion_is_specified]
         cases hx with
         | inl hA => exact ⟨Or.inl hA, Or.inl hA⟩
         | inr hBC =>
@@ -82,24 +82,23 @@ namespace SetUniverse
       intro x
       constructor
       · intro hx
-        rw [BinIntersection_is_specified, BinUnion_is_specified] at hx
+        rw [BinInter_is_specified, BinUnion_is_specified] at hx
         rw [BinUnion_is_specified]
         cases hx.2 with
         | inl hB =>
-          rw [BinIntersection_is_specified]
+          rw [BinInter_is_specified]
           exact Or.inl ⟨hx.1, hB⟩
         | inr hC =>
-          rw [BinIntersection_is_specified]
-          exact Or.inr ⟨hx.1, hC⟩
+          exact Or.inr ((BinInter_is_specified A C x).mpr ⟨hx.1, hC⟩)
       · intro hx
         rw [BinUnion_is_specified] at hx
-        rw [BinIntersection_is_specified, BinUnion_is_specified]
+        rw [BinInter_is_specified, BinUnion_is_specified]
         cases hx with
         | inl hAB =>
-          rw [BinIntersection_is_specified] at hAB
+          rw [BinInter_is_specified] at hAB
           exact ⟨hAB.1, Or.inl hAB.2⟩
         | inr hAC =>
-          rw [BinIntersection_is_specified] at hAC
+          rw [BinInter_is_specified] at hAC
           exact ⟨hAC.1, Or.inr hAC.2⟩
 
     /-! ### Leyes de De Morgan ### -/
@@ -111,12 +110,12 @@ namespace SetUniverse
       constructor
       · intro hx
         rw [Difference_is_specified, BinUnion_is_specified] at hx
-        rw [BinIntersection_is_specified, Difference_is_specified, Difference_is_specified]
+        rw [BinInter_is_specified, Difference_is_specified, Difference_is_specified]
         constructor
         · exact ⟨hx.1, fun hA => hx.2 (Or.inl hA)⟩
         · exact ⟨hx.1, fun hB => hx.2 (Or.inr hB)⟩
       · intro hx
-        rw [BinIntersection_is_specified, Difference_is_specified, Difference_is_specified] at hx
+        rw [BinInter_is_specified, Difference_is_specified, Difference_is_specified] at hx
         rw [Difference_is_specified, BinUnion_is_specified]
         exact ⟨hx.1.1, fun h => h.elim hx.1.2 hx.2.2⟩
 
@@ -126,25 +125,24 @@ namespace SetUniverse
       intro x
       constructor
       · intro hx
-        rw [Difference_is_specified, BinIntersection_is_specified] at hx
+        rw [Difference_is_specified, BinInter_is_specified] at hx
         rw [BinUnion_is_specified]
         by_cases hA : x ∈ A
         · -- x ∈ A, entonces x ∉ B (de lo contrario x ∈ A ∩ B)
-          rw [Difference_is_specified]
-          exact Or.inr ⟨hx.1, fun hB => hx.2 ⟨hA, hB⟩⟩
+          have hnotB : x ∉ B := fun hB => hx.2 ⟨hA, hB⟩
+          exact Or.inr ((Difference_is_specified C B x).mpr ⟨hx.1, hnotB⟩)
         · -- x ∉ A
-          rw [Difference_is_specified]
-          exact Or.inl ⟨hx.1, hA⟩
+          exact Or.inl ((Difference_is_specified C A x).mpr ⟨hx.1, hA⟩)
       · intro hx
         rw [BinUnion_is_specified] at hx
         rw [Difference_is_specified, BinInter_is_specified]
         cases hx with
         | inl hCA =>
           rw [Difference_is_specified] at hCA
-          exact ⟨hCA.1, fun ⟨hA, _⟩ => hCA.2 hA⟩
+          exact ⟨hCA.1, fun hAB => hCA.2 hAB.1⟩
         | inr hCB =>
           rw [Difference_is_specified] at hCB
-          exact ⟨hCB.1, fun ⟨_, hB⟩ => hCB.2 hB⟩
+          exact ⟨hCB.1, fun hAB => hCB.2 hAB.2⟩
 
     /-! ### Complemento Relativo ### -/
 
@@ -173,7 +171,7 @@ namespace SetUniverse
       intro x
       constructor
       · intro hx
-        rw [BinIntersection_is_specified, Difference_is_specified] at hx
+        rw [BinInter_is_specified, Difference_is_specified] at hx
         exact False.elim (hx.2.2 hx.1)
       · intro hEmpty
         exact False.elim (EmptySet_is_empty x hEmpty)
@@ -185,7 +183,6 @@ end SetUniverse
 export SetUniverse.BooleanAlgebra (
   BinUnion_absorb_inter
   BinInter_absorb_union
-  BinUnion_assoc
   BinUnion_distrib_inter
   BinInter_distrib_union
   DeMorgan_union

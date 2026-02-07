@@ -87,7 +87,6 @@ namespace SetUniverse
         intro y
         rw [UnionSet_is_specified]
 
-    @[simp]
     theorem Set_is_empty_1 (C : U) (hC_empty : C = (∅ : U)) :
       (⋃ C) = (∅ : U)
         := by
@@ -131,7 +130,6 @@ namespace SetUniverse
       . intro hy
         exact False.elim (EmptySet_is_empty y hy)
 
-    @[simp]
     theorem Set_is_empty_3 (C : U)
       (hC_not_empty : C ≠ (∅ : U))
       (hC_not_singleton_empty : C ≠ ({∅} : U)) :
@@ -211,7 +209,6 @@ namespace SetUniverse
           rw [←hy_is_empty]
           exact hy_in_C
 
-    @[simp]
     theorem UnionSet_is_empty' (C : U) :
       (⋃ C) = (∅ : U) ↔ (C = (∅ : U)) ∨ (∀ (S : U), S ∈ C → S = (∅ : U))
         := by
@@ -283,7 +280,6 @@ namespace SetUniverse
         . intro hx_in_empty
           exact False.elim (EmptySet_is_empty x hx_in_empty)
 
-    @[simp]
     theorem UnionSetIsEmpty_SetNonEmpty_SingletonEmptySet
       (C : U)
       (hC_non_empty : C ≠ (∅ : U)) :
@@ -377,6 +373,72 @@ namespace SetUniverse
         · exact ⟨A, Or.inl rfl, hx⟩
         · exact ⟨B, Or.inr rfl, hx⟩
 
+    /-! ### Propiedades Algebraicas de la Unión Binaria ### -/
+
+    theorem BinUnion_comm (A B : U) :
+      (A ∪ B) = (B ∪ A) := by
+      apply ExtSet
+      intro x
+      simp only [BinUnion_is_specified, or_comm]
+
+    theorem BinUnion_empty_left (A : U) :
+      (∅ ∪ A) = A := by
+      apply ExtSet
+      intro x
+      simp only [BinUnion_is_specified]
+      exact ⟨fun h => h.resolve_left (EmptySet_is_empty x), Or.inr⟩
+
+    theorem BinUnion_empty_right (A : U) :
+      (A ∪ ∅) = A := by
+      rw [BinUnion_comm, BinUnion_empty_left]
+
+    theorem BinUnion_idem (A : U) :
+      (A ∪ A) = A := by
+      apply ExtSet
+      intro x
+      simp only [BinUnion_is_specified]
+      constructor
+      · intro h
+        cases h with
+        | inl hx => exact hx
+        | inr hx => exact hx
+      · intro hx
+        exact Or.inl hx
+
+    theorem BinUnion_assoc (A B C : U) :
+      ((A ∪ B) ∪ C) = (A ∪ (B ∪ C)) := by
+      apply ExtSet
+      intro x
+      simp only [BinUnion_is_specified]
+      constructor
+      · intro h
+        cases h with
+        | inl hAB =>
+          cases hAB with
+          | inl hA => exact Or.inl hA
+          | inr hB => exact Or.inr (Or.inl hB)
+        | inr hC => exact Or.inr (Or.inr hC)
+      · intro h
+        cases h with
+        | inl hA => exact Or.inl (Or.inl hA)
+        | inr hBC =>
+          cases hBC with
+          | inl hB => exact Or.inl (Or.inr hB)
+          | inr hC => exact Or.inr hC
+
+theorem BinUnion_absorb_inter (A B : U) :
+      ( A ∪ (A ∩ B) ) = A := by
+      apply ExtSet
+      intro x
+      simp only [BinUnion_is_specified, BinInter_is_specified]
+      constructor
+      · intro h
+        cases h with
+        | inl hx => exact hx
+        | inr hAB => exact hAB.1
+      · intro hx
+        exact Or.inl hx
+
     /-! ### Diferencia Simétrica ### -/
     noncomputable def SymDiff (A B : U) : U :=
       (A \ B) ∪ (B \ A)
@@ -387,15 +449,6 @@ namespace SetUniverse
       x ∈ (A △ B) ↔ (x ∈ A ∧ x ∉ B) ∨ (x ∈ B ∧ x ∉ A) := by
       unfold SymDiff
       simp only [BinUnion_is_specified, Difference_is_specified]
-      constructor
-      · intro h
-        cases h with
-        | inl hx => exact Or.inl hx
-        | inr hx => exact Or.inr hx
-      · intro h
-        cases h with
-        | inl hx => exact Or.inl hx
-        | inr hx => exact Or.inr hx
 
     theorem SymDiff_comm (A B : U) :
       (A △ B) = (B △ A) := by
@@ -433,13 +486,13 @@ namespace SetUniverse
       constructor
       · intro h
         cases h with
-        | inl hx => 
+        | inl hx =>
           -- hx: x ∈ A ∧ x ∉ A, contradicción
           have h_in : x ∈ A := hx.1
           have h_notin : x ∉ A := hx.2
           exact False.elim (h_notin h_in)
-        | inr hx => 
-          -- hx: x ∈ A ∧ x ∉ A, contradicción  
+        | inr hx =>
+          -- hx: x ∈ A ∧ x ∉ A, contradicción
           have h_in : x ∈ A := hx.1
           have h_notin : x ∉ A := hx.2
           exact False.elim (h_notin h_in)
@@ -465,6 +518,12 @@ export SetUniverse.UnionAxiom (
   UnionSetIsEmpty_SetNonEmpty_SingletonEmptySet
   BinUnion
   BinUnion_is_specified
+  BinUnion_comm
+  BinUnion_empty_left
+  BinUnion_empty_right
+  BinUnion_idem
+  BinUnion_assoc
+  BinUnion_absorb_inter
   SymDiff
   SymDiff_is_specified
   SymDiff_comm

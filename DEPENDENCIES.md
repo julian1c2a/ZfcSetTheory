@@ -80,6 +80,7 @@ graph TD
 ## Jerarquía de Espacios de Nombres
 
 ### 1. **SetUniverse** (Namespace raíz)
+
 ```lean
 namespace SetUniverse
   -- Definición axiomática de pertenencia
@@ -88,6 +89,7 @@ namespace SetUniverse
 ```
 
 ### 2. **SetUniverse.ExtensionAxiom**
+
 ```lean
 namespace SetUniverse.ExtensionAxiom
   -- Axioma de Extensionalidad
@@ -96,6 +98,7 @@ namespace SetUniverse.ExtensionAxiom
 ```
 
 ### 3. **SetUniverse.ExistenceAxiom**
+
 ```lean
 namespace SetUniverse.ExistenceAxiom
   -- Axioma de Existencia del conjunto vacío
@@ -104,14 +107,16 @@ namespace SetUniverse.ExistenceAxiom
 ```
 
 ### 4. **SetUniverse.SpecificationAxiom**
+
 ```lean
 namespace SetUniverse.SpecificationAxiom
   -- Axioma de Especificación/Separación
-  -- Definiciones: SpecSet, BinIntersection (∩), Difference (\)
+  -- Definiciones: SpecSet, BinInter (∩), Difference (\)
   -- Teoremas: propiedades de intersección y diferencia
 ```
 
 ### 5. **SetUniverse.PairingAxiom**
+
 ```lean
 namespace SetUniverse.PairingAxiom
   -- Axioma de Pares
@@ -120,6 +125,7 @@ namespace SetUniverse.PairingAxiom
 ```
 
 ### 6. **SetUniverse.UnionAxiom**
+
 ```lean
 namespace SetUniverse.UnionAxiom
   -- Axioma de Unión
@@ -128,6 +134,7 @@ namespace SetUniverse.UnionAxiom
 ```
 
 ### 7. **SetUniverse.BooleanAlgebra**
+
 ```lean
 namespace SetUniverse.BooleanAlgebra
   -- Álgebra Booleana de conjuntos
@@ -135,6 +142,7 @@ namespace SetUniverse.BooleanAlgebra
 ```
 
 ### 8. **SetUniverse.SetOrder**
+
 ```lean
 namespace SetUniverse.SetOrder
   -- Orden parcial y estructura de retículo
@@ -143,6 +151,7 @@ namespace SetUniverse.SetOrder
 ```
 
 ### 9. **SetUniverse.SetStrictOrder**
+
 ```lean
 namespace SetUniverse.SetStrictOrder
   -- Orden estricto
@@ -153,28 +162,34 @@ namespace SetUniverse.SetStrictOrder
 ## Dependencias por Nivel
 
 ### **Nivel 0: Fundamentos**
+
 - `Prelim.lean` - Definiciones básicas (ExistsUnique, etc.)
 
 ### **Nivel 1: Axiomas Básicos**
+
 - `Extension.lean` - Axioma de Extensionalidad
 - `Existence.lean` - Axioma de Existencia
 
 ### **Nivel 2: Axiomas de Construcción**
+
 - `Specification.lean` - Construcción por especificación
 - `Pairing.lean` - Construcción de pares
 - `Union.lean` - Construcción de uniones + operaciones binarias
 
 ### **Nivel 3: Estructuras Algebraicas**
+
 - `BooleanAlgebra.lean` - Teoremas booleanos
 - `SetOrder.lean` - Estructura de orden y retículo
 - `SetStrictOrder.lean` - Orden estricto
 
 ### **Nivel 4: Integración**
+
 - `ZfcSetTheory.lean` - Módulo principal que exporta todo
 
 ## Exports por Módulo
 
 ### Extension.lean
+
 ```lean
 export SetUniverse.ExtensionAxiom (
     ExtSet, subseteq, subset, disjoint,
@@ -184,6 +199,7 @@ export SetUniverse.ExtensionAxiom (
 ```
 
 ### Existence.lean
+
 ```lean
 export SetUniverse.ExistenceAxiom (
     EmptySet, EmptySet_is_empty, EmptySet_subseteq_any
@@ -191,14 +207,16 @@ export SetUniverse.ExistenceAxiom (
 ```
 
 ### Specification.lean
+
 ```lean
 export SetUniverse.SpecificationAxiom (
-    SpecSet, BinIntersection, Difference,
-    BinIntersection_commutative, Difference_is_specified
+    SpecSet, BinInter, Difference,
+    BinInter_commutative, Difference_is_specified
 )
 ```
 
 ### Pairing.lean
+
 ```lean
 export SetUniverse.PairingAxiom (
     PairSet, Singleton, OrderedPair, fst, snd,
@@ -207,6 +225,7 @@ export SetUniverse.PairingAxiom (
 ```
 
 ### Union.lean
+
 ```lean
 export SetUniverse.UnionAxiom (
     UnionSet, BinUnion, SymDiff, 
@@ -215,14 +234,16 @@ export SetUniverse.UnionAxiom (
 ```
 
 ### BooleanAlgebra.lean
+
 ```lean
 export SetUniverse.BooleanAlgebra (
-    BinUnion_comm, BinIntersection_comm, 
-    BinUnion_idem, BinIntersection_idem
+    BinUnion_comm, BinInter_comm, 
+    BinUnion_idem, BinInter_idem
 )
 ```
 
 ### SetOrder.lean
+
 ```lean
 export SetUniverse.SetOrder (
     isUpperBound, isLowerBound, isSupremum, isInfimum,
@@ -231,6 +252,7 @@ export SetUniverse.SetOrder (
 ```
 
 ### SetStrictOrder.lean
+
 ```lean
 export SetUniverse.SetStrictOrder (
     strict_order_irreflexive, strict_order_asymmetric,

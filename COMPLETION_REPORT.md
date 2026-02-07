@@ -128,17 +128,17 @@ El proyecto actual implementa **5 axiomas fundamentales de ZFC** en orden progre
 #### Definiciones Principales
 
 - `SpecSet (x : U) (P : U → Prop) : U` - Conjunto de especificación
-- `BinIntersection (x y : U) : U` - Intersección binaria (∩)
+- `BinInter (x y : U) : U` - Intersección binaria (∩)
 - `Difference (x y : U) : U` - Diferencia (\\)
 
-#### Teoremas sobre BinIntersection (∩)
+#### Teoremas sobre BinInter (∩)
 
-- `BinIntersection_is_specified` - Caracterización de ∩
-- `Intersection_comm` - Conmutatividad: x ∩ y = y ∩ x
-- `Intersection_assoc` - Asociatividad: (x ∩ y) ∩ z = x ∩ (y ∩ z)
-- `Intersection_idempotent` - Idempotencia: x ∩ x = x
-- `Intersection_empty_left` - Identidad con vacío: ∅ ∩ x = ∅
-- `Intersection_empty_right` - Identidad con vacío: x ∩ ∅ = ∅
+- `BinInter_is_specified` - Caracterización de ∩
+- `Inter_comm` - Conmutatividad: x ∩ y = y ∩ x
+- `Inter_assoc` - Asociatividad: (x ∩ y) ∩ z = x ∩ (y ∩ z)
+- `Inter_idempotent` - Idempotencia: x ∩ x = x
+- `Inter_empty_left` - Identidad con vacío: ∅ ∩ x = ∅
+- `Inter_empty_right` - Identidad con vacío: x ∩ ∅ = ∅
 
 #### Teoremas sobre Difference (\\)
 
@@ -150,7 +150,7 @@ El proyecto actual implementa **5 axiomas fundamentales de ZFC** en orden progre
 
 #### Teoremas de Interacción
 
-- `Intersection_preserves_subseteq` - Monotonicidad de ∩
+- `Inter_preserves_subseteq` - Monotonicidad de ∩
 - `Difference_preserves_subseteq` - Monotonicidad de \\
 - `Difference_inter_distrib` - Distributividad
 
@@ -184,7 +184,7 @@ El proyecto actual implementa **5 axiomas fundamentales de ZFC** en orden progre
 - `notation "{x, y}"` - Notación para pares
 - `Singleton (x : U) : U` - Singleton ({x})
 - `OrderedPair (x y : U) : U` - Par ordenado (⟨x, y⟩) definido como {{x}, {x, y}}
-- `Intersection (w : U) : U` - Intersección familiar (⋂ w)
+- `Inter (w : U) : U` - Intersección familiar (⋂ w)
 - `notation "⋂ "` - Notación para intersección de familia
 
 #### Teoremas Principales
@@ -192,7 +192,7 @@ El proyecto actual implementa **5 axiomas fundamentales de ZFC** en orden progre
 - `PairSet_is_specified` - Caracterización de {x, y}
 - `Singleton_is_specified` - Caracterización de {x}
 - `nonempty_iff_exists_mem` (**RECIENTEMENTE REPARADO**) - w ≠ ∅ ↔ ∃ y, y ∈ w
-- `Intersection_of_singleton` - ⋂{A} = A
+- `Inter_of_singleton` - ⋂{A} = A
 - `Ordered_pair_first` - Proyección primera de pares ordenados
 - `Ordered_pair_second` - Proyección segunda de pares ordenados
 
@@ -203,9 +203,9 @@ El proyecto actual implementa **5 axiomas fundamentales de ZFC** en orden progre
 
 #### Teoremas sobre Intersección Familiar
 
-- `Intersection_is_specified` - Caracterización de ⋂
-- `Intersection_of_singleton` - Caso especial para singletons
-- `Intersection_subseteq_mem_sets` - Submultitud
+- `Inter_is_specified` - Caracterización de ⋂
+- `Inter_of_singleton` - Caso especial para singletons
+- `Inter_subseteq_mem_sets` - Submultitud
 
 **Estado:** ✅ Compilado - Recientemente reparado
 **Observación Crítica:** El lema `nonempty_iff_exists_mem` requería usar `False.elim` en lugar de `absurd` (táctica no disponible en Lean 4 v4.23.0-rc2). Esto se resolvió exitosamente.
@@ -821,7 +821,7 @@ Dependencias Externas:    0 (solo Init.Classical)
 
 **Problema:** Definiciones mal indentadas dentro de expresiones causaban fallo de parseo  
 **Solución:** Reconstruir indentación y estructura sintáctica  
-**Ubicación:** Pairing.lean, definición de Intersection  
+**Ubicación:** Pairing.lean, definición de Inter  
 **Estado:** ✅ RESUELTO
 
 ---

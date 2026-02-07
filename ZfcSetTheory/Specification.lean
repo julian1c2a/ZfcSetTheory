@@ -65,81 +65,81 @@ namespace SetUniverse
 
     /-! ### Definición del conjunto especificado por el Axioma de Especificación ### -/
     @[simp]
-    noncomputable def BinIntersection (x y : U) : U :=
+    noncomputable def BinInter (x y : U) : U :=
       choose (SpecificationUnique x fun z => z ∈ y)
 
     @[simp]
-    theorem BinIntersection_is_specified (x y z : U) :
-      z ∈ BinIntersection x y ↔ (z ∈ x ∧ z ∈ y)
+    theorem BinInter_is_specified (x y z : U) :
+      z ∈ BinInter x y ↔ (z ∈ x ∧ z ∈ y)
         := by
       have h := choose_spec (SpecificationUnique x fun z => z ∈ y)
       exact h.1 z
 
     @[simp]
-    theorem BinIntersectionUniqueSet (x y : U) :
+    theorem BinInterUniqueSet (x y : U) :
       ExistsUnique fun (z : U) => ∀ (w : U), w ∈ z ↔ (w ∈ x ∧ w ∈ y)
         := by
-      apply ExistsUnique.intro (BinIntersection x y)
+      apply ExistsUnique.intro (BinInter x y)
       · -- Existencia del conjunto de intersección binaria
-        exact BinIntersection_is_specified x y
+        exact BinInter_is_specified x y
       · -- Unicidad del conjunto de intersección binaria
-        intro z hz_intersection
-        apply (ExtSet z (BinIntersection x y))
+        intro z hz_inter
+        apply (ExtSet z (BinInter x y))
         intro w
         constructor
         · -- Dirección ->
           intro hw_in_z
-          have h_both := (hz_intersection w).mp hw_in_z
+          have h_both := (hz_inter w).mp hw_in_z
           have h_w_in_x : w ∈ x := h_both.1
           have h_w_in_y : w ∈ y := h_both.2
-          exact (BinIntersection_is_specified x y w).mpr ⟨h_w_in_x, h_w_in_y⟩
+          exact (BinInter_is_specified x y w).mpr ⟨h_w_in_x, h_w_in_y⟩
         · -- Dirección <-
-          intro hw_in_bin_intersection
-          have h_both := (BinIntersection_is_specified x y w).mp hw_in_bin_intersection
-          exact (hz_intersection w).mpr h_both
+          intro hw_in_bin_inter
+          have h_both := (BinInter_is_specified x y w).mp hw_in_bin_inter
+          exact (hz_inter w).mpr h_both
 
     /-! ### Notación estándar de conjuntos de la Intersección Binaria ### -/
-    notation:50 lhs:51 " ∩ " rhs:51 => BinIntersection lhs rhs
+    notation:50 lhs:51 " ∩ " rhs:51 => BinInter lhs rhs
 
     /-! ### Teorema de la Intersección es Subconjunto ### -/
     @[simp]
-    theorem BinIntersection_subset (x y : U) :
+    theorem BinInter_subset (x y : U) :
       (x ∩ y) ⊆ x ∧ (x ∩ y) ⊆ y
         := by
       constructor
       · -- Subconjunto de x
-        intro z h_z_in_bin_intersection
-        have h := BinIntersection_is_specified x y z
-        exact (h.1 h_z_in_bin_intersection).1
+        intro z h_z_in_bin_inter
+        have h := BinInter_is_specified x y z
+        exact (h.1 h_z_in_bin_inter).1
       · -- Subconjunto de y
-        intro z h_z_in_bin_intersection
-        have h := BinIntersection_is_specified x y z
-        exact (h.1 h_z_in_bin_intersection).2
+        intro z h_z_in_bin_inter
+        have h := BinInter_is_specified x y z
+        exact (h.1 h_z_in_bin_inter).2
 
     /-! ### Teorema de la Intersección de Conjuntos Disjuntos es Vacía ### -/
     @[simp]
-    theorem BinIntersection_empty (x y : U) :
+    theorem BinInter_empty (x y : U) :
       (x ∩ y) = ∅ ↔ (x ⟂ y)
         := by
       constructor
       · -- Dirección ->
-        intro h_bin_intersection_empty z h_z_in_x h_z_in_y
-        have h_bin_intersection := BinIntersection_is_specified x y z
-        have h_z_in_bin_intersection : z ∈ (x ∩ y) := by
-          apply h_bin_intersection.mpr
+        intro h_bin_inter_empty z h_z_in_x h_z_in_y
+        have h_bin_inter := BinInter_is_specified x y z
+        have h_z_in_bin_inter : z ∈ (x ∩ y) := by
+          apply h_bin_inter.mpr
           exact ⟨h_z_in_x, h_z_in_y⟩
         apply EmptySet_is_empty z
-        rw [← h_bin_intersection_empty]
-        exact h_z_in_bin_intersection
+        rw [← h_bin_inter_empty]
+        exact h_z_in_bin_inter
       · -- Dirección <-
         intro h_disj
         apply ExtSet (x ∩ y) ∅
         intro z
         constructor
         · -- Dirección ->
-          intro h_z_in_bin_intersection
-          have h_bin_intersection := BinIntersection_is_specified x y z
-          have h_both := h_bin_intersection.mp h_z_in_bin_intersection
+          intro h_z_in_bin_inter
+          have h_bin_inter := BinInter_is_specified x y z
+          have h_both := h_bin_inter.mp h_z_in_bin_inter
           have h_false := h_disj z h_both.1 h_both.2
           exact False.elim h_false
         · -- Dirección <-
@@ -147,79 +147,79 @@ namespace SetUniverse
           exact False.elim (EmptySet_is_empty z h_z_in_empty)
 
     @[simp]
-    theorem BinIntersection_empty_left_wc {x y : U} (h_empty : (x ∩ y) = ∅) :
+    theorem BinInter_empty_left_wc {x y : U} (h_empty : (x ∩ y) = ∅) :
       x ⟂ y
         := by
-      exact (BinIntersection_empty x y).mp h_empty
+      exact (BinInter_empty x y).mp h_empty
 
     @[simp]
-    theorem BinIntersection_empty_right_wc {x y : U} (h_perp : x ⟂ y) :
+    theorem BinInter_empty_right_wc {x y : U} (h_perp : x ⟂ y) :
       (x ∩ y) = ∅
         := by
-      exact (BinIntersection_empty x y).mpr h_perp
+      exact (BinInter_empty x y).mpr h_perp
 
     @[simp]
-    theorem BinIntersection_commutative (x y : U) :
+    theorem BinInter_commutative (x y : U) :
       (x ∩ y) = (y ∩ x)
         := by
       apply ExtSet
       intro z
       constructor
       · -- Dirección ->
-        intro h_z_in_bin_intersection
-        have h := BinIntersection_is_specified x y z
-        have h_both := h.mp h_z_in_bin_intersection
-        exact (BinIntersection_is_specified y x z).mpr ⟨h_both.2, h_both.1⟩
+        intro h_z_in_bin_inter
+        have h := BinInter_is_specified x y z
+        have h_both := h.mp h_z_in_bin_inter
+        exact (BinInter_is_specified y x z).mpr ⟨h_both.2, h_both.1⟩
       · -- Dirección <-
-        intro h_z_in_bin_intersection
-        have h := BinIntersection_is_specified y x z
-        have h_both := h.mp h_z_in_bin_intersection
-        exact (BinIntersection_is_specified x y z).mpr ⟨h_both.2, h_both.1⟩
+        intro h_z_in_bin_inter
+        have h := BinInter_is_specified y x z
+        have h_both := h.mp h_z_in_bin_inter
+        exact (BinInter_is_specified x y z).mpr ⟨h_both.2, h_both.1⟩
 
     @[simp]
-    theorem BinIntersection_associative (x y z : U) :
+    theorem BinInter_associative (x y z : U) :
       ((x ∩ y) ∩ z) = (x ∩ (y ∩ z))
         := by
       apply ExtSet
       intro w
       constructor
       · -- Dirección ->
-        intro h_w_in_bin_intersection
-        have h_bin_intersection := BinIntersection_is_specified (x ∩ y) z w
-        have h_both := h_bin_intersection.mp h_w_in_bin_intersection
-        have h_w_in_xy := (BinIntersection_is_specified x y w).mp h_both.1
-        have h_w_in_y_intersection_z : w ∈ (y ∩ z) := by
-          apply (BinIntersection_is_specified y z w).mpr
+        intro h_w_in_bin_inter
+        have h_bin_inter := BinInter_is_specified (x ∩ y) z w
+        have h_both := h_bin_inter.mp h_w_in_bin_inter
+        have h_w_in_xy := (BinInter_is_specified x y w).mp h_both.1
+        have h_w_in_y_inter_z : w ∈ (y ∩ z) := by
+          apply (BinInter_is_specified y z w).mpr
           exact ⟨h_w_in_xy.2, h_both.2⟩
-        have h_w_in_x_intersection_yz : w ∈ (x ∩ (y ∩ z)) := by
-          apply (BinIntersection_is_specified x (y ∩ z) w).mpr
-          exact ⟨h_w_in_xy.1, h_w_in_y_intersection_z⟩
-        exact h_w_in_x_intersection_yz
+        have h_w_in_x_inter_yz : w ∈ (x ∩ (y ∩ z)) := by
+          apply (BinInter_is_specified x (y ∩ z) w).mpr
+          exact ⟨h_w_in_xy.1, h_w_in_y_inter_z⟩
+        exact h_w_in_x_inter_yz
       · -- Dirección <-
-        intro h_w_in_x_intersection_yz
-        have h_bin_intersection := BinIntersection_is_specified x (y ∩ z) w
-        have h_both := h_bin_intersection.mp h_w_in_x_intersection_yz
+        intro h_w_in_x_inter_yz
+        have h_bin_inter := BinInter_is_specified x (y ∩ z) w
+        have h_both := h_bin_inter.mp h_w_in_x_inter_yz
         have h_w_in_yz : w ∈ (y ∩ z) := h_both.2
-        have h_w_in_yz_components := (BinIntersection_is_specified y z w).mp h_w_in_yz
-        have h_w_in_x_intersection_y : w ∈ (x ∩ y) := by
-          apply (BinIntersection_is_specified x y w).mpr
+        have h_w_in_yz_components := (BinInter_is_specified y z w).mp h_w_in_yz
+        have h_w_in_x_inter_y : w ∈ (x ∩ y) := by
+          apply (BinInter_is_specified x y w).mpr
           exact ⟨h_both.1, h_w_in_yz_components.1⟩
-        have h_w_in_bin_intersection : w ∈ ((x ∩ y) ∩ z) := by
-          apply (BinIntersection_is_specified (x ∩ y) z w).mpr
-          exact ⟨h_w_in_x_intersection_y, h_w_in_yz_components.2⟩
-        exact h_w_in_bin_intersection
+        have h_w_in_bin_inter : w ∈ ((x ∩ y) ∩ z) := by
+          apply (BinInter_is_specified (x ∩ y) z w).mpr
+          exact ⟨h_w_in_x_inter_y, h_w_in_yz_components.2⟩
+        exact h_w_in_bin_inter
 
     @[simp]
-      theorem BinIntersection_absorbent_elem (x : U) :
+      theorem BinInter_absorbent_elem (x : U) :
       (x ∩ ∅) = ∅
         := by
       apply ExtSet
       intro z
       constructor
       · -- Dirección ->
-        intro h_z_in_bin_intersection
-        have h_bin_intersection := BinIntersection_is_specified x ∅ z
-        have h_both := h_bin_intersection.mp h_z_in_bin_intersection
+        intro h_z_in_bin_inter
+        have h_bin_inter := BinInter_is_specified x ∅ z
+        have h_both := h_bin_inter.mp h_z_in_bin_inter
         have h_z_in_x : z ∈ x := h_both.1
         have h_z_in_empty : z ∈ ∅ := h_both.2
         exact h_z_in_empty
@@ -228,18 +228,18 @@ namespace SetUniverse
         exact False.elim (EmptySet_is_empty z h_z_in_empty)
 
     @[simp]
-    theorem BinIntersection_with_subseteq (x y : U) :
+    theorem BinInter_with_subseteq (x y : U) :
       x ⊆ y → (x ∩ y) ⊆ x
         := by
-      intro h_subset z h_z_in_bin_intersection
-      have h_bin_intersection := BinIntersection_is_specified x y z
-      have h_both := h_bin_intersection.mp h_z_in_bin_intersection
+      intro h_subset z h_z_in_bin_inter
+      have h_bin_inter := BinInter_is_specified x y z
+      have h_both := h_bin_inter.mp h_z_in_bin_inter
       have h_z_in_x : z ∈ x := h_both.1
       have h_z_in_y : z ∈ y := h_both.2
       exact h_z_in_x
 
     @[simp]
-    theorem BinIntersection_with_subseteq_full (x y : U) :
+    theorem BinInter_with_subseteq_full (x y : U) :
       x ⊆ y ↔ (x ∩ y) = x
         := by
       constructor
@@ -249,44 +249,44 @@ namespace SetUniverse
         intro z
         constructor
         · -- z ∈ (x ∩ y) → z ∈ x
-          intro h_z_in_intersection
-          have h_bin_intersection := BinIntersection_is_specified x y z
-          have h_both := h_bin_intersection.mp h_z_in_intersection
+          intro h_z_in_inter
+          have h_bin_inter := BinInter_is_specified x y z
+          have h_both := h_bin_inter.mp h_z_in_inter
           exact h_both.1
         · -- z ∈ x → z ∈ (x ∩ y)
           intro h_z_in_x
           have h_z_in_y := h_subset z h_z_in_x
-          exact (BinIntersection_is_specified x y z).mpr ⟨h_z_in_x, h_z_in_y⟩
+          exact (BinInter_is_specified x y z).mpr ⟨h_z_in_x, h_z_in_y⟩
       · -- Direction: (x ∩ y) = x → x ⊆ y
         intro h_eq z h_z_in_x
-        have h_z_in_intersection : z ∈ (x ∩ y) := by
+        have h_z_in_inter : z ∈ (x ∩ y) := by
           rw [h_eq]
           exact h_z_in_x
-        have h_bin_intersection := BinIntersection_is_specified x y z
-        have h_both := h_bin_intersection.mp h_z_in_intersection
+        have h_bin_inter := BinInter_is_specified x y z
+        have h_both := h_bin_inter.mp h_z_in_inter
         exact h_both.2
 
     @[simp]
-    theorem BinIntersection_with_empty (x : U) :
+    theorem BinInter_with_empty (x : U) :
       (x ∩ ∅) = ∅
         := by
-      exact BinIntersection_absorbent_elem x
+      exact BinInter_absorbent_elem x
 
     @[simp]
-    theorem BinIntersection_idempotence (x : U) :
+    theorem BinInter_idempotence (x : U) :
       (x ∩ x) = x
         := by
       apply ExtSet
       intro z
       constructor
       · -- Dirección ->
-        intro h_z_in_bin_intersection
-        have h_bin_intersection := BinIntersection_is_specified x x z
-        have h_both := h_bin_intersection.mp h_z_in_bin_intersection
+        intro h_z_in_bin_inter
+        have h_bin_inter := BinInter_is_specified x x z
+        have h_both := h_bin_inter.mp h_z_in_bin_inter
         exact h_both.1
       · -- Dirección <-
         intro h_z_in_x
-        exact (BinIntersection_is_specified x x z).mpr ⟨h_z_in_x, h_z_in_x⟩
+        exact (BinInter_is_specified x x z).mpr ⟨h_z_in_x, h_z_in_x⟩
 
     /-! ### Definición de la Diferencia de Conjuntos ### -/
     @[simp]
@@ -468,12 +468,12 @@ end SetUniverse
 
 export SetUniverse.SpecificationAxiom (
     Specification SpecificationUnique SpecSet SpecSet_is_specified
-    BinIntersection BinIntersection_is_specified BinIntersectionUniqueSet
-    BinIntersection_subset BinIntersection_empty BinIntersection_empty_left_wc
-    BinIntersection_empty_right_wc BinIntersection_commutative
-    BinIntersection_associative BinIntersection_absorbent_elem
-    BinIntersection_with_subseteq BinIntersection_with_subseteq_full
-    BinIntersection_with_empty BinIntersection_idempotence
+    BinInter BinInter_is_specified BinInterUniqueSet
+    BinInter_subset BinInter_empty BinInter_empty_left_wc
+    BinInter_empty_right_wc BinInter_commutative
+    BinInter_associative BinInter_absorbent_elem
+    BinInter_with_subseteq BinInter_with_subseteq_full
+    BinInter_with_empty BinInter_idempotence
     Difference Difference_is_specified DifferenceUniqueSet
     Difference_subset Difference_with_empty
     Difference_self_empty Difference_disjoint

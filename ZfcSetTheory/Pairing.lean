@@ -79,12 +79,12 @@ namespace SetUniverse
 
     /-! ### Definición de ser miembro (∈) de la Intersección de una Familia de Conjuntos ### -/
     @[simp] def
-    member_intersection (w v : U) : Prop :=
+    member_inter (w v : U) : Prop :=
       ∀ (y : U), ( y ∈ w ) → ( v ∈ y )
 
     /-! ### Definición del conjunto Intersección de una Familia de Conjuntos ### -/
     @[simp]
-    noncomputable def IntersectionSet (w : U) : U :=
+    noncomputable def interSet (w : U) : U :=
       if h : ∃ y, y ∈ w then
         let y₀ := choose h
         SpecSet y₀ (fun v => ∀ y, y ∈ w → v ∈ y)
@@ -92,7 +92,7 @@ namespace SetUniverse
         ∅
 
     /-! ### Notación estándar de la Intersección de una Familia de Conjuntos ### -/
-    notation:100 "⋂ " w => IntersectionSet w
+    notation:100 "⋂ " w => interSet w
 
     @[simp]
     theorem nonempty_iff_exists_mem (w : U) : w ≠ ∅ ↔ ∃ y, y ∈ w := by
@@ -116,7 +116,7 @@ namespace SetUniverse
 
     /-! ### ⋂{A} = A ### -/
     @[simp]
-    theorem IntersectionSet_of_singleton (A : U) : (⋂ { A }) = A := by
+    theorem interSet_of_singleton (A : U) : (⋂ { A }) = A := by
       apply ExtSet
       intro z
       constructor
@@ -127,7 +127,7 @@ namespace SetUniverse
           rw [h_empty] at hA
           exact EmptySet_is_empty A hA
         have h_exists : ∃ y, y ∈ ({A} : U) := (nonempty_iff_exists_mem _).mp h_nonempty
-        unfold IntersectionSet at hz_in_inter
+        unfold interSet at hz_in_inter
         simp only [dif_pos h_exists] at hz_in_inter
         let y₀ := choose h_exists
         have hy₀ : y₀ ∈ ({A} : U) := choose_spec h_exists
@@ -142,7 +142,7 @@ namespace SetUniverse
           rw [h_empty] at hA
           exact EmptySet_is_empty A hA
         have h_exists : ∃ y, y ∈ ({A} : U) := (nonempty_iff_exists_mem _).mp h_nonempty
-        unfold IntersectionSet
+        unfold interSet
         simp only [dif_pos h_exists]
         rw [SpecSet_is_specified]
         constructor
@@ -191,7 +191,7 @@ namespace SetUniverse
         let r := s_elem \ I
         ⋂ r
 
-    theorem intersection_of_ordered_pair (x y : U) : (⋂ ⟨x, y⟩) = {x} := by
+    theorem inter_of_ordered_pair (x y : U) : (⋂ ⟨x, y⟩) = {x} := by
       apply ExtSet
       intro z
       constructor
@@ -201,7 +201,7 @@ namespace SetUniverse
             rw [h_empty] at hx;
             exact EmptySet_is_empty {x} hx
         have h_exists : ∃ elem, elem ∈ (⟨x, y⟩ : U) := (nonempty_iff_exists_mem _).mp h_nonempty
-        unfold IntersectionSet at hz_in_inter
+        unfold interSet at hz_in_inter
         simp only [dif_pos h_exists] at hz_in_inter
         rw [SpecSet_is_specified] at hz_in_inter
         exact hz_in_inter.2 {x} ((OrderedPair_is_specified x y {x}).mpr (Or.inl rfl))
@@ -211,7 +211,7 @@ namespace SetUniverse
             rw [h_empty] at hx;
             exact EmptySet_is_empty {x} hx
         have h_exists : ∃ elem, elem ∈ (⟨x, y⟩ : U) := (nonempty_iff_exists_mem _).mp h_nonempty
-        unfold IntersectionSet
+        unfold interSet
         simp only [dif_pos h_exists]
         rw [SpecSet_is_specified]
         constructor
@@ -351,7 +351,7 @@ namespace SetUniverse
       -- ⋂ ⟨ y, y ⟩ = ⋂ {{y},{y,y}}
       -- ⋂ {{y},{y,y}} = ⋂ {{y}}
       -- ⋂ {{y}} = {y}
-      have h_I : ((⋂ ( (⟨ y, y ⟩) : U)) : U) = ({ y } : U) := (intersection_of_ordered_pair y y)
+      have h_I : ((⋂ ( (⟨ y, y ⟩) : U)) : U) = ({ y } : U) := (inter_of_ordered_pair y y)
       have h_s : ((⟨y, y⟩ : U) \ ({{y}} : U)) = (∅ : U) := by
         calc
           ((⟨ y , y ⟩ : U) \ ({{y}} : U) : U) = ((({({y} : U), ({y, y} : U)} : U) \ ({({y} : U)} : U)) : U) := by rfl
@@ -381,7 +381,7 @@ namespace SetUniverse
         exact (Singleton_is_specified y y).mpr rfl;
       exact h_z_eq_sing_y
 
-    theorem diff_pair_sing_intersection (x y : U) :
+    theorem diff_pair_sing_inter (x y : U) :
       (x = y) → (((⟨x, y⟩ : U) \ ({(⋂ (⟨x, y⟩ : U))})) = (∅ : U))
         := by
           intro h_eq
@@ -389,7 +389,7 @@ namespace SetUniverse
           rw [h_eq]
           -- El objetivo ahora es: (⟨y, y⟩ \ {⋂ ⟨y, y⟩}) = ∅
           -- Simplificamos ⋂ ⟨y, y⟩
-          have h_inter : (⋂ (⟨y, y⟩ : U)) = {y} := intersection_of_ordered_pair y y
+          have h_inter : (⋂ (⟨y, y⟩ : U)) = {y} := inter_of_ordered_pair y y
           rw [h_inter]
           -- El objetivo ahora es: (⟨y, y⟩ \ {{y}}) = ∅
           -- Simplificamos ⟨y, y⟩
@@ -408,7 +408,7 @@ namespace SetUniverse
           | inl hx_eq_y => exact Or.inr hx_eq_y
           | inr hx_eq_y => exact Or.inl hx_eq_y
 
-    theorem intersection_of_ordered_pair_neq_mem (x y : U) (h_eq : x ≠ y) :
+    theorem inter_of_ordered_pair_neq_mem (x y : U) (h_eq : x ≠ y) :
       (((⟨x, y⟩ : U)  \ ({((⋂ (⟨x, y⟩ : U)) : U)} : U)  : U) = ({{x, y}} : U))
         := by
           apply ExtSet
@@ -416,7 +416,7 @@ namespace SetUniverse
           rw [Difference_is_specified, OrderedPair_is_specified, Singleton_is_specified]
           constructor
           · intro h
-            have h_inter : (⋂ (⟨x, y⟩ : U)) = {x} := intersection_of_ordered_pair x y
+            have h_inter : (⋂ (⟨x, y⟩ : U)) = {x} := inter_of_ordered_pair x y
             let h_I := h_inter
             -- Swap the disjunction manually
             have h_z_eq_xy : z = {x, y} ∨ z = {x} :=
@@ -441,7 +441,7 @@ namespace SetUniverse
             · intro h_contra
               rw [h_z_eq_xy] at h_contra
               have h_inj : ({x, y} : U) = (⋂ (⟨x, y⟩ : U)) := h_contra
-              rw [intersection_of_ordered_pair x y] at h_inj
+              rw [inter_of_ordered_pair x y] at h_inj
               have h_y_in_x : y ∈ ({x} : U) := by
                 rw [←h_inj]
                 exact (PairSet_is_specified x y y).mpr (Or.inr rfl)
@@ -455,7 +455,7 @@ namespace SetUniverse
       fst (⟨x, y⟩ : U) = x
         := by
       unfold fst
-      rw [intersection_of_ordered_pair, IntersectionSet_of_singleton]
+      rw [inter_of_ordered_pair, interSet_of_singleton]
 
     theorem snd_of_ordered_pair_eq (x y : U) (h_eq : x = y) :
       snd ⟨x, y⟩ = y
@@ -464,9 +464,9 @@ namespace SetUniverse
       -- El objetivo es snd ⟨y, y⟩ = y
       unfold snd
       have h_s_is_empty : ((⟨y, y⟩ : U) \ {(⋂ (⟨y, y⟩ : U))}) = (∅ : U)
-        := diff_pair_sing_intersection y y rfl
+        := diff_pair_sing_inter y y rfl
       rw [dif_pos h_s_is_empty]
-      rw [intersection_of_ordered_pair, IntersectionSet_of_singleton]
+      rw [inter_of_ordered_pair, interSet_of_singleton]
 
     -- Demostración de que snd recupera el segundo elemento.
     @[simp]
@@ -479,7 +479,7 @@ namespace SetUniverse
       · -- El objetivo es (if h : s = ∅ then ... else ...), donde s = ⟨x, y⟩ \ {⋂⟨x, y⟩}
         -- Primero, probamos que la condición del 'if' es falsa.
         have h_s_ne : ((⟨x, y⟩ : U) \ {(⋂ (⟨x, y⟩ : U))}) ≠ (∅ : U) := by
-          have h_I : (⋂ (⟨x, y⟩ : U)) = ({x} : U) := intersection_of_ordered_pair x y
+          have h_I : (⋂ (⟨x, y⟩ : U)) = ({x} : U) := inter_of_ordered_pair x y
           rw [h_I] -- El conjunto es ⟨x, y⟩ \ {{x}}
           have h_s_eq : ((⟨x, y⟩ : U) \ ({{x}} : U)) = ({{x, y}} : U) := diff_ordered_pair_neq x y h_eq
           rw [h_s_eq]
@@ -507,7 +507,7 @@ namespace SetUniverse
             -- hacemos explícito el objetivo con 'change'.
             change ((⟨x, y⟩ : U) \ {(⋂ (⟨x, y⟩ : U))}) = ({{x, y}} : U)
             -- Reemplazamos la intersección directamente usando el lema.
-            rw [intersection_of_ordered_pair x y]
+            rw [inter_of_ordered_pair x y]
             -- El objetivo ahora es (⟨x, y⟩ \ {{x}}) = {{x, y}}, que es un lema.
             exact diff_ordered_pair_neq x y h_eq
           -- Usamos el lema que dice que si un conjunto es un singleton,
@@ -519,13 +519,13 @@ namespace SetUniverse
         -- Reemplazamos el 'choose' en el objetivo.
         rw [h_s_elem_eq]
         -- El objetivo ahora es: ⋂ ({x, y} \ ⋂ ⟨x, y⟩) = y
-        have h_I : (⋂ (⟨x, y⟩ : U)) = ({x} : U) := intersection_of_ordered_pair x y
+        have h_I : (⋂ (⟨x, y⟩ : U)) = ({x} : U) := inter_of_ordered_pair x y
         rw [h_I]
         -- El objetivo ahora es: ⋂ ({x, y} \ {x}) = y
         have h_r_eq : (({x, y} : U) \ ({x} : U)) = ({y} : U) := diff_pair_singleton x y h_eq
         rw [h_r_eq]
         -- El objetivo final es: ⋂ {y} = y, lo cual es cierto.
-        exact IntersectionSet_of_singleton y
+        exact interSet_of_singleton y
 
     -- El teorema principal que une todo.
     @[simp]
@@ -694,9 +694,9 @@ export SetUniverse.PairingAxiom (
     Singleton
     Singleton_is_specified
     nonempty_iff_exists_mem
-    member_intersection
-    IntersectionSet
-    IntersectionSet_of_singleton
+    member_inter
+    interSet
+    interSet_of_singleton
     OrderedPair
     OrderedPair_is_specified
     isOrderedPair
@@ -736,7 +736,7 @@ export SetUniverse.PairingAxiom (
     auxiliary_idempotence_of_or_eq
     ordered_pair_eq_mem
     ordered_pair_neq_mem
-    intersection_of_ordered_pair_neq_mem
+    inter_of_ordered_pair_neq_mem
     Eq_of_OrderedPairs_given_projections
     Eq_OrderedPairs
 )

@@ -203,7 +203,7 @@ namespace SetUniverse
       ∃ y z, ∀ w, w ∈ x → (w = y ∨ w = z)
 
     @[simp]
-    noncomputable def isBinIntersection (x y s: U) : Prop :=
+    noncomputable def isBinInter (x y s: U) : Prop :=
       ∀ z, z ∈ x ↔ (z ∈ y ∧ z ∈ s)
 
     @[simp]
@@ -223,7 +223,7 @@ namespace SetUniverse
       ∀ (z : U), z ∈ X ↔ ∃ (y : U), z ∈ y ∧ y ∈ x
 
     @[simp]
-    noncomputable def isIntersection (x X: U) : Prop :=
+    noncomputable def isinter (x X: U) : Prop :=
       ∀ (z: U), z ∈ X ↔ ∀ (y: U), y ∈ x → z ∈ y
 
   end ExtensionAxiom
@@ -236,6 +236,6 @@ export SetUniverse.ExtensionAxiom (
     disjoint disjoint_symm disjoint_is_empty disjoint_is_empty_wc
     subset_irreflexive subset_asymmetric subset_transitive
     isTransitiveSet isEmpty isNonEmpty isSingleton isPair
-    isBinIntersection isBinUnion isBinDiff isBinSymDiff
-    isUnion isIntersection subset subseteq
+    isBinInter isBinUnion isBinDiff isBinSymDiff
+    isUnion isinter subset subseteq
 )
