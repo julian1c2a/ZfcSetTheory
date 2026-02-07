@@ -55,6 +55,53 @@ namespace SetUniverse
       (A ∪ ∅) = A := by
       rw [BinUnion_comm, BinUnion_empty_left]
 
+    theorem BinUnion_idem (A : U) :
+      (A ∪ A) = A := by
+      apply ExtSet
+      intro x
+      simp only [BinUnion_is_specified]
+      constructor
+      · intro h
+        cases h with
+        | inl hx => exact hx
+        | inr hx => exact hx
+      · intro hx
+        exact Or.inl hx
+
+    /-! Intersección Binaria -/
+    theorem BinIntersection_idem (A : U) :
+      (A ∩ A) = A := by
+      apply ExtSet
+      intro x
+      simp only [BinIntersection_is_specified]
+      constructor
+      · intro ⟨hx, _⟩
+        exact hx
+      · intro hx
+        exact ⟨hx, hx⟩
+
+    theorem BinIntersection_empty (A : U) :
+      (A ∩ ∅) = ∅ := by
+      apply ExtSet
+      intro x
+      simp only [BinIntersection_is_specified]
+      constructor
+      · intro ⟨_, hx⟩
+        exact hx
+      · intro hx
+        exact False.elim (EmptySet_is_empty x hx)
+
+    theorem BinIntersection_comm (A B : U) :
+      (A ∩ B) = (B ∩ A) := by
+      apply ExtSet
+      intro x
+      simp only [BinIntersection_is_specified]
+      constructor
+      · intro ⟨hxA, hxB⟩
+        exact ⟨hxB, hxA⟩
+      · intro ⟨hxB, hxA⟩
+        exact ⟨hxA, hxB⟩
+
     /-! Transitividad -/
     theorem Subseteq_trans (A B C : U) :
       A ⊆ B → B ⊆ C → A ⊆ C := by
@@ -117,6 +164,10 @@ export SetUniverse.BooleanAlgebra (
   BinUnion_comm
   BinUnion_empty_left
   BinUnion_empty_right
+  BinUnion_idem
+  BinIntersection_idem
+  BinIntersection_empty
+  BinIntersection_comm
   Subseteq_trans
   Subseteq_reflexive
   Union_monotone
