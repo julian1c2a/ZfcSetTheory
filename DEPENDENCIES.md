@@ -14,6 +14,7 @@ ZfcSetTheory/
 ├── Union.lean                  # Axioma de Unión + Unión Binaria + Diferencia Simétrica
 ├── Potencia.lean               # Axioma del Conjunto Potencia
 ├── OrderedPair.lean            # Extensiones del Par Ordenado
+├── CartesianProduct.lean       # Producto Cartesiano A ×ₛ B
 ├── BooleanAlgebra.lean         # Álgebra Booleana de conjuntos (teoremas)
 ├── SetOrder.lean               # Orden parcial y retículos (completo)
 ├── SetStrictOrder.lean         # Orden estricto (completo)

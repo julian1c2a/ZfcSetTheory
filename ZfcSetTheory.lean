@@ -8,6 +8,7 @@ import ZfcSetTheory.Pairing
 import ZfcSetTheory.Union
 import ZfcSetTheory.Potencia
 import ZfcSetTheory.OrderedPair
+import ZfcSetTheory.CartesianProduct
 import ZfcSetTheory.BooleanAlgebra
 import ZfcSetTheory.SetOrder
 import ZfcSetTheory.SetStrictOrder
