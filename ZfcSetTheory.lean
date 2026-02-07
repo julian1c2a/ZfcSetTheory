@@ -18,3 +18,4 @@ import ZfcSetTheory.SetOrder
 import ZfcSetTheory.SetStrictOrder
 import ZfcSetTheory.AtomicBooleanAlgebra
 import ZfcSetTheory.Functions
+import ZfcSetTheory.Cardinality
