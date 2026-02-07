@@ -348,6 +348,298 @@ namespace SetUniverse
       rw [inverse_is_specified] at hy₁ hy₂
       exact hf x y₁ y₂ hy₁ hy₂
 
+    /-! ### Invertibility -/
+
+    /-- f has a left inverse g: g ∘ f = id on A -/
+    def hasLeftInverse (f A B g : U) : Prop :=
+      isFunctionFromTo f A B ∧ isFunctionFromTo g B A ∧
+      ∀ x, x ∈ A → g⦅f⦅x⦆⦆ = x
+
+    /-- f has a right inverse g: f ∘ g = id on B -/
+    def hasRightInverse (f A B g : U) : Prop :=
+      isFunctionFromTo f A B ∧ isFunctionFromTo g B A ∧
+      ∀ y, y ∈ B → f⦅g⦅y⦆⦆ = y
+
+    /-- f is left invertible -/
+    def isLeftInvertible (f A B : U) : Prop :=
+      ∃ g, hasLeftInverse f A B g
+
+    /-- f is right invertible -/
+    def isRightInvertible (f A B : U) : Prop :=
+      ∃ g, hasRightInverse f A B g
+
+    /-- f is invertible (has a two-sided inverse) -/
+    def isInvertible (f A B : U) : Prop :=
+      ∃ g, hasLeftInverse f A B g ∧ hasRightInverse f A B g
+
+    /-! ### Injectivity Equivalences -/
+
+    /-- Alternative characterization: injective means f⁻¹ is single-valued -/
+    theorem injective_iff_inverse_functional (f : U) :
+        isInjective f ↔ isSingleValued (f⁻¹ˢ) := by
+      constructor
+      · exact injective_inverse_single_valued f
+      · intro hf_inv x₁ x₂ y hx₁y hx₂y
+        have h₁ : ⟨y, x₁⟩ ∈ f⁻¹ˢ := (inverse_is_specified f y x₁).mpr hx₁y
+        have h₂ : ⟨y, x₂⟩ ∈ f⁻¹ˢ := (inverse_is_specified f y x₂).mpr hx₂y
+        exact hf_inv y x₁ x₂ h₁ h₂
+
+    /-- Injective function: composition with apply recovers the original element -/
+    theorem injective_apply_eq (f A B x₁ x₂ : U)
+        (hf : isFunctionFromTo f A B) (hinj : isInjective f)
+        (hx₁ : x₁ ∈ A) (hx₂ : x₂ ∈ A) (heq : f⦅x₁⦆ = f⦅x₂⦆) : x₁ = x₂ := by
+      obtain ⟨_, hf_total, hf_sv⟩ := hf
+      obtain ⟨y₁, hx₁y₁⟩ := hf_total x₁ hx₁
+      obtain ⟨y₂, hx₂y₂⟩ := hf_total x₂ hx₂
+      have h₁ : f⦅x₁⦆ = y₁ := apply_eq f x₁ y₁ hf_sv hx₁y₁
+      have h₂ : f⦅x₂⦆ = y₂ := apply_eq f x₂ y₂ hf_sv hx₂y₂
+      rw [h₁, h₂] at heq
+      rw [← heq] at hx₂y₂
+      exact hinj x₁ x₂ y₁ hx₁y₁ hx₂y₂
+
+    /-! ### Surjectivity Equivalences -/
+
+    /-- Surjective means the range equals the codomain -/
+    theorem surjective_iff_range_eq (f A B : U) (hf : isFunctionFromTo f A B) :
+        isSurjectiveOnto f B ↔ Ran f = B := by
+      constructor
+      · intro hsurj
+        apply ExtSet
+        intro y
+        constructor
+        · intro hy
+          rw [Ran_is_specified] at hy
+          obtain ⟨x, hxy⟩ := hy
+          have h := hf.1 ⟨x, y⟩ hxy
+          rw [OrderedPair_mem_CartesianProduct] at h
+          exact h.2
+        · intro hy
+          obtain ⟨x, hxy⟩ := hsurj y hy
+          exact (Ran_is_specified f y).mpr ⟨x, hxy⟩
+      · intro hran y hy
+        rw [← hran] at hy
+        rw [Ran_is_specified] at hy
+        exact hy
+
+    /-- For surjective functions, f⁻¹ is total on B -/
+    theorem surjective_inverse_total (f A B : U)
+        (_ : isFunctionFromTo f A B) (hsurj : isSurjectiveOnto f B) :
+        ∀ y, y ∈ B → ∃ x, ⟨y, x⟩ ∈ f⁻¹ˢ := by
+      intro y hy
+      obtain ⟨x, hxy⟩ := hsurj y hy
+      exact ⟨x, (inverse_is_specified f y x).mpr hxy⟩
+
+    /-! ### Bijection Properties -/
+
+    /-- Bijection has functional inverse -/
+    theorem bijection_inverse_is_function (f A B : U) (hbij : isBijection f A B) :
+        isFunctionFromTo (f⁻¹ˢ) B A := by
+      obtain ⟨hf, hinj, hsurj⟩ := hbij
+      refine ⟨?_, ?_, injective_inverse_single_valued f hinj⟩
+      · -- f⁻¹ˢ ⊆ B ×ₛ A
+        intro p hp
+        unfold InverseFunction at hp
+        rw [SpecSet_is_specified] at hp
+        obtain ⟨hp_in, x, y, hp_eq, hxy⟩ := hp
+        rw [hp_eq, OrderedPair_mem_CartesianProduct]
+        have h := hf.1 ⟨x, y⟩ hxy
+        rw [OrderedPair_mem_CartesianProduct] at h
+        exact ⟨h.2, h.1⟩
+      · -- f⁻¹ˢ is total on B
+        exact surjective_inverse_total f A B hf hsurj
+
+    /-- Inverse of bijection composed on right gives identity -/
+    theorem bijection_comp_inverse_right (f A B : U) (hbij : isBijection f A B) :
+        ∀ x, x ∈ A → (f⁻¹ˢ)⦅f⦅x⦆⦆ = x := by
+      intro x hx
+      obtain ⟨hf, hinj, _⟩ := hbij
+      obtain ⟨_, hf_total, hf_sv⟩ := hf
+      obtain ⟨y, hxy⟩ := hf_total x hx
+      have h_fx : f⦅x⦆ = y := apply_eq f x y hf_sv hxy
+      have h_inv : ⟨y, x⟩ ∈ f⁻¹ˢ := (inverse_is_specified f y x).mpr hxy
+      have h_inv_sv := injective_inverse_single_valued f hinj
+      have h_apply : (f⁻¹ˢ)⦅y⦆ = x := apply_eq (f⁻¹ˢ) y x h_inv_sv h_inv
+      rw [h_fx, h_apply]
+
+    /-- Inverse of bijection composed on left gives identity -/
+    theorem bijection_comp_inverse_left (f A B : U) (hbij : isBijection f A B) :
+        ∀ y, y ∈ B → f⦅(f⁻¹ˢ)⦅y⦆⦆ = y := by
+      intro y hy
+      obtain ⟨hf, hinj, hsurj⟩ := hbij
+      obtain ⟨_, _, hf_sv⟩ := hf
+      obtain ⟨x, hxy⟩ := hsurj y hy
+      have h_inv : ⟨y, x⟩ ∈ f⁻¹ˢ := (inverse_is_specified f y x).mpr hxy
+      have h_inv_sv := injective_inverse_single_valued f hinj
+      have h_inv_apply : (f⁻¹ˢ)⦅y⦆ = x := apply_eq (f⁻¹ˢ) y x h_inv_sv h_inv
+      have h_apply : f⦅x⦆ = y := apply_eq f x y hf_sv hxy
+      rw [h_inv_apply, h_apply]
+
+    /-- Inverse of inverse is original (for relations in A ×ₛ B) -/
+    theorem inverse_inverse (f A B : U) (hf : f ⊆ A ×ₛ B) : (f⁻¹ˢ)⁻¹ˢ = f := by
+      apply ExtSet
+      intro p
+      constructor
+      · intro hp
+        -- p ∈ (f⁻¹ˢ)⁻¹ˢ
+        -- (f⁻¹ˢ)⁻¹ˢ = { Ran(f⁻¹ˢ) ×ₛ Dom(f⁻¹ˢ) | ∃ x y, p = ⟨y, x⟩ ∧ ⟨x, y⟩ ∈ f⁻¹ˢ }
+        unfold InverseFunction at hp
+        rw [SpecSet_is_specified] at hp
+        obtain ⟨_, a, b, hp_eq, hab⟩ := hp
+        -- hp_eq : p = ⟨b, a⟩ (specification says p = ⟨y, x⟩ with y=b, x=a)
+        -- hab : ⟨a, b⟩ ∈ f⁻¹ˢ (specification says ⟨x, y⟩ ∈ f⁻¹ˢ)
+        -- Now unfold f⁻¹ˢ in hab
+        rw [SpecSet_is_specified] at hab
+        obtain ⟨_, c, d, hab_eq, hcd⟩ := hab
+        -- hab_eq : ⟨a, b⟩ = ⟨d, c⟩
+        -- hcd : ⟨c, d⟩ ∈ f
+        -- From hab_eq: a = d and b = c
+        have heq := Eq_of_OrderedPairs_given_projections a b d c hab_eq
+        -- So ⟨c, d⟩ = ⟨b, a⟩ ∈ f
+        rw [hp_eq, heq.2, heq.1]
+        exact hcd
+      · intro hp
+        -- p ∈ f, and f ⊆ A ×ₛ B, so p is an ordered pair
+        have h_in_prod := hf p hp
+        rw [CartesianProduct_is_specified] at h_in_prod
+        obtain ⟨h_op, _, _⟩ := h_in_prod
+        obtain ⟨x, y, hp_eq⟩ := h_op
+        -- p = ⟨x, y⟩ ∈ f, so ⟨y, x⟩ ∈ f⁻¹ˢ, so ⟨x, y⟩ ∈ (f⁻¹ˢ)⁻¹ˢ
+        rw [hp_eq] at hp ⊢
+        have h_inv : ⟨y, x⟩ ∈ f⁻¹ˢ := (inverse_is_specified f y x).mpr hp
+        exact (inverse_is_specified (f⁻¹ˢ) x y).mpr h_inv
+
+    /-! ### Main Theorem: Bijectivity ↔ Invertibility -/
+
+    /-- Bijection implies invertibility -/
+    theorem bijection_implies_invertible (f A B : U) (hbij : isBijection f A B) :
+        isInvertible f A B := by
+      refine ⟨f⁻¹ˢ, ?_, ?_⟩
+      · -- hasLeftInverse
+        refine ⟨hbij.1, bijection_inverse_is_function f A B hbij, ?_⟩
+        exact bijection_comp_inverse_right f A B hbij
+      · -- hasRightInverse
+        refine ⟨hbij.1, bijection_inverse_is_function f A B hbij, ?_⟩
+        exact bijection_comp_inverse_left f A B hbij
+
+    /-- Left invertible implies injective -/
+    theorem left_invertible_implies_injective (f A B : U)
+        (hf : isFunctionFromTo f A B) (hleft : isLeftInvertible f A B) :
+        isInjective f := by
+      obtain ⟨g, hf', hg, hcomp⟩ := hleft
+      intro x₁ x₂ y hx₁y hx₂y
+      -- x₁ ∈ A and x₂ ∈ A
+      have hx₁_A : x₁ ∈ A := by
+        have h := hf.1 ⟨x₁, y⟩ hx₁y
+        rw [OrderedPair_mem_CartesianProduct] at h
+        exact h.1
+      have hx₂_A : x₂ ∈ A := by
+        have h := hf.1 ⟨x₂, y⟩ hx₂y
+        rw [OrderedPair_mem_CartesianProduct] at h
+        exact h.1
+      -- f⦅x₁⦆ = y and f⦅x₂⦆ = y
+      have hfx₁ : f⦅x₁⦆ = y := apply_eq f x₁ y hf.2.2 hx₁y
+      have hfx₂ : f⦅x₂⦆ = y := apply_eq f x₂ y hf.2.2 hx₂y
+      -- g⦅f⦅x₁⦆⦆ = x₁ and g⦅f⦅x₂⦆⦆ = x₂
+      have h₁ := hcomp x₁ hx₁_A
+      have h₂ := hcomp x₂ hx₂_A
+      -- g⦅y⦆ = g⦅f⦅x₁⦆⦆ = x₁ and g⦅y⦆ = g⦅f⦅x₂⦆⦆ = x₂
+      rw [hfx₁] at h₁
+      rw [hfx₂] at h₂
+      exact h₁.symm.trans h₂
+
+    /-- Right invertible implies surjective -/
+    theorem right_invertible_implies_surjective (f A B : U)
+        (hf : isFunctionFromTo f A B) (hright : isRightInvertible f A B) :
+        isSurjectiveOnto f B := by
+      obtain ⟨g, hf', hg, hcomp⟩ := hright
+      intro y hy
+      -- g⦅y⦆ ∈ A
+      have h_gy_A : g⦅y⦆ ∈ A := by
+        have h_gy_dom : y ∈ Dom g := by
+          rw [Dom_is_specified]
+          obtain ⟨_, hg_total, _⟩ := hg
+          obtain ⟨x, hyx⟩ := hg_total y hy
+          exact ⟨x, hyx⟩
+        have h_mem := apply_mem g y hg.2.2 h_gy_dom
+        have h := hg.1 ⟨y, g⦅y⦆⟩ h_mem
+        rw [OrderedPair_mem_CartesianProduct] at h
+        exact h.2
+      -- ⟨g⦅y⦆, f⦅g⦅y⦆⦆⟩ ∈ f
+      have h_fx_dom : g⦅y⦆ ∈ Dom f := by
+        rw [Dom_is_specified]
+        obtain ⟨_, hf_total, _⟩ := hf
+        exact hf_total (g⦅y⦆) h_gy_A
+      have h_mem := apply_mem f (g⦅y⦆) hf.2.2 h_fx_dom
+      -- f⦅g⦅y⦆⦆ = y
+      have h_eq := hcomp y hy
+      rw [h_eq] at h_mem
+      exact ⟨g⦅y⦆, h_mem⟩
+
+    /-- Invertibility implies bijectivity -/
+    theorem invertible_implies_bijection (f A B : U)
+        (hf : isFunctionFromTo f A B) (hinv : isInvertible f A B) :
+        isBijection f A B := by
+      obtain ⟨g, hleft, hright⟩ := hinv
+      refine ⟨hf, ?_, ?_⟩
+      · exact left_invertible_implies_injective f A B hf ⟨g, hleft⟩
+      · exact right_invertible_implies_surjective f A B hf ⟨g, hright⟩
+
+    /-- Main equivalence: Bijectivity ↔ Invertibility -/
+    theorem bijection_iff_invertible (f A B : U) (hf : isFunctionFromTo f A B) :
+        isBijection f A B ↔ isInvertible f A B := by
+      constructor
+      · exact bijection_implies_invertible f A B
+      · intro hinv
+        exact invertible_implies_bijection f A B hf hinv
+
+    /-! ### Additional Injectivity/Surjectivity Results -/
+
+    /-- Composition of injective functions is injective -/
+    theorem comp_injective (f g : U) (hinj_f : isInjective f) (hinj_g : isInjective g) :
+        isInjective (g ∘ₛ f) := by
+      intro x₁ x₂ z hx₁z hx₂z
+      rw [comp_is_specified] at hx₁z hx₂z
+      obtain ⟨y₁, hx₁y₁, hy₁z⟩ := hx₁z
+      obtain ⟨y₂, hx₂y₂, hy₂z⟩ := hx₂z
+      have h_y_eq : y₁ = y₂ := hinj_g y₁ y₂ z hy₁z hy₂z
+      rw [h_y_eq] at hx₁y₁
+      exact hinj_f x₁ x₂ y₂ hx₁y₁ hx₂y₂
+
+    /-- Composition of surjective functions is surjective -/
+    theorem comp_surjective (f g A B C : U)
+        (_ : isFunctionFromTo f A B) (hg : isFunctionFromTo g B C)
+        (hsurj_f : isSurjectiveOnto f B) (hsurj_g : isSurjectiveOnto g C) :
+        isSurjectiveOnto (g ∘ₛ f) C := by
+      intro z hz
+      obtain ⟨y, hyz⟩ := hsurj_g z hz
+      have hy_B : y ∈ B := by
+        have h := hg.1 ⟨y, z⟩ hyz
+        rw [OrderedPair_mem_CartesianProduct] at h
+        exact h.1
+      obtain ⟨x, hxy⟩ := hsurj_f y hy_B
+      exact ⟨x, (comp_is_specified g f x z).mpr ⟨y, hxy, hyz⟩⟩
+
+    /-- Composition of bijections is a bijection -/
+    theorem comp_bijection (f g A B C : U)
+        (hf : isFunctionFromTo f A B) (hg : isFunctionFromTo g B C)
+        (hbij_f : isBijection f A B) (hbij_g : isBijection g B C) :
+        isBijection (g ∘ₛ f) A C := by
+      refine ⟨comp_is_function f g A B C hf hg, ?_, ?_⟩
+      · exact comp_injective f g hbij_f.2.1 hbij_g.2.1
+      · exact comp_surjective f g A B C hf hg hbij_f.2.2 hbij_g.2.2
+
+    /-- Identity is a bijection -/
+    theorem id_is_bijection (A : U) : isBijection (𝟙 A) A A := by
+      refine ⟨IdFunction_is_function A, ?_, ?_⟩
+      · -- Injective
+        intro x₁ x₂ y hx₁y hx₂y
+        have h₁ := (IdFunction_is_specified A x₁ y).mp hx₁y
+        have h₂ := (IdFunction_is_specified A x₂ y).mp hx₂y
+        exact h₁.2.trans h₂.2.symm
+      · -- Surjective
+        intro y hy
+        exact ⟨y, (IdFunction_is_specified A y y).mpr ⟨hy, rfl⟩⟩
+
     /-! ### Image and Preimage -/
 
     /-- Direct image: f[X] = { y | ∃ x ∈ X, ⟨x, y⟩ ∈ f } -/
@@ -507,6 +799,16 @@ namespace SetUniverse
     InverseFunction inverse_is_specified
     isInjective isSurjectiveOnto isBijection
     injective_inverse_single_valued single_valued_inverse_injective
+    -- Invertibility
+    hasLeftInverse hasRightInverse isLeftInvertible isRightInvertible isInvertible
+    injective_iff_inverse_functional injective_apply_eq
+    surjective_iff_range_eq surjective_inverse_total
+    bijection_inverse_is_function bijection_comp_inverse_right bijection_comp_inverse_left
+    inverse_inverse
+    bijection_implies_invertible left_invertible_implies_injective right_invertible_implies_surjective
+    invertible_implies_bijection bijection_iff_invertible
+    comp_injective comp_surjective comp_bijection id_is_bijection
+    -- Image/Preimage
     ImageSet ImageSet_is_specified PreimageSet PreimageSet_is_specified
     image_empty image_mono image_union preimage_union preimage_inter_subset preimage_inter_eq
   )
