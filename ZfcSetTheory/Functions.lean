@@ -786,6 +786,123 @@ namespace SetUniverse
         have h_eq : y₁ = y₂ := hf x y₁ y₂ hxy₁ hxy₂
         exact ⟨y₁, (BinInter_is_specified X Y y₁).mpr ⟨hy₁, h_eq ▸ hy₂⟩, hxy₁⟩
 
+    /-! ============================================================ -/
+    /-! ### EQUIPOTENCE AND CARDINALITY ORDERING ### -/
+    /-! ============================================================ -/
+
+    /-! Two sets are equipotent (have the same cardinality) if there exists
+        a bijection between them. This defines an equivalence relation on sets.
+
+        A set A is dominated by B if there exists an injection from A to B.
+        This defines a preorder on sets. -/
+
+    /-! ### Equipotence (Bijection Equivalence) -/
+
+    /-- A is equipotent to B: there exists a bijection from A to B -/
+    def isEquipotent (A B : U) : Prop :=
+      ∃ f, isBijection f A B
+
+    notation:50 A " ≃ₛ " B => isEquipotent A B
+
+    /-- Inverse of a bijection is a bijection -/
+    theorem inverse_is_bijection (f A B : U) (hbij : isBijection f A B) :
+        isBijection (f⁻¹ˢ) B A := by
+      have hf := hbij.1
+      have hinj := hbij.2.1
+      refine ⟨bijection_inverse_is_function f A B hbij, ?_, ?_⟩
+      · -- f⁻¹ is injective: this follows from f being single-valued
+        exact single_valued_inverse_injective f hf.2.2
+      · -- f⁻¹ is surjective onto A: every x ∈ A has ⟨x, f⦅x⦆⟩ ∈ f, so ⟨f⦅x⦆, x⟩ ∈ f⁻¹
+        intro x hx
+        obtain ⟨y, hxy⟩ := hf.2.1 x hx
+        exact ⟨y, (inverse_is_specified f y x).mpr hxy⟩
+
+    /-- Equipotence is reflexive: A ≃ₛ A -/
+    theorem equipotent_refl (A : U) : A ≃ₛ A :=
+      ⟨𝟙 A, id_is_bijection A⟩
+
+    /-- Equipotence is symmetric: A ≃ₛ B → B ≃ₛ A -/
+    theorem equipotent_symm (A B : U) (h : A ≃ₛ B) : B ≃ₛ A := by
+      obtain ⟨f, hf⟩ := h
+      exact ⟨f⁻¹ˢ, inverse_is_bijection f A B hf⟩
+
+    /-- Equipotence is transitive: A ≃ₛ B → B ≃ₛ C → A ≃ₛ C -/
+    theorem equipotent_trans (A B C : U) (hab : A ≃ₛ B) (hbc : B ≃ₛ C) : A ≃ₛ C := by
+      obtain ⟨f, hf⟩ := hab
+      obtain ⟨g, hg⟩ := hbc
+      exact ⟨g ∘ₛ f, comp_bijection f g A B C hf.1 hg.1 hf hg⟩
+
+    /-- Equipotence is an equivalence relation -/
+    theorem equipotent_is_equivalence :
+        (∀ (A : U), isEquipotent A A) ∧
+        (∀ (A B : U), isEquipotent A B → isEquipotent B A) ∧
+        (∀ (A B C : U), isEquipotent A B → isEquipotent B C → isEquipotent A C) :=
+      ⟨equipotent_refl, equipotent_symm, equipotent_trans⟩
+
+    /-! ### Cardinality Dominance (Injection Preorder) -/
+
+    /-- A is dominated by B: there exists an injection from A to B -/
+    def isDominatedBy (A B : U) : Prop :=
+      ∃ f, isFunctionFromTo f A B ∧ isInjective f
+
+    notation:50 A " ≼ₛ " B => isDominatedBy A B
+
+    /-- Identity is injective -/
+    theorem id_is_injective (A : U) : isInjective (𝟙 A) := by
+      intro x₁ x₂ y hx₁ hx₂
+      have h₁ := (IdFunction_is_specified A x₁ y).mp hx₁
+      have h₂ := (IdFunction_is_specified A x₂ y).mp hx₂
+      exact h₁.2.trans h₂.2.symm
+
+    /-- Dominance is reflexive: A ≼ₛ A -/
+    theorem dominated_refl (A : U) : A ≼ₛ A :=
+      ⟨𝟙 A, IdFunction_is_function A, id_is_injective A⟩
+
+    /-- Dominance is transitive: A ≼ₛ B → B ≼ₛ C → A ≼ₛ C -/
+    theorem dominated_trans (A B C : U) (hab : A ≼ₛ B) (hbc : B ≼ₛ C) : A ≼ₛ C := by
+      obtain ⟨f, hf_func, hf_inj⟩ := hab
+      obtain ⟨g, hg_func, hg_inj⟩ := hbc
+      refine ⟨g ∘ₛ f, comp_is_function f g A B C hf_func hg_func, ?_⟩
+      exact comp_injective f g hf_inj hg_inj
+
+    /-- Dominance is a preorder -/
+    theorem dominated_is_preorder :
+        (∀ (A : U), isDominatedBy A A) ∧
+        (∀ (A B C : U), isDominatedBy A B → isDominatedBy B C → isDominatedBy A C) :=
+      ⟨dominated_refl, dominated_trans⟩
+
+    /-- Bijection implies both directions of dominance -/
+    theorem equipotent_implies_dominated_both (A B : U) (h : A ≃ₛ B) :
+        (A ≼ₛ B) ∧ (B ≼ₛ A) := by
+      obtain ⟨f, hf⟩ := h
+      constructor
+      · exact ⟨f, hf.1, hf.2.1⟩
+      · have hf_inv := inverse_is_bijection f A B hf
+        exact ⟨f⁻¹ˢ, hf_inv.1, hf_inv.2.1⟩
+
+    /-- Strict dominance: A is strictly dominated by B -/
+    def isStrictlyDominatedBy (A B : U) : Prop :=
+      (A ≼ₛ B) ∧ ¬(B ≼ₛ A)
+
+    notation:50 A " ≺ₛ " B => isStrictlyDominatedBy A B
+
+    /-- Strict dominance is irreflexive -/
+    theorem strict_dominated_irrefl (A : U) : ¬(A ≺ₛ A) := by
+      intro h
+      exact h.2 (dominated_refl A)
+
+    /-- Strict dominance is transitive -/
+    theorem strict_dominated_trans (A B C : U)
+        (hab : A ≺ₛ B) (hbc : B ≺ₛ C) : A ≺ₛ C := by
+      obtain ⟨hab_dom, hab_not⟩ := hab
+      obtain ⟨hbc_dom, hbc_not⟩ := hbc
+      constructor
+      · exact dominated_trans A B C hab_dom hbc_dom
+      · intro hca
+        -- If C ≼ A and A ≼ B, then C ≼ B, contradicting ¬(C ≼ B) implicit in B ≺ C
+        have hcb := dominated_trans C A B hca hab_dom
+        exact hbc_not hcb
+
   end Functions
 
   -- Export key definitions and theorems
@@ -804,13 +921,18 @@ namespace SetUniverse
     injective_iff_inverse_functional injective_apply_eq
     surjective_iff_range_eq surjective_inverse_total
     bijection_inverse_is_function bijection_comp_inverse_right bijection_comp_inverse_left
-    inverse_inverse
+    inverse_inverse inverse_is_bijection
     bijection_implies_invertible left_invertible_implies_injective right_invertible_implies_surjective
     invertible_implies_bijection bijection_iff_invertible
-    comp_injective comp_surjective comp_bijection id_is_bijection
+    comp_injective comp_surjective comp_bijection id_is_bijection id_is_injective
     -- Image/Preimage
     ImageSet ImageSet_is_specified PreimageSet PreimageSet_is_specified
     image_empty image_mono image_union preimage_union preimage_inter_subset preimage_inter_eq
+    -- Equipotence and Dominance
+    isEquipotent equipotent_refl equipotent_symm equipotent_trans equipotent_is_equivalence
+    isDominatedBy dominated_refl dominated_trans dominated_is_preorder
+    equipotent_implies_dominated_both
+    isStrictlyDominatedBy strict_dominated_irrefl strict_dominated_trans
   )
 
 end SetUniverse
