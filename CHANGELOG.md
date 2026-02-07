@@ -15,6 +15,41 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ---
 
+## [0.8.0] - 2026-02-07
+
+### Añadido
+
+- **PowerSetAlgebra.lean**: Álgebra del conjunto potencia
+  - `Complement A X` - Complemento de X respecto a A (notación: `X^∁[ A ]`)
+  - `ComplementFamily A F` - Familia de complementos
+  - `double_complement` - (X^∁[A])^∁[A] = X (si X ⊆ A)
+  - `complement_empty` - ∅^∁[A] = A
+  - `complement_full` - A^∁[A] = ∅
+  - De Morgan para familias: `DeMorgan_union_family`, `DeMorgan_inter_family`
+
+- **GeneralizedDeMorgan.lean**: Leyes de De Morgan generalizadas
+  - `complement_union_eq_inter_complement` - A \ ⋃ F = ⋂ (ComplementFamily A F)
+  - `complement_inter_eq_union_complement` - A \ ⋂ F = ⋃ (ComplementFamily A F)
+  - Versiones duales e inversas
+
+- **GeneralizedDistributive.lean**: Leyes distributivas generalizadas
+  - `DistribSet X F op` - Conjunto imagen { op(X, Y) | Y ∈ F }
+  - `inter_union_distrib` - X ∩ (⋃ F) = ⋃ { X ∩ Y | Y ∈ F }
+  - `union_inter_distrib` - X ∪ (⋂ F) = ⋂ { X ∪ Y | Y ∈ F }
+  - Versiones conmutativas
+
+- **AtomicBooleanAlgebra.lean**: Álgebra de Boole atómica
+  - `isAtom A X` - X es un átomo en 𝒫(A)
+  - `Atoms A` - Conjunto de todos los átomos
+  - `isAtomic A` - 𝒫(A) es atómica
+  - `singleton_is_atom` - {x} es átomo cuando x ∈ A
+  - `atom_is_singleton` - Todo átomo es un singleton
+  - `atom_iff_singleton` - Caracterización completa
+  - `PowerSet_is_atomic` - 𝒫(A) es un álgebra de Boole atómica
+  - `element_is_union_of_atoms` - Todo elemento es unión de átomos
+
+---
+
 ## [0.7.0] - 2026-02-07
 
 ### Añadido

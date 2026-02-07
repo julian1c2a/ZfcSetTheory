@@ -28,20 +28,24 @@ Este proyecto desarrolla los axiomas fundamentales de ZFC de manera progresiva, 
 
 ```
 ZfcSetTheory/
-├── Prelim.lean              # Definiciones preliminares (ExistsUnique)
-├── Extension.lean           # Axioma de Extensionalidad + ⊆, ⊂, ⟂
-├── Existence.lean           # Axioma de Existencia (∅)
-├── Specification.lean       # Axioma de Especificación + ∩, \
-├── Pairing.lean             # Axioma de Par + {a,b}, {a}, ⟨a,b⟩, relaciones, funciones
-├── Union.lean               # Axioma de Unión + ⋃, ∪, △
-├── Potencia.lean            # Axioma de Potencia (𝒫)
-├── OrderedPair.lean         # Extensiones del par ordenado
-├── CartesianProduct.lean    # Producto Cartesiano A ×ₛ B
-├── Relations.lean           # Relaciones: equivalencia, orden parcial, orden lineal
-├── BooleanAlgebra.lean      # Teoremas de álgebra booleana
-├── SetOrder.lean            # Orden parcial y retículos
-├── SetStrictOrder.lean      # Orden estricto
-└── ZfcSetTheory.lean        # Módulo raíz
+├── Prelim.lean                  # Definiciones preliminares (ExistsUnique)
+├── Extension.lean               # Axioma de Extensionalidad + ⊆, ⊂, ⟂
+├── Existence.lean               # Axioma de Existencia (∅)
+├── Specification.lean           # Axioma de Especificación + ∩, \
+├── Pairing.lean                 # Axioma de Par + {a,b}, {a}, ⟨a,b⟩, relaciones, funciones
+├── Union.lean                   # Axioma de Unión + ⋃, ∪, △
+├── PowerSet.lean                # Axioma de Potencia (𝒫)
+├── OrderedPair.lean             # Extensiones del par ordenado
+├── CartesianProduct.lean        # Producto Cartesiano A ×ₛ B
+├── Relations.lean               # Relaciones: equivalencia, orden parcial, orden lineal
+├── BooleanAlgebra.lean          # Teoremas de álgebra booleana
+├── PowerSetAlgebra.lean         # Álgebra del conjunto potencia (complemento, De Morgan)
+├── GeneralizedDeMorgan.lean     # Leyes de De Morgan generalizadas para familias
+├── GeneralizedDistributive.lean # Leyes distributivas generalizadas
+├── AtomicBooleanAlgebra.lean    # Álgebra de Boole atómica (𝒫(A) es atómica)
+├── SetOrder.lean                # Orden parcial y retículos
+├── SetStrictOrder.lean          # Orden estricto
+└── ZfcSetTheory.lean            # Módulo raíz
 ```
 
 ## 🛠️ Construcciones Disponibles
@@ -74,6 +78,13 @@ ZfcSetTheory/
 - Funciones (parciales, totales)
 - Funciones inyectivas, suryectivas, biyectivas
 - Dominio y rango
+
+### Álgebra de Boole
+
+- **Leyes de De Morgan generalizadas**: `(A \ ⋃ F) = ⋂ (A \ F)` y duales
+- **Leyes distributivas generalizadas**: `X ∩ (⋃ F) = ⋃ { X ∩ Y | Y ∈ F }`
+- **Átomos en 𝒫(A)**: Los singletons son exactamente los átomos
+- **𝒫(A) es atómica**: Todo elemento no vacío contiene un átomo
 
 ## 📦 Instalación
 

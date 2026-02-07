@@ -6,20 +6,24 @@
 
 ```
 ZfcSetTheory/
-├── Prelim.lean                 # Definiciones preliminares
-├── Extension.lean              # Axioma de Extensionalidad
-├── Existence.lean              # Axioma de Existencia (conjunto vacío)
-├── Specification.lean          # Axioma de Especificación
-├── Pairing.lean                # Axioma de Pares
-├── Union.lean                  # Axioma de Unión + Unión Binaria + Diferencia Simétrica
-├── Potencia.lean               # Axioma del Conjunto Potencia
-├── OrderedPair.lean            # Extensiones del Par Ordenado
-├── CartesianProduct.lean       # Producto Cartesiano A ×ₛ B
-├── Relations.lean              # Relaciones: equivalencia, orden, clases
-├── BooleanAlgebra.lean         # Álgebra Booleana de conjuntos (teoremas)
-├── SetOrder.lean               # Orden parcial y retículos (completo)
-├── SetStrictOrder.lean         # Orden estricto (completo)
-└── ZfcSetTheory.lean           # Módulo principal
+├── Prelim.lean                     # Definiciones preliminares
+├── Extension.lean                  # Axioma de Extensionalidad
+├── Existence.lean                  # Axioma de Existencia (conjunto vacío)
+├── Specification.lean              # Axioma de Especificación
+├── Pairing.lean                    # Axioma de Pares
+├── Union.lean                      # Axioma de Unión + Unión Binaria + Diferencia Simétrica
+├── PowerSet.lean                   # Axioma del Conjunto Potencia
+├── OrderedPair.lean                # Extensiones del Par Ordenado
+├── CartesianProduct.lean           # Producto Cartesiano A ×ₛ B
+├── Relations.lean                  # Relaciones: equivalencia, orden, clases
+├── BooleanAlgebra.lean             # Álgebra Booleana de conjuntos (teoremas)
+├── PowerSetAlgebra.lean            # Álgebra del conjunto potencia (complemento, De Morgan)
+├── GeneralizedDeMorgan.lean        # Leyes de De Morgan generalizadas para familias
+├── GeneralizedDistributive.lean    # Leyes distributivas generalizadas
+├── AtomicBooleanAlgebra.lean       # Álgebra de Boole atómica
+├── SetOrder.lean                   # Orden parcial y retículos (completo)
+├── SetStrictOrder.lean             # Orden estricto (completo)
+└── ZfcSetTheory.lean               # Módulo principal
 ```
 
 ## Diagrama de Dependencias
@@ -209,7 +213,43 @@ namespace SetUniverse.BooleanAlgebra
   -- Teoremas: leyes booleanas, distributividad, idempotencia
 ```
 
-### 12. **SetUniverse.SetOrder**
+### 12. **SetUniverse.PowerSetAlgebra**
+
+```lean
+namespace SetUniverse.PowerSetAlgebra
+  -- Álgebra del conjunto potencia
+  -- Definiciones: Complement (X^∁[ A ]), ComplementFamily
+  -- Teoremas: double_complement, DeMorgan_union_family, DeMorgan_inter_family
+```
+
+### 13. **SetUniverse.GeneralizedDeMorgan**
+
+```lean
+namespace SetUniverse.GeneralizedDeMorgan
+  -- Leyes de De Morgan generalizadas
+  -- Teoremas: complement_union_eq_inter_complement, complement_inter_eq_union_complement
+```
+
+### 14. **SetUniverse.GeneralizedDistributive**
+
+```lean
+namespace SetUniverse.GeneralizedDistributive
+  -- Leyes distributivas generalizadas
+  -- Definiciones: DistribSet
+  -- Teoremas: inter_union_distrib, union_inter_distrib
+```
+
+### 15. **SetUniverse.AtomicBooleanAlgebra**
+
+```lean
+namespace SetUniverse.AtomicBooleanAlgebra
+  -- Álgebra de Boole atómica
+  -- Definiciones: isAtom, Atoms, isAtomic, atomBelow
+  -- Teoremas: singleton_is_atom, atom_is_singleton, atom_iff_singleton
+  --           PowerSet_is_atomic, element_is_union_of_atoms
+```
+
+### 16. **SetUniverse.SetOrder**
 
 ```lean
 namespace SetUniverse.SetOrder
@@ -218,7 +258,7 @@ namespace SetUniverse.SetOrder
   -- Teoremas: propiedades de orden, cotas, supremos/ínfimos
 ```
 
-### 13. **SetUniverse.SetStrictOrder**
+### 17. **SetUniverse.SetStrictOrder**
 
 ```lean
 namespace SetUniverse.SetStrictOrder
@@ -263,6 +303,10 @@ namespace SetUniverse.SetStrictOrder
 ### **Nivel 7: Estructuras Algebraicas**
 
 - `BooleanAlgebra.lean` - Teoremas booleanos
+- `PowerSetAlgebra.lean` - Álgebra del conjunto potencia
+- `GeneralizedDeMorgan.lean` - De Morgan generalizadas
+- `GeneralizedDistributive.lean` - Distributivas generalizadas
+- `AtomicBooleanAlgebra.lean` - Álgebra de Boole atómica
 - `SetOrder.lean` - Estructura de orden y retículo
 - `SetStrictOrder.lean` - Orden estricto
 
