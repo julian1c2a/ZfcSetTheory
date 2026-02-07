@@ -112,9 +112,11 @@ namespace SetUniverse
               rw [PairSet_is_specified] at hd_in
               cases hd_in with
               | inl hd_eq_a => 
-                -- d = a, b = c, a = c, entonces b = d
+                -- d = a, b = c, entonces b = d
                 rw [hb_eq_c, hd_eq_a, ha_eq_c]
-              | inr hd_eq_b => exact hd_eq_b.symm
+              | inr hd_eq_b => 
+                -- d = b, entonces b = d
+                exact hd_eq_b.symm
           | inr h_ab_eq_cd =>
             -- {a,b} = {c,d}
             -- d ∈ {c,d} = {a,b}, así que d = a ∨ d = b
@@ -184,9 +186,11 @@ namespace SetUniverse
             cases hb_in with
             | inl hb_eq_c => 
               -- b = c, d = a, c = a, entonces b = d
-              rw [hb_eq_c, hd_eq_a, hc_eq_a]
+              calc b = c := hb_eq_c
+                _ = a := hc_eq_a
+                _ = d := hd_eq_a.symm
             | inr hb_eq_d => 
-              -- b = d, entonces b = d
+              -- b = d directamente
               exact hb_eq_d
 
     /-! ### Igualdad de pares ordenados (←) ###
