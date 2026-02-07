@@ -7,3 +7,5 @@ import ZfcSetTheory.Specification
 import ZfcSetTheory.Pairing
 import ZfcSetTheory.Union
 import ZfcSetTheory.BooleanAlgebra
+import ZfcSetTheory.OrderLattice
+import ZfcSetTheory.StrictOrder
