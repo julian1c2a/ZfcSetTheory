@@ -357,6 +357,87 @@ namespace SetUniverse
         · intro hx_in_empty
           exact False.elim (EmptySet_is_empty x hx_in_empty)
 
+    /-! ### Unión Binaria ### -/
+    noncomputable def BinUnion (A B : U) : U :=
+      UnionSet (PairSet A B)
+
+    notation:50 lhs:51 " ∪ " rhs:51 => BinUnion lhs rhs
+
+    theorem BinUnion_is_specified (A B x : U) :
+      x ∈ (A ∪ B) ↔ x ∈ A ∨ x ∈ B := by
+      unfold BinUnion
+      simp only [UnionSet_is_specified, PairSet_is_specified]
+      constructor
+      · intro ⟨S, h, hx⟩
+        rcases h with rfl | rfl
+        · left; exact hx
+        · right; exact hx
+      · intro h
+        rcases h with hx | hx
+        · exact ⟨A, Or.inl rfl, hx⟩
+        · exact ⟨B, Or.inr rfl, hx⟩
+
+    /-! ### Diferencia Simétrica ### -/
+    noncomputable def SymDiff (A B : U) : U :=
+      (A \ B) ∪ (B \ A)
+
+    notation:50 lhs:51 " △ " rhs:51 => SymDiff lhs rhs
+
+    theorem SymDiff_is_specified (A B x : U) :
+      x ∈ (A △ B) ↔ (x ∈ A ∧ x ∉ B) ∨ (x ∈ B ∧ x ∉ A) := by
+      unfold SymDiff
+      simp only [BinUnion_is_specified, Difference_is_specified]
+      constructor
+      · intro h
+        cases h with
+        | inl hx => exact Or.inl hx
+        | inr hx => exact Or.inr hx
+      · intro h
+        cases h with
+        | inl hx => exact Or.inl hx
+        | inr hx => exact Or.inr hx
+
+    theorem SymDiff_comm (A B : U) :
+      (A △ B) = (B △ A) := by
+      apply ExtSet
+      intro x
+      simp only [SymDiff_is_specified]
+      constructor
+      · intro h
+        cases h with
+        | inl hx => exact Or.inr hx
+        | inr hx => exact Or.inl hx
+      · intro h
+        cases h with
+        | inl hx => exact Or.inr hx
+        | inr hx => exact Or.inl hx
+
+    theorem SymDiff_empty_left (A : U) :
+      (∅ △ A) = A := by
+      apply ExtSet
+      intro x
+      simp only [SymDiff_is_specified]
+      constructor
+      · intro h
+        cases h with
+        | inl hx => exact False.elim (EmptySet_is_empty x hx.1)
+        | inr hx => exact hx.1
+      · intro hx
+        exact Or.inr ⟨hx, fun h => EmptySet_is_empty x h⟩
+
+    theorem SymDiff_self (A : U) :
+      (A △ A) = ∅ := by
+      apply ExtSet
+      intro x
+      simp only [SymDiff_is_specified]
+      constructor
+      · intro h
+        cases h with
+        | inl hx => exact hx.2 hx.1
+        | inr hx => exact hx.2 hx.1
+      · intro hx
+        exact False.elim (EmptySet_is_empty x hx)
+
   end UnionAxiom
 end SetUniverse
 
@@ -373,6 +454,13 @@ export SetUniverse.UnionAxiom (
   Set_is_empty_2
   Set_is_empty_3
   UnionSetIsEmpty_SetNonEmpty_SingletonEmptySet
+  BinUnion
+  BinUnion_is_specified
+  SymDiff
+  SymDiff_is_specified
+  SymDiff_comm
+  SymDiff_empty_left
+  SymDiff_self
 )
 
 /-!
