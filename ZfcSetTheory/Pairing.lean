@@ -525,7 +525,7 @@ namespace SetUniverse
         have h_r_eq : (({x, y} : U) \ ({x} : U)) = ({y} : U) := diff_pair_singleton x y h_eq
         rw [h_r_eq]
         -- El objetivo final es: ⋂ {y} = y, lo cual es cierto.
-        exact Intersection_of_singleton
+        exact IntersectionSet_of_singleton y
 
     -- El teorema principal que une todo.
     @[simp]
