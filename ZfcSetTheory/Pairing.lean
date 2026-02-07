@@ -84,7 +84,7 @@ namespace SetUniverse
 
     /-! ### Definición del conjunto Intersección de una Familia de Conjuntos ### -/
     @[simp]
-    noncomputable def Intersection (w : U) : U :=
+    noncomputable def IntersectionSet (w : U) : U :=
       if h : ∃ y, y ∈ w then
         let y₀ := choose h
         SpecSet y₀ (fun v => ∀ y, y ∈ w → v ∈ y)
@@ -92,7 +92,7 @@ namespace SetUniverse
         ∅
 
     /-! ### Notación estándar de la Intersección de una Familia de Conjuntos ### -/
-    notation:100 "⋂ " w => Intersection w
+    notation:100 "⋂ " w => IntersectionSet w
 
     @[simp]
     theorem nonempty_iff_exists_mem (w : U) : w ≠ ∅ ↔ ∃ y, y ∈ w := by
@@ -116,7 +116,7 @@ namespace SetUniverse
 
     /-! ### ⋂{A} = A ### -/
     @[simp]
-    theorem Intersection_of_singleton (A : U) : (⋂ { A }) = A := by
+    theorem IntersectionSet_of_singleton (A : U) : (⋂ { A }) = A := by
       apply ExtSet
       intro z
       constructor
@@ -127,7 +127,7 @@ namespace SetUniverse
           rw [h_empty] at hA
           exact EmptySet_is_empty A hA
         have h_exists : ∃ y, y ∈ ({A} : U) := (nonempty_iff_exists_mem _).mp h_nonempty
-        unfold Intersection at hz_in_inter
+        unfold IntersectionSet at hz_in_inter
         simp only [dif_pos h_exists] at hz_in_inter
         let y₀ := choose h_exists
         have hy₀ : y₀ ∈ ({A} : U) := choose_spec h_exists
@@ -142,7 +142,7 @@ namespace SetUniverse
           rw [h_empty] at hA
           exact EmptySet_is_empty A hA
         have h_exists : ∃ y, y ∈ ({A} : U) := (nonempty_iff_exists_mem _).mp h_nonempty
-        unfold Intersection
+        unfold IntersectionSet
         simp only [dif_pos h_exists]
         rw [SpecSet_is_specified]
         constructor
@@ -201,7 +201,7 @@ namespace SetUniverse
             rw [h_empty] at hx;
             exact EmptySet_is_empty {x} hx
         have h_exists : ∃ elem, elem ∈ (⟨x, y⟩ : U) := (nonempty_iff_exists_mem _).mp h_nonempty
-        unfold Intersection at hz_in_inter
+        unfold IntersectionSet at hz_in_inter
         simp only [dif_pos h_exists] at hz_in_inter
         rw [SpecSet_is_specified] at hz_in_inter
         exact hz_in_inter.2 {x} ((OrderedPair_is_specified x y {x}).mpr (Or.inl rfl))
@@ -211,7 +211,7 @@ namespace SetUniverse
             rw [h_empty] at hx;
             exact EmptySet_is_empty {x} hx
         have h_exists : ∃ elem, elem ∈ (⟨x, y⟩ : U) := (nonempty_iff_exists_mem _).mp h_nonempty
-        unfold Intersection
+        unfold IntersectionSet
         simp only [dif_pos h_exists]
         rw [SpecSet_is_specified]
         constructor
@@ -455,7 +455,7 @@ namespace SetUniverse
       fst (⟨x, y⟩ : U) = x
         := by
       unfold fst
-      rw [intersection_of_ordered_pair, Intersection_of_singleton]
+      rw [intersection_of_ordered_pair, IntersectionSet_of_singleton]
 
     theorem snd_of_ordered_pair_eq (x y : U) (h_eq : x = y) :
       snd ⟨x, y⟩ = y
@@ -466,7 +466,7 @@ namespace SetUniverse
       have h_s_is_empty : ((⟨y, y⟩ : U) \ {(⋂ (⟨y, y⟩ : U))}) = (∅ : U)
         := diff_pair_sing_intersection y y rfl
       rw [dif_pos h_s_is_empty]
-      rw [intersection_of_ordered_pair, Intersection_of_singleton]
+      rw [intersection_of_ordered_pair, IntersectionSet_of_singleton]
 
     -- Demostración de que snd recupera el segundo elemento.
     @[simp]
@@ -695,7 +695,8 @@ export SetUniverse.PairingAxiom (
     Singleton_is_specified
     nonempty_iff_exists_mem
     member_intersection
-    Intersection
+    IntersectionSet
+    IntersectionSet_of_singleton
     OrderedPair
     OrderedPair_is_specified
     isOrderedPair
