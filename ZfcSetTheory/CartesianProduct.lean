@@ -20,7 +20,7 @@ namespace SetUniverse
   universe u
   variable {U : Type u}
 
-  namespace CartesianProductAxiom
+  namespace CartesianProduct
 
     /-! ============================================================ -/
     /-! ### PRODUCTO CARTESIANO ### -/
@@ -253,10 +253,10 @@ namespace SetUniverse
           · rw [BinInter_is_specified]
             exact ⟨hpAB.2.2, hpAC.2.2⟩
 
-  end CartesianProductAxiom
+  end CartesianProduct
 end SetUniverse
 
-export SetUniverse.CartesianProductAxiom (
+export SetUniverse.CartesianProduct (
   CartesianProduct
   CartesianProduct_is_specified
   OrderedPair_mem_CartesianProduct
