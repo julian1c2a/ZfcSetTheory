@@ -17,3 +17,4 @@ import ZfcSetTheory.GeneralizedDistributive
 import ZfcSetTheory.SetOrder
 import ZfcSetTheory.SetStrictOrder
 import ZfcSetTheory.AtomicBooleanAlgebra
+import ZfcSetTheory.Functions
