@@ -56,19 +56,19 @@ namespace SetUniverse
       rw [BinUnion_comm, BinUnion_empty_left]
 
     /-! Transitividad -/
-    theorem Subseteq_trans {A B C : U} :
+    theorem Subseteq_trans (A B C : U) :
       A ⊆ B → B ⊆ C → A ⊆ C := by
       intro h1 h2 x hx
       exact h2 x (h1 x hx)
 
-    theorem Subseteq_reflexive {A : U} :
+    theorem Subseteq_reflexive (A : U) :
       A ⊆ A := by
       intro x hx
       exact hx
 
 
     /-! Monotonía -/
-    theorem Union_monotone {A B C : U} :
+    theorem Union_monotone (A B C : U) :
       A ⊆ B → (A ∪ C) ⊆ (B ∪ C) := by
       intro h x hx
       simp only [BinUnion_is_specified] at hx ⊢
@@ -76,39 +76,32 @@ namespace SetUniverse
       · left; exact h x hxA
       · right; exact hxC
 
-    theorem Inter_monotone {A B C : U} :
+    theorem Inter_monotone (A B C : U) :
       A ⊆ B → (A ∩ C) ⊆ (B ∩ C) := by
       intro h x ⟨hx, hc⟩
       exact ⟨h x hx, hc⟩
 
     /-! Equivalencias -/
-    theorem Subseteq_inter_eq {A B : U} :
-      (A ⊆ B) ↔ ((A ∩ B) = A) := by
-      constructor
-      · intro h
+    theorem Subseteq_inter_eq (A B : U) :
+      (A ⊆ B) ↔ ((A ∩ B) = A) := ⟨
+      fun h => by
         apply ExtSet
         intro x
         constructor
-        · intro hx
-          obtain ⟨ha, _⟩ := hx
-          exact ha
-        · intro ha
-          exact ⟨ha, h x ha⟩
-      · intro h x hx
-        rw [← h]
-        constructor
-        · exact hx
-        · rfl
+        · intro ⟨ha, _⟩; exact ha
+        · intro ha; exact ⟨ha, h x ha⟩,
+      fun h x hx => by rw [← h]; exact hx⟩
 
     /-! Diferencia -/
-    theorem Diff_self {A : U} :
+    theorem Diff_self (A : U) :
       (A \ A) = ∅ := by
       apply ExtSet
       intro x
       simp only [Difference_is_specified]
       exact ⟨fun ⟨_, h⟩ => h rfl, EmptySet_is_empty x⟩
 
-    theorem Diff_empty {A : U} : (A \ ∅) = A := by
+    theorem Diff_empty (A : U) :
+      (A \ ∅) = A := by
       apply ExtSet
       intro x
       simp only [Difference_is_specified]
