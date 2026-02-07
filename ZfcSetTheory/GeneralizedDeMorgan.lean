@@ -87,8 +87,9 @@ namespace SetUniverse
 
     /-- First De Morgan: ⋂(ComplementFamily A F) = A \ ⋃F -/
     theorem inter_complement_eq_complement_union (A F : U)
-        (hF_nonempty : F ≠ ∅) (hF_subsets : ∀ X, X ∈ F → X ⊆ A) :
-        ⋂ (ComplementFamily A F) = Difference A (⋃ F) := by
+        (hF_nonempty : F ≠ ∅) (_hF_subsets : ∀ X, X ∈ F → X ⊆ A) :
+        (⋂ (ComplementFamily A F)) = Difference A (⋃ F)
+        := by
       -- ComplementFamily A F is nonempty
       have hCF_nonempty : ComplementFamily A F ≠ ∅ := by
         have h_ex := (nonempty_iff_exists_mem F).mp hF_nonempty
@@ -99,7 +100,7 @@ namespace SetUniverse
         rw [h_empty] at h_mem
         exact EmptySet_is_empty (Difference A X) h_mem
       -- Forward direction: z ∈ ⋂(ComplementFamily A F) → z ∈ A \ ⋃F
-      have forward : ∀ z, z ∈ ⋂ (ComplementFamily A F) → z ∈ Difference A (⋃ F) := by
+      have forward : ∀ z, z ∈ (⋂ (ComplementFamily A F)) → z ∈ Difference A (⋃ F) := by
         intro z hz
         rw [interSet_mem_iff (ComplementFamily A F) z hCF_nonempty] at hz
         rw [Difference_is_specified]
@@ -120,7 +121,7 @@ namespace SetUniverse
           rw [Difference_is_specified] at hz_in_AS
           exact hz_in_AS.2 hS.2
       -- Backward direction: z ∈ A \ ⋃F → z ∈ ⋂(ComplementFamily A F)
-      have backward : ∀ z, z ∈ Difference A (⋃ F) → z ∈ ⋂ (ComplementFamily A F) := by
+      have backward : ∀ z, z ∈ Difference A (⋃ F) → z ∈ (⋂ (ComplementFamily A F)) := by
         intro z hz
         rw [Difference_is_specified] at hz
         have hz_in_A := hz.1
@@ -136,7 +137,7 @@ namespace SetUniverse
         · intro hz_in_X
           rw [UnionSet_is_specified] at hz_not_union
           exact hz_not_union ⟨h_ex, hX_spec.1, hz_in_X⟩
-      have h_iff : ∀ z, z ∈ ⋂ (ComplementFamily A F) ↔ z ∈ Difference A (⋃ F) :=
+      have h_iff : ∀ z, z ∈ (⋂ (ComplementFamily A F)) ↔ z ∈ Difference A (⋃ F) :=
         fun z => ⟨forward z, backward z⟩
       exact ExtSet (⋂ (ComplementFamily A F)) (Difference A (⋃ F)) h_iff
 
@@ -145,9 +146,9 @@ namespace SetUniverse
     /-- Second De Morgan: ⋃(ComplementFamily A F) = A \ ⋂F -/
     theorem union_complement_eq_complement_inter (A F : U)
         (hF_nonempty : F ≠ ∅) (_hF_subsets : ∀ X, X ∈ F → X ⊆ A) :
-        ⋃ (ComplementFamily A F) = Difference A (⋂ F) := by
+        (⋃ (ComplementFamily A F)) = Difference A (⋂ F) := by
       -- Forward: z ∈ ⋃(ComplementFamily A F) → z ∈ A \ ⋂F
-      have forward : ∀ z, z ∈ ⋃ (ComplementFamily A F) → z ∈ Difference A (⋂ F) := by
+      have forward : ∀ z, z ∈ (⋃ (ComplementFamily A F)) → z ∈ Difference A (⋂ F) := by
         intro z hz
         rw [UnionSet_is_specified] at hz
         let Y := choose hz
@@ -164,7 +165,7 @@ namespace SetUniverse
           intro h_all
           exact hz_in_Y.2 (h_all h_ex2 hX_spec.1)
       -- Backward: z ∈ A \ ⋂F → z ∈ ⋃(ComplementFamily A F)
-      have backward : ∀ z, z ∈ Difference A (⋂ F) → z ∈ ⋃ (ComplementFamily A F) := by
+      have backward : ∀ z, z ∈ Difference A (⋂ F) → z ∈ (⋃ (ComplementFamily A F)) := by
         intro z hz
         rw [Difference_is_specified] at hz
         have hz_in_A := hz.1
@@ -183,7 +184,7 @@ namespace SetUniverse
         rw [UnionSet_is_specified]
         exact ⟨Difference A X, complement_mem_ComplementFamily A F X hX_spec.1,
                (Difference_is_specified A X z).mpr ⟨hz_in_A, hX_spec.2⟩⟩
-      have h_iff : ∀ z, z ∈ ⋃ (ComplementFamily A F) ↔ z ∈ Difference A (⋂ F) :=
+      have h_iff : ∀ z, z ∈ (⋃ (ComplementFamily A F)) ↔ z ∈ Difference A (⋂ F) :=
         fun z => ⟨forward z, backward z⟩
       exact ExtSet (⋃ (ComplementFamily A F)) (Difference A (⋂ F)) h_iff
 
@@ -241,12 +242,12 @@ namespace SetUniverse
     /-- Double complement: A \ ⋃(ComplementFamily A F) = ⋂F -/
     theorem complement_union_complement_eq_inter (A F : U)
         (hF_nonempty : F ≠ ∅) (hF_subsets : ∀ X, X ∈ F → X ⊆ A) :
-        Difference A (⋃ (ComplementFamily A F)) = ⋂ F := by
+        Difference A (⋃ (ComplementFamily A F)) = (⋂ F) := by
       have h_eq := union_complement_eq_complement_inter A F hF_nonempty hF_subsets
-      have hIF_sub : ⋂ F ⊆ A := inter_subsets F A hF_nonempty hF_subsets
+      have hIF_sub : (⋂ F) ⊆ A := inter_subsets F A hF_nonempty hF_subsets
       calc Difference A (⋃ (ComplementFamily A F))
           = Difference A (Difference A (⋂ F)) := by rw [h_eq]
-        _ = ⋂ F := double_complement A (⋂ F) hIF_sub
+        _ = (⋂ F) := double_complement A (⋂ F) hIF_sub
 
   end GeneralizedDeMorgan
 
