@@ -1,0 +1,166 @@
+import Init.Classical
+import ZfcSetTheory.Prelim
+import ZfcSetTheory.Extension
+import ZfcSetTheory.Existence
+
+namespace SetUniverse
+  open Classical
+  open SetUniverse.ExtensionAxiom
+  open SetUniverse.ExistenceAxiom
+  universe u
+  variable {U : Type u}
+
+  namespace StrictOrder
+
+    /-! ### Propiedades del Orden Estricto (⊂) ### -/
+
+    @[simp]
+    theorem subset_subseteq (x y : U) :
+      x ⊂ y → x ⊆ y
+        := by
+      intro h_subs
+      exact h_subs.1
+
+    @[simp]
+    theorem subseteq_subset_or_eq (x y : U) :
+      x ⊆ y → (x ⊂ y ∨ x = y)
+        := by
+      intro h_subs
+      by_cases h_eq : x = y
+      · -- Caso x = y
+        right
+        exact h_eq
+      · -- Caso x ≠ y
+        left
+        constructor
+        · exact h_subs
+        · exact h_eq
+
+    @[simp]
+    theorem subset_irreflexive :
+      ∀ (x : U), ¬(x ⊂ x)
+        := by
+      intro x h_subs
+      apply h_subs.2
+      rfl
+
+    @[simp]
+    theorem subset_asymmetric :
+      ∀ (x y : U), x ⊂ y → ¬(y ⊂ x)
+        := by
+      intro x y h_subs
+      intro h_subs_reverse
+      apply h_subs.2
+      apply EqualityOfSubset
+      exact h_subs.1
+      exact h_subs_reverse.1
+
+    @[simp]
+    theorem subset_asymmetric' (x y : U) :
+      (x ⊆ y) → ¬(y ⊂ x)
+        := by
+      intro h_subs
+      by_cases h_eq : x = y
+      · -- Caso x = y
+        intro h_subs_reverse
+        apply h_subs_reverse.2
+        exact h_eq.symm
+      · -- Caso x ≠ y
+        intro h_subs_reverse
+        apply h_subs_reverse.2
+        apply EqualityOfSubset
+        exact h_subs_reverse.1
+        exact h_subs
+
+    @[simp] 
+    theorem subset_transitive :
+      ∀ (x y z : U), x ⊂ y → y ⊂ z → x ⊂ z
+        := by
+      intro x y z h_subs_xy h_subs_yz
+      constructor
+      · apply subseteq_transitive
+        exact h_subs_xy.1
+        exact h_subs_yz.1
+      · intro h_eq
+        apply h_subs_xy.2
+        apply EqualityOfSubset
+        exact h_subs_xy.1
+        rw [h_eq]
+        exact h_subs_yz.1
+
+    @[simp]
+    theorem subset_transitive' (x y z : U) :
+      (x ⊆ y) → (y ⊂ z) → (x ⊂ z)
+        := by
+      intro h_subs_xy h_subs_yz
+      constructor
+      · apply subseteq_transitive
+        exact h_subs_xy
+        exact h_subs_yz.1
+      · intro h_eq
+        apply h_subs_yz.2
+        apply EqualityOfSubset
+        exact h_subs_yz.1
+        rw [← h_eq]
+        exact h_subs_xy
+
+    @[simp]
+    theorem subset_transitive'' (x y z : U) :
+      (x ⊂ y) → (y ⊆ z) → (x ⊂ z)
+        := by
+      intro h_subs_xy h_subs_yz
+      constructor
+      · apply subseteq_transitive
+        exact h_subs_xy.1
+        exact h_subs_yz
+      · intro h_eq
+        apply h_subs_xy.2
+        apply EqualityOfSubset
+        exact h_subs_xy.1
+        rw [h_eq]
+        exact h_subs_yz
+
+    /-! ### Teoremas sobre Orden Estricto como Relación ### -/
+    
+    @[simp]
+    theorem strict_order_is_irreflexive :
+      ∀ x : U, ¬(x ⊂ x) := subset_irreflexive
+
+    @[simp]
+    theorem strict_order_is_asymmetric :
+      ∀ x y : U, x ⊂ y → ¬(y ⊂ x) := subset_asymmetric
+
+    @[simp]
+    theorem strict_order_is_transitive :
+      ∀ x y z : U, x ⊂ y → y ⊂ z → x ⊂ z := subset_transitive
+
+    /-! ### Relación entre Orden Parcial y Orden Estricto ### -/
+    
+    @[simp]
+    theorem partial_to_strict_order (x y : U) :
+      (x ⊆ y ∧ x ≠ y) ↔ x ⊂ y := by
+      constructor
+      · intro ⟨h_sub, h_neq⟩
+        exact ⟨h_sub, h_neq⟩
+      · intro h_strict
+        exact ⟨h_strict.1, h_strict.2⟩
+
+    @[simp]
+    theorem strict_implies_partial (x y : U) :
+      x ⊂ y → x ⊆ y := subset_subseteq x y
+
+    @[simp]
+    theorem partial_cases (x y : U) :
+      x ⊆ y → (x ⊂ y ∨ x = y) := subseteq_subset_or_eq x y
+
+  end StrictOrder
+
+end SetUniverse
+
+export SetUniverse.StrictOrder (
+    subset_subseteq subseteq_subset_or_eq subset_irreflexive
+    subset_asymmetric subset_asymmetric' subset_transitive
+    subset_transitive' subset_transitive''
+    strict_order_is_irreflexive strict_order_is_asymmetric strict_order_is_transitive
+    partial_to_strict_order strict_implies_partial partial_cases
+)
