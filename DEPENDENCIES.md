@@ -15,6 +15,7 @@ ZfcSetTheory/
 ├── Potencia.lean               # Axioma del Conjunto Potencia
 ├── OrderedPair.lean            # Extensiones del Par Ordenado
 ├── CartesianProduct.lean       # Producto Cartesiano A ×ₛ B
+├── Relations.lean              # Relaciones: equivalencia, orden, clases
 ├── BooleanAlgebra.lean         # Álgebra Booleana de conjuntos (teoremas)
 ├── SetOrder.lean               # Orden parcial y retículos (completo)
 ├── SetStrictOrder.lean         # Orden estricto (completo)
@@ -58,7 +59,13 @@ graph TD
     Pa --> OP
     U --> OP
     
-    %% Nivel 6: Álgebras y órdenes
+    %% Nivel 6: Producto Cartesiano
+    OP --> CP[CartesianProduct.lean]
+    
+    %% Nivel 7: Relaciones
+    CP --> Rel[Relations.lean]
+    
+    %% Nivel 8: Álgebras y órdenes
     E --> SSO[SetStrictOrder.lean]
     Ex --> SO[SetOrder.lean]
     S --> SO
@@ -69,7 +76,7 @@ graph TD
     Pa --> BA
     U --> BA
     
-    %% Nivel 7: Módulo principal
+    %% Nivel 9: Módulo principal
     E --> Z[ZfcSetTheory.lean]
     Ex --> Z
     S --> Z
@@ -77,6 +84,8 @@ graph TD
     U --> Z
     Pot --> Z
     OP --> Z
+    CP --> Z
+    Rel --> Z
     BA --> Z
     SO --> Z
     SSO --> Z
@@ -86,13 +95,15 @@ graph TD
     classDef algebra fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
     classDef order fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
     classDef extension fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+    classDef relation fill:#fce4ec,stroke:#880e4f,stroke-width:2px
     classDef main fill:#fff3e0,stroke:#e65100,stroke-width:3px
     classDef external fill:#fafafa,stroke:#424242,stroke-width:1px
     
     class E,Ex,S,Pa,U,Pot axiom
     class BA algebra
     class SO,SSO order
-    class OP extension
+    class OP,CP extension
+    class Rel relation
     class Z main
     class IC,P external
 ```
@@ -170,7 +181,27 @@ namespace SetUniverse.OrderedPairExtensions
   -- Teoremas: OrderedPair_eq_of, OrderedPair_eq_iff, OrderedPair_in_PowerSet
 ```
 
-### 9. **SetUniverse.BooleanAlgebra**
+### 9. **SetUniverse.CartesianProduct**
+
+```lean
+namespace SetUniverse.CartesianProduct
+  -- Producto Cartesiano
+  -- Definiciones: CartesianProduct (A ×ₛ B)
+  -- Teoremas: caracterización, vacío, monotonía, distributividad
+```
+
+### 10. **SetUniverse.Relations**
+
+```lean
+namespace SetUniverse.Relations
+  -- Relaciones sobre conjuntos
+  -- Definiciones: isRelationOn, isReflexiveOn, isSymmetricOn, etc.
+  -- Tipos: equivalencia, preorden, orden parcial, orden lineal, orden estricto
+  -- Construcciones: EqClass, QuotientSet, IdRel, InverseRel
+  -- Teoremas: propiedades de relaciones, clases de equivalencia
+```
+
+### 11. **SetUniverse.BooleanAlgebra**
 
 ```lean
 namespace SetUniverse.BooleanAlgebra
@@ -178,7 +209,7 @@ namespace SetUniverse.BooleanAlgebra
   -- Teoremas: leyes booleanas, distributividad, idempotencia
 ```
 
-### 10. **SetUniverse.SetOrder**
+### 12. **SetUniverse.SetOrder**
 
 ```lean
 namespace SetUniverse.SetOrder
@@ -187,7 +218,7 @@ namespace SetUniverse.SetOrder
   -- Teoremas: propiedades de orden, cotas, supremos/ínfimos
 ```
 
-### 11. **SetUniverse.SetStrictOrder**
+### 13. **SetUniverse.SetStrictOrder**
 
 ```lean
 namespace SetUniverse.SetStrictOrder
@@ -217,17 +248,25 @@ namespace SetUniverse.SetStrictOrder
 
 - `Potencia.lean` - Construcción de conjunto potencia
 
-### **Nivel 4: Extensiones**
+### **Nivel 4: Extensiones del Par Ordenado**
 
 - `OrderedPair.lean` - Teoremas adicionales sobre pares ordenados
 
-### **Nivel 5: Estructuras Algebraicas**
+### **Nivel 5: Producto Cartesiano**
+
+- `CartesianProduct.lean` - Producto cartesiano A ×ₛ B
+
+### **Nivel 6: Relaciones**
+
+- `Relations.lean` - Relaciones, equivalencias, órdenes, clases de equivalencia
+
+### **Nivel 7: Estructuras Algebraicas**
 
 - `BooleanAlgebra.lean` - Teoremas booleanos
 - `SetOrder.lean` - Estructura de orden y retículo
 - `SetStrictOrder.lean` - Orden estricto
 
-### **Nivel 6: Integración**
+### **Nivel 8: Integración**
 
 - `ZfcSetTheory.lean` - Módulo principal que exporta todo
 
@@ -319,6 +358,44 @@ export SetUniverse.PowerSetAxiom (
 ```lean
 export SetUniverse.OrderedPairExtensions (
   OrderedPair_eq_of, OrderedPair_eq_iff, OrderedPair_in_PowerSet
+)
+```
+
+### CartesianProduct.lean
+
+```lean
+export SetUniverse.CartesianProduct (
+  CartesianProduct,
+  CartesianProduct_is_specified,
+  OrderedPair_mem_CartesianProduct,
+  CartesianProduct_empty_left,
+  CartesianProduct_empty_right,
+  CartesianProduct_mono,
+  CartesianProduct_distrib_union_left,
+  CartesianProduct_distrib_union_right,
+  CartesianProduct_distrib_inter_left,
+  CartesianProduct_distrib_inter_right
+)
+```
+
+### Relations.lean
+
+```lean
+export SetUniverse.Relations (
+    isRelationOn, isRelationFrom, Related,
+    isReflexiveOn, isIrreflexiveOn, isSymmetricOn, isAntiSymmetricOn, isAsymmetricOn,
+    isTransitiveOn, isConnectedOn, isStronglyConnectedOn, isTrichotomousOn,
+    isEquivalenceOn, isPreorderOn, isPartialOrderOn, isLinearOrderOn,
+    isStrictOrderOn, isStrictPartialOrderOn, isStrictLinearOrderOn,
+    isWellFoundedOn, isWellOrderOn,
+    EqClass, QuotientSet, IdRel, InverseRel,
+    Asymmetric_implies_Irreflexive, StrictOrder_is_Irreflexive,
+    StrictPartialOrder_is_Irreflexive, Irreflexive_Transitive_implies_Asymmetric,
+    Asymmetric_iff_Irreflexive_and_AntiSymmetric,
+    PartialOrder_Connected_is_LinearOrder, LinearOrder_comparable,
+    mem_IdRel, IdRel_is_Equivalence, mem_EqClass, EqClass_mem_self,
+    mem_EqClass_of_Related, Related_of_mem_EqClass, mem_EqClass_iff,
+    EqClass_eq_iff, EqClass_eq_or_disjoint
 )
 ```
 

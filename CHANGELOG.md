@@ -9,8 +9,27 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ### En desarrollo
 
-- Producto cartesiano A × B
-- Teoremas adicionales de álgebra booleana (distributividad, De Morgan)
+- Composición de funciones
+- Función inversa para funciones biyectivas
+- N-tuplas
+
+---
+
+## [0.7.0] - 2026-02-07
+
+### Añadido
+
+- **Relations.lean**: Nuevo módulo completo de relaciones
+  - Propiedades: `isReflexiveOn`, `isSymmetricOn`, `isTransitiveOn`, etc.
+  - Tipos: equivalencia, preorden, orden parcial, orden lineal, orden estricto
+  - Relaciones bien fundadas y buenos órdenes
+  - Construcciones: `EqClass`, `QuotientSet`, `IdRel`, `InverseRel`
+  - ~20 teoremas sobre propiedades de relaciones y clases de equivalencia
+
+### Cambiado
+
+- **CartesianProduct.lean**: Renombrado namespace `CartesianProductAxiom` → `CartesianProduct`
+  (no es un axioma, es una construcción derivada)
 
 ---
 

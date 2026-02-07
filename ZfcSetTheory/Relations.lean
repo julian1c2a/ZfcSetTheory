@@ -10,7 +10,7 @@ import ZfcSetTheory.Existence
 import ZfcSetTheory.Specification
 import ZfcSetTheory.Pairing
 import ZfcSetTheory.Union
-import ZfcSetTheory.Potencia
+import ZfcSetTheory.PowerSet
 import ZfcSetTheory.OrderedPair
 import ZfcSetTheory.CartesianProduct
 
@@ -230,6 +230,51 @@ namespace SetUniverse
         exact hRefl x hxA
       · exact hConn x y hxA hyA heq
 
+    /-- A strict order with connectivity is trichotomous -/
+    theorem StrictOrder_Connected_is_Trichotomous (R A : U)
+        (hStrict : isStrictOrderOn R A) (hConn : isConnectedOn R A) :
+        isTrichotomousOn R A := by
+      intro x y hxA hyA
+      have hIrr := hStrict.2.1
+      have hTrans := hStrict.2.2
+      -- Derive asymmetry from irreflexivity and transitivity
+      have hAsym := Irreflexive_Transitive_implies_Asymmetric R A hIrr hTrans
+      by_cases heq : x = y
+      · -- Case x = y: middle option (neither xRy nor yRx)
+        right; left
+        subst heq
+        exact ⟨fun h => hIrr x hxA h, rfl, fun h => hIrr x hxA h⟩
+      · -- Case x ≠ y: by connectivity, either xRy or yRx
+        cases hConn x y hxA hyA heq with
+        | inl hxy =>
+          -- xRy holds, so by asymmetry yRx doesn't hold
+          left
+          exact ⟨hxy, heq, hAsym x y hxA hyA hxy⟩
+        | inr hyx =>
+          -- yRx holds, so by asymmetry xRy doesn't hold
+          right; right
+          exact ⟨hAsym y x hyA hxA hyx, heq, hyx⟩
+
+    /-- A strict linear order is equivalent to a strict order that is connected -/
+    theorem StrictLinearOrder_iff_StrictOrder_Connected (R A : U) :
+        isStrictLinearOrderOn R A ↔ isStrictOrderOn R A ∧ isConnectedOn R A := by
+      constructor
+      · intro h
+        have hStrict := h.1
+        have hTrich := h.2
+        constructor
+        · exact hStrict
+        · -- Derive connectivity from trichotomy
+          intro x y hxA hyA hneq
+          cases hTrich x y hxA hyA with
+          | inl h1 => left; exact h1.1
+          | inr h2 =>
+            cases h2 with
+            | inl h2a => exact absurd h2a.2.1 hneq
+            | inr h2b => right; exact h2b.2.2
+      · intro h
+        exact ⟨h.1, StrictOrder_Connected_is_Trichotomous R A h.1 h.2⟩
+
     /-! ### Membership characterization for IdRel -/
 
     /-- Membership in identity relation -/
@@ -427,6 +472,8 @@ export SetUniverse.Relations (
     Asymmetric_iff_Irreflexive_and_AntiSymmetric
     PartialOrder_Connected_is_LinearOrder
     LinearOrder_comparable
+    StrictOrder_Connected_is_Trichotomous
+    StrictLinearOrder_iff_StrictOrder_Connected
     mem_IdRel
     IdRel_is_Equivalence
     mem_EqClass

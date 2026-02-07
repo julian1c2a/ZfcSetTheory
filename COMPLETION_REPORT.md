@@ -182,7 +182,81 @@ El proyecto implementa **6 axiomas de ZFC** con estructuras algebraicas completa
 
 ---
 
-### 9. BooleanAlgebra.lean - Álgebra Booleana ✅
+### 9. CartesianProduct.lean - Producto Cartesiano ✅
+
+**Dependencias:** OrderedPair.lean
+
+**Definiciones:**
+
+- `CartesianProduct (×ₛ)` - Producto cartesiano A ×ₛ B
+
+**Teoremas principales:**
+
+- `CartesianProduct_is_specified` - p ∈ A ×ₛ B ↔ isOrderedPair p ∧ fst p ∈ A ∧ snd p ∈ B
+- `OrderedPair_mem_CartesianProduct` - ⟨a, b⟩ ∈ A ×ₛ B ↔ a ∈ A ∧ b ∈ B
+- `CartesianProduct_empty_left` - ∅ ×ₛ B = ∅
+- `CartesianProduct_empty_right` - A ×ₛ ∅ = ∅
+- `CartesianProduct_mono` - A ⊆ A' → B ⊆ B' → A ×ₛ B ⊆ A' ×ₛ B'
+- `CartesianProduct_distrib_union_left` - (A ∪ B) ×ₛ C = (A ×ₛ C) ∪ (B ×ₛ C)
+- `CartesianProduct_distrib_union_right` - A ×ₛ (B ∪ C) = (A ×ₛ B) ∪ (A ×ₛ C)
+- `CartesianProduct_distrib_inter_left` - (A ∩ B) ×ₛ C = (A ×ₛ C) ∩ (B ×ₛ C)
+- `CartesianProduct_distrib_inter_right` - A ×ₛ (B ∩ C) = (A ×ₛ B) ∩ (A ×ₛ C)
+
+**Teoremas:** 10
+
+---
+
+### 10. Relations.lean - Relaciones ✅
+
+**Dependencias:** CartesianProduct.lean
+
+**Definiciones (propiedades de relaciones):**
+
+- `isRelationOn R A` - R ⊆ A ×ₛ A
+- `isRelationFrom R A B` - R ⊆ A ×ₛ B
+- `Related R x y` - ⟨x, y⟩ ∈ R
+- `isReflexiveOn`, `isIrreflexiveOn`
+- `isSymmetricOn`, `isAntiSymmetricOn`, `isAsymmetricOn`
+- `isTransitiveOn`
+- `isConnectedOn`, `isStronglyConnectedOn`, `isTrichotomousOn`
+
+**Definiciones (tipos de relaciones):**
+
+- `isEquivalenceOn` - Relación de equivalencia
+- `isPreorderOn` - Preorden
+- `isPartialOrderOn` - Orden parcial
+- `isLinearOrderOn` - Orden lineal (total)
+- `isStrictOrderOn` - Orden estricto
+- `isStrictPartialOrderOn` - Orden parcial estricto
+- `isStrictLinearOrderOn` - Orden lineal estricto
+- `isWellFoundedOn` - Relación bien fundada
+- `isWellOrderOn` - Buen orden
+
+**Construcciones:**
+
+- `EqClass a R A` - Clase de equivalencia de a
+- `QuotientSet A R` - Conjunto cociente A/R
+- `IdRel A` - Relación identidad
+- `InverseRel R` - Relación inversa R⁻¹
+
+**Teoremas principales:**
+
+- `Asymmetric_implies_Irreflexive` - Asimetría implica irreflexividad
+- `Irreflexive_Transitive_implies_Asymmetric` - Irrefl. + Trans. implica asimetría
+- `Asymmetric_iff_Irreflexive_and_AntiSymmetric` - Equivalencia con trans.
+- `LinearOrder_comparable` - En orden lineal, dos elementos son comparables
+- `mem_IdRel` - Caracterización de la relación identidad
+- `IdRel_is_Equivalence` - IdRel es relación de equivalencia
+- `mem_EqClass` - Caracterización de clase de equivalencia
+- `EqClass_mem_self` - a ∈ [a]
+- `EqClass_eq_iff` - [a] = [b] ↔ (a, b) ∈ R
+- `EqClass_eq_or_disjoint` - Las clases son iguales o disjuntas
+
+**Teoremas:** ~20
+
+---
+
+### 11. BooleanAlgebra.lean - Álgebra Booleana ✅
 
 **Teoremas principales:**
 
@@ -199,7 +273,7 @@ El proyecto implementa **6 axiomas de ZFC** con estructuras algebraicas completa
 
 ---
 
-### 10. SetOrder.lean - Orden Parcial y Retículos ✅
+### 12. SetOrder.lean - Orden Parcial y Retículos ✅
 
 **Definiciones:**
 
@@ -218,7 +292,7 @@ El proyecto implementa **6 axiomas de ZFC** con estructuras algebraicas completa
 
 ---
 
-### 11. SetStrictOrder.lean - Orden Estricto ✅
+### 13. SetStrictOrder.lean - Orden Estricto ✅
 
 **Teoremas:**
 
@@ -236,9 +310,9 @@ El proyecto implementa **6 axiomas de ZFC** con estructuras algebraicas completa
 | Métrica | Valor |
 |---------|-------|
 | **Axiomas ZFC** | 6 / 9 (67%) |
-| **Módulos Lean** | 11 |
-| **Teoremas totales** | ~180 |
-| **Líneas de código** | ~3500 |
+| **Módulos Lean** | 13 |
+| **Teoremas totales** | ~210 |
+| **Líneas de código** | ~4000 |
 | **Dependencias externas** | 0 (solo Init.Classical) |
 
 ---
@@ -258,14 +332,20 @@ El proyecto implementa **6 axiomas de ZFC** con estructuras algebraicas completa
 - ✅ Unión familiar (⋃ C)
 - ✅ Intersección familiar (⋂ C)
 - ✅ Conjunto potencia (𝒫 A)
-- ⏳ Producto cartesiano (A × B)
+- ✅ Producto cartesiano (A ×ₛ B)
 
 ### Relaciones
 
 - ✅ Subconjunto (⊆, ⊂)
 - ✅ Disjuntos (⟂)
-- ✅ Reflexivas, simétricas, transitivas
+- ✅ Relaciones R ⊆ A ×ₛ A
+- ✅ Reflexivas, simétricas, transitivas, antisimétricas, asimétricas
 - ✅ Relaciones de equivalencia
+- ✅ Clases de equivalencia y conjuntos cociente
+- ✅ Preordenes, órdenes parciales, órdenes lineales
+- ✅ Órdenes estrictos
+- ✅ Relaciones bien fundadas y buenos órdenes
+- ✅ Relación identidad, relación inversa
 
 ### Funciones
 

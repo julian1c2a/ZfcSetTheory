@@ -49,20 +49,52 @@ notation:70 A:71 " ×ₛ " B:71 => CartesianProduct A B
 
 ## 🔧 Prioridad Media
 
-### 3. Relaciones como Subconjuntos del Producto Cartesiano
+### 3. ~~Relaciones como Subconjuntos del Producto Cartesiano~~ ✅ COMPLETADO
 
-**Objetivo**: Formalizar relaciones binarias R ⊆ A × B.
+**Implementado en Relations.lean**:
 
 ```lean
-def isRelationOn (R A B : U) : Prop := R ⊆ A × B
+def isRelationOn (R A : U) : Prop := R ⊆ (A ×ₛ A)
+def isRelationFrom (R A B : U) : Prop := R ⊆ (A ×ₛ B)
+def Related (R x y : U) : Prop := ⟨x, y⟩ ∈ R
 ```
 
-**Teoremas a demostrar**:
+**Propiedades de relaciones implementadas**:
 
-- [ ] `domain_subset`: domain(R) ⊆ A
-- [ ] `range_subset`: range(R) ⊆ B
-- [ ] `relation_composition`: Composición de relaciones R ∘ S
-- [ ] `inverse_relation`: R⁻¹ para relaciones
+- [x] `isReflexiveOn`, `isIrreflexiveOn`
+- [x] `isSymmetricOn`, `isAntiSymmetricOn`, `isAsymmetricOn`
+- [x] `isTransitiveOn`
+- [x] `isConnectedOn`, `isStronglyConnectedOn`, `isTrichotomousOn`
+
+**Tipos de relaciones compuestas**:
+
+- [x] `isEquivalenceOn` - Relación de equivalencia
+- [x] `isPreorderOn` - Preorden
+- [x] `isPartialOrderOn` - Orden parcial
+- [x] `isLinearOrderOn` - Orden lineal (total)
+- [x] `isStrictOrderOn` - Orden estricto
+- [x] `isStrictPartialOrderOn` - Orden parcial estricto
+- [x] `isStrictLinearOrderOn` - Orden lineal estricto
+- [x] `isWellFoundedOn` - Relación bien fundada
+- [x] `isWellOrderOn` - Buen orden
+
+**Construcciones de relaciones**:
+
+- [x] `EqClass a R A` - Clase de equivalencia
+- [x] `QuotientSet A R` - Conjunto cociente
+- [x] `IdRel A` - Relación identidad
+- [x] `InverseRel R` - Relación inversa
+
+**Teoremas demostrados**:
+
+- [x] `Asymmetric_implies_Irreflexive`
+- [x] `StrictOrder_is_Irreflexive`
+- [x] `Irreflexive_Transitive_implies_Asymmetric`
+- [x] `Asymmetric_iff_Irreflexive_and_AntiSymmetric`
+- [x] `LinearOrder_comparable`
+- [x] `mem_IdRel`, `IdRel_is_Equivalence`
+- [x] `mem_EqClass`, `EqClass_mem_self`
+- [x] `EqClass_eq_iff`, `EqClass_eq_or_disjoint`
 
 ---
 
@@ -143,7 +175,7 @@ axiom Choice : ∀ (A : U),
 | Álgebra Booleana | Completo | ▓▓▓▓▓▓▓▓▓ 100% |
 | Par Ordenado | Completo | ▓▓▓▓▓▓▓▓▓ 100% |
 | Producto Cartesiano | Completo | ▓▓▓▓▓▓▓▓▓ 100% |
-| Relaciones | Básico | ▓▓▓▓░░░░░ 40% |
+| Relaciones | Completo | ▓▓▓▓▓▓▓▓▓ 100% |
 | Funciones | Básico | ▓▓▓▓░░░░░ 40% |
 
 ---
@@ -156,11 +188,12 @@ axiom Choice : ∀ (A : U),
 - [x] Extensiones del Par Ordenado
 - [x] Producto Cartesiano
 - [x] Completar Álgebra de Boole
+- [x] Relaciones formales (Relations.lean)
 
 ### Fase 2: Estructuras
 
-- [ ] Relaciones sobre productos cartesianos
-- [ ] Funciones mejoradas
+- [x] Relaciones sobre productos cartesianos
+- [ ] Funciones mejoradas (composición, inversa)
 - [ ] N-tuplas
 
 ### Fase 3: Infinito

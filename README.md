@@ -36,6 +36,8 @@ ZfcSetTheory/
 ├── Union.lean               # Axioma de Unión + ⋃, ∪, △
 ├── Potencia.lean            # Axioma de Potencia (𝒫)
 ├── OrderedPair.lean         # Extensiones del par ordenado
+├── CartesianProduct.lean    # Producto Cartesiano A ×ₛ B
+├── Relations.lean           # Relaciones: equivalencia, orden parcial, orden lineal
 ├── BooleanAlgebra.lean      # Teoremas de álgebra booleana
 ├── SetOrder.lean            # Orden parcial y retículos
 ├── SetStrictOrder.lean      # Orden estricto
@@ -59,11 +61,16 @@ ZfcSetTheory/
 - **Unión familiar**: `⋃ C`
 - **Intersección familiar**: `⋂ C`
 - **Conjunto potencia**: `𝒫 A`
+- **Producto cartesiano**: `A ×ₛ B`
 
 ### Relaciones y Funciones
 
-- Relaciones binarias (reflexiva, simétrica, transitiva, etc.)
+- Relaciones binarias R ⊆ A ×ₛ A
+- Propiedades: reflexiva, simétrica, transitiva, antisimétrica, asimétrica
 - Relaciones de equivalencia
+- Clases de equivalencia y conjuntos cociente
+- Órdenes parciales, lineales y estrictos
+- Órdenes bien fundados
 - Funciones (parciales, totales)
 - Funciones inyectivas, suryectivas, biyectivas
 - Dominio y rango

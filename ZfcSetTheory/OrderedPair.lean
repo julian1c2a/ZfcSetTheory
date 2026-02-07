@@ -5,7 +5,7 @@ import ZfcSetTheory.Existence
 import ZfcSetTheory.Specification
 import ZfcSetTheory.Pairing
 import ZfcSetTheory.Union
-import ZfcSetTheory.Potencia
+import ZfcSetTheory.PowerSet
 
 namespace SetUniverse
   open Classical
