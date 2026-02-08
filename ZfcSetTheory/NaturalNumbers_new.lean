@@ -1,18 +1,20 @@
 /-
   # Natural Numbers (von Neumann ordinals)
 
-  This file defines the natural numbers as von Neumann ordinals using the Axiom of Infinity.
+  This file defines each natural number as a von Neumann ordinal.
 
   ## Main definitions
   - `σ` : Successor function σ(n) = n ∪ {n}
-  - `isTransitive` : A set x is transitive if ∀ y ∈ x, y ⊆ x
-  - `isInductive` : A set I is inductive if ∅ ∈ I and ∀ x ∈ I, σ(x) ∈ I
-  - `ω` : The set of natural numbers (smallest inductive set)
+  - `is_natural_number` n ↔ n = ∅ ∨ ∃ m, `is_natural_number`m  ∧ n = σ(m)
+  - `isTransitive` x :
+    - ∅ ∈ x
+    - ∀ y ∈ x, y ⊆ x
+    - ∀ y ∈ x, `isTransitive` y
+  - `is_natural_number` n → `isTransitive` n
+  - `isInductive` : A set I is inductive if I is closed under transitivity
 
   ## Main theorems
-  - `Infinity` : Axiom of Infinity - there exists an inductive set
-  - `ω_is_inductive` : ω is inductive
-  - `ω_elements_transitive` : Every element of ω is a transitive set
+  - `each_elements_of_transitive_set` : Every element of a transitive set is a transitive set
   - `ω_no_self_membership` : No element of ω contains itself
   - `σ_injective_on_ω` : σ is injective on ω
   - `induction_principle` : Induction on ω
