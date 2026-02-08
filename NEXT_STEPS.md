@@ -84,9 +84,35 @@ notation:70 A:71 " ×ₛ " B:71 => CartesianProduct A B
 
 ---
 
+### 6. ~~Teoría de Cardinalidad~~ ✅ COMPLETADO
+
+**Implementado en Cardinality.lean**:
+
+**Teorema de Cantor:**
+
+- [x] `DiagonalSet f A` - Conjunto diagonal { x ∈ A | x ∉ f⦅x⦆ }
+- [x] `DiagonalSet_not_in_range` - D ∉ rango(f)
+- [x] `cantor_no_surjection` - No existe suryección f: A → 𝒫(A)
+- [x] `cantor_no_bijection` - No existe biyección A ↔ 𝒫(A)
+- [x] `singletonMap` - Mapa canónico x ↦ {x}
+- [x] `singletonMap_is_injective` - El mapa singleton es inyectivo
+- [x] `cantor_strict_dominance` - A se inyecta en 𝒫(A) pero no viceversa
+- [x] `cantor_not_equipotent` - A y 𝒫(A) no son equipotentes
+
+**Teorema de Cantor-Schröder-Bernstein:**
+
+- [x] `SetDiff A B` - Diferencia A ∖ B
+- [x] `isCSB_closed f g A B C` - C es cerrado bajo g ∘ f
+- [x] `CSB_core f g A B` - Núcleo cerrado mínimo
+- [x] `CSB_bijection f g A B` - Biyección construida
+- [x] `CSB_bijection_is_bijection` - La construcción produce biyección
+- [x] `cantor_schroeder_bernstein` - Si ∃ inyecciones f: A → B y g: B → A, entonces ∃ biyección A ↔ B
+
+---
+
 ## 🔧 Prioridad Media
 
-### 6. Funciones como Relaciones Funcionales
+### 7. Funciones como Relaciones Funcionales
 
 **Mejoras sobre lo existente en Pairing.lean**:
 
@@ -99,7 +125,7 @@ notation:70 A:71 " ×ₛ " B:71 => CartesianProduct A B
 
 ---
 
-### 7. N-tuplas y Productos Finitos
+### 8. N-tuplas y Productos Finitos
 
 ```lean
 -- Ternos
@@ -113,7 +139,7 @@ def FiniteProduct (sets : List U) : U := ...
 
 ## 📚 Prioridad Baja (Futuro)
 
-### 8. Axioma del Infinito
+### 9. Axioma del Infinito
 
 ```lean
 axiom Infinity : ∃ (I : U), ∅ ∈ I ∧ ∀ x, x ∈ I → x ∪ {x} ∈ I
@@ -127,7 +153,7 @@ axiom Infinity : ∃ (I : U), ∅ ∈ I ∧ ∀ x, x ∈ I → x ∪ {x} ∈ I
 
 ---
 
-### 9. Axioma de Reemplazo
+### 10. Axioma de Reemplazo
 
 ```lean
 axiom Replacement : ∀ (A : U) (F : U → U), 
@@ -137,7 +163,7 @@ axiom Replacement : ∀ (A : U) (F : U → U),
 
 ---
 
-### 10. Axioma de Fundación (Regularidad)
+### 11. Axioma de Fundación (Regularidad)
 
 ```lean
 axiom Foundation : ∀ (A : U), A ≠ ∅ → ∃ x, x ∈ A ∧ x ∩ A = ∅
@@ -145,7 +171,7 @@ axiom Foundation : ∀ (A : U), A ≠ ∅ → ∃ x, x ∈ A ∧ x ∩ A = ∅
 
 ---
 
-### 11. Axioma de Elección
+### 12. Axioma de Elección
 
 ```lean
 axiom Choice : ∀ (A : U), 
@@ -167,6 +193,7 @@ axiom Choice : ∀ (A : U),
 | Par Ordenado | Completo | ▓▓▓▓▓▓▓▓▓ 100% |
 | Producto Cartesiano | Completo | ▓▓▓▓▓▓▓▓▓ 100% |
 | Relaciones | Completo | ▓▓▓▓▓▓▓▓▓ 100% |
+| Cardinalidad (Cantor, CSB) | Completo | ▓▓▓▓▓▓▓▓▓ 100% |
 | Funciones | Básico | ▓▓▓▓░░░░░ 40% |
 
 ---
@@ -184,12 +211,13 @@ axiom Choice : ∀ (A : U),
 - [x] Distributivas generalizadas
 - [x] Álgebra de Boole atómica
 
-### Fase 2: Estructuras (En progreso) (En progreso)
+### Fase 2: Estructuras (En progreso)
 
 - [x] Relaciones sobre productos cartesianos
 - [x] Leyes de De Morgan generalizadas
 - [x] Leyes distributivas generalizadas  
 - [x] Álgebra de Boole atómica
+- [x] Teoría de Cardinalidad (Cantor, CSB)
 - [ ] Funciones mejoradas (composición, inversa)
 - [ ] N-tuplas
 

@@ -19,3 +19,4 @@ import ZfcSetTheory.SetStrictOrder
 import ZfcSetTheory.AtomicBooleanAlgebra
 import ZfcSetTheory.Functions
 import ZfcSetTheory.Cardinality
+import ZfcSetTheory.NaturalNumbers

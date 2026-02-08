@@ -23,6 +23,7 @@ ZfcSetTheory/
 ├── AtomicBooleanAlgebra.lean       # Álgebra de Boole atómica
 ├── SetOrder.lean                   # Orden parcial y retículos (completo)
 ├── SetStrictOrder.lean             # Orden estricto (completo)
+├── Cardinality.lean                # Teoremas de Cantor y Cantor-Schröder-Bernstein
 └── ZfcSetTheory.lean               # Módulo principal
 ```
 
@@ -80,7 +81,11 @@ graph TD
     Pa --> BA
     U --> BA
     
-    %% Nivel 9: Módulo principal
+    %% Nivel 9: Cardinalidad
+    Rel --> Card[Cardinality.lean]
+    Pot --> Card
+    
+    %% Nivel 10: Módulo principal
     E --> Z[ZfcSetTheory.lean]
     Ex --> Z
     S --> Z
@@ -93,6 +98,7 @@ graph TD
     BA --> Z
     SO --> Z
     SSO --> Z
+    Card --> Z
     
     %% Estilos
     classDef axiom fill:#e1f5fe,stroke:#01579b,stroke-width:2px
@@ -267,6 +273,16 @@ namespace SetUniverse.SetStrictOrder
   -- Relaciones entre orden parcial y estricto
 ```
 
+### 18. **SetUniverse.Cardinality**
+
+```lean
+namespace SetUniverse.Cardinality
+  -- Teoría de Cardinalidad
+  -- Definiciones: DiagonalSet, SetDiff, singletonMap, CSB_core, CSB_bijection
+  -- Teoremas de Cantor: cantor_no_surjection, cantor_no_bijection
+  -- Teorema de Cantor-Schröder-Bernstein: cantor_schroeder_bernstein
+```
+
 ## Dependencias por Nivel
 
 ### **Nivel 0: Fundamentos**
@@ -308,6 +324,8 @@ namespace SetUniverse.SetStrictOrder
 - `GeneralizedDistributive.lean` - Distributivas generalizadas
 - `AtomicBooleanAlgebra.lean` - Álgebra de Boole atómica
 - `SetOrder.lean` - Estructura de orden y retículo
+- `SetStrictOrder.lean` - Orden estricto
+- `Cardinality.lean` - Teoremas de Cantor y Cantor-Schröder-Bernstein
 - `SetStrictOrder.lean` - Orden estricto
 
 ### **Nivel 8: Integración**
@@ -472,6 +490,22 @@ export SetUniverse.SetOrder (
 export SetUniverse.SetStrictOrder (
     strict_order_irreflexive, strict_order_asymmetric,
     strict_order_transitive, partial_to_strict_order
+)
+```
+
+### Cardinality.lean
+
+```lean
+export SetUniverse.Cardinality (
+    -- Teorema de Cantor
+    DiagonalSet, DiagonalSet_is_specified, DiagonalSet_not_in_range,
+    cantor_no_surjection, cantor_no_bijection,
+    singletonMap, singletonMap_is_specified, singletonMap_is_function,
+    singletonMap_is_injective, cantor_strict_dominance, cantor_not_equipotent,
+    -- Teorema de Cantor-Schröder-Bernstein
+    SetDiff, SetDiff_is_specified, isCSB_closed, CSB_core, CSB_core_is_specified,
+    CSB_bijection, CSB_bijection_is_specified, CSB_bijection_is_bijection,
+    cantor_schroeder_bernstein
 )
 ```
 

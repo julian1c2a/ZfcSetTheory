@@ -9,7 +9,7 @@
 
 ## 📊 Resumen Ejecutivo
 
-El proyecto implementa **6 axiomas de ZFC** con estructuras algebraicas completas (álgebra booleana, retículos, orden estricto).
+El proyecto implementa **6 axiomas de ZFC** con estructuras algebraicas completas (álgebra booleana, retículos, orden estricto) y teoría de cardinalidad (Cantor, CSB).
 
 ### Axiomas Implementados
 
@@ -387,14 +387,46 @@ El proyecto implementa **6 axiomas de ZFC** con estructuras algebraicas completa
 
 ---
 
+### 18. Cardinality.lean - Teoría de Cardinalidad ✅
+
+**Dependencias:** Functions.lean, PowerSet.lean
+
+**Definiciones:**
+
+- `DiagonalSet f A` - Conjunto diagonal { x ∈ A | x ∉ f⦅x⦆ }
+- `singletonMap A` - Mapa canónico x ↦ {x}
+- `SetDiff A B` - Diferencia A ∖ B
+- `isCSB_closed f g A B C` - C es cerrado bajo g ∘ f
+- `CSB_core f g A B` - Núcleo cerrado mínimo para CSB
+- `CSB_bijection f g A B` - Biyección construida para CSB
+
+**Teoremas principales (Cantor):**
+
+- `DiagonalSet_not_in_range` - D ∉ rango(f) para D = { x | x ∉ f⦅x⦆ }
+- `cantor_no_surjection` - No existe suryección f: A → 𝒫(A)
+- `cantor_no_bijection` - No existe biyección A ↔ 𝒫(A)
+- `singletonMap_is_injective` - El mapa x ↦ {x} es inyectivo
+- `cantor_strict_dominance` - A se inyecta en 𝒫(A) pero no viceversa
+- `cantor_not_equipotent` - A y 𝒫(A) no son equipotentes
+
+**Teoremas principales (Cantor-Schröder-Bernstein):**
+
+- `CSB_core_is_specified` - Caracterización del núcleo cerrado mínimo
+- `CSB_bijection_is_bijection` - La construcción CSB produce una biyección
+- `cantor_schroeder_bernstein` - Si ∃ inyecciones f: A → B y g: B → A, entonces ∃ biyección A ↔ B
+
+**Teoremas:** ~25
+
+---
+
 ## 📈 Estadísticas Globales
 
 | Métrica | Valor |
 |---------|-------|
 | **Axiomas ZFC** | 6 / 9 (67%) |
-| **Módulos Lean** | 17 |
-| **Teoremas totales** | ~260 |
-| **Líneas de código** | ~5000 |
+| **Módulos Lean** | 18 |
+| **Teoremas totales** | ~285 |
+| **Líneas de código** | ~5650 |
 | **Dependencias externas** | 0 (solo Init.Classical) |
 
 ---
@@ -447,6 +479,13 @@ El proyecto implementa **6 axiomas de ZFC** con estructuras algebraicas completa
 - ⏳ Composición
 - ⏳ Función inversa
 
+### Cardinalidad
+
+- ✅ Teorema de Cantor (no existe biyección A ↔ 𝒫(A))
+- ✅ Inyección canónica A → 𝒫(A) (mapa singleton)
+- ✅ Dominación estricta de 𝒫(A) sobre A
+- ✅ Teorema de Cantor-Schröder-Bernstein
+
 ---
 
 ## 🎯 Próximos Pasos
@@ -458,6 +497,8 @@ Ver [NEXT_STEPS.md](NEXT_STEPS.md) para la hoja de ruta completa.
 - ✅ Leyes de De Morgan generalizadas
 - ✅ Leyes distributivas generalizadas
 - ✅ Álgebra de Boole atómica
+- ✅ Teorema de Cantor
+- ✅ Teorema de Cantor-Schröder-Bernstein
 
 **Prioridad inmediata:**
 

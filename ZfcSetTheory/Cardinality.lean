@@ -83,8 +83,7 @@ namespace SetUniverse
       exact DiagonalSet_subset f A
 
     /-- Key lemma: The diagonal set is not in the range of any function f: A → 𝒫(A) -/
-    theorem DiagonalSet_not_in_range (f A : U)
-        (hf : isFunctionFromTo f A (𝒫 A)) :
+    theorem DiagonalSet_not_in_range (f A : U) :
         ¬∃ d, d ∈ A ∧ f⦅d⦆ = DiagonalSet f A := by
       intro hex
       obtain ⟨d, hd_A, hd_eq⟩ := hex
@@ -122,7 +121,7 @@ namespace SetUniverse
       -- f⦅d⦆ = DiagonalSet f A
       have hd_eq : f⦅d⦆ = DiagonalSet f A := apply_eq f d (DiagonalSet f A) hf.2.2 hd
       -- But this contradicts DiagonalSet_not_in_range
-      exact DiagonalSet_not_in_range f A hf ⟨d, hd_A, hd_eq⟩
+      exact DiagonalSet_not_in_range f A ⟨d, hd_A, hd_eq⟩
 
     /-- Corollary: There is no bijection from A to 𝒫(A) -/
     theorem cantor_no_bijection (f A : U) (hf : isFunctionFromTo f A (𝒫 A)) :
@@ -434,9 +433,9 @@ namespace SetUniverse
 
     /-- The CSB bijection is injective -/
     theorem CSB_bijection_is_injective (f g A B : U)
-        (hf : isFunctionFromTo f A B) (hg : isFunctionFromTo g B A)
-        (hf_inj : isInjective f) (hg_inj : isInjective g) :
-        isInjective (CSB_bijection f g A B) := by
+        (hf : isFunctionFromTo f A B) (hg : isFunctionFromTo g B A) (hf_inj : isInjective f) :
+        isInjective (CSB_bijection f g A B)
+        := by
       intro x₁ x₂ y hx₁y hx₂y
       rw [CSB_bijection_is_specified] at hx₁y hx₂y
       let C := CSB_core f g A B
@@ -492,7 +491,7 @@ namespace SetUniverse
     /-- The CSB bijection is surjective -/
     theorem CSB_bijection_is_surjective (f g A B : U)
         (hf : isFunctionFromTo f A B) (hg : isFunctionFromTo g B A)
-        (hf_inj : isInjective f) (hg_inj : isInjective g) :
+        (_ : isInjective f) (hg_inj : isInjective g) :
         isSurjectiveOnto (CSB_bijection f g A B) B := by
       intro y hy
       let C := CSB_core f g A B
@@ -600,7 +599,7 @@ namespace SetUniverse
         (hf_inj : isInjective f) (hg_inj : isInjective g) :
         isBijection (CSB_bijection f g A B) A B :=
       ⟨CSB_bijection_is_function f g A B hf hg hf_inj hg_inj,
-       CSB_bijection_is_injective f g A B hf hg hf_inj hg_inj,
+       CSB_bijection_is_injective f g A B hf hg hf_inj,
        CSB_bijection_is_surjective f g A B hf hg hf_inj hg_inj⟩
 
     /-- Cantor-Schröder-Bernstein Theorem -/

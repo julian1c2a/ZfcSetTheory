@@ -45,6 +45,7 @@ ZfcSetTheory/
 ├── AtomicBooleanAlgebra.lean    # Álgebra de Boole atómica (𝒫(A) es atómica)
 ├── SetOrder.lean                # Orden parcial y retículos
 ├── SetStrictOrder.lean          # Orden estricto
+├── Cardinality.lean             # Teoremas de Cantor y Cantor-Schröder-Bernstein
 └── ZfcSetTheory.lean            # Módulo raíz
 ```
 
@@ -85,6 +86,13 @@ ZfcSetTheory/
 - **Leyes distributivas generalizadas**: `X ∩ (⋃ F) = ⋃ { X ∩ Y | Y ∈ F }`
 - **Átomos en 𝒫(A)**: Los singletons son exactamente los átomos
 - **𝒫(A) es atómica**: Todo elemento no vacío contiene un átomo
+
+### Teoría de Cardinalidad
+
+- **Teorema de Cantor**: No existe biyección A → 𝒫(A)
+- **Inyección canónica**: El mapa x ↦ {x} es inyección A → 𝒫(A)
+- **Dominación estricta**: A se inyecta en 𝒫(A) pero no viceversa
+- **Teorema de Cantor-Schröder-Bernstein**: Si existen inyecciones f: A → B y g: B → A, entonces existe biyección A ↔ B
 
 ## 📦 Instalación
 
