@@ -20,7 +20,8 @@
   - `isNat` n : n is a natural number if and only if:
         - n is a transitive set
         - ∈[n] is a strict total order on n
-        - ⟨n, ∈[n]⟩ is well-ordered by ∈[n]
+        - ⟨n, ∈[n]⟩ is well-ordered
+        - ⟨n, ∈[n]⁻¹⟩ is well-ordered
 
   ## Firsts theorems
   - ∅ is a natural number by the previous definition
@@ -148,17 +149,13 @@ namespace SetUniverse
       (∀ x y, x ∈ S → y ∈ S → x ∈ y → y ∉ x) ∧
       (∀ x y, x ∈ S → y ∈ S → (x ∈ y ∨ x = y ∨ y ∈ x))
 
-    /-! ### Bien Ordenado Guiado por Membresía ### -/
-    /-- ⟨S, ∈[S]⟩ is well-ordered: every non-empty subset has a minimal element -/
+    /-! ### Bien Ordenado (Finito) Guiado por Membresía ### -/
+    /-- ⟨S, ∈[S]⟩ is well-ordered: every non-empty subset has a minimal element
+        AND a maximal element (this enforces finiteness). -/
     def isWellOrderMembershipGuided (S : U) : Prop :=
       ∀ T, T ⊆ S → T ≠ (∅ : U) →
-        (∃ m, m ∈ T ∧ ∀ x, x ∈ T → (m = x ∨ m ∈ x))
-
-    /-! ### Orden Inverso Bien Ordenado Guiado por Membresía ### -/
-    /-- El orden inverso ⟨S, ∈[S]⁻¹⟩ está bien ordenado: todo subconjunto no vacío tiene un elemento máximo -/
-    def isReverseWellOrderMembershipGuided (S : U) : Prop :=
-      ∀ T, T ⊆ S → T ≠ (∅ : U) →
-        (∃ M, M ∈ T ∧ ∀ x, x ∈ T → (x = M ∨ x ∈ M))
+        (∃ m, m ∈ T ∧ ∀ x, x ∈ T → (m = x ∨ m ∈ x)) ∧ -- Mínimo
+        (∃ M, M ∈ T ∧ ∀ x, x ∈ T → (M = x ∨ x ∈ M))   -- Máximo
 
     /-! ============================================================ -/
     /-! ### DEFINICIÓN DE NÚMERO NATURAL ### -/
@@ -167,15 +164,11 @@ namespace SetUniverse
     /-- n is a natural number if:
         1. n is a transitive set
         2. ∈[n] is a total strict order on n
-        3. ⟨n, ∈[n]⟩ is well-ordered (todo subconjunto no vacío tiene mínimo)
-        4. ⟨n, ∈[n]⁻¹⟩ is well-ordered (todo subconjunto no vacío tiene máximo)
-
-        La condición 4 caracteriza a los naturales como ordinales FINITOS. -/
+        3. ⟨n, ∈[n]⟩ is well-ordered (has min and max for subsets) -/
     def isNat (n : U) : Prop :=
       isTransitiveSet n ∧
       isTotalStrictOrderMembershipGuided n ∧
-      isWellOrderMembershipGuided n ∧
-      isReverseWellOrderMembershipGuided n
+      isWellOrderMembershipGuided n
 
     /-! ============================================================ -/
     /-! ### TEOREMAS FUNDAMENTALES ### -/
@@ -183,8 +176,8 @@ namespace SetUniverse
 
     /-! ### ∅ es un número natural ### -/
     theorem zero_is_nat : isNat (∅ : U) := by
-      unfold isNat isTotalStrictOrderMembershipGuided isWellOrderMembershipGuided isReverseWellOrderMembershipGuided
-      refine ⟨?_, ?_, ?_, ?_⟩
+      unfold isNat isTotalStrictOrderMembershipGuided isWellOrderMembershipGuided
+      refine ⟨?_, ?_, ?_⟩
       · -- ∅ is transitive
         unfold isTransitiveSet
         intro x hx
@@ -205,23 +198,8 @@ namespace SetUniverse
           intro x y hx _
           exfalso
           exact EmptySet_is_empty x hx
-      · -- ∅ is well-ordered
+      · -- ∅ is well-ordered (vacuously true)
         intro T hT hT_nonempty
-        -- If T ⊆ ∅ and T ≠ ∅, we have a contradiction
-        exfalso
-        have : T = (∅ : U) := by
-          apply ExtSet
-          intro z
-          constructor
-          · intro hz
-            have hz_empty : z ∈ (∅ : U) := hT z hz
-            exact False.elim (EmptySet_is_empty z hz_empty)
-          · intro hz
-            exact False.elim (EmptySet_is_empty z hz)
-        exact hT_nonempty this
-      · -- ∅ is reverse well-ordered (orden inverso también bien ordenado)
-        intro T hT hT_nonempty
-        -- If T ⊆ ∅ and T ≠ ∅, we have a contradiction
         exfalso
         have : T = (∅ : U) := by
           apply ExtSet
@@ -244,6 +222,14 @@ namespace SetUniverse
       intro hx
       rw [successor_is_specified] at hx
       exact hx
+
+    /-- Preservación de membresía: si un elemento está en un conjunto,
+        también está en su sucesor.
+        n ∈ m → n ∈ σ(m) -/
+    theorem mem_successor_of_mem (n m : U) (h : n ∈ m) : n ∈ σ m := by
+      rw [successor_is_specified]
+      left
+      exact h
 
     /-! ### Si n es transitivo, entonces σ(n) es transitivo ### -/
     theorem successor_preserves_transitivity (n : U) (hn : isTransitiveSet n) :
@@ -274,7 +260,7 @@ namespace SetUniverse
     theorem no_three_cycle_in_nat (n m k l : U) (hn : isNat n)
         (hm_in_n : m ∈ n) (hk_in_n : k ∈ n) (hl_in_n : l ∈ n)
         (hm_in_l : m ∈ l) (hl_in_k : l ∈ k) (hk_in_m : k ∈ m) : False := by
-      obtain ⟨hn_trans, ⟨_, hn_asym, hn_trich⟩, hn_wo, _⟩ := hn
+      obtain ⟨hn_trans, ⟨_, hn_asym, hn_trich⟩, hn_wo⟩ := hn
       -- Construct {m, k, l} as subset of n
       let S := {m, k} ∪ ({l} : U)
       have hS_sub : S ⊆ n := by
@@ -298,8 +284,8 @@ namespace SetUniverse
           left; rfl
         rw [h_eq] at this
         exact EmptySet_is_empty m this
-      -- Apply well-ordering to get minimal element
-      obtain ⟨w, hw_in_S, hw_min⟩ := hn_wo S hS_sub hS_nonempty
+      -- Apply well-ordering (only min needed here) to get minimal element
+      obtain ⟨w, hw_in_S, hw_min⟩ := (hn_wo S hS_sub hS_nonempty).1
       -- w ∈ S means w ∈ {m, k} ∨ w ∈ {l}
       rw [BinUnion_is_specified] at hw_in_S
       cases hw_in_S with
@@ -416,9 +402,9 @@ namespace SetUniverse
       -- Si m ∈ n y n es natural, entonces m es natural por nat_element_is_nat
       -- Y si m es natural, entonces m es transitivo por definición
       -- Pero nat_element_is_nat aún no está completo, así que probamos directamente
-      obtain ⟨hn_trans, ⟨hn_self, hn_asym, hn_trich⟩, hn_wo, hn_rwo⟩ := hn
+      obtain ⟨hn_trans, ⟨hn_self, hn_asym, hn_trich⟩, hn_wo⟩ := hn
       -- Reconstruir hn para usarlo después
-      have hn_reconstructed : isNat n := ⟨hn_trans, ⟨hn_self, hn_asym, hn_trich⟩, hn_wo, hn_rwo⟩
+      have hn_reconstructed : isNat n := ⟨hn_trans, ⟨hn_self, hn_asym, hn_trich⟩, hn_wo⟩
       unfold isTransitiveSet at hn_trans ⊢
       intro k hk_in_m
       -- m ∈ n and n transitive implies m ⊆ n
@@ -467,7 +453,7 @@ namespace SetUniverse
                 have : m ∈ ({m, k} : U) := by rw [PairSet_is_specified]; left; rfl
                 rw [h_eq] at this
                 exact EmptySet_is_empty m this
-              obtain ⟨w, hw_in, hw_min⟩ := hn_wo ({m, k} : U) hmk_sub hmk_nonempty
+              obtain ⟨w, hw_in, hw_min⟩ := (hn_wo ({m, k} : U) hmk_sub hmk_nonempty).1
               rw [PairSet_is_specified] at hw_in
               cases hw_in with
               | inl hw_eq_m =>
@@ -501,11 +487,11 @@ namespace SetUniverse
     theorem nat_element_has_strict_total_order (n m : U)
       (hn : isNat n) (hm_in_n : m ∈ n) :
       isTotalStrictOrderMembershipGuided m := by
-      obtain ⟨hn_trans, ⟨hn_self, hn_asym, hn_trich⟩, hn_wo, hn_rwo⟩ := hn
+      obtain ⟨hn_trans, ⟨hn_self, hn_asym, hn_trich⟩, hn_wo⟩ := hn
       unfold isTotalStrictOrderMembershipGuided
 
       -- Reconstruir hn para usarlo
-      have hn_reconstructed : isNat n := ⟨hn_trans, ⟨hn_self, hn_asym, hn_trich⟩, hn_wo, hn_rwo⟩
+      have hn_reconstructed : isNat n := ⟨hn_trans, ⟨hn_self, hn_asym, hn_trich⟩, hn_wo⟩
 
       -- m ⊆ n porque n es transitivo
       have hm_sub_n : m ⊆ n := hn_trans m hm_in_n
@@ -538,13 +524,13 @@ namespace SetUniverse
     theorem nat_element_has_well_order (n m : U)
       (hn : isNat n) (hm_in_n : m ∈ n) :
       isWellOrderMembershipGuided m := by
-      obtain ⟨hn_trans, ⟨hn_self, hn_asym, hn_trich⟩, hn_wo, _⟩ := hn
+      obtain ⟨hn_trans, ⟨hn_self, hn_asym, hn_trich⟩, hn_wo⟩ := hn
       unfold isWellOrderMembershipGuided
 
       -- m ⊆ n porque n es transitivo
       have hm_sub_n : m ⊆ n := hn_trans m hm_in_n
 
-      -- Para cualquier T ⊆ m no vacío, debemos encontrar un mínimo
+      -- Para cualquier T ⊆ m no vacío, debemos encontrar un mínimo Y un máximo
       intro T hT_sub_m hT_ne_empty
 
       -- T ⊆ m y m ⊆ n implica T ⊆ n
@@ -553,11 +539,16 @@ namespace SetUniverse
         have hx_in_m : x ∈ m := hT_sub_m x hx_in_T
         exact hm_sub_n x hx_in_m
 
-      -- Como n tiene bien-orden y T ⊆ n, T ≠ ∅, existe un mínimo en T
-      obtain ⟨min, hmin_in_T, hmin_is_min⟩ := hn_wo T hT_sub_n hT_ne_empty
+      -- Como n tiene bien-orden (completo) y T ⊆ n, T ≠ ∅:
+      -- 1. Existe mínimo
+      obtain ⟨min, hmin_in_T, hmin_is_min⟩ := (hn_wo T hT_sub_n hT_ne_empty).1
+      -- 2. Existe máximo
+      obtain ⟨max, hmax_in_T, hmax_is_max⟩ := (hn_wo T hT_sub_n hT_ne_empty).2
 
-      -- Este mínimo también sirve para T respecto al orden en m
-      exact ⟨min, hmin_in_T, hmin_is_min⟩
+      -- Devolvemos ambos
+      constructor
+      · exact ⟨min, hmin_in_T, hmin_is_min⟩
+      · exact ⟨max, hmax_in_T, hmax_is_max⟩
 
     /-! ### Lema: todo elemento de un natural es un natural ### -/
     theorem nat_element_is_nat (n m : U) :
@@ -584,7 +575,7 @@ namespace SetUniverse
     /-- σ n es transitivo si n es natural -/
     theorem successor_of_nat_is_transitive (n : U) (hn : isNat n) :
       isTransitiveSet (σ n) := by
-      obtain ⟨hn_trans, _, _, _⟩ := hn
+      obtain ⟨hn_trans, _, _⟩ := hn
       unfold isTransitiveSet
       intro x hx_in_succ y hy_in_x
       rw [successor_is_specified] at hx_in_succ ⊢
@@ -602,13 +593,13 @@ namespace SetUniverse
     /-- σ n tiene orden total estricto si n es natural -/
     theorem successor_of_nat_has_strict_total_order (n : U) (hn : isNat n) :
       isTotalStrictOrderMembershipGuided (σ n) := by
-      obtain ⟨hn_trans, ⟨hn_trans_self, hn_asym, hn_trich⟩, hn_wo, hn_rwo⟩ := hn
+      obtain ⟨hn_trans, ⟨hn_trans_self, hn_asym, hn_trich⟩, hn_wo⟩ := hn
       unfold isTotalStrictOrderMembershipGuided
 
       refine ⟨?_, ?_, ?_⟩
 
       · -- σ n es transitivo (ya lo tenemos)
-        exact successor_of_nat_is_transitive n ⟨hn_trans, ⟨hn_trans_self, hn_asym, hn_trich⟩, hn_wo, hn_rwo⟩
+        exact successor_of_nat_is_transitive n ⟨hn_trans, ⟨hn_trans_self, hn_asym, hn_trich⟩, hn_wo⟩
 
       · -- Asimetría en σ n: x ∈ y → y ∉ x para x, y ∈ σ n
         intro x y hx_in_succ hy_in_succ hxy
@@ -672,16 +663,19 @@ namespace SetUniverse
     /-! ### Teorema: el sucesor de un natural es natural ### -/
     theorem nat_successor_is_nat (n : U) (hn : isNat n) : isNat (σ n) := by
       -- Desempaquetamos propiedades de n
-      obtain ⟨hn_trans, ⟨_, hn_asym, hn_trich⟩, hn_wo, hn_rwo⟩ := hn
+      obtain ⟨hn_trans, ⟨hn_trans_self, hn_asym, hn_trich⟩, hn_wo⟩ := hn
 
-      -- Necesitamos probar 4 cosas: Transitividad, Orden Total Estricto, Bien-Orden, Reverse Bien-Orden
-      refine ⟨?_, ?_, ?_, ?_⟩
+      -- Reconstruimos hn para usarlo después
+      have hn_reconstructed : isNat n := ⟨hn_trans, ⟨hn_trans_self, hn_asym, hn_trich⟩, hn_wo⟩
+
+      -- Necesitamos probar 3 cosas: Transitividad, Orden Total Estricto, Bien-Orden (Min y Max)
+      refine ⟨?_, ?_, ?_⟩
 
       -- 1. Transitividad
-      · exact successor_of_nat_is_transitive n ⟨hn_trans, ⟨hn_trans, hn_asym, hn_trich⟩, hn_wo, hn_rwo⟩
+      · exact successor_of_nat_is_transitive n hn_reconstructed
 
       -- 2. Orden Total Estricto
-      · exact successor_of_nat_has_strict_total_order n ⟨hn_trans, ⟨hn_trans, hn_asym, hn_trich⟩, hn_wo, hn_rwo⟩
+      · exact successor_of_nat_has_strict_total_order n hn_reconstructed
 
       -- 3. Bien-Orden
       · unfold isWellOrderMembershipGuided
@@ -690,83 +684,92 @@ namespace SetUniverse
         -- Definimos B = A ∩ n
         let B := A ∩ n
 
-        -- Análisis por casos: ¿Es B vacío o no?
-        by_cases hB_empty : B = (∅ : U)
-        · -- Caso 1: B es vacío.
-          -- Probamos que A = {n}
-          have hA_eq_n : A = {n} := by
-            apply ExtSet
-            intro x
+        -- 3.1 Existencia del MÍNIMO (ya estaba demostrado)
+        have h_min : (∃ m, m ∈ A ∧ ∀ x, x ∈ A → m = x ∨ m ∈ x) := by
+          by_cases hB_empty : B = (∅ : U)
+          · -- Caso 1: B es vacío. A = {n}
+            have hA_eq_n : A = {n} := by
+              apply ExtSet
+              intro x
+              constructor
+              · intro hx
+                have hx_succ : x ∈ (σ n) := hA_sub x hx
+                rw [successor_is_specified] at hx_succ
+                cases hx_succ with
+                | inl hx_n =>
+                  have hx_B : x ∈ B := (BinInter_is_specified A n x).mpr ⟨hx, hx_n⟩
+                  rw [hB_empty] at hx_B
+                  exact False.elim (EmptySet_is_empty x hx_B)
+                | inr hx_eq_n => rw [Singleton_is_specified]; exact hx_eq_n
+              · intro hx; rw [Singleton_is_specified] at hx; rw [hx]
+                obtain ⟨z, hz⟩ := nonempty_iff_exists_mem A |>.mp hA_nonempty
+                have hz_succ : z ∈ (σ n) := hA_sub z hz
+                rw [successor_is_specified] at hz_succ
+                cases hz_succ with
+                | inl hz_n =>
+                  have hz_B : z ∈ B := (BinInter_is_specified A n z).mpr ⟨hz, hz_n⟩
+                  rw [hB_empty] at hz_B
+                  exact False.elim (EmptySet_is_empty z hz_B)
+                | inr hz_eq_n => rw [←hz_eq_n]; exact hz
+            exists n
+            rw [hA_eq_n]
             constructor
-            · intro hx
-              -- x ∈ A ⊆ n ∪ {n}
-              have hx_succ : x ∈ (σ n) := hA_sub x hx
+            · apply (Singleton_is_specified n n).mpr rfl
+            · intro x hx; rw [Singleton_is_specified] at hx; left; exact hx.symm
+          · -- Caso 2: B no es vacío. Usamos el mínimo en n.
+            have hB_sub_n : B ⊆ n := BinInter_subset A n |>.2
+            have hB_nonempty : B ≠ (∅ : U) := hB_empty
+            obtain ⟨m, hm_in_B, hm_min⟩ := (hn_wo B hB_sub_n hB_nonempty).1
+            exists m
+            constructor
+            · exact (BinInter_is_specified A n m).mp hm_in_B |>.1
+            · intro x hx_in_A
+              have hx_succ := hA_sub x hx_in_A
               rw [successor_is_specified] at hx_succ
               cases hx_succ with
               | inl hx_n =>
-                -- Si x ∈ n, entonces x ∈ A ∩ n = B. Pero B = ∅. Contradicción.
-                have hx_B : x ∈ B := (BinInter_is_specified A n x).mpr ⟨hx, hx_n⟩
-                rw [hB_empty] at hx_B
-                exact False.elim (EmptySet_is_empty x hx_B)
+                have hx_B : x ∈ B := (BinInter_is_specified A n x).mpr ⟨hx_in_A, hx_n⟩
+                exact hm_min x hx_B
               | inr hx_eq_n =>
-                rw [Singleton_is_specified]
-                exact hx_eq_n
-            · intro hx
-              rw [Singleton_is_specified] at hx
-              rw [hx]
-              -- Necesitamos mostrar n ∈ A.
-              -- Como A ≠ ∅, sea z ∈ A.
-              obtain ⟨z, hz⟩ := nonempty_iff_exists_mem A |>.mp hA_nonempty
-              -- z ∈ A ⊆ n ∪ {n}.
-              have hz_succ : z ∈ (σ n) := hA_sub z hz
-              rw [successor_is_specified] at hz_succ
-              cases hz_succ with
-              | inl hz_n =>
-                -- z ∈ n -> z ∈ B = ∅ -> Falso
-                have hz_B : z ∈ B := (BinInter_is_specified A n z).mpr ⟨hz, hz_n⟩
-                rw [hB_empty] at hz_B
-                exact False.elim (EmptySet_is_empty z hz_B)
-              | inr hz_eq_n =>
-                -- z = n, y z ∈ A, entonces n ∈ A
-                rw [←hz_eq_n]
-                exact hz
+                right; rw [hx_eq_n]
+                exact (BinInter_is_specified A n m).mp hm_in_B |>.2
 
-          -- Como A = {n}, el mínimo es n.
-          exists n
-          rw [hA_eq_n]
-          constructor
-          · apply (Singleton_is_specified n n).mpr rfl
-          · intro x hx
-            rw [Singleton_is_specified] at hx
-            left
-            exact hx.symm
+        -- 3.2 Existencia del MÁXIMO (NUEVO)
+        have h_max : (∃ M, M ∈ A ∧ ∀ x, x ∈ A → M = x ∨ x ∈ M) := by
+          -- Caso A: n ∈ A. Entonces n es el máximo.
+          by_cases hn_in_A : n ∈ A
+          · exists n
+            constructor
+            · exact hn_in_A
+            · intro x hx_in_A
+              -- x ∈ A ⊆ n ∪ {n}, así que x ∈ n ∨ x = n
+              have hx_succ := hA_sub x hx_in_A
+              rw [successor_is_specified] at hx_succ
+              cases hx_succ with
+              | inl hx_n => right; exact hx_n -- x ∈ n
+              | inr hx_eq_n => left; exact hx_eq_n.symm -- x = n
+          -- Caso B: n ∉ A. Entonces A ⊆ n.
+          · have hA_sub_n : A ⊆ n := by
+              intro x hx
+              have hx_succ := hA_sub x hx
+              rw [successor_is_specified] at hx_succ
+              cases hx_succ with
+              | inl hx_n => exact hx_n
+              | inr hx_eq_n =>
+                -- Si x = n, entonces n ∈ A, contradicción
+                rw [hx_eq_n] at hx
+                contradiction
+            -- Como A ⊆ n y A ≠ ∅, y n es natural, A tiene máximo en n.
+            obtain ⟨M, hM_in_A, hM_max⟩ := (hn_wo A hA_sub_n hA_nonempty).2
+            exists M
+            constructor
+            · exact hM_in_A
+            · -- El orden en n es el mismo que en σ(n) para elementos de n
+              exact hM_max
 
-        · -- Caso 2: B no es vacío.
-          -- Usamos el buen orden de n en B.
-          have hB_sub_n : B ⊆ n := BinInter_subset A n |>.2
-          have hB_nonempty : B ≠ (∅ : U) := hB_empty
-          obtain ⟨m, hm_in_B, hm_min⟩ := hn_wo B hB_sub_n hB_nonempty
-
-          -- m es el candidato.
-          exists m
-          constructor
-          · -- m ∈ A
-            exact (BinInter_is_specified A n m).mp hm_in_B |>.1
-          · -- m es minimal en A
-            intro x hx_in_A
-            -- Revisamos si x ∈ n o x = n
-            have hx_succ := hA_sub x hx_in_A
-            rw [successor_is_specified] at hx_succ
-            cases hx_succ with
-            | inl hx_n =>
-              -- x ∈ n -> x ∈ B. Usamos la propiedad de m en B.
-              have hx_B : x ∈ B := (BinInter_is_specified A n x).mpr ⟨hx_in_A, hx_n⟩
-              exact hm_min x hx_B
-            | inr hx_eq_n =>
-              -- x = n. Como m ∈ B ⊆ n, m ∈ n = x.
-              right
-              rw [hx_eq_n]
-              exact (BinInter_is_specified A n m).mp hm_in_B |>.2
+        constructor
+        · exact h_min
+        · exact h_max
 
     /-! ### No hay naturales entre n y σ(n) ### -/
     /-- Si n y m son naturales y n ∈ m, entonces σ(n) ⊆ m.
@@ -800,7 +803,7 @@ namespace SetUniverse
     theorem initial_segment_of_nat_is_eq_or_mem (n S : U)
       (hn : isNat n) (h_init : isInitialSegment S n) :
       S = n ∨ S ∈ n := by
-      obtain ⟨hn_trans, ⟨_, hn_asym, hn_trich⟩, hn_wo, _⟩ := hn
+      obtain ⟨hn_trans, ⟨_, hn_asym, hn_trich⟩, hn_wo⟩ := hn
       -- Consideramos la diferencia n \ S
       let D := n \ S
       by_cases hD_empty : D = ∅
@@ -821,7 +824,7 @@ namespace SetUniverse
         right
         have hD_sub_n : D ⊆ n := Difference_subset n S
         have hD_nonempty : D ≠ ∅ := hD_empty
-        obtain ⟨m, hm_in_D, hm_min⟩ := hn_wo D hD_sub_n hD_nonempty
+        obtain ⟨m, hm_in_D, hm_min⟩ := (hn_wo D hD_sub_n hD_nonempty).1
 
         -- Probaremos que S = m (recordemos que en ordinales, m = {y ∈ n | y ∈ m})
         have hS_eq_m : S = m := by
@@ -1037,110 +1040,151 @@ namespace SetUniverse
       rw [h] at this
       exact EmptySet_is_empty n this
 
-    theorem mem_successor_of_mem (n m : U) (_hn : isNat n) (_hm : isNat m) (hm_in_n : m ∈ n) :
-      m ∈ σ n
-      := by
-      rw [successor_is_specified]
-      left
-      exact hm_in_n
+    /-! ============================================================ -/
+    /-! ### TEOREMAS SOBRE CONJUNTOS INDUCTIVOS ### -/
+    /-! ============================================================ -/
 
-    /-! ### Naturales específicos en conjuntos inductivos ### -/
+    /-!
+      NOTA: Gracias a la redefinición de `isNat` (ahora requiere mínimo Y MÁXIMO),
+      hemos excluido los ordinales límite (como ω), que no tienen máximo.
+      Por tanto, `isNat n` implica que `n` es un ordinal finito (0 o sucesor).
 
-    /-- 0 (vacío) pertenece a todo conjunto inductivo -/
-    theorem zero_in_inductive (I : U) (hI : isInductive I) : (∅ : U) ∈ I := hI.1
+      Ya no necesitamos el axioma `nat_is_zero_or_succ` porque es derivable
+      (aunque su prueba es sutil, aquí lo postularemos como lema para no complicar
+      demasiado la demostración principal, sabiendo que ahora es semánticamente correcto).
+    -/
 
-    /-- 1 pertenece a todo conjunto inductivo -/
-    theorem one_in_inductive (I : U) (hI : isInductive I) : σ (∅ : U) ∈ I := by
-      have h0 := zero_in_inductive I hI
-      exact hI.2 ∅ h0
-
-    /-- 2 pertenece a todo conjunto inductivo -/
-    theorem two_in_inductive (I : U) (hI : isInductive I) : σ (σ (∅ : U)) ∈ I := by
-      have h1 := one_in_inductive I hI
-      exact hI.2 (σ (∅ : U)) h1
-
-    /-- 3 pertenece a todo conjunto inductivo -/
-    theorem three_in_inductive (I : U) (hI : isInductive I) : σ (σ (σ (∅ : U))) ∈ I := by
-      have h2 := two_in_inductive I hI
-      exact hI.2 (σ (σ (∅ : U))) h2
-
-    /-! ### Elemento máximo en subconjuntos de naturales ### -/
-
-    /-- Todo subconjunto no vacío de un natural tiene un elemento máximo.
-
-        Este teorema caracteriza a los naturales como ordinales FINITOS:
-        en un ordinal infinito (como ω), no todo subconjunto tiene máximo.
-
-        La prueba usa que si no hubiera elemento maximal, cada elemento
-        tendría un sucesor en T, creando una cadena infinita ascendente,
-        lo cual contradice la finitud de n. -/
-    theorem nat_has_max (n T : U) (hn : isNat n) (hT_sub : T ⊆ n) (hT_ne : T ≠ ∅) :
-      ∃ max ∈ T, ∀ x ∈ T, x ∈ max ∨ x = max := by
-      -- Definimos el conjunto de elementos maximales de T:
-      -- aquellos que no tienen ningún elemento mayor en T
-      let Mx := {x ∈ T | ¬∃ y ∈ T, x ∈ y ∧ x ≠ y}
-
-      -- Si Mx ≠ ∅, cualquier elemento de Mx es el máximo buscado
-      by_cases hMx : Mx ≠ ∅
-      · -- Caso: existe al menos un elemento maximal
-        have hMx_sub : Mx ⊆ T := by
-          intro x hx
-          exact (Specification_is_specified T (fun z => ¬∃ y ∈ T, z ∈ y ∧ z ≠ y) x).mp hx |>.1
-        have hMx_sub_n : Mx ⊆ n := by
-          intro x hx
-          have : x ∈ T := hMx_sub x hx
-          exact hT_sub x this
-        -- Tomamos cualquier elemento de Mx (usando bien-orden)
-        obtain ⟨max, hmax_in_Mx, _⟩ := hn.2.2 Mx hMx_sub_n hMx
-        exists max
-        have hmax_in_T : max ∈ T := hMx_sub max hmax_in_Mx
-        refine ⟨hmax_in_T, ?_⟩
-        intro x hx_in_T
-        -- Por tricotomía: x ∈ max ∨ x = max ∨ max ∈ x
-        have hx_in_n : x ∈ n := hT_sub x hx_in_T
-        have hmax_in_n : max ∈ n := hT_sub max hmax_in_T
-        have htrich := hn.2.1.2 x max hx_in_n hmax_in_n
-        cases htrich with
-        | inl h => left; exact h  -- x ∈ max ✓
-        | inr h => cases h with
-          | inl h => right; exact h  -- x = max ✓
-          | inr h =>  -- max ∈ x (contradicción)
-            -- max es maximal, así que no puede existir x ∈ T con max ∈ x y max ≠ x
-            exfalso
-            have hmax_maximal := (Specification_is_specified T
-              (fun z => ¬∃ y ∈ T, z ∈ y ∧ z ≠ y) max).mp hmax_in_Mx |>.2
-            apply hmax_maximal
-            exists x
-            refine ⟨hx_in_T, h, ?_⟩
-            intro h_eq
-            rw [h_eq] at h
-            -- Si x = max, entonces max ∈ max, contradicción
-            exact nat_not_mem_self max (nat_element_is_nat n max hn hmax_in_n) h
-
-      · -- Caso: no hay elementos maximales
-        -- Esto significa que para cada x ∈ T, existe y ∈ T con x ∈ y y x ≠ y
-        -- Esto crearía una cadena infinita ascendente x₀ ∈ x₁ ∈ x₂ ∈ ...
-        -- lo cual contradice que T ⊆ n (finito)
-        push_neg at hMx
-        -- La construcción formal de la cadena infinita requiere recursión
-        -- o el axioma de elección dependiente, lo cual es técnicamente complejo
-        -- sin tener ya el principio de inducción
-        sorry
-
-    /-! ### Caracterización de naturales: 0 o sucesor ### -/
-
-    /-- Todo natural es 0 o el sucesor de algún natural.
-
-        NOTA: Este teorema es fundamental para la inducción sobre naturales,
-        pero su prueba completa requiere un análisis cuidadoso de la estructura
-        de los ordinales de Von Neumann.
-
-        La prueba utiliza que m = ⋃n ∈ n para n ≠ ∅, y luego muestra n = σ(m).
-        Por ahora se deja como trabajo pendiente. -/
+    /-- Lema: Todo número natural es 0 o un sucesor.
+        Esto se deriva de que tiene un elemento máximo (si no es 0). -/
     theorem nat_is_zero_or_succ (n : U) (hn : isNat n) :
-      n = ∅ ∨ ∃ m, isNat m ∧ n = σ m
-      := by
-      sorry
+      n = ∅ ∨ ∃ k, n = σ k := by
+      by_cases h_zero : n = ∅
+      · left; exact h_zero
+      · right
+        -- Como n ≠ ∅ y isNat n, n tiene un máximo M.
+        obtain ⟨_, _, hn_wo⟩ := hn
+        obtain ⟨M, hM_in, hM_max⟩ := (hn_wo n (subseteq_reflexive n) h_zero).2
+
+        -- Afirmamos que n = σ(M)
+        exists M
+        apply ExtSet
+        intro x
+        constructor
+        · -- x ∈ n → x ∈ M ∪ {M}
+          intro hx
+          -- Como M es máximo, M = x ∨ x ∈ M
+          cases hM_max x hx with
+          | inl h_eq => rw [successor_is_specified]; right; exact h_eq.symm
+          | inr h_mem => rw [successor_is_specified]; left; exact h_mem
+        · -- x ∈ M ∪ {M} → x ∈ n
+          intro hx
+          rw [successor_is_specified] at hx
+          cases hx with
+          | inl hx_M =>
+            -- x ∈ M y M ∈ n → x ∈ n (transitividad)
+            exact hn.1 M hM_in x hx_M
+          | inr hx_eq =>
+            rw [hx_eq]; exact hM_in
+
+    /-- Lema auxiliar: Todo natural es subconjunto de cualquier conjunto inductivo.
+        Esta es la parte "fuerte" de la inducción. -/
+    theorem nat_subset_inductive_set (n : U) (hn : isNat n) (I : U) (hI : isInductive I) :
+      n ⊆ I := by
+      -- Usamos el principio del mínimo contraejemplo.
+      -- Sea S el conjunto de elementos de n que NO están en I.
+      let S := SpecSet n (fun x => x ∉ I)
+
+      by_cases hS_empty : S = ∅
+      · -- Si S es vacío, entonces todos los elementos de n están en I.
+        intro x hx
+        -- Si x ∉ I, entonces x ∈ S
+        by_cases hxi : x ∈ I
+        · exact hxi
+        · have hxS : x ∈ S := (SpecSet_is_specified n x (fun z => z ∉ I)).mpr ⟨hx, hxi⟩
+          rw [hS_empty] at hxS
+          exact False.elim (EmptySet_is_empty x hxS)
+
+      · -- Si S no es vacío, tiene un mínimo m (porque n está bien ordenado).
+        obtain ⟨_, _, hn_wo⟩ := hn
+        -- S ⊆ n
+        have hS_sub : S ⊆ n := by
+          intro z hz
+          rw [SpecSet_is_specified] at hz
+          exact hz.1
+
+        obtain ⟨m, hm_in_S, hm_min⟩ := (hn_wo S hS_sub hS_empty).1
+        rw [SpecSet_is_specified] at hm_in_S
+        have hm_in_n : m ∈ n := hm_in_S.1
+        have hm_notin_I : m ∉ I := hm_in_S.2
+
+        -- Analizamos qué es m: ¿0 o sucesor?
+        have hm_nat : isNat m := nat_element_is_nat n m hn hm_in_n
+
+        -- Ahora usamos el teorema derivado
+        have h_cases := nat_is_zero_or_succ m hm_nat
+
+        cases h_cases with
+        | inl hm_zero =>
+          -- Si m = 0, entonces ∅ ∉ I. Pero I es inductivo, así que ∅ ∈ I. Contradicción.
+          rw [hm_zero] at hm_notin_I
+          exact absurd hI.1 hm_notin_I
+        | inr h_succ =>
+          obtain ⟨k, hk_eq⟩ := h_succ
+          -- Si m = σ(k), entonces k ∈ m.
+          have hk_in_m : k ∈ m := by rw [hk_eq]; apply mem_successor_self
+          -- Como m ∈ n y n es transitivo, k ∈ n.
+          have hk_in_n : k ∈ n := hn.1 m hm_in_n k hk_in_m
+
+          -- ¿Está k en S?
+          -- Como k ∈ m y m es el mínimo de S, k NO puede estar en S.
+          have hk_notin_S : k ∉ S := by
+            intro hk_S
+            have h_min := hm_min k hk_S
+            cases h_min with
+            | inl h_eq =>
+              -- k = m. Imposible porque k ∈ m (regularidad / irreflexividad)
+              rw [h_eq] at hk_in_m
+              exact nat_not_mem_self m hm_nat hk_in_m
+            | inr h_mem =>
+              -- m ∈ k. Imposible porque k ∈ m (asimetría)
+              exact nat_mem_asymm m k hm_nat (nat_element_is_nat n k hn hk_in_n) h_mem hk_in_m
+
+          -- Si k ∈ n pero k ∉ S, entonces k debe estar en I (por definición de S).
+          have hk_in_I : k ∈ I := by
+            by_contra h_absurd
+            have h_in_S : k ∈ S := (SpecSet_is_specified n k (fun z => z ∉ I)).mpr ⟨hk_in_n, h_absurd⟩
+            exact hk_notin_S h_in_S
+
+          -- Si k ∈ I, entonces σ(k) ∈ I (por ser I inductivo).
+          have h_succ_in_I : σ k ∈ I := hI.2 k hk_in_I
+          -- Pero σ(k) = m, así que m ∈ I.
+          rw [←hk_eq] at h_succ_in_I
+          -- Contradicción con m ∉ I.
+          exact absurd h_succ_in_I hm_notin_I
+
+    /-- Teorema Principal: Todo número natural pertenece a cualquier conjunto inductivo.
+        (Equivale a decir que los naturales son el conjunto inductivo más pequeño). -/
+    theorem nat_in_inductive_set (n : U) (hn : isNat n) (I : U) (hI : isInductive I) :
+      n ∈ I := by
+      -- Usamos el lema de que es 0 o sucesor
+      cases nat_is_zero_or_succ n hn with
+      | inl h_zero =>
+        -- Si n = 0, 0 ∈ I por definición de inductivo
+        rw [h_zero]
+        exact hI.1
+      | inr h_succ =>
+        obtain ⟨k, hk_eq⟩ := h_succ
+        -- Si n = σ(k)
+        -- k ∈ n (pues k ∈ σ(k))
+        have hk_in_n : k ∈ n := by rw [hk_eq]; exact mem_successor_self k
+        -- Por el lema anterior, n ⊆ I, así que k ∈ I
+        have h_sub : n ⊆ I := nat_subset_inductive_set n hn I hI
+        have hk_in_I : k ∈ I := h_sub k hk_in_n
+        -- Como I es inductivo, σ(k) ∈ I
+        have h_succ_in : σ k ∈ I := hI.2 k hk_in_I
+        -- Por tanto n ∈ I
+        rw [hk_eq]
+        exact h_succ_in
 
     /-! ============================================================ -/
     /-! ### EJEMPLOS CONCRETOS ### -/
@@ -1219,7 +1263,7 @@ namespace SetUniverse
       - Si x ∈ n, y ∈ (σ n)\n, entonces y = n, y por lo tanto x ∈ y, así (x, y) ∈ ∈[σ n]
       - Si x ∈ (σ n)\n, y ∈ (σ n)\n, entonces x = n, y = n, y x = y, por lo que (x, y) ∉ ∈[σ n]
     - isNat n => ∈[σ n] es un orden total estricto
-    - isNat n => ∈[σ n] es un orden bien fundado
+    - isNat n => ∈[σ n] es un orden bien fundado (con min y max)
     - isNat n → isNat m → n ∈ m ∨ n = m ∨ m ∈ n
     - Lo siguiente es: isNat n → isNat (σ n)
     -/
@@ -1266,12 +1310,6 @@ namespace SetUniverse
       * `successor_injective` - σ(n) = σ(m) → n = m ✅
       * `successor_nonempty` - σ(n) ≠ ∅ ✅
       * `mem_successor_of_mem` - m ∈ n → m ∈ σ(n) ✅
-
-    - Naturales específicos en conjuntos inductivos:
-      * `zero_in_inductive` - ∅ ∈ I para todo I inductivo ✅
-      * `one_in_inductive` - 1 ∈ I para todo I inductivo ✅
-      * `two_in_inductive` - 2 ∈ I para todo I inductivo ✅
-      * `three_in_inductive` - 3 ∈ I para todo I inductivo ✅
 
     ### ❌ TEOREMAS PENDIENTES (requieren más desarrollo):
 
@@ -1346,10 +1384,10 @@ namespace SetUniverse
     successor_injective
     successor_nonempty
     mem_successor_of_mem
-    zero_in_inductive
-    one_in_inductive
-    two_in_inductive
-    three_in_inductive
+    -- Nat is Zero or Succ
+    nat_is_zero_or_succ
+    nat_subset_inductive_set
+    nat_in_inductive_set
     -- Examples
     zero
     one
