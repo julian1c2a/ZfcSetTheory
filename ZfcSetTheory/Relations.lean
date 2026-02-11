@@ -169,6 +169,21 @@ namespace SetUniverse
     noncomputable def InverseRel (R : U) : U :=
       SpecSet (𝒫 (𝒫 (⋃(⋃ R)))) (fun p => ⟨snd p, fst p⟩ ∈ R)
 
+    /-! ### Domain and Range for Relations -/
+
+    /-- Domain of a relation R (properly defined for relations):
+        domain_rel R = {x | ∃ y, ⟨x, y⟩ ∈ R} -/
+    noncomputable def domain_rel (R : U) : U :=
+      SpecSet (⋃(⋃ R)) (fun x => ∃ y, ⟨x, y⟩ ∈ R)
+
+    /-- Range (image) of a relation R (properly defined for relations):
+        range_rel R = {y | ∃ x, ⟨x, y⟩ ∈ R} -/
+    noncomputable def range_rel (R : U) : U :=
+      SpecSet (⋃(⋃ R)) (fun y => ∃ x, ⟨x, y⟩ ∈ R)
+
+    /-- Alternative name for range_rel -/
+    noncomputable def imag_rel (R : U) : U := range_rel R
+
     /-! ### Theorems about Relation Properties -/
 
     /-- If R is asymmetric on A, then R is irreflexive on A -/
@@ -484,6 +499,96 @@ namespace SetUniverse
         ⟨x, y⟩ ∈ R → y ∈ range R := by
       intro h
       rw [mem_range]
+      exact ⟨x, h⟩
+
+    /-! ### Domain and Range for Relations (Properly Defined) -/
+
+    /-- Characterization of domain_rel membership:
+        x is in the domain of R if and only if there exists y such that ⟨x, y⟩ ∈ R -/
+    theorem mem_domain_rel (R x : U) :
+        x ∈ domain_rel R ↔ ∃ y, ⟨x, y⟩ ∈ R := by
+      unfold domain_rel
+      rw [SpecSet_is_specified]
+      constructor
+      · intro h; exact h.2
+      · intro h
+        constructor
+        · -- x ∈ ⋃(⋃ R)
+          obtain ⟨y, hxy⟩ := h
+          -- ⟨x, y⟩ ∈ R means ⟨x, y⟩ is an ordered pair
+          -- By definition: ⟨x, y⟩ = {{x}, {x, y}}
+          -- So {{x}, {x, y}} ∈ R
+          -- Therefore {x} ∈ ⋃ R (as {x} ∈ {{x}, {x, y}})
+          -- And x ∈ ⋃(⋃ R) (as x ∈ {x})
+          rw [UnionSet_is_specified]
+          use {x}
+          constructor
+          · rw [UnionSet_is_specified]
+            use ⟨x, y⟩
+            constructor
+            · exact hxy
+            · -- {x} ∈ ⟨x, y⟩
+              rw [OrderedPair_is_specified]
+              left
+              rfl
+          · simp [Singleton_is_specified]
+        · exact h
+
+    /-- Characterization of range_rel membership:
+        y is in the range of R if and only if there exists x such that ⟨x, y⟩ ∈ R -/
+    theorem mem_range_rel (R y : U) :
+        y ∈ range_rel R ↔ ∃ x, ⟨x, y⟩ ∈ R := by
+      unfold range_rel
+      rw [SpecSet_is_specified]
+      constructor
+      · intro h; exact h.2
+      · intro h
+        constructor
+        · -- y ∈ ⋃(⋃ R)
+          obtain ⟨x, hxy⟩ := h
+          -- Similar to mem_domain_rel:
+          -- ⟨x, y⟩ = {{x}, {x, y}} ∈ R
+          -- So {x, y} ∈ ⋃ R
+          -- And y ∈ ⋃(⋃ R)
+          rw [UnionSet_is_specified]
+          use {x, y}
+          constructor
+          · rw [UnionSet_is_specified]
+            use ⟨x, y⟩
+            constructor
+            · exact hxy
+            · -- {x, y} ∈ ⟨x, y⟩
+              rw [OrderedPair_is_specified]
+              right
+              rfl
+          · simp [PairSet_is_specified]
+        · exact h
+
+    /-- Characterization of imag_rel (alias for range_rel) -/
+    theorem mem_imag_rel (R y : U) :
+        y ∈ imag_rel R ↔ ∃ x, ⟨x, y⟩ ∈ R := by
+      unfold imag_rel
+      exact mem_range_rel R y
+
+    /-- If ⟨x, y⟩ ∈ R, then x ∈ domain_rel R -/
+    theorem pair_mem_implies_fst_in_domain_rel (R x y : U) :
+        ⟨x, y⟩ ∈ R → x ∈ domain_rel R := by
+      intro h
+      rw [mem_domain_rel]
+      exact ⟨y, h⟩
+
+    /-- If ⟨x, y⟩ ∈ R, then y ∈ range_rel R -/
+    theorem pair_mem_implies_snd_in_range_rel (R x y : U) :
+        ⟨x, y⟩ ∈ R → y ∈ range_rel R := by
+      intro h
+      rw [mem_range_rel]
+      exact ⟨x, h⟩
+
+    /-- If ⟨x, y⟩ ∈ R, then y ∈ imag_rel R -/
+    theorem pair_mem_implies_snd_in_imag_rel (R x y : U) :
+        ⟨x, y⟩ ∈ R → y ∈ imag_rel R := by
+      intro h
+      rw [mem_imag_rel]
       exact ⟨x, h⟩
 
   end Relations
