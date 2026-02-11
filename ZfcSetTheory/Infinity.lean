@@ -5,14 +5,37 @@
   de todos los números naturales (ω). Sin este axioma, podemos construir números
   naturales individuales, pero no el conjunto que los contiene a todos.
 
-  ## Definiciones Principales
-  - `InfinityAxiom`: Existe un conjunto inductivo.
-  - `Omega` (ω): La intersección de todos los subconjuntos inductivos.
+  ## Contenido
 
-  ## Teoremas Principales
-  - `Omega_is_inductive`: ω es un conjunto inductivo.
-  - `Omega_subset_all_inductive`: ω es subconjunto de cualquier conjunto inductivo.
-  - `induction_principle`: El Principio de Inducción Matemática para ω.
+  ### Axioma y Construcción
+  - `ExistsInductiveSet`: Axioma de Infinito - existe un conjunto inductivo
+  - `Omega` (ω): El menor conjunto inductivo (intersección de todos los inductivos)
+
+  ### Propiedades Básicas de ω
+  - `Omega_is_inductive`: ω es un conjunto inductivo
+  - `Omega_subset_all_inductive`: ω ⊆ K para todo K inductivo (minimalidad)
+  - `zero_in_Omega`: 0 ∈ ω
+  - `succ_in_Omega`: n ∈ ω → σ(n) ∈ ω
+
+  ### Caracterización de Naturales
+  - `mem_Omega_is_Nat`: n ∈ ω → isNat n
+  - `Nat_in_Omega`: isNat n → n ∈ ω
+  - `Nat_iff_mem_Omega`: isNat n ↔ n ∈ ω (caracterización completa)
+
+  ### Principios de Inducción
+  - `induction_principle`: Inducción matemática débil sobre ω
+  - `strong_induction_principle`: Inducción fuerte (completa) sobre ω
+
+  ### Propiedades Estructurales
+  - `Omega_is_transitive`: ω es un conjunto transitivo
+  - `Omega_element_is_transitive`: Todo elemento de ω es transitivo
+  - `Omega_has_total_order`: ω tiene orden total estricto por membresía
+  - `Omega_no_maximum`: ω no tiene elemento máximo (infinitud)
+
+  ## Próximos Desarrollos
+
+  El **Teorema de Recursión** (que permite definir funciones recursivas sobre ω)
+  se desarrollará en el archivo `Recursion.lean`, que construirá sobre este.
 -/
 
 import Init.Classical
@@ -104,6 +127,7 @@ namespace SetUniverse
 
     /-- ω contiene al vacío (0) -/
     theorem zero_in_Omega : (∅ : U) ∈ ω := by
+      unfold Omega
       rw [SpecSet_is_specified]
       constructor
       · -- ∅ ∈ Witness
@@ -114,6 +138,7 @@ namespace SetUniverse
 
     /-- ω es cerrado bajo sucesor -/
     theorem succ_in_Omega (n : U) (hn : n ∈ ω) : σ n ∈ ω := by
+      unfold Omega at hn ⊢
       rw [SpecSet_is_specified] at hn ⊢
       constructor
       · -- σ(n) ∈ Witness
@@ -127,8 +152,10 @@ namespace SetUniverse
         exact hJ_ind.2 n hn_in_J
 
     /-- Teorema: ω es un conjunto inductivo -/
-    theorem Omega_is_inductive : isInductive ω :=
-      ⟨zero_in_Omega, succ_in_Omega⟩
+    theorem Omega_is_inductive : isInductive (ω : U) := by
+      constructor
+      · exact zero_in_Omega
+      · exact succ_in_Omega
 
     /-- Teorema: ω es subconjunto de CUALQUIER conjunto inductivo K.
         (No solo de los subconjuntos del testigo).
@@ -136,7 +163,7 @@ namespace SetUniverse
     theorem Omega_subset_all_inductive (K : U) (hK : isInductive K) : ω ⊆ K := by
       intro x hx
       -- Sea I el testigo. Consideramos L = I ∩ K.
-      let I := WitnessInductiveSet
+      let I : U := WitnessInductiveSet
       let L := I ∩ K
 
       -- L es inductivo
@@ -156,6 +183,7 @@ namespace SetUniverse
       have hL_sub_I : L ⊆ I := BinInter_subset I K |>.1
 
       -- Por definición de ω, x debe estar en L (porque L es inductivo y L ⊆ I)
+      unfold Omega at hx
       rw [SpecSet_is_specified] at hx
       have hx_in_L : x ∈ L := hx.2 L hL_sub_I hL_ind
 
@@ -194,7 +222,7 @@ namespace SetUniverse
     -/
     theorem mem_Omega_is_Nat (n : U) (hn : n ∈ ω) : isNat n := by
       -- Definimos S = {x ∈ ω | isNat x}
-      let S := SpecSet ω (fun x => isNat x)
+      let S := SpecSet ω (fun (x : U) => isNat x)
 
       -- Demostramos que S es inductivo
       have h_zero : (∅ : U) ∈ S := by
@@ -222,7 +250,8 @@ namespace SetUniverse
 
     /-- Todo número natural (von Neumann) pertenece a ω -/
     theorem Nat_in_Omega (n : U) (hn : isNat n) : n ∈ ω := by
-      exact nat_in_inductive_set n hn ω Omega_is_inductive
+      have h_ind : isInductive (ω : U) := Omega_is_inductive
+      exact nat_in_inductive_set n hn ω h_ind
 
     /-- Caracterización completa: n es natural ↔ n ∈ ω -/
     theorem Nat_iff_mem_Omega (n : U) : isNat n ↔ n ∈ ω :=
@@ -262,7 +291,10 @@ namespace SetUniverse
           | inl hm_in_k => exact hk.2 m hm_in_k
           | inr hm_eq_k =>
             rw [hm_eq_k]
-            exact hT_sub_S k ⟨hk.1, hk.2⟩
+            have hk_in_T : k ∈ T := by
+              rw [SpecSet_is_specified]
+              exact ⟨hk.1, hk.2⟩
+            exact hT_sub_S k hk_in_T
 
       have hT_eq_omega : T = ω := by
         apply induction_principle T
@@ -283,7 +315,7 @@ namespace SetUniverse
     /-! ============================================================ -/
 
     /-- ω es un conjunto transitivo -/
-    theorem Omega_is_transitive : isTransitiveSet ω := by
+    theorem Omega_is_transitive : isTransitiveSet (ω : U) := by
       intro n hn x hx_in_n
       have hn_nat : isNat n := mem_Omega_is_Nat n hn
       have hx_nat : isNat x := nat_element_is_nat n x hn_nat hx_in_n
@@ -296,7 +328,7 @@ namespace SetUniverse
       exact hn_nat.1
 
     /-- ω tiene un orden total estricto (membresía) -/
-    theorem Omega_has_total_order : isTotalStrictOrderMembershipGuided ω := by
+    theorem Omega_has_total_order : isTotalStrictOrderMembershipGuided (ω : U) := by
       constructor
       · exact Omega_is_transitive
       · constructor

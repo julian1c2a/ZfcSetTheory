@@ -20,3 +20,4 @@ import ZfcSetTheory.AtomicBooleanAlgebra
 import ZfcSetTheory.Functions
 import ZfcSetTheory.Cardinality
 import ZfcSetTheory.NaturalNumbers
+import ZfcSetTheory.Infinity
