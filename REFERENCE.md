@@ -33,6 +33,7 @@
 **Enunciado Matemático**: Dos conjuntos son iguales si y solo si tienen los mismos elementos.
 
 **Firma Lean4**:
+
 ```lean
 @[simp] axiom ExtSet (x y : U): (∀ (z: U), z ∈ x ↔ z ∈ y) → (x = y)
 ```
@@ -48,6 +49,7 @@
 **Enunciado Matemático**: Existe un conjunto que no contiene ningún elemento (conjunto vacío).
 
 **Firma Lean4**:
+
 ```lean
 @[simp] axiom ExistsAnEmptySet : ∃ (x : U), ∀ (y : U), y ∉ x
 ```
@@ -63,6 +65,7 @@
 **Enunciado Matemático**: Para cualquier conjunto A y propiedad P, existe un conjunto que contiene exactamente los elementos de A que satisfacen P.
 
 **Firma Lean4**:
+
 ```lean
 @[simp] axiom Specification (x : U) (P : U → Prop) :
   ∃ (y : U), ∀ (z : U), z ∈ y ↔ (z ∈ x ∧ P z)
@@ -79,6 +82,7 @@
 **Enunciado Matemático**: Para cualesquiera dos elementos a y b, existe un conjunto que contiene exactamente a y b.
 
 **Firma Lean4**:
+
 ```lean
 @[simp] axiom Pairing (x y : U) :
   ∃ (z : U), ∀ (w : U), w ∈ z ↔ (w = x ∨ w = y)
@@ -95,6 +99,7 @@
 **Enunciado Matemático**: Para cualquier familia de conjuntos F, existe un conjunto que contiene exactamente los elementos que pertenecen a algún conjunto de F.
 
 **Firma Lean4**:
+
 ```lean
 @[simp] axiom Union :
   ∀ (C : U), ∃ (UC : U), ∀ (x : U), x ∈ UC ↔ ∃ (y : U), y ∈ C ∧ x ∈ y
@@ -114,6 +119,7 @@
 **Enunciado Matemático**: Existe un único elemento que satisface la propiedad P.
 
 **Firma Lean4**:
+
 ```lean
 def ExistsUnique {α : Sort u} (p : α → Prop) : Prop :=
   ∃ x, p x ∧ ∀ y, p y → y = x
@@ -131,6 +137,7 @@ def ExistsUnique {α : Sort u} (p : α → Prop) : Prop :=
 **Enunciado Matemático**: Relación primitiva de pertenencia entre elementos y conjuntos.
 
 **Firma Lean4**:
+
 ```lean
 axiom mem (x y : U) : Prop
 notation:50 lhs:51 " ∈ " rhs:51 => mem lhs rhs
@@ -146,6 +153,7 @@ notation:50 lhs:51 " ∈ " rhs:51 => mem lhs rhs
 **Enunciado Matemático**: A es subconjunto de B si todo elemento de A está en B.
 
 **Firma Lean4**:
+
 ```lean
 @[simp] def subseteq (x y : U) : Prop := ∀ (z: U), z ∈ x → z ∈ y
 notation:50 lhs:51 " ⊆ " rhs:51 => subseteq lhs rhs
@@ -161,6 +169,7 @@ notation:50 lhs:51 " ⊆ " rhs:51 => subseteq lhs rhs
 **Enunciado Matemático**: Dos conjuntos son disjuntos si no tienen elementos en común.
 
 **Firma Lean4**:
+
 ```lean
 @[simp] def disjoint (x y : U) : Prop := ∀ z, z ∈ x → z ∉ y
 notation:50 lhs:51 " ⟂ " rhs:51 => disjoint lhs rhs
@@ -178,6 +187,7 @@ notation:50 lhs:51 " ⟂ " rhs:51 => disjoint lhs rhs
 **Enunciado Matemático**: El único conjunto que no contiene elementos.
 
 **Firma Lean4**:
+
 ```lean
 @[simp] noncomputable def EmptySet : U := ExistsUniqueEmptySet.choose
 notation " ∅ " => EmptySet
@@ -195,6 +205,7 @@ notation " ∅ " => EmptySet
 **Enunciado Matemático**: El conjunto de elementos de A que satisfacen la propiedad P.
 
 **Firma Lean4**:
+
 ```lean
 @[simp] noncomputable def SpecSet (x : U) (P : U → Prop) : U :=
   choose (SpecificationUnique x P)
@@ -211,6 +222,7 @@ notation " { " x " | " P " } " => SpecSet x P
 **Enunciado Matemático**: El conjunto de elementos que pertenecen tanto a A como a B.
 
 **Firma Lean4**:
+
 ```lean
 @[simp] noncomputable def BinInter (x y : U) : U :=
   choose (SpecificationUnique x fun z => z ∈ y)
@@ -227,6 +239,7 @@ notation:50 lhs:51 " ∩ " rhs:51 => BinInter lhs rhs
 **Enunciado Matemático**: El conjunto de elementos que están en A pero no en B.
 
 **Firma Lean4**:
+
 ```lean
 @[simp] noncomputable def Difference (x y : U) : U :=
   choose (SpecificationUnique x (fun z => z ∉ y))
@@ -245,6 +258,7 @@ notation:50 lhs:51 " \\ " rhs:51 => Difference lhs rhs
 **Enunciado Matemático**: El conjunto que contiene exactamente los elementos a y b.
 
 **Firma Lean4**:
+
 ```lean
 @[simp] noncomputable def PairSet (x y : U) : U :=
   choose (PairingUniqueSet x y)
@@ -261,6 +275,7 @@ notation " { " x ", " y " } " => PairSet x y
 **Enunciado Matemático**: El conjunto que contiene únicamente el elemento a.
 
 **Firma Lean4**:
+
 ```lean
 @[simp] noncomputable def Singleton (x : U) : U := ({ x , x } : U)
 notation " { " x " } " => Singleton x
@@ -276,6 +291,7 @@ notation " { " x " } " => Singleton x
 **Enunciado Matemático**: El par ordenado de Kuratowski ⟨a,b⟩ = {{a}, {a,b}}.
 
 **Firma Lean4**:
+
 ```lean
 @[simp] noncomputable def OrderedPair (x y : U) : U
     := (({ (({ x }): U) , (({ x , y }): U) }): U)
@@ -294,6 +310,7 @@ notation " ⟨ " x " , " y " ⟩ " => OrderedPair x y
 **Enunciado Matemático**: El conjunto de todos los elementos que pertenecen a algún conjunto de la familia C.
 
 **Firma Lean4**:
+
 ```lean
 @[simp] noncomputable def UnionSet (C : U) : U :=
   choose (UnionExistsUnique C)
@@ -310,6 +327,7 @@ notation " ⋃ " C: 100 => UnionSet C
 **Enunciado Matemático**: El conjunto de elementos que están en A o en B (o en ambos).
 
 **Firma Lean4**:
+
 ```lean
 noncomputable def BinUnion (A B : U) : U := UnionSet (PairSet A B)
 notation:50 lhs:51 " ∪ " rhs:51 => BinUnion lhs rhs
@@ -327,6 +345,7 @@ notation:50 lhs:51 " ∪ " rhs:51 => BinUnion lhs rhs
 **Enunciado Matemático**: El producto cartesiano A × B es el conjunto de todos los pares ordenados ⟨a,b⟩ donde a ∈ A y b ∈ B.
 
 **Firma Lean4**:
+
 ```lean
 noncomputable def CartesianProduct (A B : U) : U :=
   SpecSet (𝒫 (𝒫 (A ∪ B))) (fun p => isOrderedPair p ∧ fst p ∈ A ∧ snd p ∈ B)
@@ -345,6 +364,7 @@ notation:70 A:71 " ×ₛ " B:71 => CartesianProduct A B
 **Enunciado Matemático**: R es una relación en A si R ⊆ A × A.
 
 **Firma Lean4**:
+
 ```lean
 def isRelationOn (R A : U) : Prop := R ⊆ (A ×ₛ A)
 ```
@@ -359,6 +379,7 @@ def isRelationOn (R A : U) : Prop := R ⊆ (A ×ₛ A)
 **Enunciado Matemático**: R es reflexiva en A si ∀x ∈ A, (x,x) ∈ R.
 
 **Firma Lean4**:
+
 ```lean
 def isReflexiveOn (R A : U) : Prop :=
   ∀ x : U, x ∈ A → ⟨x, x⟩ ∈ R
@@ -374,6 +395,7 @@ def isReflexiveOn (R A : U) : Prop :=
 **Enunciado Matemático**: R es simétrica en A si ∀x,y ∈ A, (x,y) ∈ R → (y,x) ∈ R.
 
 **Firma Lean4**:
+
 ```lean
 def isSymmetricOn (R A : U) : Prop :=
   ∀ x y : U, x ∈ A → y ∈ A → ⟨x, y⟩ ∈ R → ⟨y, x⟩ ∈ R
@@ -389,6 +411,7 @@ def isSymmetricOn (R A : U) : Prop :=
 **Enunciado Matemático**: R es antisimétrica en A si ∀x,y ∈ A, (x,y) ∈ R ∧ (y,x) ∈ R → x = y.
 
 **Firma Lean4**:
+
 ```lean
 def isAntiSymmetricOn (R A : U) : Prop :=
   ∀ x y : U, x ∈ A → y ∈ A → ⟨x, y⟩ ∈ R → ⟨y, x⟩ ∈ R → x = y
@@ -404,6 +427,7 @@ def isAntiSymmetricOn (R A : U) : Prop :=
 **Enunciado Matemático**: R es transitiva en A si ∀x,y,z ∈ A, (x,y) ∈ R ∧ (y,z) ∈ R → (x,z) ∈ R.
 
 **Firma Lean4**:
+
 ```lean
 def isTransitiveOn (R A : U) : Prop :=
   ∀ x y z : U, x ∈ A → y ∈ A → z ∈ A → ⟨x, y⟩ ∈ R → ⟨y, z⟩ ∈ R → ⟨x, z⟩ ∈ R
@@ -419,6 +443,7 @@ def isTransitiveOn (R A : U) : Prop :=
 **Enunciado Matemático**: R es relación de equivalencia en A si es reflexiva, simétrica y transitiva.
 
 **Firma Lean4**:
+
 ```lean
 def isEquivalenceOn (R A : U) : Prop :=
   isRelationOn R A ∧ isReflexiveOn R A ∧ isSymmetricOn R A ∧ isTransitiveOn R A
@@ -434,6 +459,7 @@ def isEquivalenceOn (R A : U) : Prop :=
 **Enunciado Matemático**: R es orden parcial en A si es reflexiva, antisimétrica y transitiva.
 
 **Firma Lean4**:
+
 ```lean
 def isPartialOrderOn (R A : U) : Prop :=
   isRelationOn R A ∧ isReflexiveOn R A ∧ isAntiSymmetricOn R A ∧ isTransitiveOn R A
@@ -449,6 +475,7 @@ def isPartialOrderOn (R A : U) : Prop :=
 **Enunciado Matemático**: La clase de equivalencia de a bajo R en A: {x ∈ A | (a,x) ∈ R}.
 
 **Firma Lean4**:
+
 ```lean
 noncomputable def EqClass (a R A : U) : U :=
   SpecSet A (fun x => ⟨a, x⟩ ∈ R)
@@ -464,6 +491,7 @@ noncomputable def EqClass (a R A : U) : U :=
 **Enunciado Matemático**: La relación identidad en A: {(x,x) | x ∈ A}.
 
 **Firma Lean4**:
+
 ```lean
 noncomputable def IdRel (A : U) : U :=
   SpecSet (A ×ₛ A) (fun p => fst p = snd p)
@@ -481,6 +509,7 @@ noncomputable def IdRel (A : U) : U :=
 **Enunciado Matemático**: f es una función de A a B si f ⊆ A × B, es total en A y es univaluada.
 
 **Firma Lean4**:
+
 ```lean
 def isFunctionFromTo (f A B : U) : Prop :=
   f ⊆ (A ×ₛ B) ∧
@@ -498,6 +527,7 @@ def isFunctionFromTo (f A B : U) : Prop :=
 **Enunciado Matemático**: f⦅x⦆ es el único y tal que ⟨x,y⟩ ∈ f.
 
 **Firma Lean4**:
+
 ```lean
 noncomputable def apply (f x : U) : U :=
   if h : ∃ y, ⟨x, y⟩ ∈ f then Classical.choose h else ∅
@@ -514,6 +544,7 @@ notation:max f "⦅" x "⦆" => apply f x
 **Enunciado Matemático**: A y B son equipotentes si existe una biyección entre ellos.
 
 **Firma Lean4**:
+
 ```lean
 def isEquipotent (A B : U) : Prop := ∃ f, isBijection f A B
 notation:50 A " ≃ₛ " B => isEquipotent A B
@@ -531,6 +562,7 @@ notation:50 A " ≃ₛ " B => isEquipotent A B
 **Enunciado Matemático**: A ∪ (A ∩ B) = A.
 
 **Firma Lean4**:
+
 ```lean
 theorem BinUnion_absorb_inter (A B : U) : (A ∪ (A ∩ B)) = A
 ```
@@ -545,6 +577,7 @@ theorem BinUnion_absorb_inter (A B : U) : (A ∪ (A ∩ B)) = A
 **Enunciado Matemático**: A ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C).
 
 **Firma Lean4**:
+
 ```lean
 theorem BinUnion_distrib_inter (A B C : U) :
   (A ∪ (B ∩ C)) = ((A ∪ B) ∩ (A ∪ C))
@@ -562,6 +595,7 @@ theorem BinUnion_distrib_inter (A B C : U) :
 **Enunciado Matemático**: X es un átomo en 𝒫(A) si X ≠ ∅ y no hay elementos estrictamente entre ∅ y X.
 
 **Firma Lean4**:
+
 ```lean
 def isAtom (A X : U) : Prop :=
   X ∈ 𝒫 A ∧ X ≠ ∅ ∧ ∀ Y, Y ∈ 𝒫 A → Y ⊂ X → Y = ∅
@@ -579,6 +613,7 @@ def isAtom (A X : U) : Prop :=
 **Enunciado Matemático**: El conjunto diagonal para la demostración de Cantor: { x ∈ A | x ∉ f⦅x⦆ }.
 
 **Firma Lean4**:
+
 ```lean
 noncomputable def DiagonalSet (f A : U) : U :=
   SpecSet A (fun x => x ∉ f⦅x⦆)
@@ -598,6 +633,7 @@ noncomputable def DiagonalSet (f A : U) : U :=
 **Enunciado Matemático**: Si A ⊆ B y B ⊆ A, entonces A = B.
 
 **Firma Lean4**:
+
 ```lean
 @[simp] theorem EqualityOfSubset (x y : U) :
   (x ⊆ y) → (y ⊆ x) → (x = y)
@@ -615,6 +651,7 @@ noncomputable def DiagonalSet (f A : U) : U :=
 **Enunciado Matemático**: La primera proyección de un par ordenado es el primer elemento.
 
 **Firma Lean4**:
+
 ```lean
 @[simp] theorem fst_of_ordered_pair (x y : U) : fst (⟨x, y⟩ : U) = x
 ```
@@ -629,6 +666,7 @@ noncomputable def DiagonalSet (f A : U) : U :=
 **Enunciado Matemático**: La segunda proyección de un par ordenado es el segundo elemento.
 
 **Firma Lean4**:
+
 ```lean
 @[simp] theorem snd_of_ordered_pair (x y : U) : snd ⟨x, y⟩ = y
 ```
@@ -645,6 +683,7 @@ noncomputable def DiagonalSet (f A : U) : U :=
 **Enunciado Matemático**: p ∈ A × B ↔ (isOrderedPair p ∧ fst p ∈ A ∧ snd p ∈ B).
 
 **Firma Lean4**:
+
 ```lean
 theorem CartesianProduct_is_specified (A B p : U) :
   p ∈ (A ×ₛ B) ↔ (isOrderedPair p ∧ fst p ∈ A ∧ snd p ∈ B)
@@ -662,6 +701,7 @@ theorem CartesianProduct_is_specified (A B p : U) :
 **Enunciado Matemático**: Si R es asimétrica en A, entonces R es irreflexiva en A.
 
 **Firma Lean4**:
+
 ```lean
 theorem Asymmetric_implies_Irreflexive (R A : U) :
     isAsymmetricOn R A → isIrreflexiveOn R A
@@ -677,6 +717,7 @@ theorem Asymmetric_implies_Irreflexive (R A : U) :
 **Enunciado Matemático**: La relación identidad IdRel A es una relación de equivalencia en A.
 
 **Firma Lean4**:
+
 ```lean
 theorem IdRel_is_Equivalence (A : U) :
     isEquivalenceOn (IdRel A) A
@@ -692,6 +733,7 @@ theorem IdRel_is_Equivalence (A : U) :
 **Enunciado Matemático**: x ∈ EqClass a R A ↔ x ∈ A ∧ ⟨a,x⟩ ∈ R.
 
 **Firma Lean4**:
+
 ```lean
 theorem mem_EqClass (a R A x : U) :
     x ∈ EqClass a R A ↔ x ∈ A ∧ ⟨a, x⟩ ∈ R
@@ -707,6 +749,7 @@ theorem mem_EqClass (a R A x : U) :
 **Enunciado Matemático**: Para relaciones de equivalencia, EqClass a R A = EqClass b R A ↔ ⟨a,b⟩ ∈ R.
 
 **Firma Lean4**:
+
 ```lean
 theorem EqClass_eq_iff (R A a b : U)
     (hEq : isEquivalenceOn R A) (haA : a ∈ A) (hbA : b ∈ A) :
@@ -723,6 +766,7 @@ theorem EqClass_eq_iff (R A a b : U)
 **Enunciado Matemático**: Las clases de equivalencia son iguales o disjuntas.
 
 **Firma Lean4**:
+
 ```lean
 theorem EqClass_eq_or_disjoint (R A a b : U)
     (hEq : isEquivalenceOn R A) (haA : a ∈ A) (hbA : b ∈ A) :
@@ -741,6 +785,7 @@ theorem EqClass_eq_or_disjoint (R A a b : U)
 **Enunciado Matemático**: Si A ≼ B y B ≼ A, entonces A ≃ B.
 
 **Firma Lean4**:
+
 ```lean
 theorem cantor_schroeder_bernstein (A B : U)
     (hab : isDominatedBy A B) (hba : isDominatedBy B A) :
@@ -759,6 +804,7 @@ theorem cantor_schroeder_bernstein (A B : U)
 **Enunciado Matemático**: {x} es un átomo en 𝒫(A) cuando x ∈ A.
 
 **Firma Lean4**:
+
 ```lean
 theorem singleton_is_atom (A x : U) (hx : x ∈ A) : isAtom A {x}
 ```
@@ -773,6 +819,7 @@ theorem singleton_is_atom (A x : U) (hx : x ∈ A) : isAtom A {x}
 **Enunciado Matemático**: Todo átomo es un singleton.
 
 **Firma Lean4**:
+
 ```lean
 theorem atom_is_singleton (A X : U) (hAtom : isAtom A X) :
   ∃ x, x ∈ A ∧ X = {x}
@@ -790,6 +837,7 @@ theorem atom_is_singleton (A X : U) (hAtom : isAtom A X) :
 **Enunciado Matemático**: No existe suryección de A a 𝒫(A).
 
 **Firma Lean4**:
+
 ```lean
 theorem cantor_no_surjection (f A : U) (hf : isFunctionFromTo f A (𝒫 A)) :
   ¬isSurjectiveOnto f (𝒫 A)
@@ -800,6 +848,7 @@ theorem cantor_no_surjection (f A : U) (hf : isFunctionFromTo f A (𝒫 A)) :
 ## 5. Notación y Sintaxis
 
 ### 5.1 Operadores Básicos
+
 - `x ∈ A` - Pertenencia (`mem`)
 - `A ⊆ B` - Subconjunto (`subseteq`)
 - `A ⊂ B` - Subconjunto propio (`subset`)
@@ -807,18 +856,21 @@ theorem cantor_no_surjection (f A : U) (hf : isFunctionFromTo f A (𝒫 A)) :
 - `∅` - Conjunto vacío (`EmptySet`)
 
 ### 5.2 Construcciones de Conjuntos
+
 - `{a}` - Singleton (`Singleton`)
 - `{a, b}` - Par no ordenado (`PairSet`)
 - `⟨a, b⟩` - Par ordenado (`OrderedPair`)
 - `A ×ₛ B` - Producto cartesiano (`CartesianProduct`)
 
 ### 5.3 Operaciones Binarias
+
 - `A ∪ B` - Unión binaria (`BinUnion`)
 - `A ∩ B` - Intersección binaria (`BinInter`)
 - `A \ B` - Diferencia (`Difference`)
 - `A △ B` - Diferencia simétrica (`SymDiff`)
 
 ### 5.4 Funciones
+
 - `f⦅x⦆` - Aplicación de función (`apply`)
 - `𝟙 A` - Función identidad (`IdFunction`)
 - `g ∘ₛ f` - Composición (`FunctionComposition`)
@@ -828,6 +880,7 @@ theorem cantor_no_surjection (f A : U) (hf : isFunctionFromTo f A (𝒫 A)) :
 ## 6. Exports por Módulo
 
 ### 6.1 Extension.lean
+
 ```lean
 export SetUniverse.ExtensionAxiom (
     ExtSet ExtSetReverse ExtSet_wc EqualityOfSubset
@@ -838,6 +891,7 @@ export SetUniverse.ExtensionAxiom (
 ```
 
 ### 6.2 Relations.lean
+
 ```lean
 export SetUniverse.Relations (
     isRelationOn isRelationFrom Related
@@ -855,6 +909,7 @@ export SetUniverse.Relations (
 ```
 
 ### 6.3 Functions.lean
+
 ```lean
 export Functions (
   isSingleValued isFunctionFromTo Dom Ran apply
@@ -868,6 +923,7 @@ export Functions (
 ```
 
 ### 6.4 Cardinality.lean
+
 ```lean
 export Cardinality (
   DiagonalSet singletonMap
