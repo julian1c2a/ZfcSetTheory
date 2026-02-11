@@ -23,6 +23,11 @@ import ZfcSetTheory.Specification
 import ZfcSetTheory.Pairing
 import ZfcSetTheory.Union
 import ZfcSetTheory.PowerSet
+import ZfcSetTheory.OrderedPair
+import ZfcSetTheory.CartesianProduct
+import ZfcSetTheory.Relations
+import ZfcSetTheory.Functions
+import ZfcSetTheory.Cardinality
 import ZfcSetTheory.NaturalNumbers
 
 namespace SetUniverse
@@ -33,6 +38,11 @@ namespace SetUniverse
   open SetUniverse.PairingAxiom
   open SetUniverse.UnionAxiom
   open SetUniverse.PowerSetAxiom
+  open SetUniverse.OrderedPairExtensions
+  open SetUniverse.CartesianProduct
+  open SetUniverse.Relations
+  open SetUniverse.Functions
+  open SetUniverse.Cardinality
   open SetUniverse.NaturalNumbers
 
   universe u

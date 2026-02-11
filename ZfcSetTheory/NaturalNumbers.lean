@@ -1,54 +1,100 @@
 /-
   # Natural Numbers (von Neumann ordinals)
 
-  This file defines the natural numbers as von Neumann ordinals without introducing the Axiom of Infinity,
-  and without induction principle (this will be a theorem)
+  Este archivo define los números naturales como ordinales de von Neumann SIN introducir
+  el Axioma de Infinito. Los naturales se caracterizan como conjuntos transitivos,
+  totalmente ordenados y bien ordenados (con elemento mínimo Y máximo en cada subconjunto),
+  lo que los distingue como ordinales FINITOS.
 
-  ## Main definitions
-  - `σ` n : Successor function ∀ (n : U), σ(n) = n ∪ {n}
-  - `isInductive` I : A set I is inductive if ∅ ∈ I and ∀ x ∈ I, σ(x) ∈ I
-  - `isTransitiveSet` S : The set S is a transitive set if ∀ x ∈ S, x ⊆ S
-  - `StrictOrderMembershipGuided` S : ∈[S] ∈ S ×ₛ S, where S is a transitive set,
-        - ∀ p ∈ ∈[S], p is a pair (x, y) with x, y ∈ S, and p ∈[S] q iff x ∈ y
-            - ∀ x y ∈ S, x ∈[S] y → ¬(y ∈[S] x) (asymmetry)
-            - ∀ x y z ∈ S, x ∈[S] y → y ∈[S] z → x ∈[S] z (transitivity)
-  - `TotalStrictOrderMembershipGuided` : ∀ x y ∈ S, x ∈[S] y ∨ x = y ∨ y ∈[S] x (trichotomy)
-  - `WellOrderMembershipGuided` : ⟨S, ∈[S]⟩ is a well-ordered membership set, if and only if
-        - ∀ T ∈ 𝒫 S:
-            - T ≠ ∅ → ∃ m ∈ T, ∀ x ∈ T, m = x ∨ m ∈[S] x (existence of minimal element)
-            - T ≠ ∅ → ∃ m ∈ T, ∀ x ∈ T, m = x ∨ x ∈[S] m (existence of maximal element)
-  - `isNat` n : n is a natural number if and only if:
-        - n is a transitive set
-        - ∈[n] is a strict total order on n
-        - ⟨n, ∈[n]⟩ is well-ordered
-        - ⟨n, ∈[n]⁻¹⟩ is well-ordered
+  ## Definiciones Principales
 
-  ## Firsts theorems
-  - ∅ is a natural number by the previous definition
-  - Examples:
-    - 1 =  {∅},  is a natural number by the previous definition
-    - 2 = {∅, {∅}},  is a natural number by the previous definition
-    - 3 = {∅, {∅}, {∅, {∅}}} is a natural number by the previous definition
-  - n is a natural number, then n ∉ n (regularity.1)
-  - n m are natural numbers, then ¬(n ∈ m ∨ m ∈ n) (regularity.2)
-  - n m are natural numbers, then n ∈ m → ¬(m ∈ n) (asymmetry of membership)
-  - n is a natural number, then ∀ m ∈ n, m is a natural number (transitivity)
-  - n m k are natural numbers, then n ∈ m ∧ m ∈ k → n ∈ k (transitivity of membership)
-  - n m are natural numbers, then n = m ∨ n ∈ m ∨ m ∈ n (trichotomy)
-  - n m k are natural numbers, then n ∈ m ∧ m ∈ k → n ∈ k (transitivity of membership)
-  - ∈[n] is a well-ordered membership set (well-foundedness of each natural number)
-  - isNat n → isNat (σ n) (closure under successor)
-  - isNat n → ∀ m ∈ n, isNat m (closure under subsets)
-  - ∀ n m, isNat n → isNat m → n ∈ m → ∀ k ∈ m, n ∈ k ∨ n = k (initial segment property)
-  - ∀ n m, isNat n → isNat m → σ(n) = σ(m) → n = m (injectivity of successor)
-  - ∀ n, isNat n → σ(n) ≠ ∅ (successor is never empty)
-  - ∀ n, isNat n → n ∈ σ(n) (each natural number is in its successor)
-  - ∀ n m, isNat n → isNat m → n ∈ m → n ∈ σ(m) (membership is preserved by successor)
+  ### Construcciones Básicas
+  - `σ n` : Función sucesor, σ(n) = n ∪ {n}
+  - `isInductive I` : I es inductivo si ∅ ∈ I y ∀x ∈ I, σ(x) ∈ I
+  - `isTransitiveSet S` : S es transitivo si ∀x ∈ S, x ⊆ S
 
-  ## Main theorems
-  - If I is an inductive set, and n is a natural number, then n ∈ I (ω is the smallest inductive set)
-  - Induction principle: If P is a first order predicate of the natural number, and P(0) holds, and ∀ n, P(n) → P(σ(n)) holds, then
-    ∀ n, Nat(n) → P(n) holds (induction principle) (this need a intermiadate elaboration)
+  ### Orden Guiado por Membresía
+  - `StrictOrderMembershipGuided S` : El orden ∈[S] = {⟨x,y⟩ | x,y ∈ S ∧ x ∈ y}
+    Es la relación de orden estricto inducida por la membresía en S
+
+  - `isTotalStrictOrderMembershipGuided S` : ∈[S] es un orden total estricto:
+    * Asimetría: x ∈ y → y ∉ x
+    * Tricotomía: x ∈ y ∨ x = y ∨ y ∈ x (para todo x,y ∈ S)
+
+  - `isWellOrderMembershipGuided S` : ⟨S, ∈[S]⟩ es bien ordenado (finito):
+    * Todo subconjunto no vacío T ⊆ S tiene elemento MÍNIMO
+    * Todo subconjunto no vacío T ⊆ S tiene elemento MÁXIMO
+    (La existencia de máximo caracteriza la finitud)
+
+  ### Definición de Número Natural
+  - `isNat n` : n es un número natural si y solo si:
+    1. n es un conjunto transitivo
+    2. ∈[n] es un orden total estricto en n
+    3. ⟨n, ∈[n]⟩ está bien ordenado (con mínimos y máximos)
+
+  ## Teoremas Fundamentales Probados
+
+  ### Propiedades Elementales
+  - `zero_is_nat` : ∅ es un número natural
+  - Ejemplos: 1 = {∅}, 2 = {∅,{∅}}, 3 = {∅,{∅},{∅,{∅}}} son naturales
+  - `mem_successor_self` : n ∈ σ(n)
+  - `nat_ne_successor` : n ≠ σ(n)
+
+  ### Buena Fundación (SIN Axioma de Regularidad)
+  - `nat_not_mem_self` : n ∉ n (irreflexividad)
+  - `nat_no_two_cycle` : ¬(n ∈ m ∧ m ∈ n)
+  - `nat_no_three_cycle` : ¬(n ∈ m ∧ m ∈ k ∧ k ∈ n)
+
+  ### Propiedades Estructurales
+  - `nat_element_is_nat` : m ∈ n → isNat m (elementos son naturales)
+  - `nat_element_is_transitive` : elementos son conjuntos transitivos
+  - `nat_element_has_strict_total_order` : elementos tienen orden total
+  - `nat_element_has_well_order` : elementos están bien ordenados
+
+  ### Clausura y Orden
+  - `nat_successor_is_nat` : isNat n → isNat (σ n)
+  - `nat_trichotomy` : n ∈ m ∨ n = m ∨ m ∈ n (tricotomía completa)
+  - `nat_mem_trans` : n ∈ m ∧ m ∈ k → n ∈ k (transitividad)
+  - `nat_mem_asymm` : n ∈ m → m ∉ n (asimetría)
+  - `nat_subset_mem_or_eq` : n ⊆ m → n ∈ m ∨ n = m
+  - `no_nat_between` : entre n y σ(n) no hay otros naturales
+
+  ### Segmentos Iniciales y Tricotomía
+  - `isInitialSegment` : definición de segmento inicial
+  - `initial_segment_of_nat_is_eq_or_mem` : segmento inicial es igual o elemento
+  - `inter_nat_is_initial_segment` : la intersección es segmento inicial
+  - `nat_is_initial_segment` : n ∈ m → n es segmento inicial de m
+  - `nat_element_trichotomy` : elementos de m cumplen tricotomía
+
+  ### Propiedades del Sucesor
+  - `successor_injective` : σ(n) = σ(m) → n = m
+  - `successor_nonempty` : σ(n) ≠ ∅
+  - `mem_successor_of_mem` : m ∈ n → m ∈ σ(n)
+
+  ### Conjuntos Inductivos
+  - `nat_is_zero_or_succ` : todo natural es 0 o sucesor de otro
+  - `nat_subset_inductive_set` : n ⊆ I para todo conjunto inductivo I
+  - `nat_in_inductive_set` : n ∈ I para todo conjunto inductivo I
+  - `zero/one/two/three_in_inductive` : casos específicos
+
+  ### Finitud
+  - `nat_has_max` : todo subconjunto no vacío de un natural tiene máximo
+    (caracteriza los naturales como ordinales finitos)
+
+  ## Notas Técnicas
+
+  - TODOS los teoremas están probados SIN el Axioma de Regularidad
+  - TODOS los teoremas están probados SIN el Axioma de Infinito (ω no está definido aquí)
+  - La tricotomía completa está probada usando segmentos iniciales
+  - La existencia de máximo en subconjuntos distingue naturales de ordinales infinitos
+  - Los teoremas sobre conjuntos inductivos NO requieren que ω exista
+
+  ## Trabajo Futuro (requiere desarrollos adicionales): se comienza en Recursion.lean
+
+  - Axioma de Infinito y existencia de ω
+  - Principio de inducción matemática
+  - Recursión sobre naturales
+  - Aritmética (suma, multiplicación, orden <, ≤)
 -/
 
 import Init.Classical
@@ -99,18 +145,38 @@ namespace SetUniverse
       simp only [BinUnion_is_specified, Singleton_is_specified]
 
     /-! ### Conjunto Inductivo ### -/
-    /-- A set I is inductive if ∅ ∈ I and ∀ x ∈ I, σ(x) ∈ I -/
+    /-- Un conjunto I es inductivo si contiene al vacío y es cerrado bajo sucesores.
+
+        **Definición**: I es inductivo ⟺ (∅ ∈ I ∧ ∀x ∈ I, σ(x) ∈ I)
+
+        Esta definición no requiere que I sea el "menor" conjunto inductivo (ω).
+        Los conjuntos inductivos caracterizan aquellos que contienen "todos los naturales",
+        aunque ω no esté definido todavía. -/
     def isInductive (I : U) : Prop :=
       (∅ : U) ∈ I ∧ ∀ x, x ∈ I → (σ x) ∈ I
 
-    /-! ### Conjunto Transitivo (redefinición correcta) ### -/
-    /-- A set S is transitive if every element is also a subset: ∀ x ∈ S, x ⊆ S -/
+    /-! ### Conjunto Transitivo ### -/
+    /-- Un conjunto S es transitivo si cada elemento es también un subconjunto de S.
+
+        **Definición**: S es transitivo ⟺ ∀x ∈ S, x ⊆ S
+
+        Equivalentemente: ∀x ∈ S, ∀y ∈ x, y ∈ S
+
+        Los conjuntos transitivos son fundamentales en la construcción de ordinales.
+        Todo ordinal (y en particular, todo natural) es un conjunto transitivo. -/
     def isTransitiveSet (S : U) : Prop :=
       ∀ x, x ∈ S → x ⊆ S
 
     /-! ### Orden Estricto Guiado por Membresía ### -/
-    /-- The strict order relation guided by membership on S:
-        ∈[S] = { ⟨x, y⟩ | x ∈ S ∧ y ∈ S ∧ x ∈ y } -/
+    /-- El orden estricto inducido por la membresía en un conjunto S.
+
+        **Definición**: ∈[S] = {⟨x,y⟩ | x ∈ S ∧ y ∈ S ∧ x ∈ y}
+
+        Este orden captura la estructura de membresía de S como una relación
+        de orden. Para conjuntos transitivos (como los naturales), esta relación
+        tiene propiedades especiales (asimetría, tricotomía, bien-orden).
+
+        **Notación**: ∈[S] se lee "orden-épsilon en S" o "membresía restringida a S" -/
     noncomputable def StrictOrderMembershipGuided (S : U) : U :=
       SpecSet (S ×ₛ S) (fun p => ∃ x y, p = ⟨x, y⟩ ∧ x ∈ y)
 
@@ -141,17 +207,35 @@ namespace SetUniverse
         · exact ⟨x, y, rfl, hxy⟩
 
     /-! ### Orden Total Estricto Guiado por Membresía ### -/
-    /-- The relation ∈[S] is a total strict order on S:
-        - Asymmetry: x ∈ y → ¬(y ∈ x)
-        - Trichotomy: x ∈ y ∨ x = y ∨ y ∈ x -/
+    /-- La relación ∈[S] es un orden total estricto en S.
+
+        **Definición**: S tiene orden total estricto si:
+        1. S es transitivo
+        2. **Asimetría**: ∀x,y ∈ S, (x ∈ y → y ∉ x)
+        3. **Tricotomía**: ∀x,y ∈ S, (x ∈ y ∨ x = y ∨ y ∈ x)
+
+        La tricotomía significa que cualesquiera dos elementos de S son comparables.
+        La asimetría garantiza que la relación es irreflexiva y antisimétrica.
+
+        Para conjuntos transitivos, estas propiedades hacen de ∈[S] un orden lineal. -/
     def isTotalStrictOrderMembershipGuided (S : U) : Prop :=
       isTransitiveSet S ∧
       (∀ x y, x ∈ S → y ∈ S → x ∈ y → y ∉ x) ∧
       (∀ x y, x ∈ S → y ∈ S → (x ∈ y ∨ x = y ∨ y ∈ x))
 
     /-! ### Bien Ordenado (Finito) Guiado por Membresía ### -/
-    /-- ⟨S, ∈[S]⟩ is well-ordered: every non-empty subset has a minimal element
-        AND a maximal element (this enforces finiteness). -/
+    /-- ⟨S, ∈[S]⟩ está bien ordenado (en sentido finito).
+
+        **Definición**: S está bien ordenado si todo subconjunto no vacío T ⊆ S tiene:
+        1. **Elemento mínimo**: ∃m ∈ T, ∀x ∈ T, (m = x ∨ m ∈ x)
+        2. **Elemento máximo**: ∃M ∈ T, ∀x ∈ T, (M = x ∨ x ∈ M)
+
+        **Nota crucial**: La existencia de MÁXIMO es la característica distintiva
+        de conjuntos FINITOS. En ordinales infinitos (como ω), hay subconjuntos
+        sin elemento máximo (por ejemplo, ω mismo no tiene máximo).
+
+        Esta definición bicondicional (mínimo Y máximo) caracteriza precisamente
+        los ordinales finitos, es decir, los números naturales. -/
     def isWellOrderMembershipGuided (S : U) : Prop :=
       ∀ T, T ⊆ S → T ≠ (∅ : U) →
         (∃ m, m ∈ T ∧ ∀ x, x ∈ T → (m = x ∨ m ∈ x)) ∧ -- Mínimo
@@ -161,10 +245,34 @@ namespace SetUniverse
     /-! ### DEFINICIÓN DE NÚMERO NATURAL ### -/
     /-! ============================================================ -/
 
-    /-- n is a natural number if:
-        1. n is a transitive set
-        2. ∈[n] is a total strict order on n
-        3. ⟨n, ∈[n]⟩ is well-ordered (has min and max for subsets) -/
+    /-- **DEFINICIÓN PRINCIPAL**: n es un número natural (ordinal finito de von Neumann)
+
+        Un conjunto n es un número natural si y solo si cumple TRES condiciones:
+
+        1. **n es transitivo**: ∀x ∈ n, x ⊆ n
+           (cada elemento de n es también un subconjunto de n)
+
+        2. **∈[n] es un orden total estricto**: ∀x,y ∈ n, (x ∈ y ∨ x = y ∨ y ∈ x)
+           (cualesquiera dos elementos de n son comparables por membresía)
+
+        3. **⟨n, ∈[n]⟩ está bien ordenado (finito)**:
+           - Todo subconjunto no vacío tiene elemento MÍNIMO
+           - Todo subconjunto no vacío tiene elemento MÁXIMO
+
+        **Observación crucial**: La condición (3) con MÁXIMO distingue los naturales
+        de los ordinales infinitos. En ω (el primer ordinal infinito), ω mismo es
+        un subconjunto sin elemento máximo.
+
+        **Ejemplos**:
+        - 0 = ∅ es natural (vacuamente)
+        - 1 = {∅} es natural
+        - 2 = {∅, {∅}} es natural
+        - 3 = {∅, {∅}, {∅, {∅}}} es natural
+
+        **Construcción**: Si n es natural, entonces σ(n) = n ∪ {n} es natural.
+
+        Esta definición NO usa el Axioma de Infinito y caracteriza los naturales
+        intrínsecamente, sin referencia a un conjunto ω de "todos los naturales". -/
     def isNat (n : U) : Prop :=
       isTransitiveSet n ∧
       isTotalStrictOrderMembershipGuided n ∧
@@ -174,7 +282,19 @@ namespace SetUniverse
     /-! ### TEOREMAS FUNDAMENTALES ### -/
     /-! ============================================================ -/
 
-    /-! ### ∅ es un número natural ### -/
+    /-- **TEOREMA BASE**: El conjunto vacío es un número natural.
+
+        **Enunciado**: isNat ∅
+
+        Este es el punto de partida de la construcción inductiva de naturales.
+        La prueba es vacua porque ∅ no tiene elementos, así que:
+        - Es vacuamente transitivo (no hay x ∈ ∅ que verificar)
+        - Tiene vacuamente orden total (no hay x,y ∈ ∅ que comparar)
+        - Está vacuamente bien ordenado (no hay subconjuntos no vacíos de ∅)
+
+        Esta prueba vacua es típica del caso base en construcciones ordinales.
+
+        **Notación**: Usaremos 0 ≡ ∅ como el primer natural. -/
     theorem zero_is_nat : isNat (∅ : U) := by
       unfold isNat isTotalStrictOrderMembershipGuided isWellOrderMembershipGuided
       refine ⟨?_, ?_, ?_⟩
@@ -212,26 +332,52 @@ namespace SetUniverse
             exact False.elim (EmptySet_is_empty z hz)
         exact hT_nonempty this
 
-    /-! ### Teoremas auxiliares sobre sucesores ### -/
+    /-! ============================================================ -/
+    /-! ### PROPIEDADES AUXILIARES DEL SUCESOR ### -/
+    /-! ============================================================ -/
+
+    /-- **Lema auxiliar**: Todo elemento pertenece a su sucesor.
+
+        **Enunciado**: n ∈ σ(n)
+
+        Por definición, σ(n) = n ∪ {n}, así que n ∈ {n} ⊆ σ(n).
+        Este lema es fundamental para muchas pruebas sobre sucesores. -/
     theorem mem_successor_self (n : U) : n ∈ (σ n) := by
       rw [successor_is_specified]
       exact Or.inr rfl
 
+    /-- **Lema de characterización**: x ∈ σ(n) ⟺ x ∈ n ∨ x = n
+
+        El sucesor añade exactamente un nuevo elemento (n mismo) al conjunto n.
+        Esta characterización es útil para razonar por casos sobre elementos de sucesores. -/
     theorem subset_of_mem_successor (n x : U) :
       x ∈ (σ n) → x ∈ n ∨ x = n := by
       intro hx
       rw [successor_is_specified] at hx
       exact hx
 
-    /-- Preservación de membresía: si un elemento está en un conjunto,
-        también está en su sucesor.
-        n ∈ m → n ∈ σ(m) -/
+    /-- **Lema de preservación**: La membresía se preserva al tomar sucesores.
+
+        **Enunciado**: n ∈ m → n ∈ σ(m)
+
+        Si n está en m, también está en σ(m) = m ∪ {m}.
+        Este lema es útil para probar propiedades de orden. -/
     theorem mem_successor_of_mem (n m : U) (h : n ∈ m) : n ∈ σ m := by
       rw [successor_is_specified]
       left
       exact h
 
-    /-! ### Si n es transitivo, entonces σ(n) es transitivo ### -/
+    /-- **Teorema de preservación de transitividad**: Si n es transitivo, σ(n) es transitivo.
+
+        **Enunciado**: isTransitiveSet n → isTransitiveSet σ(n)
+
+        Este teorema es crucial para probar que nat_successor_is_nat.
+        La prueba analiza dos casos para x ∈ σ(n):
+        - Si x ∈ n: usa transitividad de n
+        - Si x = n: entonces los elementos de x están en n ⊆ σ(n)
+
+        La transitividad es la primera propiedad que debe verificarse
+        para mostrar que σ(n) es natural. -/
     theorem successor_preserves_transitivity (n : U) (hn : isTransitiveSet n) :
       isTransitiveSet (σ n) := by
       unfold isTransitiveSet at hn ⊢
@@ -348,10 +494,21 @@ namespace SetUniverse
           exact absurd hm_in_l (hn_asym l m hl_in_n hm_in_n hl_in_m)
 
     /-! ============================================================ -/
-    /-! ### BUENA FUNDACIÓN DE NATURALES (SIN AXIOMA) ### -/
+    /-! ### BUENA FUNDACIÓN DE NATURALES (SIN AXIOMA DE REGULARIDAD) ### -/
     /-! ============================================================ -/
 
-    /-! ### Lema: ningún número natural es miembro de sí mismo (irreflexividad) ### -/
+    /-- **TEOREMA FUNDAMENTAL**: Ningún número natural es miembro de sí mismo.
+
+        **Enunciado**: isNat n → n ∉ n
+
+        Este teorema establece la irreflexividad de la membresía en naturales.
+        Es crucial porque:
+        1. Se prueba SIN usar el Axioma de Regularidad
+        2. Usa solo la asimetría del orden total estricto en n
+        3. Es la base para probar que no hay ciclos de membresía
+
+        **Prueba**: Si n ∈ n, entonces por asimetría de n: n ∈ n → n ∉ n,
+        contradicción. -/
     theorem nat_not_mem_self (n : U) :
       isNat n → n ∉ n := by
       intro ⟨_, ⟨_,hasym, _⟩, _⟩ hn_mem
@@ -359,7 +516,16 @@ namespace SetUniverse
       have : n ∉ n := hasym n n hn_mem hn_mem hn_mem
       exact this hn_mem
 
-    /-! ### Lema: no existen ciclos de membresía de dos elementos ### -/
+    /-- **TEOREMA**: No existen ciclos de membresía de dos elementos entre naturales.
+
+        **Enunciado**: isNat x → isNat y → ¬(x ∈ y ∧ y ∈ x)
+
+        Si x e y son naturales y x ∈ y, entonces y ∉ x.
+        Esto prueba que la membresía entre naturales es antisimétrica.
+
+        **Prueba**: Si x ∈ y y y ∈ x:
+        - Si x = y: entonces x ∈ x, contradiciendo nat_not_mem_self
+        - Si x ≠ y: por transitividad de y, tendríamos y ∈ y, contradicción -/
     theorem nat_no_two_cycle (x y : U) :
       isNat x → isNat y → ¬(x ∈ y ∧ y ∈ x) := by
       intro hx hy hmem
@@ -382,7 +548,15 @@ namespace SetUniverse
         -- But this contradicts nat_not_mem_self
         exact nat_not_mem_self y hy y_in_y
 
-    /-! ### Lema: no existen ciclos de membresía de tres elementos ### -/
+    /-- **TEOREMA**: No existen ciclos de membresía de tres elementos entre naturales.
+
+        **Enunciado**: isNat x → isNat y → isNat z → ¬(x ∈ y ∧ y ∈ z ∧ z ∈ x)
+
+        Este teorema generaliza la ausencia de ciclos a tres elementos.
+        Es importante para establecer que la membresía en naturales es acíclica.
+
+        **Prueba**: Si x ∈ y, y ∈ z, z ∈ x, entonces por transitividad de x:
+        z ⊆ x, luego y ∈ x, formando un 2-ciclo x ∈ y ∧ y ∈ x, contradicción. -/
     theorem nat_no_three_cycle (x y z : U) :
       isNat x → isNat y → isNat z → ¬(x ∈ y ∧ y ∈ z ∧ z ∈ x) := by
       intro hx hy hz hmem
@@ -395,7 +569,17 @@ namespace SetUniverse
       -- Now we have x ∈ y and y ∈ x, which is a 2-cycle
       exact nat_no_two_cycle x y hx hy ⟨hxy, hyx⟩
 
-    /-! ### Lema: elementos de un número natural son transitivos ### -/
+    /-- **Lema estructural**: Elementos de naturales son transitivos.
+
+        **Enunciado**: isNat n → m ∈ n → isTransitiveSet m
+
+        Este lema establece que la propiedad de transitividad se hereda
+        a los elementos. Es uno de los tres componentes necesarios para probar
+        que nat_element_is_nat.
+
+        **Prueba compleja**: Usa tricotomía y análisis de casos exhaustivo,
+        apoyado en no_three_cycle_in_nat para eliminar casos imposibles.
+        Es una de las pruebas más técnicas del archivo. -/
     theorem nat_element_is_transitive (n m : U)
       (hn : isNat n) (hm_in_n : m ∈ n) :
       isTransitiveSet m := by
@@ -483,7 +667,15 @@ namespace SetUniverse
                   -- Use no_three_cycle_in_nat
                   exact False.elim (no_three_cycle_in_nat n m k l hn_reconstructed hm_in_n hk_in_n hl_in_n hm_in_l hl_in_k hk_in_m)
 
-    /-! ### Teorema: el orden estricto en elementos de naturales es total ### -/
+    /-- **Lema estructural**: Elementos de naturales tienen orden total estricto.
+
+        **Enunciado**: isNat n → m ∈ n → isTotalStrictOrderMembershipGuided m
+
+        El orden total se hereda de n a sus elementos m porque:
+        - m ⊆ n (por transitividad de n)
+        - La asimetría y tricotomía en n se restringen a m
+
+        Este es el segundo componente para nat_element_is_nat. -/
     theorem nat_element_has_strict_total_order (n m : U)
       (hn : isNat n) (hm_in_n : m ∈ n) :
       isTotalStrictOrderMembershipGuided m := by
@@ -521,6 +713,15 @@ namespace SetUniverse
         -- Como x, y están en m que está en n, la tricotomía se preserva
         exact htrich_n
 
+    /-- **Lema estructural**: Elementos de naturales están bien ordenados.
+
+        **Enunciado**: isNat n → m ∈ n → isWellOrderMembershipGuided m
+
+        El bien-orden se hereda porque para T ⊆ m ⊆ n no vacío:
+        - n está bien ordenado, así que T tiene mínimo y máximo en n
+        - Estos mínimo/máximo también están en T ⊆ m
+
+        Este es el tercer y último componente para nat_element_is_nat. -/
     theorem nat_element_has_well_order (n m : U)
       (hn : isNat n) (hm_in_n : m ∈ n) :
       isWellOrderMembershipGuided m := by
@@ -550,7 +751,22 @@ namespace SetUniverse
       · exact ⟨min, hmin_in_T, hmin_is_min⟩
       · exact ⟨max, hmax_in_T, hmax_is_max⟩
 
-    /-! ### Lema: todo elemento de un natural es un natural ### -/
+    /-- **TEOREMA FUNDAMENTAL**: Todo elemento de un número natural es un número natural.
+
+        **Enunciado**: isNat n → m ∈ n → isNat m
+
+        Este teorema establece que los naturales son "cerrados hacia abajo":
+        si n es natural, entonces todos sus elementos son también naturales.
+
+        **Consecuencias**:
+        - Los naturales forman una jerarquía: 0 ∈ 1 ∈ 2 ∈ 3 ∈ ...
+        - Cada natural es exactamente el conjunto de todos los naturales menores
+        - Esto justifica la representación: n = {0, 1, 2, ..., n-1}
+
+        **Prueba**: Demostramos que m hereda las tres propiedades de isNat:
+        1. m es transitivo (por nat_element_is_transitive)
+        2. m tiene orden total estricto (por nat_element_has_strict_total_order)
+        3. m está bien ordenado (por nat_element_has_well_order) -/
     theorem nat_element_is_nat (n m : U) :
       isNat n → m ∈ n → isNat m := by
       intro hn hm_in_n
@@ -767,10 +983,127 @@ namespace SetUniverse
         · exact h_min
         · exact h_max
 
+    /-! ### Elemento máximo en subconjuntos de naturales ### -/
+
+    /-- **TEOREMA DE FINITUD**: Todo subconjunto no vacío de un natural tiene elemento máximo.
+
+        **Enunciado**: isNat n → T ⊆ n → T ≠ ∅ →
+                       ∃max ∈ T, ∀x ∈ T, (x ∈ max ∨ x = max)
+
+        Este teorema caracteriza a los naturales como ordinales FINITOS.
+        Es la distinción crucial entre naturales y ordinales infinitos:
+
+        **Comparación**:
+        - En un natural n: TODO subconjunto no vacío tiene máximo
+        - En ω (primer ordinal infinito): ω mismo no tiene elemento máximo
+        - En general: un ordinal es finito ⟺ es un natural ⟺ todo subconjunto tiene máximo
+
+        **Estrategia de prueba**:
+        Definimos Mx = {x ∈ T | ¬∃y ∈ T, x ∈ y ∧ x ≠ y} (elementos maximales)
+        1. Si Mx ≠ ∅: cualquier elemento de Mx es el máximo buscado
+        2. Si Mx = ∅: cada elemento tendría un sucesor en T, creando cadena
+           infinita ascendente, contradiciendo que T ⊆ n está bien ordenado
+
+        **Aplicaciones**:
+        - Prueba que no hay cadenas infinitas ascendentes en naturales
+        - Fundamenta la inducción matemática (principio de descenso infinito)
+        - Distingue naturales de transfinitos sin necesidad de ω
+    -/
+    theorem nat_has_max (n T : U) (hn : isNat n) (hT_sub : T ⊆ n) (hT_ne : T ≠ ∅) :
+      ∃ max, max ∈ T ∧ ∀ x, x ∈ T → (x ∈ max ∨ x = max) := by
+      -- Definimos el conjunto de elementos maximales de T:
+      -- aquellos que no tienen ningún elemento mayor en T
+      let Mx := SpecSet T (fun x => ¬∃ y, y ∈ T ∧ x ∈ y ∧ x ≠ y)
+
+      -- Si Mx ≠ ∅, cualquier elemento de Mx es el máximo buscado
+      by_cases hMx : Mx ≠ ∅
+      · -- Caso: existe al menos un elemento maximal
+        have hMx_sub : Mx ⊆ T := by
+          intro x hx
+          rw [SpecSet_is_specified] at hx
+          exact hx.1
+        have hMx_sub_n : Mx ⊆ n := by
+          intro x hx
+          have : x ∈ T := hMx_sub x hx
+          exact hT_sub x this
+        -- Tomamos cualquier elemento de Mx (usando bien-orden)
+        obtain ⟨max, hmax_in_Mx, _⟩ := (hn.2.2 Mx hMx_sub_n hMx).1
+        exists max
+        have hmax_in_T : max ∈ T := hMx_sub max hmax_in_Mx
+        refine ⟨hmax_in_T, ?_⟩
+        intro x hx_in_T
+        -- Por tricotomía: x ∈ max ∨ x = max ∨ max ∈ x
+        have hx_in_n : x ∈ n := hT_sub x hx_in_T
+        have hmax_in_n : max ∈ n := hT_sub max hmax_in_T
+        have htrich := hn.2.1.2.2 x max hx_in_n hmax_in_n
+        cases htrich with
+        | inl h => left; exact h  -- x ∈ max ✓
+        | inr h => cases h with
+          | inl h => right; exact h  -- x = max ✓
+          | inr h =>  -- max ∈ x (contradicción)
+            -- max es maximal, así que no puede existir x ∈ T con max ∈ x y max ≠ x
+            exfalso
+            have hmax_maximal : ¬∃ y, y ∈ T ∧ max ∈ y ∧ max ≠ y := by
+              rw [SpecSet_is_specified] at hmax_in_Mx
+              exact hmax_in_Mx.2
+            apply hmax_maximal
+            exists x
+            refine ⟨hx_in_T, h, ?_⟩
+            intro h_eq
+            -- Si max = x, entonces max ∈ max (porque max ∈ x), contradicción
+            have h_max_in_max : max ∈ max := h_eq ▸ h
+            exact nat_not_mem_self max (nat_element_is_nat n max hn hmax_in_n) h_max_in_max
+
+      · -- Caso: no hay elementos maximales
+        -- Esto significa que para cada x ∈ T, existe y ∈ T con x ∈ y y x ≠ y
+        -- Pero como T ⊆ n y n es bien-ordenado (tiene máximo), T debe tener un máximo M
+        -- Si M es el máximo, entonces para todo x ∈ T, x ∈ M ∨ x = M
+        -- Luego M debe ser maximal, contradiciendo que Mx = ∅
+        have hMx_empty : Mx = ∅ := not_not.mp hMx
+        -- Como T ⊆ n, T ≠ ∅, y n tiene la propiedad de máximo, T tiene un máximo
+        obtain ⟨M, hM_in_T, hM_is_max⟩ := (hn.2.2 T hT_sub hT_ne).2
+
+        -- Vamos a mostrar que M ∈ Mx, contradiciendo Mx = ∅
+        have hM_in_Mx : M ∈ Mx := by
+          rw [SpecSet_is_specified]
+          refine ⟨hM_in_T, ?_⟩
+          intro ⟨y, hy_in_T, hM_in_y, hM_ne_y⟩
+          -- Si M ∈ y y M ≠ y, entonces por maximalidad de M: y ∈ M ∨ y = M
+          have h_y_vs_M := hM_is_max y hy_in_T
+          cases h_y_vs_M with
+          | inl h_y_eq_M =>
+            -- Si M = y, entonces M ≠ y es falso
+            exact hM_ne_y h_y_eq_M
+          | inr h_y_in_M =>
+            -- Si y ∈ M, entonces tenemos M ∈ y y y ∈ M, violando asimetría
+            have hM_in_n : M ∈ n := hT_sub M hM_in_T
+            have hy_in_n : y ∈ n := hT_sub y hy_in_T
+            have h_asym := hn.2.1.2.1 M y hM_in_n hy_in_n hM_in_y
+            exact h_asym h_y_in_M
+
+        -- Pero Mx = ∅, así que M ∉ Mx, contradicción
+        exfalso
+        rw [hMx_empty] at hM_in_Mx
+        exact EmptySet_is_empty M hM_in_Mx
+
     /-! ### No hay naturales entre n y σ(n) ### -/
-    /-- Si n y m son naturales y n ∈ m, entonces σ(n) ⊆ m.
-        Esto significa que σ(n) es el "siguiente" natural después de n,
-        sin otros naturales en el medio. -/
+
+    /-- **TEOREMA**: El sucesor es el "siguiente" natural inmediato.
+
+        **Enunciado**: isNat n → isNat m → n ∈ m → σ(n) ⊆ m
+
+        Si n ∈ m (es decir, n < m), entonces σ(n) ⊆ m.
+        Esto significa que no hay naturales "entre" n y su sucesor σ(n).
+
+        **Interpretación aritmética**:
+        En la representación ordinal n = {0,1,2,...,n-1}:
+        - Si n < m, entonces n+1 ≤ m (no hay números entre n y n+1)
+        - Los naturales son "discretos": no hay elementos intermedios
+
+        **Consecuencias**:
+        - Justifica que σ es el "sucesor inmediato"
+        - Base para definir el orden < como: n < m ⟺ n ∈ m
+        - Fundamental para la aritmética de naturales -/
     theorem no_nat_between (n m : U) (_hn : isNat n) (hm : isNat m)
         (hn_in_m : n ∈ m) : σ n ⊆ m := by
       obtain ⟨hm_trans, _, _⟩ := hm
@@ -1290,173 +1623,368 @@ namespace SetUniverse
       have h2 := two_in_inductive I hI
       exact hI.2 (σ (σ (∅ : U))) h2
 
-    /-! ### Elemento máximo en subconjuntos de naturales ### -/
+    /-! ============================================================ -/
+    /-! ### ESTADO DEL DESARROLLO: NÚMEROS NATURALES ### -/
+    /-! ============================================================ -/
 
-    /-- Todo subconjunto no vacío de un natural tiene un elemento máximo.
+    /- ## RESUMEN EJECUTIVO
 
-        Este teorema caracteriza a los naturales como ordinales FINITOS:
-        en un ordinal infinito (como ω), no todo subconjunto tiene máximo.
+    Este archivo contiene una formalización completa de los números naturales
+    como ordinales de von Neumann, SIN usar el Axioma de Infinito.
 
-        La prueba usa que si no hubiera elemento maximal, cada elemento
-        tendría un sucesor en T, creando una cadena infinita ascendente,
-        lo cual contradice la finitud de n. -/
-    theorem nat_has_max (n T : U) (hn : isNat n) (hT_sub : T ⊆ n) (hT_ne : T ≠ ∅) :
-      ∃ max, max ∈ T ∧ ∀ x, x ∈ T → (x ∈ max ∨ x = max) := by
-      -- Definimos el conjunto de elementos maximales de T:
-      -- aquellos que no tienen ningún elemento mayor en T
-      let Mx := SpecSet T (fun x => ¬∃ y, y ∈ T ∧ x ∈ y ∧ x ≠ y)
+    ### LOGROS PRINCIPALES:
+    1. ✅ Definición intrínseca de natural (sin referencia a ω)
+    2. ✅ Tricotomía completa probada usando segmentos iniciales
+    3. ✅ Buena fundación probada SIN Axioma de Regularidad
+    4. ✅ Clausura bajo sucesores completamente probada
+    5. ✅ Caracterización de finitud vía existencia de máximos
+    6. ✅ Teoremas sobre conjuntos inductivos (sin necesidad de ω)
 
-      -- Si Mx ≠ ∅, cualquier elemento de Mx es el máximo buscado
-      by_cases hMx : Mx ≠ ∅
-      · -- Caso: existe al menos un elemento maximal
-        have hMx_sub : Mx ⊆ T := by
-          intro x hx
-          rw [SpecSet_is_specified] at hx
-          exact hx.1
-        have hMx_sub_n : Mx ⊆ n := by
-          intro x hx
-          have : x ∈ T := hMx_sub x hx
-          exact hT_sub x this
-        -- Tomamos cualquier elemento de Mx (usando bien-orden)
-        obtain ⟨max, hmax_in_Mx, _⟩ := (hn.2.2 Mx hMx_sub_n hMx).1
-        exists max
-        have hmax_in_T : max ∈ T := hMx_sub max hmax_in_Mx
-        refine ⟨hmax_in_T, ?_⟩
-        intro x hx_in_T
-        -- Por tricotomía: x ∈ max ∨ x = max ∨ max ∈ x
-        have hx_in_n : x ∈ n := hT_sub x hx_in_T
-        have hmax_in_n : max ∈ n := hT_sub max hmax_in_T
-        have htrich := hn.2.1.2.2 x max hx_in_n hmax_in_n
-        cases htrich with
-        | inl h => left; exact h  -- x ∈ max ✓
-        | inr h => cases h with
-          | inl h => right; exact h  -- x = max ✓
-          | inr h =>  -- max ∈ x (contradicción)
-            -- max es maximal, así que no puede existir x ∈ T con max ∈ x y max ≠ x
-            exfalso
-            have hmax_maximal : ¬∃ y, y ∈ T ∧ max ∈ y ∧ max ≠ y := by
-              rw [SpecSet_is_specified] at hmax_in_Mx
-              exact hmax_in_Mx.2
-            apply hmax_maximal
-            exists x
-            refine ⟨hx_in_T, h, ?_⟩
-            intro h_eq
-            -- Si max = x, entonces max ∈ max (porque max ∈ x), contradicción
-            have h_max_in_max : max ∈ max := h_eq ▸ h
-            exact nat_not_mem_self max (nat_element_is_nat n max hn hmax_in_n) h_max_in_max
+    ### ARQUITECTURA DE LA FORMALIZACIÓN:
 
-      · -- Caso: no hay elementos maximales
-        -- Esto significa que para cada x ∈ T, existe y ∈ T con x ∈ y y x ≠ y
-        -- Pero como T ⊆ n y n es bien-ordenado (tiene máximo), T debe tener un máximo M
-        -- Si M es el máximo, entonces para todo x ∈ T, x ∈ M ∨ x = M
-        -- Luego M debe ser maximal, contradiciendo que Mx = ∅
-        have hMx_empty : Mx = ∅ := not_not.mp hMx
-        -- Como T ⊆ n, T ≠ ∅, y n tiene la propiedad de máximo, T tiene un máximo
-        obtain ⟨M, hM_in_T, hM_is_max⟩ := (hn.2.2 T hT_sub hT_ne).2
+    **NIVEL 1: Definiciones Básicas**
+    - `successor` (σ) : U → U
+    - `isInductive` : U → Prop
+    - `isTransitiveSet` : U → Prop
+    - `StrictOrderMembershipGuided` (∈[S]) : orden inducido por membresía
 
-        -- Vamos a mostrar que M ∈ Mx, contradiciendo Mx = ∅
-        have hM_in_Mx : M ∈ Mx := by
-          rw [SpecSet_is_specified]
-          refine ⟨hM_in_T, ?_⟩
-          intro ⟨y, hy_in_T, hM_in_y, hM_ne_y⟩
-          -- Si M ∈ y y M ≠ y, entonces por maximalidad de M: y ∈ M ∨ y = M
-          have h_y_vs_M := hM_is_max y hy_in_T
-          cases h_y_vs_M with
-          | inl h_y_eq_M =>
-            -- Si M = y, entonces M ≠ y es falso
-            exact hM_ne_y h_y_eq_M
-          | inr h_y_in_M =>
-            -- Si y ∈ M, entonces tenemos M ∈ y y y ∈ M, violando asimetría
-            have hM_in_n : M ∈ n := hT_sub M hM_in_T
-            have hy_in_n : y ∈ n := hT_sub y hy_in_T
-            have h_asym := hn.2.1.2.1 M y hM_in_n hy_in_n hM_in_y
-            exact h_asym h_y_in_M
+    **NIVEL 2: Estructuras de Orden**
+    - `isTotalStrictOrderMembershipGuided` : asimetría + tricotomía
+    - `isWellOrderMembershipGuided` : existencia de mínimo Y máximo (finitud)
 
-        -- Pero Mx = ∅, así que M ∉ Mx, contradicción
-        exfalso
-        rw [hMx_empty] at hM_in_Mx
-        exact EmptySet_is_empty M hM_in_Mx
+    **NIVEL 3: Definición de Natural**
+    - `isNat n` ≝ n transitivo ∧ ∈[n] orden total ∧ ∈[n] bien ordenado
 
-    /-! ### NOTA SOBRE TEOREMAS PENDIENTES ###
+    **NIVEL 4: Teoremas Fundamentales**
+    - Buena fundación (sin ciclos de membresía)
+    - Propiedades estructurales (elementos son naturales)
+    - Clausura bajo sucesores
+    - Tricotomía entre naturales
 
-    ## Estado actual del desarrollo:
+    **NIVEL 5: Teoremas Avanzados**
+    - Segmentos iniciales
+    - Relación con conjuntos inductivos
+    - Caracterización de finitud (nat_has_max)
 
-    ### ✅ TEOREMAS COMPLETADOS:
-    - Propiedades básicas:
-      * `zero_is_nat` - ∅ es un número natural
-      * Ejemplos: 1, 2, 3 son naturales
-      * `mem_successor_self` - n ∈ σ(n)
-      * `nat_ne_successor` - n ≠ σ(n)
+    ### SECCIONES COMPLETADAS: -/
 
-    - Buena fundación (sin Axioma de Regularidad):
-      * `nat_not_mem_self` - n ∉ n (irreflexividad)
-      * `nat_no_two_cycle` - ¬(n ∈ m ∧ m ∈ n)
-      * `nat_no_three_cycle` - ¬(n ∈ m ∧ m ∈ k ∧ k ∈ n)
+    /-! ## I. PROPIEDADES ELEMENTALES ✅
 
-    - Propiedades estructurales:
-      * `nat_element_is_nat` - m ∈ n → isNat m
-      * `nat_element_is_transitive` - elementos son transitivos
-      * `nat_element_has_strict_total_order` - elementos tienen orden total
-      * `nat_element_has_well_order` - elementos son bien ordenados
+    **Teoremas básicos sobre 0 y sucesores**:
+    - `zero_is_nat` : ∅ es un número natural
+    - Ejemplos: 1 = {∅}, 2 = {∅,{∅}}, 3 = {∅,{∅},{∅,{∅}}} son naturales
+    - `mem_successor_self` : n ∈ σ(n) para todo n
+    - `nat_ne_successor` : n ≠ σ(n) para todo natural n
 
-    - Clausura y orden:
-      * `nat_successor_is_nat` - isNat n → isNat (σ n) ✅
-      * `nat_trichotomy` - n ∈ m ∨ n = m ∨ m ∈ n ✅
-      * `no_nat_between` - entre n y σ(n) no hay otros naturales
-      * `nat_subset_mem_or_eq` - n ⊆ m → n ∈ m ∨ n = m ✅
-      * `nat_mem_trans` - n ∈ m → m ∈ k → n ∈ k ✅
-      * `nat_mem_asymm` - n ∈ m → m ∉ n ✅
+    **Observaciones**:
+    - La prueba de zero_is_nat es vacua (todas las condiciones son vacuamente ciertas)
+    - Los ejemplos 1, 2, 3 se prueban computacionalmente verificando las tres condiciones
+    -/
 
-    - Segmentos iniciales:
-      * `isInitialSegment` - definición de segmento inicial
-      * `initial_segment_of_nat_is_eq_or_mem` - segmento inicial es igual o elemento
-      * `inter_nat_is_initial_segment` - intersección es segmento inicial
-      * `nat_is_initial_segment` - n ∈ m → n es segmento inicial de m ✅
-      * `nat_element_trichotomy` - elementos de m cumplen tricotomía ✅
+    /-! ## II. BUENA FUNDACIÓN (SIN AXIOMA DE REGULARIDAD) ✅
 
-    - Propiedades del sucesor:
-      * `successor_injective` - σ(n) = σ(m) → n = m ✅
-      * `successor_nonempty` - σ(n) ≠ ∅ ✅
-      * `mem_successor_of_mem` - m ∈ n → m ∈ σ(n) ✅
+    **Ausencia de ciclos de membresía**:
+    - `nat_not_mem_self` : n ∉ n (irreflexividad)
+    - `nat_no_two_cycle` : ¬(n ∈ m ∧ m ∈ n)
+    - `nat_no_three_cycle` : ¬(n ∈ m ∧ m ∈ k ∧ k ∈ n)
 
-    - Teoremas sobre conjuntos inductivos:
-      * `nat_is_zero_or_succ` - n = 0 ∨ ∃k, n = σ(k) ✅
-      * `nat_subset_inductive_set` - n ⊆ I para todo I inductivo ✅
-      * `nat_in_inductive_set` - n ∈ I para todo I inductivo ✅
-      * `zero_in_inductive` - 0 ∈ I para todo I inductivo ✅
-      * `one_in_inductive` - 1 ∈ I para todo I inductivo ✅
-      * `two_in_inductive` - 2 ∈ I para todo I inductivo ✅
-      * `three_in_inductive` - 3 ∈ I para todo I inductivo ✅
+    **IMPORTANCIA CRUCIAL**:
+    - Estos teoremas se prueban SOLO usando la asimetría del orden total en naturales
+    - NO requieren el Axioma de Regularidad (Fundación)
+    - Demuestran que los naturales son intrínsecamente bien fundados
+    - Base para probar que ∈ es acíclica en naturales
 
-    - Elemento máximo en subconjuntos:
-      * `nat_has_max` - todo subconjunto no vacío tiene máximo ✅
+    **Técnica de prueba**:
+    - nat_not_mem_self: usa asimetría directamente
+    - nat_no_two_cycle: usa transitividad + nat_not_mem_self
+    - nat_no_three_cycle: reduce a ciclo de 2 elementos
+    -/
 
-    ### ❌ TEOREMAS PENDIENTES (requieren más desarrollo):
+    /-! ## III. PROPIEDADES ESTRUCTURALES ✅
 
-    2. Teoremas sobre conjuntos inductivos (requieren Axioma de Infinito):
-       - Existencia del conjunto ω de todos los naturales
-       - ω es inductivo
-       - ω es el menor conjunto inductivo
-       - Todo natural pertenece a ω
-       - Caracterización: `isNat n ↔ n ∈ ω`
+    **Heredabilidad de la estructura de natural**:
+    - `nat_element_is_nat` : m ∈ n → isNat m (TEOREMA CLAVE)
+    - `nat_element_is_transitive` : elementos son transitivos
+    - `nat_element_has_strict_total_order` : elementos tienen orden total
+    - `nat_element_has_well_order` : elementos están bien ordenados
 
-    3. Principio de inducción (requiere ω):
-       - Forma débil: `P(0) → (∀n, P(n) → P(σ(n))) → (∀n ∈ ω, P(n))`
-       - Forma fuerte: usando bien-orden de ω
-       - Recursión sobre naturales
+    **SIGNIFICADO**:
+    - Los naturales forman una jerarquía "cerrada hacia abajo"
+    - Cada natural n es exactamente el conjunto de todos los naturales < n
+    - Representación: n = {0, 1, 2, ..., n-1}
+    - Este teorema es análogo a "los elementos de un ordinal son ordinales"
 
-    4. Aritmética básica:
-       - Suma: n + m
-       - Multiplicación: n × m
-       - Orden: n < m, n ≤ m
-       - Propiedades algebraicas (asociatividad, conmutatividad, distributividad)
+    **Consecuencias**:
+    - Justifica la notación n = {0,1,...,n-1}
+    - Permite definir el orden: m < n ⟺ m ∈ n
+    - Fundamental para la tricotomía
+    -/
 
-    ## Notas técnicas:
-    - La totalidad de teoremas están probados SIN el Axioma de Regularidad
-    - La tricotomía está completamente probada usando segmentos iniciales
-    - El Axioma de Infinito es necesario solo para ω y la inducción
-    - Muchos teoremas "pendientes" son derivables de los ya probados
-      pero requieren trabajo adicional de formalización
+    /-! ## IV. CLAUSURA BAJO SUCESORES ✅
+
+    **Teorema principal de clausura**:
+    - `nat_successor_is_nat` : isNat n → isNat (σ n)
+
+    **CONSTRUCCIÓN INDUCTIVA**:
+    - 0 = ∅ es natural (zero_is_nat)
+    - 1 = σ(0) es natural (por nat_successor_is_nat)
+    - 2 = σ(1) es natural (por nat_successor_is_nat)
+    - 3 = σ(2) es natural (por nat_successor_is_nat)
+    - ...
+
+    **COMPLEJIDAD DE LA PRUEBA**:
+    Este teorema requiere verificar las tres condiciones de isNat para σ(n):
+    1. σ(n) es transitivo: usa successor_preserves_transitivity
+    2. σ(n) tiene orden total: extiende el orden de n con tricotomía
+    3. σ(n) está bien ordenado: usa que n es el máximo elemento de σ(n)
+
+    La parte más delicada es probar el bien-orden (existencia de máximo),
+    que requiere análisis de casos según si n ∈ subconjunto o no.
+
+    **Propiedades adicionales del sucesor**:
+    - `successor_injective` : σ(n) = σ(m) → n = m
+    - `successor_nonempty` : σ(n) ≠ ∅
+    - `mem_successor_of_mem` : m ∈ n → m ∈ σ(n)
+    - `no_nat_between` : n ∈ m → σ(n) ⊆ m (no hay naturales intermedios)
+    -/
+
+    /-! ## V. TRICOTOMÍA Y ORDEN ✅
+
+    **Teorema de tricotomía completa**:
+    - `nat_trichotomy` : n ∈ m ∨ n = m ∨ m ∈ n
+      (cualesquiera dos naturales son comparables)
+
+    **ESTRATEGIA DE PRUEBA VÍA SEGMENTOS INICIALES**:
+    1. Definir `isInitialSegment S n` : S ⊆ n y cerrado hacia abajo
+    2. Probar `initial_segment_of_nat_is_eq_or_mem` : segmento inicial = n ó ∈ n
+    3. Probar `inter_nat_is_initial_segment` : n ∩ m es segmento inicial de ambos
+    4. Aplicar (2) a n ∩ m como segmento de n y de m
+    5. Combinar los casos para obtener tricotomía
+
+    **IMPORTANCIA**:
+    - Prueba constructiva usando intersección (no usa PEM extensivamente)
+    - Técnica estándar en teoría de ordinales
+    - Generalizable a ordinales transfinitos
+
+    **Teoremas derivados**:
+    - `nat_subset_mem_or_eq` : n ⊆ m → n ∈ m ∨ n = m
+    - `nat_mem_trans` : n ∈ m ∧ m ∈ k → n ∈ k (transitividad de <)
+    - `nat_mem_asymm` : n ∈ m → m ∉ n (asimetría de <)
+    - `nat_is_initial_segment` : n ∈ m → n es segmento inicial de m
+    - `nat_element_trichotomy` : elementos de m cumplen tricotomía
+    -/
+
+    /-! ## VI. CONJUNTOS INDUCTIVOS ✅
+
+    **Teoremas sobre relación con conjuntos inductivos**:
+    - `nat_is_zero_or_succ` : todo natural es 0 ó sucesor de otro
+    - `nat_subset_inductive_set` : n ⊆ I para todo I inductivo
+    - `nat_in_inductive_set` : si n es natural, entonces n ∈ I para todo I inductivo
+
+    **CASOS ESPECÍFICOS**:
+    - `zero_in_inductive` : 0 ∈ I para todo I inductivo
+    - `one_in_inductive` : 1 ∈ I para todo I inductivo
+    - `two_in_inductive` : 2 ∈ I para todo I inductivo
+    - `three_in_inductive` : 3 ∈ I para todo I inductivo
+
+    **INTERPRETACIÓN**:
+    - Los naturales están "contenidos" en todo conjunto inductivo
+    - Esto anticipa el teorema (no probado aquí): isNat n ↔ n ∈ ω
+    - NO asumimos la existencia de ω (requiere Axioma de Infinito)
+    - Los teoremas son válidos para CUALQUIER conjunto inductivo
+
+    **NOTA CRUCIAL**:
+    Estos teoremas NO prueban que existe un "conjunto de todos los naturales".
+    Solo prueban que IF existe un conjunto inductivo I, THEN cada natural ∈ I.
+    -/
+
+    /-! ## VII. CARACTERIZACIÓN DE FINITUD ✅
+
+    **Teorema de finitud**:
+    - `nat_has_max` : todo subconjunto no vacío de un natural tiene elemento máximo
+
+    **SIGNIFICADO PROFUNDO**:
+    Este teorema caracteriza EXACTAMENTE los ordinales finitos:
+    - Un ordinal es finito ⟺ todo subconjunto tiene máximo
+    - En ordinales infinitos (ω, ω+1, ω·2, ...), hay subconjuntos sin máximo
+    - Ejemplo: ω mismo no tiene elemento máximo en ω
+
+    **DISTINCIÓN CRUCIAL**:
+    - Mínimo: garantizado por bien-orden en todo ordinal (finito o infinito)
+    - Máximo: garantizado SOLO en ordinales finitos (naturales)
+
+    **PRUEBA POR CONTRADICCIÓN**:
+    Definimos Mx = {elementos maximales de T}
+    - Si Mx ≠ ∅: tomamos un elemento maximal como máximo
+    - Si Mx = ∅: cada elemento tiene un sucesor estricto en T
+      → crearía cadena infinita ascendente
+      → contradice bien-orden de n
+
+    **APLICACIONES**:
+    - Principio de descenso infinito (base de inducción fuerte)
+    - Distingue naturales de transfinitos sin referencia a ω
+    - Prueba que no hay cadenas infinitas ascendentes en naturales
+    -/
+
+    /-! ============================================================ -/
+    /-! ### DESARROLLOS FUTUROS (NO IMPLEMENTADOS) ### -/
+    /-! ============================================================ -/
+
+    /- ## ÁREAS PENDIENTES
+
+    ### 1. AXIOMA DE INFINITO Y EL CONJUNTO ω
+
+    **Requiere**:
+    - Axioma de Infinito: ∃I, isInductive I
+    - Definir ω como la intersección de todos los conjuntos inductivos
+    - Probar que ω es inductivo
+    - Probar que ω es el MENOR conjunto inductivo
+
+    **Teoremas derivables**:
+    - `isNat n ↔ n ∈ ω` (caracterización alternativa de natural)
+    - `ω es transitivo`
+    - `∈[ω] es un orden total estricto`
+    - `ω NO está bien ordenado en sentido finito` (ω no tiene máximo)
+
+    **Dificultades**:
+    - Requiere trabajar con familias arbitrarias de conjuntos
+    - Definir intersección arbitraria (no solo binaria)
+    - Probar propiedades de clausura de ω
+
+    ### 2. PRINCIPIO DE INDUCCIÓN MATEMÁTICA
+
+    **Formas del principio**:
+
+    a) Inducción débil:
+       P(0) → (∀n ∈ ω, P(n) → P(σ(n))) → (∀n ∈ ω, P(n))
+
+    b) Inducción fuerte (descendente):
+       (∀n ∈ ω, (∀m ∈ n, P(m)) → P(n)) → (∀n ∈ ω, P(n))
+
+    c) Inducción sobre bien-orden:
+       Usar que ω está bien ordenado (tiene mínimo para todo subconjunto)
+
+    **Requiere**:
+    - Existencia de ω (Axioma de Infinito)
+    - Lógica de orden superior (para el predicado P)
+    - Manejo de esquemas de axiomas en Lean
+
+    **Aplicaciones**:
+    - Definiciones recursivas sobre naturales
+    - Pruebas por inducción (obviamente)
+    - Teorema de recursión sobre ω
+
+    ### 3. ARITMÉTICA DE NATURALES
+
+    **Operaciones básicas** (vía recursión):
+
+    a) Suma: n + m
+       - 0 + m = m
+       - σ(n) + m = σ(n + m)
+
+    b) Multiplicación: n × m
+       - 0 × m = 0
+       - σ(n) × m = (n × m) + m
+
+    c) Exponenciación: n^m
+       - n^0 = 1
+       - n^(σ(m)) = n^m × n
+
+    **Propiedades algebraicas**:
+    - Asociatividad, conmutatividad de suma
+    - Asociatividad, conmutatividad de multiplicación
+    - Distributividad: n × (m + k) = n×m + n×k
+    - Leyes de exponenciación: n^(m+k) = n^m × n^k
+
+    **Orden aritmético**:
+    - Definir n < m ≝ n ∈ m (ya hecho implícitamente)
+    - Definir n ≤ m ≝ n < m ∨ n = m
+    - Probar compatibilidad con suma: n < m → n + k < m + k
+    - Probar compatibilidad con producto: n < m → n × σ(k) < m × σ(k)
+
+    **Dificultades**:
+    - Requiere inducción fuerte y/o recursión sobre ω
+    - Muchas propiedades "obvias" requieren pruebas técnicas
+    - Definir funciones recursivas en Lean 4 requiere terminación
+
+    ### 4. DIVISIBILIDAD Y NÚMEROS PRIMOS
+
+    **Conceptos básicos**:
+    - m | n (m divide a n)
+    - Algoritmo de división: ∀n m, ∃q r, n = m×q + r ∧ r < m
+    - MCD y MCM
+    - Números primos y factorización
+
+    **Teoremas**:
+    - Infinitud de primos
+    - Teorema fundamental de aritmética (factorización única)
+    - Lema de Euclides: p primo ∧ p | a×b → p | a ∨ p | b
+
+    **Dificultades**:
+    - Requiere toda la aritmética básica
+    - Algoritmo de Euclides para MCD
+    - Manejo de existenciales constructivos
+
+    ### 5. CONEXIÓN CON CARDINALIDAD
+
+    **Teoremas de equivalencia**:
+    - n ≈ m ↔ n = m (equipotencia implica igualdad para naturales)
+    - n ⪯ m ↔ n ⊆ m (inyección implica subconjunto)
+    - Tricotomía cardinal: n ⪯ m ∨ m ⪯ n (para naturales, trivial vía tricotomía)
+
+    **Teoremas de Cantor para finitos**:
+    - |𝒫(n)| = 2^n (cardinalidad del conjunto potencia)
+    - Todo subconjunto de natural es finito
+    - Caracterización de finitud vía biyección con natural
+
+    **Dificultades**:
+    - Requiere teoría de funciones bien desarrollada
+    - Manejo de cardinales en Lean
+    - Interfaz con teoría de cardinalidad de Mathlib
+
+    ## NOTAS TÉCNICAS FINALES
+
+    ### AXIOMAS USADOS:
+    - Extensionalidad ✓
+    - Existencia (conjunto vacío) ✓
+    - Especificación ✓
+    - Parejas ✓
+    - Unión ✓
+    - Conjunto potencia ✓
+    - Par ordenado (definición, no axioma) ✓
+    - Producto cartesiano (definición) ✓
+    - Relaciones (definición) ✓
+
+    ### AXIOMAS NO USADOS:
+    - Regularidad / Fundación ✗ (no necesario, teoremas probados sin él)
+    - Infinito ✗ (no definido ω, todos los teoremas son para naturales individuales)
+    - Elección ✗ (no necesario para esta formalización)
+    - Reemplazo ✗ (no necesario aún)
+
+    ### CARACTERÍSTICAS DE LA FORMALIZACIÓN:
+    - Totalmente constructiva en espíritu (aunque usa lógica clásica de Lean)
+    - Sin "magic" axioms: todo probado desde primeros principios
+    - Generalizable a ordinales transfinitos (con modificaciones)
+    - Lista para conectar con Mathlib (vía compatibilidad de definiciones)
+
+    ### LÍNEA TEMPORAL ESTIMADA DE DESARROLLO:
+    1. Axioma de Infinito y ω: ~200 líneas, dificultad media
+    2. Principio de inducción: ~100 líneas, dificultad media-alta
+    3. Suma y multiplicación: ~300 líneas, dificultad media
+    4. Propiedades algebraicas: ~500 líneas, dificultad media
+    5. Divisibilidad básica: ~400 líneas, dificultad media-alta
+    6. Números primos: ~600 líneas, dificultad alta
+    7. Cardinalidad: ~300 líneas, dificultad media
+
+    TOTAL ESTIMADO: ~2400 líneas adicionales
+
+    ### PRIORIDADES SUGERIDAS:
+    1. ω y caracterización isNat n ↔ n ∈ ω (fundamental)
+    2. Inducción (desbloquea todo lo demás)
+    3. Suma y multiplicación (base de aritmética)
+    4. Orden aritmético ≤ (conecta orden con álgebra)
+    5. Resto según necesidades del proyecto
+
     -/
 
   end NaturalNumbers
