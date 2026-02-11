@@ -41,6 +41,7 @@ including composition, identity, inverse, image, and preimage.
 
 namespace SetUniverse
   open Classical
+  open ExistsUnique
   open SetUniverse.ExtensionAxiom
   open SetUniverse.ExistenceAxiom
   open SetUniverse.SpecificationAxiom
@@ -71,7 +72,7 @@ namespace SetUniverse
         If f is not a function or x is not in domain, returns ∅ (by default of choose). -/
     noncomputable def apply (f x : U) : U :=
       if h : ∃! y, ⟨x, y⟩ ∈ f then
-        choose h
+        ExistsUnique.choose h
       else
         ∅
 
@@ -89,8 +90,7 @@ namespace SetUniverse
       f⦅x⦆ = y := by
       unfold apply
       simp only [dif_pos h_unique]
-      have h := choose_spec h_unique
-      exact (h_unique.unique h h_in)
+      exact (unique h_unique y h_in).symm
 
     /-! ============================================================ -/
     /-! ### COMPOSITION AND IDENTITY ### -/
@@ -111,19 +111,9 @@ namespace SetUniverse
       constructor
       · intro h; exact h.2
       · intro h
-        obtain ⟨x, z, hp, y, hf, hg⟩ := h
         constructor
-        · rw [hp, OrderedPair_mem_CartesianProduct]
-          constructor
-          · rw [domain, SpecSet_is_specified]
-            refine ⟨by rw [fst_of_ordered_pair]; exact fst_of_ordered_pair x y ▸ (fst_of_ordered_pair x y).symm ▸ (fst_of_ordered_pair x y) ▸ (fst_of_ordered_pair x y) ▸ _, y, hf⟩
-            -- Simplifying: fst f might not contain x directly if f is not pairs
-            -- But assume f, g are relations. domain definition relies on fst.
-            -- Let's just trust Relation's domain for now.
-            sorry -- Technicality about domain/range sets
-          · rw [range, SpecSet_is_specified]
-            refine ⟨_, y, hg⟩
-            sorry
+        · -- Prove p ∈ domain f ×ₛ range g
+          sorry -- Requires domain/range theorems from Relations
         · exact h
 
     /-- Composition of functions is a function -/
@@ -155,7 +145,8 @@ namespace SetUniverse
         obtain ⟨z, hz_unique⟩ := hg.2 y hy_in_B
         exists z
         constructor
-        · rw [comp_is_specified]
+        · show ⟨x, z⟩ ∈ g ∘ f
+          rw [comp_is_specified]
           refine ⟨x, z, rfl, y, hy_unique.1, hz_unique.1⟩
         · intro z' hz'
           rw [comp_is_specified] at hz'
@@ -165,10 +156,10 @@ namespace SetUniverse
           have hz_eq : z' = z'' := (Eq_of_OrderedPairs_given_projections x z' x z'' h_eq).2
           subst hz_eq
           -- y' must be y
-          have hy_eq : y' = y := hy_unique.unique y' hf'
+          have hy_eq : y' = y := hy_unique.2 y' hf'
           subst hy_eq
           -- z' must be z
-          exact hz_unique.unique z' hg'
+          exact hz_unique.2 z' hg'
 
     /-- Identity Function on A -/
     noncomputable def IdFunction (A : U) : U := IdRel A
@@ -176,8 +167,14 @@ namespace SetUniverse
     theorem apply_id (A x : U) (hx : x ∈ A) :
       (IdFunction A)⦅x⦆ = x := by
       apply apply_eq (IdFunction A) x x
-      · exact ⟨⟨hx, rfl⟩, fun y hy => hy.2.symm⟩
-      · rw [mem_IdRel]; exact ⟨hx, rfl⟩
+      · apply ExistsUnique.intro x
+        · unfold IdFunction
+          rw [mem_IdRel]; exact ⟨hx, rfl⟩
+        · intro y' hy'
+          unfold IdFunction at hy'
+          rw [mem_IdRel] at hy'; exact hy'.2.symm
+      · unfold IdFunction
+        rw [mem_IdRel]; exact ⟨hx, rfl⟩
 
     /-! ============================================================ -/
     /-! ### INVERSE FUNCTION ### -/
@@ -225,31 +222,25 @@ namespace SetUniverse
         intro p hp
         rw [Restriction_is_specified] at hp
         obtain ⟨hp_f, h_fst_C⟩ := hp
-        have h_sub := hf.1 p hp_f
-        rw [OrderedPair_mem_CartesianProduct] at h_sub ⊢
-        constructor
-        · rw [fst_of_ordered_pair] at h_fst_C
-          exact h_fst_C
-        · exact h_sub.2
-      · constructor
-        · -- Total on C
-          intro x hx
-          -- x ∈ C implies x ∈ A
-          have hx_A : x ∈ A := hC x hx
-          -- f is total on A, so ∃ y, ⟨x, y⟩ ∈ f
-          have h_tot := hf.2.1 x hx_A
-          obtain ⟨y, hy⟩ := h_tot
-          exists y
+        have h_sub : p ∈ A ×ₛ B := hf.1 p hp_f
+        -- p ∈ f and fst p ∈ C, with f ⊆ A × B, so p ∈ C × B
+        sorry -- Requires proving p is ordered pair and using projections
+      · intro x hx
+        -- x ∈ C implies x ∈ A
+        have hx_A : x ∈ A := hC x hx
+        -- f is total on A, so ∃! y, ⟨x, y⟩ ∈ f
+        obtain ⟨y, hy⟩ := hf.2 x hx_A
+        apply ExistsUnique.intro y
+        · -- Prove ⟨x, y⟩ ∈ f ↾ C
           rw [Restriction_is_specified]
           constructor
-          · exact hy
+          · exact hy.1
           · rw [fst_of_ordered_pair]
             exact hx
-        · -- Single valued
-          intro x y₁ y₂ hy₁ hy₂
-          rw [Restriction_is_specified] at hy₁ hy₂
-          -- Just use single-valuedness of f
-          exact hf.2.2 x y₁ y₂ hy₁.1 hy₂.1
+        · -- Prove uniqueness
+          intro y' hy'
+          rw [Restriction_is_specified] at hy'
+          exact hy.2 y' hy'.1
 
     /-- Application of restricted function equals application of original -/
     theorem Restriction_apply (f C x : U) (hx : x ∈ C) :
@@ -263,6 +254,7 @@ namespace SetUniverse
           refine ⟨y, hy.1, ?_⟩
           intro y' hy'
           apply hunique y'
+          show ⟨x, y'⟩ ∈ f ↾ C
           rw [Restriction_is_specified]
           constructor
           · exact hy'
@@ -271,7 +263,8 @@ namespace SetUniverse
         · intro h
           obtain ⟨y, hy, hunique⟩ := h
           refine ⟨y, ?_, ?_⟩
-          · rw [Restriction_is_specified]
+          · show ⟨x, y⟩ ∈ f ↾ C
+            rw [Restriction_is_specified]
             constructor
             · exact hy
             · rw [fst_of_ordered_pair]
@@ -287,10 +280,14 @@ namespace SetUniverse
         have h_eq_preds : (fun y => ⟨x, y⟩ ∈ f ↾ C) = (fun y => ⟨x, y⟩ ∈ f) := by
           apply funext
           intro y
+          apply propext
           rw [Restriction_is_specified]
           constructor
           · intro h_in; exact h_in.1
-          · intro h_in; exact ⟨h_in, (fst_of_ordered_pair x y) ▸ hx⟩
+          · intro h_in
+            constructor
+            · exact h_in
+            · rw [fst_of_ordered_pair]; exact hx
         congr
       · rw [dif_neg h]
         have h' : ¬∃! y, ⟨x, y⟩ ∈ f ↾ C := mt h_iff.mp h
@@ -320,7 +317,7 @@ namespace SetUniverse
       ∀ x₁ x₂ y, ⟨x₁, y⟩ ∈ f → ⟨x₂, y⟩ ∈ f → x₁ = x₂
 
     def isSurjectiveOnto (f B : U) : Prop :=
-      ∀ y ∈ B, ∃ x, ⟨x, y⟩ ∈ f
+      ∀ y, y ∈ B → ∃ x, ⟨x, y⟩ ∈ f
 
     def isBijection (f A B : U) : Prop :=
       isFunctionFromTo f A B ∧ isInjective f ∧ isSurjectiveOnto f B
