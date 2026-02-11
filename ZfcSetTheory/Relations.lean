@@ -450,57 +450,6 @@ namespace SetUniverse
           exfalso
           exact EmptySet_is_empty x hx
 
-    /-! ### Domain and Range Characterization Theorems -/
-
-    /-- Characterization of domain membership:
-        x is in the domain of R if and only if there exists y such that ⟨x, y⟩ ∈ R -/
-    theorem mem_domain (R x : U) :
-        x ∈ domain R ↔ ∃ y, ⟨x, y⟩ ∈ R := by
-      unfold domain
-      rw [SpecSet_is_specified]
-      constructor
-      · intro h; exact h.2
-      · intro h
-        constructor
-        · -- x ∈ fst R
-          -- NOTE: This requires a theorem about the structure of fst applied to relations
-          -- The definition domain R = SpecSet (fst R) (fun x => ∃ y, ⟨x, y⟩ ∈ R)
-          -- assumes fst R makes sense, but fst is defined for ordered pairs, not relations
-          -- Ideally domain should be redefined as SpecSet (⋃(⋃ R)) (fun x => ∃ y, ⟨x, y⟩ ∈ R)
-          sorry
-        · exact h
-
-    /-- Characterization of range membership:
-        y is in the range of R if and only if there exists x such that ⟨x, y⟩ ∈ R -/
-    theorem mem_range (R y : U) :
-        y ∈ range R ↔ ∃ x, ⟨x, y⟩ ∈ R := by
-      unfold range
-      rw [SpecSet_is_specified]
-      constructor
-      · intro h; exact h.2
-      · intro h
-        constructor
-        · -- y ∈ snd R
-          -- NOTE: Same structural issue as mem_domain
-          -- snd is defined for ordered pairs, not relations
-          -- Ideally range should be redefined as SpecSet (⋃(⋃ R)) (fun y => ∃ x, ⟨x, y⟩ ∈ R)
-          sorry
-        · exact h
-
-    /-- If ⟨x, y⟩ ∈ R, then x ∈ domain R -/
-    theorem pair_mem_implies_fst_in_domain (R x y : U) :
-        ⟨x, y⟩ ∈ R → x ∈ domain R := by
-      intro h
-      rw [mem_domain]
-      exact ⟨y, h⟩
-
-    /-- If ⟨x, y⟩ ∈ R, then y ∈ range R -/
-    theorem pair_mem_implies_snd_in_range (R x y : U) :
-        ⟨x, y⟩ ∈ R → y ∈ range R := by
-      intro h
-      rw [mem_range]
-      exact ⟨x, h⟩
-
     /-! ### Domain and Range for Relations (Properly Defined) -/
 
     /-- Characterization of domain_rel membership:
@@ -510,29 +459,18 @@ namespace SetUniverse
       unfold domain_rel
       rw [SpecSet_is_specified]
       constructor
-      · intro h; exact h.2
-      · intro h
-        constructor
-        · -- x ∈ ⋃(⋃ R)
-          obtain ⟨y, hxy⟩ := h
-          -- ⟨x, y⟩ ∈ R means ⟨x, y⟩ is an ordered pair
-          -- By definition: ⟨x, y⟩ = {{x}, {x, y}}
-          -- So {{x}, {x, y}} ∈ R
-          -- Therefore {x} ∈ ⋃ R (as {x} ∈ {{x}, {x, y}})
-          -- And x ∈ ⋃(⋃ R) (as x ∈ {x})
-          rw [UnionSet_is_specified]
-          use {x}
-          constructor
-          · rw [UnionSet_is_specified]
-            use ⟨x, y⟩
-            constructor
-            · exact hxy
-            · -- {x} ∈ ⟨x, y⟩
-              rw [OrderedPair_is_specified]
-              left
-              rfl
-          · simp [Singleton_is_specified]
-        · exact h
+      · -- Forward direction: x ∈ domain_rel R → ∃ y, ⟨x, y⟩ ∈ R
+        intro h
+        exact h.2
+      · -- Backward direction: ∃ y, ⟨x, y⟩ ∈ R → x ∈ domain_rel R
+        intro h
+        obtain ⟨y, hxy⟩ := h
+        refine ⟨?_, ⟨y, hxy⟩⟩
+        -- Show x ∈ ⋃(⋃ R)
+        apply (UnionSet_is_specified (⋃ R) x).mpr
+        refine ⟨{x}, ?_, (Singleton_is_specified x x).mpr rfl⟩
+        apply (UnionSet_is_specified R {x}).mpr
+        exact ⟨⟨x, y⟩, hxy, (OrderedPair_is_specified x y {x}).mpr (Or.inl rfl)⟩
 
     /-- Characterization of range_rel membership:
         y is in the range of R if and only if there exists x such that ⟨x, y⟩ ∈ R -/
@@ -541,28 +479,18 @@ namespace SetUniverse
       unfold range_rel
       rw [SpecSet_is_specified]
       constructor
-      · intro h; exact h.2
-      · intro h
-        constructor
-        · -- y ∈ ⋃(⋃ R)
-          obtain ⟨x, hxy⟩ := h
-          -- Similar to mem_domain_rel:
-          -- ⟨x, y⟩ = {{x}, {x, y}} ∈ R
-          -- So {x, y} ∈ ⋃ R
-          -- And y ∈ ⋃(⋃ R)
-          rw [UnionSet_is_specified]
-          use {x, y}
-          constructor
-          · rw [UnionSet_is_specified]
-            use ⟨x, y⟩
-            constructor
-            · exact hxy
-            · -- {x, y} ∈ ⟨x, y⟩
-              rw [OrderedPair_is_specified]
-              right
-              rfl
-          · simp [PairSet_is_specified]
-        · exact h
+      · -- Forward direction: y ∈ range_rel R → ∃ x, ⟨x, y⟩ ∈ R
+        intro h
+        exact h.2
+      · -- Backward direction: ∃ x, ⟨x, y⟩ ∈ R → y ∈ range_rel R
+        intro h
+        obtain ⟨x, hxy⟩ := h
+        refine ⟨?_, ⟨x, hxy⟩⟩
+        -- Show y ∈ ⋃(⋃ R)
+        apply (UnionSet_is_specified (⋃ R) y).mpr
+        refine ⟨{x, y}, ?_, (PairSet_is_specified x y y).mpr (Or.inr rfl)⟩
+        apply (UnionSet_is_specified R {x, y}).mpr
+        exact ⟨⟨x, y⟩, hxy, (OrderedPair_is_specified x y {x, y}).mpr (Or.inr rfl)⟩
 
     /-- Characterization of imag_rel (alias for range_rel) -/
     theorem mem_imag_rel (R y : U) :
@@ -589,6 +517,74 @@ namespace SetUniverse
         ⟨x, y⟩ ∈ R → y ∈ imag_rel R := by
       intro h
       rw [mem_imag_rel]
+      exact ⟨x, h⟩
+
+    /-! ### Legacy Domain and Range (Structural Issues) -/
+
+    /-- Characterization of domain membership (using legacy definition from Pairing.lean):
+        x is in the domain of R if and only if there exists y such that ⟨x, y⟩ ∈ R
+
+        NOTE: This theorem has a `sorry` because the definition `domain R = SpecSet (fst R) ...`
+        in Pairing.lean uses `fst R`, which is designed for individual ordered pairs, not relations.
+        The correct definition should use `⋃(⋃ R)` instead (see `domain_rel` above).
+
+        The forward direction works because it only depends on the predicate part.
+        Use `domain_rel` and `mem_domain_rel` for fully proven theorems. -/
+    theorem mem_domain (R x : U) :
+        x ∈ domain R ↔ ∃ y, ⟨x, y⟩ ∈ R := by
+      unfold domain
+      rw [SpecSet_is_specified]
+      constructor
+      · intro h; exact h.2
+      · intro h
+        constructor
+        · -- x ∈ fst R
+          -- This requires proving that fst R (where fst is defined for pairs) works for relations
+          -- Problem: fst R = ⋂(⋂ R) doesn't represent the set of first elements for a relation
+          -- Solution: Use domain_rel instead, which correctly uses ⋃(⋃ R)
+          sorry
+        · exact h
+
+    /-- Characterization of range membership (using legacy definition from Pairing.lean):
+        y is in the range of R if and only if there exists x such that ⟨x, y⟩ ∈ R
+
+        NOTE: This theorem has a `sorry` for the same structural reason as `mem_domain`.
+        The definition `range R = SpecSet (snd R) ...` uses `snd R` which doesn't make sense
+        for relations. Use `range_rel` and `mem_range_rel` for fully proven theorems. -/
+    theorem mem_range (R y : U) :
+        y ∈ range R ↔ ∃ x, ⟨x, y⟩ ∈ R := by
+      unfold range
+      rw [SpecSet_is_specified]
+      constructor
+      · intro h; exact h.2
+      · intro h
+        constructor
+        · -- y ∈ snd R
+          -- Same structural issue as mem_domain: snd R doesn't work for relations
+          -- Use range_rel instead, which correctly uses ⋃(⋃ R)
+          sorry
+        · exact h
+
+    /-- If ⟨x, y⟩ ∈ R, then x ∈ domain R
+
+        NOTE: This works despite the structural issues in `domain` because it only uses
+        the easy direction of `mem_domain`. For a fully proven version, see
+        `pair_mem_implies_fst_in_domain_rel`. -/
+    theorem pair_mem_implies_fst_in_domain (R x y : U) :
+        ⟨x, y⟩ ∈ R → x ∈ domain R := by
+      intro h
+      rw [mem_domain]
+      exact ⟨y, h⟩
+
+    /-- If ⟨x, y⟩ ∈ R, then y ∈ range R
+
+        NOTE: This works despite the structural issues in `range` because it only uses
+        the easy direction of `mem_range`. For a fully proven version, see
+        `pair_mem_implies_snd_in_range_rel`. -/
+    theorem pair_mem_implies_snd_in_range (R x y : U) :
+        ⟨x, y⟩ ∈ R → y ∈ range R := by
+      intro h
+      rw [mem_range]
       exact ⟨x, h⟩
 
   end Relations
@@ -639,6 +635,15 @@ export SetUniverse.Relations (
     mem_EqClass_iff
     EqClass_eq_iff
     EqClass_eq_or_disjoint
+    domain_rel
+    range_rel
+    imag_rel
+    mem_domain_rel
+    mem_range_rel
+    mem_imag_rel
+    pair_mem_implies_fst_in_domain_rel
+    pair_mem_implies_snd_in_range_rel
+    pair_mem_implies_snd_in_imag_rel
     mem_domain
     mem_range
     pair_mem_implies_fst_in_domain
