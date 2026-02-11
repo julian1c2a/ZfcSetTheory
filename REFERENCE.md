@@ -17,7 +17,7 @@
 | `PowerSet.lean` | `SetUniverse.PowerSetAxiom` | `Prelim`, `Extension`, `Existence`, `Specification`, `Pairing`, `Union` | ✅ Completo |
 | `PowerSetAlgebra.lean` | `SetUniverse.PowerSetAlgebra` | `PowerSet`, `BooleanAlgebra` + anteriores | ✅ Completo |
 | `OrderedPair.lean` | `SetUniverse.OrderedPairExtensions` | Todos los anteriores + `PowerSet` | ✅ Completo |
-| `CartesianProduct.lean` | `SetUniverse.CartesianProduct` | `OrderedPair` + anteriores | 🔶 Parcial |
+| `CartesianProduct.lean` | `SetUniverse.CartesianProduct` | `OrderedPair` + anteriores | ✅ Completo |
 | `Relations.lean` | `SetUniverse.Relations` | `CartesianProduct` + anteriores | ✅ Completo |
 | `Functions.lean` | `SetUniverse.Functions` | `CartesianProduct`, `Relations` + anteriores | 🔶 Parcial |
 | `BooleanAlgebra.lean` | `SetUniverse.BooleanAlgebra` | `Union`, `Specification`, `Pairing`, `Extension`, `Existence`, `Prelim` | ✅ Completo |
@@ -1216,6 +1216,135 @@ theorem CartesianProduct_is_specified (A B p : U) :
 ```
 
 **Dependencias**: `SpecSet`, `PowerSet`, `OrderedPair`
+
+#### Caracterización con Par Ordenado Explícito
+
+**Ubicación**: `CartesianProduct.lean`, línea 50  
+**Orden**: 2º teorema principal
+
+**Enunciado Matemático**: ⟨a,b⟩ ∈ A × B ↔ (a ∈ A ∧ b ∈ B).
+
+**Firma Lean4**:
+
+```lean
+theorem OrderedPair_mem_CartesianProduct (a b A B : U) :
+  ⟨ a , b ⟩ ∈ (A ×ₛ B) ↔ (a ∈ A ∧ b ∈ B)
+```
+
+**Dependencias**: `CartesianProduct_is_specified`, `fst_of_ordered_pair`, `snd_of_ordered_pair`
+
+#### Producto con Conjunto Vacío (Izquierda)
+
+**Ubicación**: `CartesianProduct.lean`, línea 62  
+**Orden**: 3º teorema principal
+
+**Enunciado Matemático**: ∅ × B = ∅.
+
+**Firma Lean4**:
+
+```lean
+theorem CartesianProduct_empty_left (B : U) :
+  (∅ ×ₛ B) = ∅
+```
+
+**Dependencias**: `ExtSet`, `CartesianProduct_is_specified`, `EmptySet_is_empty`
+
+#### Producto con Conjunto Vacío (Derecha)
+
+**Ubicación**: `CartesianProduct.lean`, línea 72  
+**Orden**: 4º teorema principal
+
+**Enunciado Matemático**: A × ∅ = ∅.
+
+**Firma Lean4**:
+
+```lean
+theorem CartesianProduct_empty_right (A : U) :
+  (A ×ₛ ∅) = ∅
+```
+
+**Dependencias**: `ExtSet`, `CartesianProduct_is_specified`, `EmptySet_is_empty`
+
+#### Monotonicidad del Producto Cartesiano
+
+**Ubicación**: `CartesianProduct.lean`, línea 82  
+**Orden**: 5º teorema principal
+
+**Enunciado Matemático**: Si A ⊆ A' y B ⊆ B', entonces A × B ⊆ A' × B'.
+
+**Firma Lean4**:
+
+```lean
+theorem CartesianProduct_mono (A A' B B' : U)
+  (hA : A ⊆ A') (hB : B ⊆ B') :
+    (A ×ₛ B) ⊆ (A' ×ₛ B')
+```
+
+**Dependencias**: `CartesianProduct_is_specified`, `subseteq`
+
+#### Distributividad con Unión (Izquierda)
+
+**Ubicación**: `CartesianProduct.lean`, línea 89  
+**Orden**: 6º teorema principal
+
+**Enunciado Matemático**: (A ∪ B) × C = (A × C) ∪ (B × C).
+
+**Firma Lean4**:
+
+```lean
+theorem CartesianProduct_distrib_union_left (A B C : U) :
+  ((A ∪ B) ×ₛ C) = ((A ×ₛ C) ∪ (B ×ₛ C))
+```
+
+**Dependencias**: `ExtSet`, `CartesianProduct_is_specified`, `BinUnion_is_specified`
+
+#### Distributividad con Unión (Derecha)
+
+**Ubicación**: `CartesianProduct.lean`, línea 115  
+**Orden**: 7º teorema principal
+
+**Enunciado Matemático**: A × (B ∪ C) = (A × B) ∪ (A × C).
+
+**Firma Lean4**:
+
+```lean
+theorem CartesianProduct_distrib_union_right (A B C : U) :
+  (A ×ₛ (B ∪ C)) = ((A ×ₛ B) ∪ (A ×ₛ C))
+```
+
+**Dependencias**: `ExtSet`, `CartesianProduct_is_specified`, `BinUnion_is_specified`
+
+#### Distributividad con Intersección (Izquierda)
+
+**Ubicación**: `CartesianProduct.lean`, línea 141  
+**Orden**: 8º teorema principal
+
+**Enunciado Matemático**: (A ∩ B) × C = (A × C) ∩ (B × C).
+
+**Firma Lean4**:
+
+```lean
+theorem CartesianProduct_distrib_inter_left (A B C : U) :
+  ((A ∩ B) ×ₛ C) = ((A ×ₛ C) ∩ (B ×ₛ C))
+```
+
+**Dependencias**: `ExtSet`, `CartesianProduct_is_specified`, `BinInter_is_specified`
+
+#### Distributividad con Intersección (Derecha)
+
+**Ubicación**: `CartesianProduct.lean`, línea 165  
+**Orden**: 9º teorema principal
+
+**Enunciado Matemático**: A × (B ∩ C) = (A × B) ∩ (A × C).
+
+**Firma Lean4**:
+
+```lean
+theorem CartesianProduct_distrib_inter_right (A B C : U) :
+  (A ×ₛ (B ∩ C)) = ((A ×ₛ B) ∩ (A ×ₛ C))
+```
+
+**Dependencias**: `ExtSet`, `CartesianProduct_is_specified`, `BinInter_is_specified`
 
 ### 4.4 Relations.lean
 
@@ -2705,6 +2834,23 @@ export OrderedPairExtensions (
 )
 ```
 
+### 6.12 CartesianProduct.lean
+
+```lean
+export CartesianProduct (
+  CartesianProduct
+  CartesianProduct_is_specified
+  OrderedPair_mem_CartesianProduct
+  CartesianProduct_empty_left
+  CartesianProduct_empty_right
+  CartesianProduct_mono
+  CartesianProduct_distrib_union_left
+  CartesianProduct_distrib_union_right
+  CartesianProduct_distrib_inter_left
+  CartesianProduct_distrib_inter_right
+)
+```
+
 ## 7. Estado de Proyección por Módulo
 
 ### 7.1 Leyenda de Estados
@@ -2734,12 +2880,12 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `SetOrder.lean` - Teoría de órdenes parciales, cotas, supremos e ínfimos
 - `SetStrictOrder.lean` - Teoría de órdenes estrictos, irreflexividad, asimetría y transitividad
 - `OrderedPair.lean` - Extensiones del par ordenado de Kuratowski, igualdad y propiedades
+- `CartesianProduct.lean` - Producto cartesiano A ×ₛ B, propiedades distributivas y monotonicidad
 
 ### 7.3 Archivos Parcialmente Proyectados
 
 Los siguientes archivos tienen **documentación parcial** (solo definiciones/teoremas principales):
 
-- `CartesianProduct.lean` - Solo definición principal y caracterización
 - `Functions.lean` - Solo definiciones básicas y Cantor-Schröder-Bernstein
 - `AtomicBooleanAlgebra.lean` - Solo definición de átomo y teoremas principales
 - `Cardinality.lean` - Solo conjunto diagonal y teorema de Cantor
@@ -2752,6 +2898,6 @@ Los siguientes archivos **no están documentados** en este REFERENCE.md:
 
 ---
 
-*Última actualización: 11 de febrero de 2026 - Completado módulo OrderedPair.lean*
+*Última actualización: 11 de febrero de 2026 - Completado módulo CartesianProduct.lean*
 
 *Este documento contiene únicamente construcciones y teoremas que están completamente implementados y demostrados en el código Lean 4. La proyección se actualiza conforme se agregan archivos al contexto de trabajo.*
