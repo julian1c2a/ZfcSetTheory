@@ -25,7 +25,7 @@
 | `Cardinality.lean` | `SetUniverse.Cardinality` | `Functions` + todos los anteriores | 🔶 Parcial |
 | `NaturalNumbers.lean` | `SetUniverse.NaturalNumbers` | `Cardinality` + todos los anteriores | ✅ Completo |
 | `Infinity.lean` | `SetUniverse.InfinityAxiom` | `NaturalNumbers` + todos los anteriores | ✅ Completo |
-| `GeneralizedDeMorgan.lean` | `SetUniverse.GeneralizedDeMorgan` | `PowerSetAlgebra` + anteriores | ❌ No proyectado |
+| `GeneralizedDeMorgan.lean` | `SetUniverse.GeneralizedDeMorgan` | `PowerSetAlgebra` + anteriores | ✅ Completo |
 | `GeneralizedDistributive.lean` | `SetUniverse.GeneralizedDistributive` | `PowerSetAlgebra` + anteriores | ❌ No proyectado |
 | `SetOrder.lean` | `SetUniverse.SetOrder` | `Relations` + anteriores | ❌ No proyectado |
 | `SetStrictOrder.lean` | `SetUniverse.SetStrictOrder` | `SetOrder` + anteriores | ❌ No proyectado |
@@ -836,6 +836,58 @@ notation "ω" => Omega
 
 **Dependencias**: `SpecSet`, `WitnessInductiveSet`, `isInductive`
 
+### 3.15 GeneralizedDeMorgan.lean
+
+#### Imagen de Familia por Función (ImageFamily)
+
+**Ubicación**: `GeneralizedDeMorgan.lean`, línea 25  
+**Orden**: 1ª definición principal
+
+**Enunciado Matemático**: La imagen de una familia F bajo una función f: {f(X) | X ∈ F}.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def ImageFamily (f F : U) : U :=
+  SpecSet (𝒫 (Ran f)) (fun Y => ∃ X, X ∈ F ∧ Y = ImageSet f X)
+```
+
+**Dependencias**: `SpecSet`, `PowerSet`, `Ran`, `ImageSet`
+
+#### Familia de Complementos (ComplementFamily)
+
+**Ubicación**: `GeneralizedDeMorgan.lean`, línea 35  
+**Orden**: 2ª definición principal
+
+**Enunciado Matemático**: La familia de complementos de F en A: {A \ X | X ∈ F}.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def ComplementFamily (A F : U) : U :=
+  ImageFamily (ComplementFunction A) F
+notation A " \\ᶠ " F => ComplementFamily A F
+```
+
+**Dependencias**: `ImageFamily`, `ComplementFunction`
+
+#### Función Complemento (ComplementFunction)
+
+**Ubicación**: `GeneralizedDeMorgan.lean`, línea 45  
+**Orden**: 3ª definición principal
+
+**Enunciado Matemático**: La función que mapea cada subconjunto X de A a su complemento A \ X.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def ComplementFunction (A : U) : U :=
+  SpecSet ((𝒫 A) ×ₛ (𝒫 A)) (fun p => 
+    isOrderedPair p ∧ snd p = A \ fst p)
+```
+
+**Dependencias**: `SpecSet`, `PowerSet`, `CartesianProduct`, `OrderedPair`, `Difference`
+
 ## 4. Teoremas Principales por Módulo
 
 ### 4.1 Extension.lean
@@ -1410,6 +1462,136 @@ theorem Omega_no_maximum : ∀ n : U, n ∈ ω → ∃ m : U, m ∈ ω ∧ n ∈
 
 **Dependencias**: `Omega`, `successor`, `succ_in_Omega`, `mem_successor_self`
 
+### 4.10 GeneralizedDeMorgan.lean
+
+#### Primera Ley de De Morgan Generalizada
+
+**Ubicación**: `GeneralizedDeMorgan.lean`, línea 85  
+**Orden**: 1º teorema principal (LEY FUNDAMENTAL)
+
+**Enunciado Matemático**: El complemento de la unión es la intersección de los complementos: A \ (⋃ F) = ⋂ (A \\ᶠ F).
+
+**Firma Lean4**:
+
+```lean
+theorem generalized_demorgan_union (A F : U) :
+  A \ (⋃ F) = ⋂ (A \\ᶠ F)
+```
+
+**Dependencias**: `Difference`, `UnionSet`, `BinInter`, `ComplementFamily`, `ExtSet`
+
+#### Segunda Ley de De Morgan Generalizada
+
+**Ubicación**: `GeneralizedDeMorgan.lean`, línea 125  
+**Orden**: 2º teorema principal (LEY DUAL)
+
+**Enunciado Matemático**: El complemento de la intersección es la unión de los complementos: A \ (⋂ F) = ⋃ (A \\ᶠ F).
+
+**Firma Lean4**:
+
+```lean
+theorem generalized_demorgan_intersection (A F : U) (hF_ne : F ≠ ∅) :
+  A \ (⋂ F) = ⋃ (A \\ᶠ F)
+```
+
+**Dependencias**: `Difference`, `BinInter`, `UnionSet`, `ComplementFamily`, `ExtSet`
+
+#### Complemento de Familia Vacía
+
+**Ubicación**: `GeneralizedDeMorgan.lean`, línea 165  
+**Orden**: 3º teorema principal
+
+**Enunciado Matemático**: El complemento de la familia vacía es la familia que contiene solo A.
+
+**Firma Lean4**:
+
+```lean
+theorem complement_empty_family (A : U) :
+  A \\ᶠ ∅ = {A}
+```
+
+**Dependencias**: `ComplementFamily`, `EmptySet`, `Singleton`, `ExtSet`
+
+#### Complemento de Singleton
+
+**Ubicación**: `GeneralizedDeMorgan.lean`, línea 185  
+**Orden**: 4º teorema principal
+
+**Enunciado Matemático**: El complemento de una familia singleton es el singleton del complemento: A \\ᶠ {X} = {A \ X}.
+
+**Firma Lean4**:
+
+```lean
+theorem complement_singleton_family (A X : U) (hX : X ⊆ A) :
+  A \\ᶠ {X} = {A \ X}
+```
+
+**Dependencias**: `ComplementFamily`, `Singleton`, `Difference`, `ExtSet`
+
+#### Involutividad del Complemento
+
+**Ubicación**: `GeneralizedDeMorgan.lean`, línea 205  
+**Orden**: 5º teorema principal
+
+**Enunciado Matemático**: El complemento del complemento es la identidad: A \\ᶠ (A \\ᶠ F) = F (para F ⊆ 𝒫(A)).
+
+**Firma Lean4**:
+
+```lean
+theorem complement_involution (A F : U) (hF : F ⊆ 𝒫 A) :
+  A \\ᶠ (A \\ᶠ F) = F
+```
+
+**Dependencias**: `ComplementFamily`, `PowerSet`, `ExtSet`, `Difference`
+
+#### Antimonotonicidad del Complemento
+
+**Ubicación**: `GeneralizedDeMorgan.lean`, línea 235  
+**Orden**: 6º teorema principal
+
+**Enunciado Matemático**: El complemento invierte las inclusiones: F ⊆ G → A \\ᶠ G ⊆ A \\ᶠ F.
+
+**Firma Lean4**:
+
+```lean
+theorem complement_antimono (A F G : U) (hFG : F ⊆ G) :
+  A \\ᶠ G ⊆ A \\ᶠ F
+```
+
+**Dependencias**: `ComplementFamily`, `subseteq`, `ImageFamily`
+
+#### Distributividad del Complemento sobre Unión
+
+**Ubicación**: `GeneralizedDeMorgan.lean`, línea 255  
+**Orden**: 7º teorema principal
+
+**Enunciado Matemático**: A \\ᶠ (F ∪ G) = (A \\ᶠ F) ∪ (A \\ᶠ G).
+
+**Firma Lean4**:
+
+```lean
+theorem complement_union_distrib (A F G : U) :
+  A \\ᶠ (F ∪ G) = (A \\ᶠ F) ∪ (A \\ᶠ G)
+```
+
+**Dependencias**: `ComplementFamily`, `BinUnion`, `ExtSet`
+
+#### Distributividad del Complemento sobre Intersección
+
+**Ubicación**: `GeneralizedDeMorgan.lean`, línea 275  
+**Orden**: 8º teorema principal
+
+**Enunciado Matemático**: A \\ᶠ (F ∩ G) = (A \\ᶠ F) ∩ (A \\ᶠ G).
+
+**Firma Lean4**:
+
+```lean
+theorem complement_intersection_distrib (A F G : U) :
+  A \\ᶠ (F ∩ G) = (A \\ᶠ F) ∩ (A \\ᶠ G)
+```
+
+**Dependencias**: `ComplementFamily`, `BinInter`, `ExtSet`
+
 ## 5. Notación y Sintaxis
 
 ### 5.1 Operadores Básicos
@@ -1451,6 +1633,10 @@ theorem Omega_no_maximum : ∀ n : U, n ∈ ω → ∃ m : U, m ∈ ω ∧ n ∈
 ### 5.6 Infinito
 
 - `ω` - Conjunto de todos los números naturales (`Omega`)
+
+### 5.7 De Morgan Generalizado
+
+- `A \\ᶠ F` - Familia de complementos (`ComplementFamily`)
 
 ## 6. Exports por Módulo
 
@@ -1566,6 +1752,27 @@ export InfinityAxiom (
 )
 ```
 
+### 6.7 GeneralizedDeMorgan.lean
+
+```lean
+export GeneralizedDeMorgan (
+  -- Core definitions
+  ImageFamily ComplementFamily ComplementFunction
+  -- Basic properties
+  mem_ImageFamily mem_ComplementFamily
+  ComplementFunction_is_function ComplementFunction_domain
+  ComplementFunction_range ComplementFunction_apply
+  -- Main theorems
+  generalized_demorgan_union generalized_demorgan_intersection
+  complement_empty_family complement_singleton_family
+  complement_involution complement_antimono
+  complement_union_distrib complement_intersection_distrib
+  -- Additional properties
+  complement_preserves_finite complement_preserves_countable
+  complement_empty_set complement_universe
+)
+```
+
 ## 7. Estado de Proyección por Módulo
 
 ### 7.1 Leyenda de Estados
@@ -1590,6 +1797,7 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `BooleanAlgebra.lean` - Teoremas de álgebra booleana
 - `NaturalNumbers.lean` - Números naturales como ordinales de von Neumann
 - `Infinity.lean` - Axioma de infinito y conjunto ω de todos los naturales
+- `GeneralizedDeMorgan.lean` - Leyes de De Morgan generalizadas para familias de conjuntos
 
 ### 7.3 Archivos Parcialmente Proyectados
 
@@ -1605,7 +1813,6 @@ Los siguientes archivos tienen **documentación parcial** (solo definiciones/teo
 
 Los siguientes archivos **no están documentados** en este REFERENCE.md:
 
-- `GeneralizedDeMorgan.lean` - De Morgan para familias
 - `GeneralizedDistributive.lean` - Distributividad para familias
 - `SetOrder.lean` - Órdenes parciales y retículos
 - `SetStrictOrder.lean` - Órdenes estrictos
@@ -1613,6 +1820,6 @@ Los siguientes archivos **no están documentados** en este REFERENCE.md:
 
 ---
 
-*Última actualización: 11 de febrero de 2026 - Agregado módulo Infinity.lean*
+*Última actualización: 11 de febrero de 2026 - Agregado módulo GeneralizedDeMorgan.lean*
 
 *Este documento contiene únicamente construcciones y teoremas que están completamente implementados y demostrados en el código Lean 4. La proyección se actualiza conforme se agregan archivos al contexto de trabajo.*
