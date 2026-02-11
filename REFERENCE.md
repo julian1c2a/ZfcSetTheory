@@ -16,6 +16,7 @@
 | `Union.lean` | `SetUniverse.UnionAxiom` | `Prelim`, `Extension`, `Existence`, `Specification`, `Pairing` | ✅ |
 | `OrderedPair.lean` | `SetUniverse.OrderedPairExtensions` | Todos los anteriores + `PowerSet` | ✅ |
 | `CartesianProduct.lean` | `SetUniverse.CartesianProduct` | `OrderedPair` + anteriores | ✅ |
+| `Relations.lean` | `SetUniverse.Relations` | `CartesianProduct` + anteriores | ✅ |
 | `Functions.lean` | `SetUniverse.Functions` | `CartesianProduct`, `Relations` + anteriores | ✅ |
 | `BooleanAlgebra.lean` | `SetUniverse.BooleanAlgebra` | `Union`, `Specification`, `Pairing`, `Extension`, `Existence`, `Prelim` | ✅ |
 | `AtomicBooleanAlgebra.lean` | `SetUniverse.AtomicBooleanAlgebra` | `PowerSetAlgebra`, `SetOrder`, `SetStrictOrder` + anteriores | ✅ |
