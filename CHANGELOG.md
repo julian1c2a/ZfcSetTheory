@@ -7,10 +7,66 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ## [Unreleased]
 
+### Añadido (2026-02-11)
+
+- **Infraestructura de Existencia Única**:
+  - `ExistsUnique` personalizado en `Prelim.lean` (52 líneas)
+  - Notación `∃! x, P` compatible con paréntesis y tipos explícitos
+  - API completa: `.intro`, `.exists`, `.choose`, `.choose_spec`, `.unique`
+  - Resuelve incompatibilidades con la implementación estándar de Lean 4
+
+- **Domain y Range para Relaciones** en `Relations.lean`:
+  - `domain_rel R` - Dominio correcto usando `⋃(⋃ R)` en lugar de `fst R`
+  - `range_rel R` - Rango correcto usando `⋃(⋃ R)` en lugar de `snd R`
+  - `imag_rel R` - Alias para `range_rel`
+  - `mem_domain_rel` - Caracterización completa (sin `sorry`)
+  - `mem_range_rel` - Caracterización completa (sin `sorry`)
+  - `mem_imag_rel` - Caracterización completa (sin `sorry`)
+  - Teoremas auxiliares: `pair_mem_implies_fst_in_domain_rel`, etc.
+
+### Cambiado
+
+- **Actualización de isFunctionFromTo**:
+  - Cambio de estructura ternaria a binaria: `isFunctionFromTo f A B` → `isFunctionFromTo f A`
+  - Nueva definición: `(f ⊆ A ×ₛ B) ∧ (∀ x ∈ A, ∃! y, ⟨x,y⟩ ∈ f)`
+  - Actualizadas todas las referencias en `Cardinality.lean`
+
+- **Reorganización de Relations.lean**:
+  - Definiciones correctas (`domain_rel`, `range_rel`) primero
+  - Sección "Legacy Domain and Range" al final con `sorry` documentados
+  - Explicaciones claras sobre problemas estructurales de `domain`/`range`
+
+### Corregido
+
+- 7 teoremas usando `∃!` actualizados a `ExistsUnique`:
+  - `ExistsUniqueEmptySet` (Existence.lean)
+  - `SpecificationUnique`, `BinInterUniqueSet`, `DifferenceUniqueSet` (Specification.lean)
+  - `PairingUniqueSet` (Pairing.lean)
+  - `UnionExistsUnique` (Union.lean)
+  - `PowerSetExistsUnique` (PowerSet.lean)
+
+- 3 `sorry` resueltos en Functions.lean:
+  - `apply_mem` - Completamente probado
+  - `apply_eq` - Completamente probado
+  - `apply_id` - Completamente probado
+
+### Documentación
+
+- **ESTADO_ACTUAL.md**: Documento completo del estado del proyecto
+  - Resumen ejecutivo con estadísticas
+  - Detalle de logros recientes
+  - Estado por archivo (19 sin `sorry`, 4 con `sorry`)
+  - Análisis de cada `sorry` pendiente con nivel de dificultad
+  - Arquitectura y jerarquía de dependencias
+  - Decisiones de diseño importantes
+  - Próximos pasos sugeridos con estimaciones de tiempo
+  - Métricas de calidad y cobertura
+
 ### En desarrollo
 
-- Composición de funciones
-- Función inversa para funciones biyectivas
+- Resolver `inverse_is_specified` en Functions.lean (1 `sorry`)
+- Resolver sorry en Cardinality.lean - teorema CSB (1 `sorry`)
+- Completar paso inductivo en Recursion.lean (1 `sorry`)
 - N-tuplas
 
 ---
