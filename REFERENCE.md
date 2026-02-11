@@ -28,7 +28,7 @@
 | `GeneralizedDeMorgan.lean` | `SetUniverse.GeneralizedDeMorgan` | `PowerSetAlgebra` + anteriores | ✅ Completo |
 | `GeneralizedDistributive.lean` | `SetUniverse.GeneralizedDistributive` | `PowerSetAlgebra` + anteriores | ✅ Completo |
 | `SetOrder.lean` | `SetUniverse.SetOrder` | `Relations` + anteriores | ✅ Completo |
-| `SetStrictOrder.lean` | `SetUniverse.SetStrictOrder` | `SetOrder` + anteriores | ❌ No proyectado |
+| `SetStrictOrder.lean` | `SetUniverse.SetStrictOrder` | `SetOrder` + anteriores | ✅ Completo |
 | `Recursion.lean` | `SetUniverse.Recursion` | `NaturalNumbers` + anteriores | ❌ No proyectado |
 
 ## 2. Axiomas ZFC Implementados
@@ -1073,6 +1073,26 @@ def isBoundedBelow (S : U) : Prop :=
 ```
 
 **Dependencias**: `isLowerBound`
+
+### 3.18 SetStrictOrder.lean
+
+*Nota: Este módulo no introduce nuevas definiciones principales, sino que establece propiedades del orden estricto ⊂ definido en `Extension.lean`.*
+
+#### Orden Estricto (subset)
+
+**Ubicación**: `Extension.lean`, línea 46 (definición implícita)  
+**Orden**: Definición heredada
+
+**Enunciado Matemático**: A ⊂ B si A ⊆ B y A ≠ B.
+
+**Firma Lean4**:
+
+```lean
+-- Definición implícita: A ⊂ B ↔ (A ⊆ B ∧ A ≠ B)
+notation:50 lhs:51 " ⊂ " rhs:51 => (lhs ⊆ rhs ∧ lhs ≠ rhs)
+```
+
+**Dependencias**: `subseteq`
 
 ## 4. Teoremas Principales por Módulo
 
@@ -2131,6 +2151,181 @@ theorem inter_monotone_right (A B C : U) :
 
 **Dependencias**: `subseteq`, `BinInter`, `BinInter_is_specified`
 
+### 4.13 SetStrictOrder.lean
+
+#### Orden Estricto Implica Orden Parcial
+
+**Ubicación**: `SetStrictOrder.lean`, línea 15  
+**Orden**: 1º teorema principal (TEOREMA BASE)
+
+**Enunciado Matemático**: Si A ⊂ B, entonces A ⊆ B.
+
+**Firma Lean4**:
+
+```lean
+theorem subset_subseteq (x y : U) :
+  x ⊂ y → x ⊆ y
+```
+
+**Dependencias**: `subset`, `subseteq`
+
+#### Caracterización del Orden Estricto
+
+**Ubicación**: `SetStrictOrder.lean`, línea 20  
+**Orden**: 2º teorema principal
+
+**Enunciado Matemático**: A ⊆ B si y solo si A ⊂ B o A = B.
+
+**Firma Lean4**:
+
+```lean
+theorem subseteq_subset_or_eq (x y : U) :
+  x ⊆ y → (x ⊂ y ∨ x = y)
+```
+
+**Dependencias**: `subseteq`, `subset`
+
+#### Irreflexividad del Orden Estricto
+
+**Ubicación**: `SetStrictOrder.lean`, línea 26  
+**Orden**: 3º teorema principal (PROPIEDAD FUNDAMENTAL)
+
+**Enunciado Matemático**: Ningún conjunto es subconjunto estricto de sí mismo.
+
+**Firma Lean4**:
+
+```lean
+theorem strict_order_irreflexive (x : U) : ¬(x ⊂ x)
+```
+
+**Dependencias**: `subset`
+
+#### Asimetría del Orden Estricto
+
+**Ubicación**: `SetStrictOrder.lean`, línea 30  
+**Orden**: 4º teorema principal
+
+**Enunciado Matemático**: Si A ⊂ B, entonces B ⊄ A.
+
+**Firma Lean4**:
+
+```lean
+theorem strict_order_asymmetric (x y : U) : x ⊂ y → ¬(y ⊂ x)
+```
+
+**Dependencias**: `subset`, `EqualityOfSubset`
+
+#### Transitividad del Orden Estricto
+
+**Ubicación**: `SetStrictOrder.lean`, línea 37  
+**Orden**: 5º teorema principal
+
+**Enunciado Matemático**: Si A ⊂ B y B ⊂ C, entonces A ⊂ C.
+
+**Firma Lean4**:
+
+```lean
+theorem strict_order_transitive (x y z : U) : x ⊂ y → y ⊂ z → x ⊂ z
+```
+
+**Dependencias**: `subset`, `order_transitive`, `EqualityOfSubset`
+
+#### Transitividad Mixta (Izquierda)
+
+**Ubicación**: `SetStrictOrder.lean`, línea 48  
+**Orden**: 6º teorema principal
+
+**Enunciado Matemático**: Si A ⊆ B y B ⊂ C, entonces A ⊂ C.
+
+**Firma Lean4**:
+
+```lean
+theorem subset_transitive_mixed_left (x y z : U) :
+  (x ⊆ y) → (y ⊂ z) → (x ⊂ z)
+```
+
+**Dependencias**: `subseteq`, `subset`, `order_transitive`, `EqualityOfSubset`
+
+#### Transitividad Mixta (Derecha)
+
+**Ubicación**: `SetStrictOrder.lean`, línea 58  
+**Orden**: 7º teorema principal
+
+**Enunciado Matemático**: Si A ⊂ B y B ⊆ C, entonces A ⊂ C.
+
+**Firma Lean4**:
+
+```lean
+theorem subset_transitive_mixed_right (x y z : U) :
+  (x ⊂ y) → (y ⊆ z) → (x ⊂ z)
+```
+
+**Dependencias**: `subset`, `subseteq`, `order_transitive`, `EqualityOfSubset`
+
+#### Equivalencia entre Órdenes
+
+**Ubicación**: `SetStrictOrder.lean`, línea 68  
+**Orden**: 8º teorema principal (TEOREMA CENTRAL)
+
+**Enunciado Matemático**: (A ⊆ B ∧ A ≠ B) ↔ A ⊂ B.
+
+**Firma Lean4**:
+
+```lean
+theorem partial_to_strict_order (x y : U) :
+  ((x ⊆ y) ∧ (x ≠ y)) ↔ x ⊂ y
+```
+
+**Dependencias**: `subseteq`, `subset`
+
+#### Tricotomía Parcial
+
+**Ubicación**: `SetStrictOrder.lean`, línea 78  
+**Orden**: 9º teorema principal
+
+**Enunciado Matemático**: Para cualesquiera A, B: A ⊂ B ∨ A = B ∨ B ⊂ A ∨ (A ⊄ B ∧ B ⊄ A).
+
+**Firma Lean4**:
+
+```lean
+theorem strict_order_trichotomy_partial (x y : U) :
+  x ⊂ y ∨ x = y ∨ y ⊂ x ∨ (¬(x ⊆ y) ∧ ¬(y ⊆ x))
+```
+
+**Dependencias**: `subset`, `subseteq`
+
+#### El Vacío es Estrictamente Menor que Cualquier No Vacío
+
+**Ubicación**: `SetStrictOrder.lean`, línea 87  
+**Orden**: 10º teorema principal
+
+**Enunciado Matemático**: Si A ≠ ∅, entonces ∅ ⊂ A.
+
+**Firma Lean4**:
+
+```lean
+theorem empty_strict_subset_nonempty (x : U) :
+  x ≠ ∅ → ∅ ⊂ x
+```
+
+**Dependencias**: `EmptySet`, `subset`, `empty_is_minimum`
+
+#### Existencia de Elemento Diferenciador
+
+**Ubicación**: `SetStrictOrder.lean`, línea 93  
+**Orden**: 11º teorema principal (TEOREMA DE DIFERENCIACIÓN)
+
+**Enunciado Matemático**: Si A ⊂ B, entonces existe z tal que z ∈ B y z ∉ A.
+
+**Firma Lean4**:
+
+```lean
+theorem strict_subset_nonempty (x y : U) :
+  x ⊂ y → ∃ z, z ∈ y ∧ z ∉ x
+```
+
+**Dependencias**: `subset`, `order_antisymmetric`, `Classical.byContradiction`
+
 ## 5. Notación y Sintaxis
 
 ### 5.1 Operadores Básicos
@@ -2188,6 +2383,13 @@ theorem inter_monotone_right (A B C : U) :
 - Conceptos de orden: cotas superiores/inferiores, supremo/ínfimo
 - Propiedades de orden: reflexividad, transitividad, antisimetría
 - Monotonicidad de operaciones de conjuntos
+
+### 5.10 Órdenes Estrictos
+
+- `A ⊂ B` - Subconjunto estricto (orden estricto)
+- Propiedades: irreflexividad, asimetría, transitividad
+- Transitividad mixta entre ⊆ y ⊂
+- Tricotomía parcial y elemento diferenciador
 
 ## 6. Exports por Módulo
 
@@ -2371,6 +2573,24 @@ export SetOrder (
 )
 ```
 
+### 6.10 SetStrictOrder.lean
+
+```lean
+export SetStrictOrder (
+  -- Basic properties
+  subset_subseteq subseteq_subset_or_eq
+  -- Strict order properties
+  strict_order_irreflexive strict_order_asymmetric strict_order_transitive
+  -- Mixed transitivity
+  subset_transitive_mixed_left subset_transitive_mixed_right
+  -- Order equivalence
+  partial_to_strict_order strict_implies_partial
+  -- Trichotomy and differentiation
+  strict_order_trichotomy_partial empty_strict_subset_nonempty
+  strict_subset_nonempty
+)
+```
+
 ## 7. Estado de Proyección por Módulo
 
 ### 7.1 Leyenda de Estados
@@ -2398,6 +2618,7 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `GeneralizedDeMorgan.lean` - Leyes de De Morgan generalizadas para familias de conjuntos
 - `GeneralizedDistributive.lean` - Leyes distributivas generalizadas para familias de conjuntos
 - `SetOrder.lean` - Teoría de órdenes parciales, cotas, supremos e ínfimos
+- `SetStrictOrder.lean` - Teoría de órdenes estrictos, irreflexividad, asimetría y transitividad
 
 ### 7.3 Archivos Parcialmente Proyectados
 
@@ -2413,11 +2634,10 @@ Los siguientes archivos tienen **documentación parcial** (solo definiciones/teo
 
 Los siguientes archivos **no están documentados** en este REFERENCE.md:
 
-- `SetStrictOrder.lean` - Órdenes estrictos
 - `Recursion.lean` - Definiciones recursivas
 
 ---
 
-*Última actualización: 11 de febrero de 2026 - Agregado módulo SetOrder.lean*
+*Última actualización: 11 de febrero de 2026 - Agregado módulo SetStrictOrder.lean*
 
 *Este documento contiene únicamente construcciones y teoremas que están completamente implementados y demostrados en el código Lean 4. La proyección se actualiza conforme se agregan archivos al contexto de trabajo.*
