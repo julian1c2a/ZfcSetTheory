@@ -23,7 +23,7 @@
 | `BooleanAlgebra.lean` | `SetUniverse.BooleanAlgebra` | `Union`, `Specification`, `Pairing`, `Extension`, `Existence`, `Prelim` | ✅ Completo |
 | `AtomicBooleanAlgebra.lean` | `SetUniverse.AtomicBooleanAlgebra` | `PowerSetAlgebra`, `SetOrder`, `SetStrictOrder` + anteriores | 🔶 Parcial |
 | `Cardinality.lean` | `SetUniverse.Cardinality` | `Functions` + todos los anteriores | 🔶 Parcial |
-| `NaturalNumbers.lean` | `SetUniverse.NaturalNumbers` | `Cardinality` + todos los anteriores | ❌ No proyectado |
+| `NaturalNumbers.lean` | `SetUniverse.NaturalNumbers` | `Cardinality` + todos los anteriores | ✅ Completo |
 | `Infinity.lean` | `SetUniverse.InfinityAxiom` | `NaturalNumbers` + todos los anteriores | ❌ No proyectado |
 | `GeneralizedDeMorgan.lean` | `SetUniverse.GeneralizedDeMorgan` | `PowerSetAlgebra` + anteriores | ❌ No proyectado |
 | `GeneralizedDistributive.lean` | `SetUniverse.GeneralizedDistributive` | `PowerSetAlgebra` + anteriores | ❌ No proyectado |
@@ -630,6 +630,161 @@ noncomputable def DiagonalSet (f A : U) : U :=
 
 **Dependencias**: `SpecSet`, `apply`
 
+### 3.13 NaturalNumbers.lean
+
+#### Función Sucesor (successor)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 45  
+**Orden**: 1ª definición principal
+
+**Enunciado Matemático**: La función sucesor σ(n) = n ∪ {n}.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def successor (n : U) : U := n ∪ {n}
+notation "σ " n:90 => successor n
+```
+
+**Dependencias**: `BinUnion`, `Singleton`
+
+#### Conjunto Inductivo (isInductive)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 56  
+**Orden**: 2ª definición principal
+
+**Enunciado Matemático**: I es inductivo si contiene al vacío y es cerrado bajo sucesores.
+
+**Firma Lean4**:
+
+```lean
+def isInductive (I : U) : Prop :=
+  (∅ : U) ∈ I ∧ ∀ x, x ∈ I → (σ x) ∈ I
+```
+
+**Dependencias**: `EmptySet`, `successor`
+
+#### Conjunto Transitivo (isTransitiveSet)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 68  
+**Orden**: 3ª definición principal
+
+**Enunciado Matemático**: S es transitivo si cada elemento es también un subconjunto de S.
+
+**Firma Lean4**:
+
+```lean
+def isTransitiveSet (S : U) : Prop :=
+  ∀ x, x ∈ S → x ⊆ S
+```
+
+**Dependencias**: `subseteq`
+
+#### Orden Estricto Guiado por Membresía (StrictOrderMembershipGuided)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 78  
+**Orden**: 4ª definición principal
+
+**Enunciado Matemático**: El orden estricto inducido por la membresía: ∈[S] = {⟨x,y⟩ | x ∈ S ∧ y ∈ S ∧ x ∈ y}.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def StrictOrderMembershipGuided (S : U) : U :=
+  SpecSet (S ×ₛ S) (fun p => ∃ x y, p = ⟨x, y⟩ ∧ x ∈ y)
+notation "∈[" S "]" => StrictOrderMembershipGuided S
+```
+
+**Dependencias**: `SpecSet`, `CartesianProduct`, `OrderedPair`
+
+#### Orden Total Estricto Guiado por Membresía (isTotalStrictOrderMembershipGuided)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 98  
+**Orden**: 5ª definición principal
+
+**Enunciado Matemático**: S tiene orden total estricto si es transitivo, asimétrico y tricotómico.
+
+**Firma Lean4**:
+
+```lean
+def isTotalStrictOrderMembershipGuided (S : U) : Prop :=
+  isTransitiveSet S ∧
+  (∀ x y, x ∈ S → y ∈ S → x ∈ y → y ∉ x) ∧
+  (∀ x y, x ∈ S → y ∈ S → (x ∈ y ∨ x = y ∨ y ∈ x))
+```
+
+**Dependencias**: `isTransitiveSet`
+
+#### Bien Ordenado Guiado por Membresía (isWellOrderMembershipGuided)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 110  
+**Orden**: 6ª definición principal
+
+**Enunciado Matemático**: S está bien ordenado si todo subconjunto no vacío tiene mínimo Y máximo.
+
+**Firma Lean4**:
+
+```lean
+def isWellOrderMembershipGuided (S : U) : Prop :=
+  ∀ T, T ⊆ S → T ≠ (∅ : U) →
+    (∃ m, m ∈ T ∧ ∀ x, x ∈ T → (m = x ∨ m ∈ x)) ∧ -- Mínimo
+    (∃ M, M ∈ T ∧ ∀ x, x ∈ T → (M = x ∨ x ∈ M))   -- Máximo
+```
+
+**Dependencias**: `subseteq`, `EmptySet`
+
+#### Número Natural (isNat)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 125  
+**Orden**: 7ª definición principal (DEFINICIÓN CENTRAL)
+
+**Enunciado Matemático**: n es un número natural si es transitivo, tiene orden total estricto y está bien ordenado.
+
+**Firma Lean4**:
+
+```lean
+def isNat (n : U) : Prop :=
+  isTransitiveSet n ∧
+  isTotalStrictOrderMembershipGuided n ∧
+  isWellOrderMembershipGuided n
+```
+
+**Dependencias**: `isTransitiveSet`, `isTotalStrictOrderMembershipGuided`, `isWellOrderMembershipGuided`
+
+#### Segmento Inicial (isInitialSegment)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 1015  
+**Orden**: 8ª definición principal
+
+**Enunciado Matemático**: S es segmento inicial de n si S ⊆ n y es cerrado hacia abajo.
+
+**Firma Lean4**:
+
+```lean
+def isInitialSegment (S n : U) : Prop :=
+  S ⊆ n ∧ ∀ x y, x ∈ S → y ∈ x → y ∈ S
+```
+
+**Dependencias**: `subseteq`
+
+#### Naturales Específicos
+
+**Ubicación**: `NaturalNumbers.lean`, líneas 1350-1365  
+**Orden**: 9ª-12ª definiciones principales
+
+**Enunciado Matemático**: Construcción explícita de los primeros naturales.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def zero : U := (∅ : U)
+noncomputable def one : U := σ (∅ : U)
+noncomputable def two : U := σ one
+noncomputable def three : U := σ two
+```
+
+**Dependencias**: `EmptySet`, `successor`
+
 ## 4. Teoremas Principales por Módulo
 
 ### 4.1 Extension.lean
@@ -854,6 +1009,199 @@ theorem cantor_no_surjection (f A : U) (hf : isFunctionFromTo f A (𝒫 A)) :
 
 **Dependencias**: `DiagonalSet`, `isFunctionFromTo`, `isSurjectiveOnto`
 
+### 4.8 NaturalNumbers.lean
+
+#### El Conjunto Vacío es Natural
+
+**Ubicación**: `NaturalNumbers.lean`, línea 145  
+**Orden**: 1º teorema principal (TEOREMA BASE)
+
+**Enunciado Matemático**: ∅ es un número natural.
+
+**Firma Lean4**:
+
+```lean
+theorem zero_is_nat : isNat (∅ : U)
+```
+
+**Dependencias**: `isNat`, `EmptySet`
+
+#### Irreflexividad de Naturales
+
+**Ubicación**: `NaturalNumbers.lean`, línea 280  
+**Orden**: 2º teorema principal
+
+**Enunciado Matemático**: Ningún número natural es miembro de sí mismo.
+
+**Firma Lean4**:
+
+```lean
+theorem nat_not_mem_self (n : U) :
+  isNat n → n ∉ n
+```
+
+**Dependencias**: `isNat`, `isTotalStrictOrderMembershipGuided`
+
+#### Ausencia de Ciclos de Dos Elementos
+
+**Ubicación**: `NaturalNumbers.lean`, línea 295  
+**Orden**: 3º teorema principal
+
+**Enunciado Matemático**: No existen ciclos de membresía de dos elementos entre naturales.
+
+**Firma Lean4**:
+
+```lean
+theorem nat_no_two_cycle (x y : U) :
+  isNat x → isNat y → ¬(x ∈ y ∧ y ∈ x)
+```
+
+**Dependencias**: `isNat`, `nat_not_mem_self`
+
+#### Ausencia de Ciclos de Tres Elementos
+
+**Ubicación**: `NaturalNumbers.lean`, línea 320  
+**Orden**: 4º teorema principal
+
+**Enunciado Matemático**: No existen ciclos de membresía de tres elementos entre naturales.
+
+**Firma Lean4**:
+
+```lean
+theorem nat_no_three_cycle (x y z : U) :
+  isNat x → isNat y → isNat z → ¬(x ∈ y ∧ y ∈ z ∧ z ∈ x)
+```
+
+**Dependencias**: `isNat`, `nat_no_two_cycle`
+
+#### Elementos de Naturales son Naturales
+
+**Ubicación**: `NaturalNumbers.lean`, línea 520  
+**Orden**: 5º teorema principal (TEOREMA FUNDAMENTAL)
+
+**Enunciado Matemático**: Todo elemento de un número natural es un número natural.
+
+**Firma Lean4**:
+
+```lean
+theorem nat_element_is_nat (n m : U) :
+  isNat n → m ∈ n → isNat m
+```
+
+**Dependencias**: `isNat`, `nat_element_is_transitive`, `nat_element_has_strict_total_order`, `nat_element_has_well_order`
+
+#### El Sucesor de un Natural es Natural
+
+**Ubicación**: `NaturalNumbers.lean`, línea 680  
+**Orden**: 6º teorema principal (CLAUSURA BAJO SUCESORES)
+
+**Enunciado Matemático**: Si n es natural, entonces σ(n) es natural.
+
+**Firma Lean4**:
+
+```lean
+theorem nat_successor_is_nat (n : U) (hn : isNat n) : isNat (σ n)
+```
+
+**Dependencias**: `isNat`, `successor`, `successor_of_nat_is_transitive`, `successor_of_nat_has_strict_total_order`
+
+#### Tricotomía entre Naturales
+
+**Ubicación**: `NaturalNumbers.lean`, línea 1080  
+**Orden**: 7º teorema principal (TRICOTOMÍA COMPLETA)
+
+**Enunciado Matemático**: Dados dos naturales n y m, se cumple exactamente una: n ∈ m, n = m, o m ∈ n.
+
+**Firma Lean4**:
+
+```lean
+theorem nat_trichotomy (n m : U) (hn : isNat n) (hm : isNat m) :
+  n ∈ m ∨ n = m ∨ m ∈ n
+```
+
+**Dependencias**: `isNat`, `initial_segment_of_nat_is_eq_or_mem`, `inter_nat_is_initial_segment`
+
+#### Segmento Inicial es Igual o Elemento
+
+**Ubicación**: `NaturalNumbers.lean`, línea 1025  
+**Orden**: 8º teorema principal
+
+**Enunciado Matemático**: Un segmento inicial de un natural n es igual a n o es un elemento de n.
+
+**Firma Lean4**:
+
+```lean
+theorem initial_segment_of_nat_is_eq_or_mem (n S : U)
+  (hn : isNat n) (h_init : isInitialSegment S n) :
+  S = n ∨ S ∈ n
+```
+
+**Dependencias**: `isNat`, `isInitialSegment`, `isWellOrderMembershipGuided`
+
+#### Inyectividad del Sucesor
+
+**Ubicación**: `NaturalNumbers.lean`, línea 1200  
+**Orden**: 9º teorema principal
+
+**Enunciado Matemático**: El sucesor es inyectivo: σ(n) = σ(m) → n = m.
+
+**Firma Lean4**:
+
+```lean
+theorem successor_injective (n m : U) (hn : isNat n) (hm : isNat m)
+  (h_eq : σ n = σ m) : n = m
+```
+
+**Dependencias**: `successor`, `isNat`, `nat_no_two_cycle`
+
+#### Todo Natural es Cero o Sucesor
+
+**Ubicación**: `NaturalNumbers.lean`, línea 1250  
+**Orden**: 10º teorema principal
+
+**Enunciado Matemático**: Todo número natural es 0 o sucesor de otro natural.
+
+**Firma Lean4**:
+
+```lean
+theorem nat_is_zero_or_succ (n : U) (hn : isNat n) :
+  n = ∅ ∨ ∃ k, n = σ k
+```
+
+**Dependencias**: `isNat`, `EmptySet`, `successor`, `isWellOrderMembershipGuided`
+
+#### Naturales en Conjuntos Inductivos
+
+**Ubicación**: `NaturalNumbers.lean`, línea 1320  
+**Orden**: 11º teorema principal
+
+**Enunciado Matemático**: Todo número natural pertenece a cualquier conjunto inductivo.
+
+**Firma Lean4**:
+
+```lean
+theorem nat_in_inductive_set (n : U) (hn : isNat n) (I : U) (hI : isInductive I) :
+  n ∈ I
+```
+
+**Dependencias**: `isNat`, `isInductive`, `nat_is_zero_or_succ`, `nat_subset_inductive_set`
+
+#### Caracterización de Finitud
+
+**Ubicación**: `NaturalNumbers.lean`, línea 850  
+**Orden**: 12º teorema principal (TEOREMA DE FINITUD)
+
+**Enunciado Matemático**: Todo subconjunto no vacío de un natural tiene elemento máximo.
+
+**Firma Lean4**:
+
+```lean
+theorem nat_has_max (n T : U) (hn : isNat n) (hT_sub : T ⊆ n) (hT_ne : T ≠ ∅) :
+  ∃ max, max ∈ T ∧ ∀ x, x ∈ T → (x ∈ max ∨ x = max)
+```
+
+**Dependencias**: `isNat`, `isWellOrderMembershipGuided`, `nat_not_mem_self`
+
 ## 5. Notación y Sintaxis
 
 ### 5.1 Operadores Básicos
@@ -885,6 +1233,12 @@ theorem cantor_no_surjection (f A : U) (hf : isFunctionFromTo f A (𝒫 A)) :
 - `g ∘ₛ f` - Composición (`FunctionComposition`)
 - `A ≃ₛ B` - Equipotencia (`isEquipotent`)
 - `A ≼ₛ B` - Dominación (`isDominatedBy`)
+
+### 5.5 Números Naturales
+
+- `σ n` - Función sucesor (`successor`)
+- `∈[S]` - Orden estricto guiado por membresía (`StrictOrderMembershipGuided`)
+- `0`, `1`, `2`, `3` - Naturales específicos (`zero`, `one`, `two`, `three`)
 
 ## 6. Exports por Módulo
 
@@ -942,6 +1296,42 @@ export Cardinality (
 )
 ```
 
+### 6.5 NaturalNumbers.lean
+
+```lean
+export NaturalNumbers (
+  -- Core definitions
+  successor successor_is_specified
+  isInductive isTransitiveSet
+  StrictOrderMembershipGuided mem_StrictOrderMembershipGuided
+  isTotalStrictOrderMembershipGuided isWellOrderMembershipGuided
+  isNat
+  -- Basic theorems
+  zero_is_nat mem_successor_self subset_of_mem_successor
+  successor_preserves_transitivity transitive_element_subset
+  -- Well-foundedness properties
+  nat_not_mem_self nat_no_two_cycle nat_no_three_cycle
+  nat_element_is_transitive nat_element_has_strict_total_order
+  nat_element_has_well_order nat_element_is_nat
+  nat_ne_successor successor_of_nat_is_transitive
+  successor_of_nat_has_strict_total_order nat_successor_is_nat
+  no_nat_between
+  -- Initial segments and trichotomy
+  isInitialSegment initial_segment_of_nat_is_eq_or_mem
+  inter_nat_is_initial_segment nat_subset_mem_or_eq
+  nat_trichotomy nat_mem_trans nat_mem_asymm
+  nat_is_initial_segment nat_element_trichotomy
+  successor_injective successor_nonempty mem_successor_of_mem
+  -- Nat is Zero or Succ
+  nat_is_zero_or_succ nat_subset_inductive_set nat_in_inductive_set
+  -- Naturales específicos en conjuntos inductivos
+  zero_in_inductive one_in_inductive two_in_inductive three_in_inductive
+  nat_has_max
+  -- Examples
+  zero one two three zero_eq one_eq two_eq three_eq
+)
+```
+
 ## 7. Estado de Proyección por Módulo
 
 ### 7.1 Leyenda de Estados
@@ -964,6 +1354,7 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `PowerSetAlgebra.lean` - Complementos y De Morgan
 - `Relations.lean` - Relaciones binarias y equivalencia
 - `BooleanAlgebra.lean` - Teoremas de álgebra booleana
+- `NaturalNumbers.lean` - Números naturales como ordinales de von Neumann
 
 ### 7.3 Archivos Parcialmente Proyectados
 
@@ -979,7 +1370,6 @@ Los siguientes archivos tienen **documentación parcial** (solo definiciones/teo
 
 Los siguientes archivos **no están documentados** en este REFERENCE.md:
 
-- `NaturalNumbers.lean` - Números naturales y inducción
 - `Infinity.lean` - Axioma de infinito y conjunto ω
 - `GeneralizedDeMorgan.lean` - De Morgan para familias
 - `GeneralizedDistributive.lean` - Distributividad para familias
@@ -988,5 +1378,7 @@ Los siguientes archivos **no están documentados** en este REFERENCE.md:
 - `Recursion.lean` - Definiciones recursivas
 
 ---
+
+*Última actualización: 11 de febrero de 2026 - Agregado módulo NaturalNumbers.lean*
 
 *Este documento contiene únicamente construcciones y teoremas que están completamente implementados y demostrados en el código Lean 4. La proyección se actualiza conforme se agregan archivos al contexto de trabajo.*
