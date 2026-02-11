@@ -19,7 +19,7 @@
 | `OrderedPair.lean` | `SetUniverse.OrderedPairExtensions` | Todos los anteriores + `PowerSet` | ✅ Completo |
 | `CartesianProduct.lean` | `SetUniverse.CartesianProduct` | `OrderedPair` + anteriores | ✅ Completo |
 | `Relations.lean` | `SetUniverse.Relations` | `CartesianProduct` + anteriores | ✅ Completo |
-| `Functions.lean` | `SetUniverse.Functions` | `CartesianProduct`, `Relations` + anteriores | 🔶 Parcial |
+| `Functions.lean` | `SetUniverse.Functions` | `CartesianProduct`, `Relations` + anteriores | ✅ Completo |
 | `BooleanAlgebra.lean` | `SetUniverse.BooleanAlgebra` | `Union`, `Specification`, `Pairing`, `Extension`, `Existence`, `Prelim` | ✅ Completo |
 | `AtomicBooleanAlgebra.lean` | `SetUniverse.AtomicBooleanAlgebra` | `PowerSetAlgebra`, `SetOrder`, `SetStrictOrder` + anteriores | 🔶 Parcial |
 | `Cardinality.lean` | `SetUniverse.Cardinality` | `Functions` + todos los anteriores | 🔶 Parcial |
@@ -544,10 +544,58 @@ def isFunctionFromTo (f A B : U) : Prop :=
 
 **Dependencias**: `CartesianProduct`, `isSingleValued`
 
+#### Univaluada (isSingleValued)
+
+**Ubicación**: `Functions.lean`, línea 25  
+**Orden**: 1ª definición principal
+
+**Enunciado Matemático**: f es univaluada si cada x tiene a lo sumo un y tal que ⟨x,y⟩ ∈ f.
+
+**Firma Lean4**:
+
+```lean
+def isSingleValued (f : U) : Prop :=
+  ∀ x y₁ y₂, ⟨x, y₁⟩ ∈ f → ⟨x, y₂⟩ ∈ f → y₁ = y₂
+```
+
+**Dependencias**: `OrderedPair`
+
+#### Dominio (Dom)
+
+**Ubicación**: `Functions.lean`, línea 37  
+**Orden**: 2ª definición principal
+
+**Enunciado Matemático**: El dominio de f es el conjunto de primeras coordenadas: {x | ∃y, ⟨x,y⟩ ∈ f}.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def Dom (f : U) : U :=
+  SpecSet (⋃ (⋃ f)) (fun x => ∃ y, ⟨x, y⟩ ∈ f)
+```
+
+**Dependencias**: `SpecSet`, `UnionSet`
+
+#### Rango (Ran)
+
+**Ubicación**: `Functions.lean`, línea 42  
+**Orden**: 3ª definición principal
+
+**Enunciado Matemático**: El rango de f es el conjunto de segundas coordenadas: {y | ∃x, ⟨x,y⟩ ∈ f}.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def Ran (f : U) : U :=
+  SpecSet (⋃ (⋃ f)) (fun y => ∃ x, ⟨x, y⟩ ∈ f)
+```
+
+**Dependencias**: `SpecSet`, `UnionSet`
+
 #### Aplicación de Función (apply)
 
 **Ubicación**: `Functions.lean`, línea 58  
-**Orden**: 2ª definición principal
+**Orden**: 4ª definición principal
 
 **Enunciado Matemático**: f⦅x⦆ es el único y tal que ⟨x,y⟩ ∈ f.
 
@@ -561,10 +609,194 @@ notation:max f "⦅" x "⦆" => apply f x
 
 **Dependencias**: `Classical.choose`, `EmptySet`
 
+#### Función Identidad (IdFunction)
+
+**Ubicación**: `Functions.lean`, línea 85  
+**Orden**: 5ª definición principal
+
+**Enunciado Matemático**: La función identidad en A: {⟨x,x⟩ | x ∈ A}.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def IdFunction (A : U) : U :=
+  SpecSet (A ×ₛ A) (fun p => ∃ x, x ∈ A ∧ p = ⟨x, x⟩)
+notation:max "𝟙" A => IdFunction A
+```
+
+**Dependencias**: `SpecSet`, `CartesianProduct`, `OrderedPair`
+
+#### Composición de Funciones (FunctionComposition)
+
+**Ubicación**: `Functions.lean`, línea 125  
+**Orden**: 6ª definición principal
+
+**Enunciado Matemático**: La composición g ∘ f: {⟨x,z⟩ | ∃y, ⟨x,y⟩ ∈ f ∧ ⟨y,z⟩ ∈ g}.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def FunctionComposition (g f : U) : U :=
+  SpecSet ((Dom f) ×ₛ (Ran g)) (fun p =>
+    ∃ x z, p = ⟨x, z⟩ ∧ ∃ y, ⟨x, y⟩ ∈ f ∧ ⟨y, z⟩ ∈ g)
+infixr:90 " ∘ₛ " => FunctionComposition
+```
+
+**Dependencias**: `SpecSet`, `Dom`, `Ran`, `OrderedPair`
+
+#### Función Inversa (InverseFunction)
+
+**Ubicación**: `Functions.lean`, línea 185  
+**Orden**: 7ª definición principal
+
+**Enunciado Matemático**: La relación inversa: {⟨y,x⟩ | ⟨x,y⟩ ∈ f}.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def InverseFunction (f : U) : U :=
+  SpecSet ((Ran f) ×ₛ (Dom f)) (fun p =>
+    ∃ x y, p = ⟨y, x⟩ ∧ ⟨x, y⟩ ∈ f)
+postfix:max "⁻¹ˢ" => InverseFunction
+```
+
+**Dependencias**: `SpecSet`, `Ran`, `Dom`, `OrderedPair`
+
+#### Inyectividad (isInjective)
+
+**Ubicación**: `Functions.lean`, línea 195  
+**Orden**: 8ª definición principal
+
+**Enunciado Matemático**: f es inyectiva si diferentes entradas dan diferentes salidas.
+
+**Firma Lean4**:
+
+```lean
+def isInjective (f : U) : Prop :=
+  ∀ x₁ x₂ y, ⟨x₁, y⟩ ∈ f → ⟨x₂, y⟩ ∈ f → x₁ = x₂
+```
+
+**Dependencias**: `OrderedPair`
+
+#### Suryectividad (isSurjectiveOnto)
+
+**Ubicación**: `Functions.lean`, línea 199  
+**Orden**: 9ª definición principal
+
+**Enunciado Matemático**: f es suryectiva en B si todo elemento de B está en el rango.
+
+**Firma Lean4**:
+
+```lean
+def isSurjectiveOnto (f B : U) : Prop :=
+  ∀ y, y ∈ B → ∃ x, ⟨x, y⟩ ∈ f
+```
+
+**Dependencias**: `OrderedPair`
+
+#### Biyección (isBijection)
+
+**Ubicación**: `Functions.lean`, línea 203  
+**Orden**: 10ª definición principal
+
+**Enunciado Matemático**: f es biyección de A a B si es función, inyectiva y suryectiva.
+
+**Firma Lean4**:
+
+```lean
+def isBijection (f A B : U) : Prop :=
+  isFunctionFromTo f A B ∧ isInjective f ∧ isSurjectiveOnto f B
+```
+
+**Dependencias**: `isFunctionFromTo`, `isInjective`, `isSurjectiveOnto`
+
+#### Inverso por Izquierda (hasLeftInverse)
+
+**Ubicación**: `Functions.lean`, línea 220  
+**Orden**: 11ª definición principal
+
+**Enunciado Matemático**: f tiene inverso por izquierda g si g ∘ f = id en A.
+
+**Firma Lean4**:
+
+```lean
+def hasLeftInverse (f A B g : U) : Prop :=
+  isFunctionFromTo f A B ∧ isFunctionFromTo g B A ∧
+  ∀ x, x ∈ A → g⦅f⦅x⦆⦆ = x
+```
+
+**Dependencias**: `isFunctionFromTo`, `apply`
+
+#### Inverso por Derecha (hasRightInverse)
+
+**Ubicación**: `Functions.lean`, línea 225  
+**Orden**: 12ª definición principal
+
+**Enunciado Matemático**: f tiene inverso por derecha g si f ∘ g = id en B.
+
+**Firma Lean4**:
+
+```lean
+def hasRightInverse (f A B g : U) : Prop :=
+  isFunctionFromTo f A B ∧ isFunctionFromTo g B A ∧
+  ∀ y, y ∈ B → f⦅g⦅y⦆⦆ = y
+```
+
+**Dependencias**: `isFunctionFromTo`, `apply`
+
+#### Invertibilidad (isInvertible)
+
+**Ubicación**: `Functions.lean`, línea 245  
+**Orden**: 13ª definición principal
+
+**Enunciado Matemático**: f es invertible si tiene inverso bilateral.
+
+**Firma Lean4**:
+
+```lean
+def isInvertible (f A B : U) : Prop :=
+  ∃ g, hasLeftInverse f A B g ∧ hasRightInverse f A B g
+```
+
+**Dependencias**: `hasLeftInverse`, `hasRightInverse`
+
+#### Imagen Directa (ImageSet)
+
+**Ubicación**: `Functions.lean`, línea 580  
+**Orden**: 14ª definición principal
+
+**Enunciado Matemático**: La imagen directa f[X] = {y | ∃x ∈ X, ⟨x,y⟩ ∈ f}.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def ImageSet (f X : U) : U :=
+  SpecSet (Ran f) (fun y => ∃ x, x ∈ X ∧ ⟨x, y⟩ ∈ f)
+notation:max f "⦃" X "⦄" => ImageSet f X
+```
+
+**Dependencias**: `SpecSet`, `Ran`, `OrderedPair`
+
+#### Imagen Inversa (PreimageSet)
+
+**Ubicación**: `Functions.lean`, línea 590  
+**Orden**: 15ª definición principal
+
+**Enunciado Matemático**: La imagen inversa f⁻¹[Y] = {x | ∃y ∈ Y, ⟨x,y⟩ ∈ f}.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def PreimageSet (f Y : U) : U :=
+  SpecSet (Dom f) (fun x => ∃ y, y ∈ Y ∧ ⟨x, y⟩ ∈ f)
+```
+
+**Dependencias**: `SpecSet`, `Dom`, `OrderedPair`
+
 #### Equipotencia (isEquipotent)
 
 **Ubicación**: `Functions.lean`, línea 398  
-**Orden**: 5ª definición principal
+**Orden**: 16ª definición principal
 
 **Enunciado Matemático**: A y B son equipotentes si existe una biyección entre ellos.
 
@@ -576,6 +808,40 @@ notation:50 A " ≃ₛ " B => isEquipotent A B
 ```
 
 **Dependencias**: `isBijection`
+
+#### Dominación (isDominatedBy)
+
+**Ubicación**: `Functions.lean`, línea 430  
+**Orden**: 17ª definición principal
+
+**Enunciado Matemático**: A es dominado por B si existe una inyección de A a B.
+
+**Firma Lean4**:
+
+```lean
+def isDominatedBy (A B : U) : Prop :=
+  ∃ f, isFunctionFromTo f A B ∧ isInjective f
+notation:50 A " ≼ₛ " B => isDominatedBy A B
+```
+
+**Dependencias**: `isFunctionFromTo`, `isInjective`
+
+#### Dominación Estricta (isStrictlyDominatedBy)
+
+**Ubicación**: `Functions.lean`, línea 465  
+**Orden**: 18ª definición principal
+
+**Enunciado Matemático**: A es estrictamente dominado por B si A ≼ B pero B ⊀ A.
+
+**Firma Lean4**:
+
+```lean
+def isStrictlyDominatedBy (A B : U) : Prop :=
+  (A ≼ₛ B) ∧ ¬(B ≼ₛ A)
+notation:50 A " ≺ₛ " B => isStrictlyDominatedBy A B
+```
+
+**Dependencias**: `isDominatedBy`
 
 ### 3.9 BooleanAlgebra.lean
 
@@ -1432,10 +1698,856 @@ theorem EqClass_eq_or_disjoint (R A a b : U)
 
 ### 4.5 Functions.lean
 
+#### Especificación del Dominio
+
+**Ubicación**: `Functions.lean`, línea 47  
+**Orden**: 1º teorema principal
+
+**Enunciado Matemático**: x ∈ Dom f ↔ ∃y, ⟨x,y⟩ ∈ f.
+
+**Firma Lean4**:
+
+```lean
+theorem Dom_is_specified (f x : U) :
+    x ∈ Dom f ↔ ∃ y, ⟨x, y⟩ ∈ f
+```
+
+**Dependencias**: `Dom`, `SpecSet_is_specified`
+
+#### Especificación del Rango
+
+**Ubicación**: `Functions.lean`, línea 58  
+**Orden**: 2º teorema principal
+
+**Enunciado Matemático**: y ∈ Ran f ↔ ∃x, ⟨x,y⟩ ∈ f.
+
+**Firma Lean4**:
+
+```lean
+theorem Ran_is_specified (f y : U) :
+    y ∈ Ran f ↔ ∃ x, ⟨x, y⟩ ∈ f
+```
+
+**Dependencias**: `Ran`, `SpecSet_is_specified`
+
+#### Corrección de la Aplicación
+
+**Ubicación**: `Functions.lean`, línea 70  
+**Orden**: 3º teorema principal
+
+**Enunciado Matemático**: Si f es univaluada y ⟨x,y⟩ ∈ f, entonces f⦅x⦆ = y.
+
+**Firma Lean4**:
+
+```lean
+theorem apply_eq (f x y : U) (hf : isSingleValued f) (hxy : ⟨x, y⟩ ∈ f) :
+    f⦅x⦆ = y
+```
+
+**Dependencias**: `apply`, `isSingleValued`, `Classical.choose_spec`
+
+#### Aplicación da Membresía
+
+**Ubicación**: `Functions.lean`, línea 78  
+**Orden**: 4º teorema principal
+
+**Enunciado Matemático**: Si x ∈ Dom f y f es univaluada, entonces ⟨x, f⦅x⦆⟩ ∈ f.
+
+**Firma Lean4**:
+
+```lean
+theorem apply_mem (f x : U) (hf : isSingleValued f) (hx : x ∈ Dom f) :
+    ⟨x, f⦅x⦆⟩ ∈ f
+```
+
+**Dependencias**: `apply`, `Dom_is_specified`, `apply_eq`
+
+#### Especificación de Función Identidad
+
+**Ubicación**: `Functions.lean`, línea 90  
+**Orden**: 5º teorema principal
+
+**Enunciado Matemático**: ⟨x,y⟩ ∈ 𝟙 A ↔ x ∈ A ∧ x = y.
+
+**Firma Lean4**:
+
+```lean
+theorem IdFunction_is_specified (A x y : U) :
+    ⟨x, y⟩ ∈ (𝟙 A) ↔ x ∈ A ∧ x = y
+```
+
+**Dependencias**: `IdFunction`, `SpecSet_is_specified`, `OrderedPair_eq_iff`
+
+#### Identidad es Univaluada
+
+**Ubicación**: `Functions.lean`, línea 102  
+**Orden**: 6º teorema principal
+
+**Enunciado Matemático**: 𝟙 A es univaluada.
+
+**Firma Lean4**:
+
+```lean
+theorem IdFunction_single_valued (A : U) : isSingleValued (𝟙 A)
+```
+
+**Dependencias**: `IdFunction`, `isSingleValued`, `IdFunction_is_specified`
+
+#### Identidad es Función
+
+**Ubicación**: `Functions.lean`, línea 107  
+**Orden**: 7º teorema principal
+
+**Enunciado Matemático**: 𝟙 A es función de A a A.
+
+**Firma Lean4**:
+
+```lean
+theorem IdFunction_is_function (A : U) : isFunctionFromTo (𝟙 A) A A
+```
+
+**Dependencias**: `IdFunction`, `isFunctionFromTo`, `IdFunction_single_valued`
+
+#### Aplicación de Identidad
+
+**Ubicación**: `Functions.lean`, línea 115  
+**Orden**: 8º teorema principal
+
+**Enunciado Matemático**: (𝟙 A)⦅x⦆ = x para x ∈ A.
+
+**Firma Lean4**:
+
+```lean
+theorem apply_id (A x : U) (hx : x ∈ A) : (𝟙 A)⦅x⦆ = x
+```
+
+**Dependencias**: `apply_eq`, `IdFunction_single_valued`, `IdFunction_is_specified`
+
+#### Especificación de Composición
+
+**Ubicación**: `Functions.lean`, línea 135  
+**Orden**: 9º teorema principal
+
+**Enunciado Matemático**: ⟨x,z⟩ ∈ g ∘ₛ f ↔ ∃y, ⟨x,y⟩ ∈ f ∧ ⟨y,z⟩ ∈ g.
+
+**Firma Lean4**:
+
+```lean
+theorem comp_is_specified (g f x z : U) :
+    ⟨x, z⟩ ∈ (g ∘ₛ f) ↔ ∃ y, ⟨x, y⟩ ∈ f ∧ ⟨y, z⟩ ∈ g
+```
+
+**Dependencias**: `FunctionComposition`, `SpecSet_is_specified`, `OrderedPair_eq_iff`
+
+#### Composición Preserva Univaluación
+
+**Ubicación**: `Functions.lean`, línea 147  
+**Orden**: 10º teorema principal
+
+**Enunciado Matemático**: Si f y g son univaluadas, entonces g ∘ₛ f es univaluada.
+
+**Firma Lean4**:
+
+```lean
+theorem comp_single_valued (g f : U) (hf : isSingleValued f) (hg : isSingleValued g) :
+    isSingleValued (g ∘ₛ f)
+```
+
+**Dependencias**: `isSingleValued`, `comp_is_specified`
+
+#### Composición de Funciones es Función
+
+**Ubicación**: `Functions.lean`, línea 155  
+**Orden**: 11º teorema principal
+
+**Enunciado Matemático**: Si f: A → B y g: B → C son funciones, entonces g ∘ₛ f: A → C es función.
+
+**Firma Lean4**:
+
+```lean
+theorem comp_is_function (f g A B C : U)
+    (hf : isFunctionFromTo f A B) (hg : isFunctionFromTo g B C) :
+    isFunctionFromTo (g ∘ₛ f) A C
+```
+
+**Dependencias**: `isFunctionFromTo`, `comp_single_valued`, `comp_is_specified`
+
+#### Composición con Identidad (Derecha)
+
+**Ubicación**: `Functions.lean`, línea 175  
+**Orden**: 12º teorema principal
+
+**Enunciado Matemático**: f ∘ₛ 𝟙 A = f para f: A → B.
+
+**Firma Lean4**:
+
+```lean
+theorem comp_id_right (f A B : U) (hf : isFunctionFromTo f A B) :
+    (f ∘ₛ 𝟙 A) = f
+```
+
+**Dependencias**: `FunctionComposition`, `IdFunction`, `ExtSet`
+
+#### Composición con Identidad (Izquierda)
+
+**Ubicación**: `Functions.lean`, línea 190  
+**Orden**: 13º teorema principal
+
+**Enunciado Matemático**: 𝟙 B ∘ₛ f = f para f: A → B.
+
+**Firma Lean4**:
+
+```lean
+theorem comp_id_left (f A B : U) (hf : isFunctionFromTo f A B) :
+    ((𝟙 B) ∘ₛ f) = f
+```
+
+**Dependencias**: `FunctionComposition`, `IdFunction`, `ExtSet`
+
+#### Especificación de Función Inversa
+
+**Ubicación**: `Functions.lean`, línea 205  
+**Orden**: 14º teorema principal
+
+**Enunciado Matemático**: ⟨y,x⟩ ∈ f⁻¹ˢ ↔ ⟨x,y⟩ ∈ f.
+
+**Firma Lean4**:
+
+```lean
+theorem inverse_is_specified (f y x : U) :
+    ⟨y, x⟩ ∈ f⁻¹ˢ ↔ ⟨x, y⟩ ∈ f
+```
+
+**Dependencias**: `InverseFunction`, `SpecSet_is_specified`, `OrderedPair_eq_iff`
+
+#### Inyectiva Implica Inversa Univaluada
+
+**Ubicación**: `Functions.lean`, línea 217  
+**Orden**: 15º teorema principal
+
+**Enunciado Matemático**: Si f es inyectiva, entonces f⁻¹ˢ es univaluada.
+
+**Firma Lean4**:
+
+```lean
+theorem injective_inverse_single_valued (f : U) (hf : isInjective f) :
+    isSingleValued (f⁻¹ˢ)
+```
+
+**Dependencias**: `isInjective`, `isSingleValued`, `inverse_is_specified`
+
+#### Univaluada Implica Inversa Inyectiva
+
+**Ubicación**: `Functions.lean`, línea 223  
+**Orden**: 16º teorema principal
+
+**Enunciado Matemático**: Si f es univaluada, entonces f⁻¹ˢ es inyectiva.
+
+**Firma Lean4**:
+
+```lean
+theorem single_valued_inverse_injective (f : U) (hf : isSingleValued f) :
+    isInjective (f⁻¹ˢ)
+```
+
+**Dependencias**: `isSingleValued`, `isInjective`, `inverse_is_specified`
+
+#### Caracterización de Inyectividad
+
+**Ubicación**: `Functions.lean`, línea 250  
+**Orden**: 17º teorema principal
+
+**Enunciado Matemático**: f es inyectiva ↔ f⁻¹ˢ es univaluada.
+
+**Firma Lean4**:
+
+```lean
+theorem injective_iff_inverse_functional (f : U) :
+    isInjective f ↔ isSingleValued (f⁻¹ˢ)
+```
+
+**Dependencias**: `isInjective`, `isSingleValued`, `injective_inverse_single_valued`
+
+#### Inyectividad y Aplicación
+
+**Ubicación**: `Functions.lean`, línea 258  
+**Orden**: 18º teorema principal
+
+**Enunciado Matemático**: Para función inyectiva, f⦅x₁⦆ = f⦅x₂⦆ → x₁ = x₂.
+
+**Firma Lean4**:
+
+```lean
+theorem injective_apply_eq (f A B x₁ x₂ : U)
+    (hf : isFunctionFromTo f A B) (hinj : isInjective f)
+    (hx₁ : x₁ ∈ A) (hx₂ : x₂ ∈ A) (heq : f⦅x₁⦆ = f⦅x₂⦆) : x₁ = x₂
+```
+
+**Dependencias**: `isInjective`, `isFunctionFromTo`, `apply_eq`
+
+#### Caracterización de Suryectividad
+
+**Ubicación**: `Functions.lean`, línea 270  
+**Orden**: 19º teorema principal
+
+**Enunciado Matemático**: f es suryectiva en B ↔ Ran f = B.
+
+**Firma Lean4**:
+
+```lean
+theorem surjective_iff_range_eq (f A B : U) (hf : isFunctionFromTo f A B) :
+    isSurjectiveOnto f B ↔ Ran f = B
+```
+
+**Dependencias**: `isSurjectiveOnto`, `Ran`, `ExtSet`
+
+#### Suryectiva Implica Inversa Total
+
+**Ubicación**: `Functions.lean`, línea 285  
+**Orden**: 20º teorema principal
+
+**Enunciado Matemático**: Si f: A → B es suryectiva, entonces f⁻¹ˢ es total en B.
+
+**Firma Lean4**:
+
+```lean
+theorem surjective_inverse_total (f A B : U)
+    (_ : isFunctionFromTo f A B) (hsurj : isSurjectiveOnto f B) :
+    ∀ y, y ∈ B → ∃ x, ⟨y, x⟩ ∈ f⁻¹ˢ
+```
+
+**Dependencias**: `isSurjectiveOnto`, `inverse_is_specified`
+
+#### Biyección Implica Inversa es Función
+
+**Ubicación**: `Functions.lean`, línea 295  
+**Orden**: 21º teorema principal
+
+**Enunciado Matemático**: Si f: A → B es biyección, entonces f⁻¹ˢ: B → A es función.
+
+**Firma Lean4**:
+
+```lean
+theorem bijection_inverse_is_function (f A B : U) (hbij : isBijection f A B) :
+    isFunctionFromTo (f⁻¹ˢ) B A
+```
+
+**Dependencias**: `isBijection`, `isFunctionFromTo`, `injective_inverse_single_valued`
+
+#### Biyección: Composición con Inversa (Derecha)
+
+**Ubicación**: `Functions.lean`, línea 310  
+**Orden**: 22º teorema principal
+
+**Enunciado Matemático**: Para biyección f: A → B, (f⁻¹ˢ)⦅f⦅x⦆⦆ = x para x ∈ A.
+
+**Firma Lean4**:
+
+```lean
+theorem bijection_comp_inverse_right (f A B : U) (hbij : isBijection f A B) :
+    ∀ x, x ∈ A → (f⁻¹ˢ)⦅f⦅x⦆⦆ = x
+```
+
+**Dependencias**: `isBijection`, `apply_eq`, `inverse_is_specified`
+
+#### Biyección: Composición con Inversa (Izquierda)
+
+**Ubicación**: `Functions.lean`, línea 325  
+**Orden**: 23º teorema principal
+
+**Enunciado Matemático**: Para biyección f: A → B, f⦅(f⁻¹ˢ)⦅y⦆⦆ = y para y ∈ B.
+
+**Firma Lean4**:
+
+```lean
+theorem bijection_comp_inverse_left (f A B : U) (hbij : isBijection f A B) :
+    ∀ y, y ∈ B → f⦅(f⁻¹ˢ)⦅y⦆⦆ = y
+```
+
+**Dependencias**: `isBijection`, `apply_eq`, `inverse_is_specified`
+
+#### Inversa de Inversa
+
+**Ubicación**: `Functions.lean`, línea 340  
+**Orden**: 24º teorema principal
+
+**Enunciado Matemático**: Para f ⊆ A ×ₛ B, (f⁻¹ˢ)⁻¹ˢ = f.
+
+**Firma Lean4**:
+
+```lean
+theorem inverse_inverse (f A B : U) (hf : f ⊆ A ×ₛ B) : (f⁻¹ˢ)⁻¹ˢ = f
+```
+
+**Dependencias**: `InverseFunction`, `ExtSet`, `inverse_is_specified`
+
+#### Biyección Implica Invertibilidad
+
+**Ubicación**: `Functions.lean`, línea 365  
+**Orden**: 25º teorema principal
+
+**Enunciado Matemático**: Si f: A → B es biyección, entonces f es invertible.
+
+**Firma Lean4**:
+
+```lean
+theorem bijection_implies_invertible (f A B : U) (hbij : isBijection f A B) :
+    isInvertible f A B
+```
+
+**Dependencias**: `isBijection`, `isInvertible`, `bijection_inverse_is_function`
+
+#### Inverso Izquierdo Implica Inyectividad
+
+**Ubicación**: `Functions.lean`, línea 375  
+**Orden**: 26º teorema principal
+
+**Enunciado Matemático**: Si f tiene inverso por izquierda, entonces f es inyectiva.
+
+**Firma Lean4**:
+
+```lean
+theorem left_invertible_implies_injective (f A B : U)
+    (hf : isFunctionFromTo f A B) (hleft : isLeftInvertible f A B) :
+    isInjective f
+```
+
+**Dependencias**: `isLeftInvertible`, `isInjective`, `apply_eq`
+
+#### Inverso Derecho Implica Suryectividad
+
+**Ubicación**: `Functions.lean`, línea 395  
+**Orden**: 27º teorema principal
+
+**Enunciado Matemático**: Si f tiene inverso por derecha, entonces f es suryectiva.
+
+**Firma Lean4**:
+
+```lean
+theorem right_invertible_implies_surjective (f A B : U)
+    (hf : isFunctionFromTo f A B) (hright : isRightInvertible f A B) :
+    isSurjectiveOnto f B
+```
+
+**Dependencias**: `isRightInvertible`, `isSurjectiveOnto`, `apply_mem`
+
+#### Invertibilidad Implica Biyección
+
+**Ubicación**: `Functions.lean`, línea 415  
+**Orden**: 28º teorema principal
+
+**Enunciado Matemático**: Si f es invertible, entonces f es biyección.
+
+**Firma Lean4**:
+
+```lean
+theorem invertible_implies_bijection (f A B : U)
+    (hf : isFunctionFromTo f A B) (hinv : isInvertible f A B) :
+    isBijection f A B
+```
+
+**Dependencias**: `isInvertible`, `isBijection`, `left_invertible_implies_injective`
+
+#### Equivalencia Biyección-Invertibilidad
+
+**Ubicación**: `Functions.lean`, línea 425  
+**Orden**: 29º teorema principal (TEOREMA CENTRAL)
+
+**Enunciado Matemático**: f: A → B es biyección ↔ f es invertible.
+
+**Firma Lean4**:
+
+```lean
+theorem bijection_iff_invertible (f A B : U) (hf : isFunctionFromTo f A B) :
+    isBijection f A B ↔ isInvertible f A B
+```
+
+**Dependencias**: `isBijection`, `isInvertible`, `bijection_implies_invertible`
+
+#### Inversa de Biyección es Biyección
+
+**Ubicación**: `Functions.lean`, línea 405  
+**Orden**: 30º teorema principal
+
+**Enunciado Matemático**: Si f: A → B es biyección, entonces f⁻¹ˢ: B → A es biyección.
+
+**Firma Lean4**:
+
+```lean
+theorem inverse_is_bijection (f A B : U) (hbij : isBijection f A B) :
+    isBijection (f⁻¹ˢ) B A
+```
+
+**Dependencias**: `isBijection`, `InverseFunction`, `single_valued_inverse_injective`
+
+#### Equipotencia es Reflexiva
+
+**Ubicación**: `Functions.lean`, línea 435  
+**Orden**: 31º teorema principal
+
+**Enunciado Matemático**: A ≃ₛ A.
+
+**Firma Lean4**:
+
+```lean
+theorem equipotent_refl (A : U) : A ≃ₛ A
+```
+
+**Dependencias**: `isEquipotent`, `IdFunction`, `id_is_bijection`
+
+#### Equipotencia es Simétrica
+
+**Ubicación**: `Functions.lean`, línea 440  
+**Orden**: 32º teorema principal
+
+**Enunciado Matemático**: A ≃ₛ B → B ≃ₛ A.
+
+**Firma Lean4**:
+
+```lean
+theorem equipotent_symm (A B : U) (h : A ≃ₛ B) : B ≃ₛ A
+```
+
+**Dependencias**: `isEquipotent`, `inverse_is_bijection`
+
+#### Equipotencia es Transitiva
+
+**Ubicación**: `Functions.lean`, línea 445  
+**Orden**: 33º teorema principal
+
+**Enunciado Matemático**: A ≃ₛ B → B ≃ₛ C → A ≃ₛ C.
+
+**Firma Lean4**:
+
+```lean
+theorem equipotent_trans (A B C : U) (hab : A ≃ₛ B) (hbc : B ≃ₛ C) : A ≃ₛ C
+```
+
+**Dependencias**: `isEquipotent`, `comp_bijection`
+
+#### Equipotencia es Relación de Equivalencia
+
+**Ubicación**: `Functions.lean`, línea 450  
+**Orden**: 34º teorema principal
+
+**Enunciado Matemático**: ≃ₛ es reflexiva, simétrica y transitiva.
+
+**Firma Lean4**:
+
+```lean
+theorem equipotent_is_equivalence :
+    (∀ (A : U), isEquipotent A A) ∧
+    (∀ (A B : U), isEquipotent A B → isEquipotent B A) ∧
+    (∀ (A B C : U), isEquipotent A B → isEquipotent B C → isEquipotent A C)
+```
+
+**Dependencias**: `equipotent_refl`, `equipotent_symm`, `equipotent_trans`
+
+#### Identidad es Inyectiva
+
+**Ubicación**: `Functions.lean`, línea 455  
+**Orden**: 35º teorema principal
+
+**Enunciado Matemático**: 𝟙 A es inyectiva.
+
+**Firma Lean4**:
+
+```lean
+theorem id_is_injective (A : U) : isInjective (𝟙 A)
+```
+
+**Dependencias**: `isInjective`, `IdFunction_is_specified`
+
+#### Dominación es Reflexiva
+
+**Ubicación**: `Functions.lean`, línea 460  
+**Orden**: 36º teorema principal
+
+**Enunciado Matemático**: A ≼ₛ A.
+
+**Firma Lean4**:
+
+```lean
+theorem dominated_refl (A : U) : A ≼ₛ A
+```
+
+**Dependencias**: `isDominatedBy`, `IdFunction_is_function`, `id_is_injective`
+
+#### Dominación es Transitiva
+
+**Ubicación**: `Functions.lean`, línea 465  
+**Orden**: 37º teorema principal
+
+**Enunciado Matemático**: A ≼ₛ B → B ≼ₛ C → A ≼ₛ C.
+
+**Firma Lean4**:
+
+```lean
+theorem dominated_trans (A B C : U) (hab : A ≼ₛ B) (hbc : B ≼ₛ C) : A ≼ₛ C
+```
+
+**Dependencias**: `isDominatedBy`, `comp_is_function`, `comp_injective`
+
+#### Dominación es Preorden
+
+**Ubicación**: `Functions.lean`, línea 475  
+**Orden**: 38º teorema principal
+
+**Enunciado Matemático**: ≼ₛ es reflexiva y transitiva.
+
+**Firma Lean4**:
+
+```lean
+theorem dominated_is_preorder :
+    (∀ (A : U), isDominatedBy A A) ∧
+    (∀ (A B C : U), isDominatedBy A B → isDominatedBy B C → isDominatedBy A C)
+```
+
+**Dependencias**: `dominated_refl`, `dominated_trans`
+
+#### Equipotencia Implica Dominación Bilateral
+
+**Ubicación**: `Functions.lean`, línea 480  
+**Orden**: 39º teorema principal
+
+**Enunciado Matemático**: A ≃ₛ B → (A ≼ₛ B ∧ B ≼ₛ A).
+
+**Firma Lean4**:
+
+```lean
+theorem equipotent_implies_dominated_both (A B : U) (h : A ≃ₛ B) :
+    (A ≼ₛ B) ∧ (B ≼ₛ A)
+```
+
+**Dependencias**: `isEquipotent`, `isDominatedBy`, `inverse_is_bijection`
+
+#### Dominación Estricta es Irreflexiva
+
+**Ubicación**: `Functions.lean`, línea 490  
+**Orden**: 40º teorema principal
+
+**Enunciado Matemático**: ¬(A ≺ₛ A).
+
+**Firma Lean4**:
+
+```lean
+theorem strict_dominated_irrefl (A : U) : ¬(A ≺ₛ A)
+```
+
+**Dependencias**: `isStrictlyDominatedBy`, `dominated_refl`
+
+#### Dominación Estricta es Transitiva
+
+**Ubicación**: `Functions.lean`, línea 495  
+**Orden**: 41º teorema principal
+
+**Enunciado Matemático**: A ≺ₛ B → B ≺ₛ C → A ≺ₛ C.
+
+**Firma Lean4**:
+
+```lean
+theorem strict_dominated_trans (A B C : U)
+    (hab : A ≺ₛ B) (hbc : B ≺ₛ C) : A ≺ₛ C
+```
+
+**Dependencias**: `isStrictlyDominatedBy`, `dominated_trans`
+
+#### Composición de Inyectivas es Inyectiva
+
+**Ubicación**: `Functions.lean`, línea 505  
+**Orden**: 42º teorema principal
+
+**Enunciado Matemático**: Si f y g son inyectivas, entonces g ∘ₛ f es inyectiva.
+
+**Firma Lean4**:
+
+```lean
+theorem comp_injective (f g : U) (hinj_f : isInjective f) (hinj_g : isInjective g) :
+    isInjective (g ∘ₛ f)
+```
+
+**Dependencias**: `isInjective`, `comp_is_specified`
+
+#### Composición de Suryectivas es Suryectiva
+
+**Ubicación**: `Functions.lean`, línea 515  
+**Orden**: 43º teorema principal
+
+**Enunciado Matemático**: Si f y g son suryectivas, entonces g ∘ₛ f es suryectiva.
+
+**Firma Lean4**:
+
+```lean
+theorem comp_surjective (f g A B C : U)
+    (_ : isFunctionFromTo f A B) (hg : isFunctionFromTo g B C)
+    (hsurj_f : isSurjectiveOnto f B) (hsurj_g : isSurjectiveOnto g C) :
+    isSurjectiveOnto (g ∘ₛ f) C
+```
+
+**Dependencias**: `isSurjectiveOnto`, `comp_is_specified`
+
+#### Composición de Biyecciones es Biyección
+
+**Ubicación**: `Functions.lean`, línea 530  
+**Orden**: 44º teorema principal
+
+**Enunciado Matemático**: Si f y g son biyecciones, entonces g ∘ₛ f es biyección.
+
+**Firma Lean4**:
+
+```lean
+theorem comp_bijection (f g A B C : U)
+    (hf : isFunctionFromTo f A B) (hg : isFunctionFromTo g B C)
+    (hbij_f : isBijection f A B) (hbij_g : isBijection g B C) :
+    isBijection (g ∘ₛ f) A C
+```
+
+**Dependencias**: `isBijection`, `comp_is_function`, `comp_injective`, `comp_surjective`
+
+#### Identidad es Biyección
+
+**Ubicación**: `Functions.lean`, línea 540  
+**Orden**: 45º teorema principal
+
+**Enunciado Matemático**: 𝟙 A es biyección de A a A.
+
+**Firma Lean4**:
+
+```lean
+theorem id_is_bijection (A : U) : isBijection (𝟙 A) A A
+```
+
+**Dependencias**: `isBijection`, `IdFunction_is_function`, `id_is_injective`
+
+#### Especificación de Imagen Directa
+
+**Ubicación**: `Functions.lean`, línea 590  
+**Orden**: 46º teorema principal
+
+**Enunciado Matemático**: y ∈ f⦃X⦄ ↔ ∃x, x ∈ X ∧ ⟨x,y⟩ ∈ f.
+
+**Firma Lean4**:
+
+```lean
+theorem ImageSet_is_specified (f X y : U) :
+    y ∈ f⦃X⦄ ↔ ∃ x, x ∈ X ∧ ⟨x, y⟩ ∈ f
+```
+
+**Dependencias**: `ImageSet`, `SpecSet_is_specified`
+
+#### Especificación de Imagen Inversa
+
+**Ubicación**: `Functions.lean`, línea 600  
+**Orden**: 47º teorema principal
+
+**Enunciado Matemático**: x ∈ PreimageSet f Y ↔ ∃y, y ∈ Y ∧ ⟨x,y⟩ ∈ f.
+
+**Firma Lean4**:
+
+```lean
+theorem PreimageSet_is_specified (f Y x : U) :
+    x ∈ PreimageSet f Y ↔ ∃ y, y ∈ Y ∧ ⟨x, y⟩ ∈ f
+```
+
+**Dependencias**: `PreimageSet`, `SpecSet_is_specified`
+
+#### Imagen del Conjunto Vacío
+
+**Ubicación**: `Functions.lean`, línea 610  
+**Orden**: 48º teorema principal
+
+**Enunciado Matemático**: f⦃∅⦄ = ∅.
+
+**Firma Lean4**:
+
+```lean
+theorem image_empty (f : U) : f⦃∅⦄ = ∅
+```
+
+**Dependencias**: `ImageSet`, `ExtSet`, `EmptySet_is_empty`
+
+#### Imagen Preserva Subconjuntos
+
+**Ubicación**: `Functions.lean`, línea 620  
+**Orden**: 49º teorema principal
+
+**Enunciado Matemático**: Si X ⊆ Y, entonces f⦃X⦄ ⊆ f⦃Y⦄.
+
+**Firma Lean4**:
+
+```lean
+theorem image_mono (f X Y : U) (h : X ⊆ Y) : f⦃X⦄ ⊆ f⦃Y⦄
+```
+
+**Dependencias**: `ImageSet`, `subseteq`, `ImageSet_is_specified`
+
+#### Imagen de Unión
+
+**Ubicación**: `Functions.lean`, línea 625  
+**Orden**: 50º teorema principal
+
+**Enunciado Matemático**: f⦃X ∪ Y⦄ = f⦃X⦄ ∪ f⦃Y⦄.
+
+**Firma Lean4**:
+
+```lean
+theorem image_union (f X Y : U) : f⦃BinUnion X Y⦄ = BinUnion (f⦃X⦄) (f⦃Y⦄)
+```
+
+**Dependencias**: `ImageSet`, `BinUnion`, `ExtSet`, `BinUnion_is_specified`
+
+#### Imagen Inversa de Unión
+
+**Ubicación**: `Functions.lean`, línea 645  
+**Orden**: 51º teorema principal
+
+**Enunciado Matemático**: PreimageSet f (X ∪ Y) = PreimageSet f X ∪ PreimageSet f Y.
+
+**Firma Lean4**:
+
+```lean
+theorem preimage_union (f X Y : U) :
+    PreimageSet f (BinUnion X Y) = BinUnion (PreimageSet f X) (PreimageSet f Y)
+```
+
+**Dependencias**: `PreimageSet`, `BinUnion`, `ExtSet`, `PreimageSet_is_specified`
+
+#### Imagen Inversa de Intersección (Inclusión)
+
+**Ubicación**: `Functions.lean`, línea 665  
+**Orden**: 52º teorema principal
+
+**Enunciado Matemático**: PreimageSet f (X ∩ Y) ⊆ PreimageSet f X ∩ PreimageSet f Y.
+
+**Firma Lean4**:
+
+```lean
+theorem preimage_inter_subset (f X Y : U) :
+    PreimageSet f (BinInter X Y) ⊆ BinInter (PreimageSet f X) (PreimageSet f Y)
+```
+
+**Dependencias**: `PreimageSet`, `BinInter`, `subseteq`, `PreimageSet_is_specified`
+
+#### Imagen Inversa de Intersección (Igualdad para Univaluadas)
+
+**Ubicación**: `Functions.lean`, línea 675  
+**Orden**: 53º teorema principal
+
+**Enunciado Matemático**: Para f univaluada, PreimageSet f (X ∩ Y) = PreimageSet f X ∩ PreimageSet f Y.
+
+**Firma Lean4**:
+
+```lean
+theorem preimage_inter_eq (f X Y : U) (hf : isSingleValued f) :
+    PreimageSet f (BinInter X Y) = BinInter (PreimageSet f X) (PreimageSet f Y)
+```
+
+**Dependencias**: `PreimageSet`, `BinInter`, `isSingleValued`, `preimage_inter_subset`
+
 #### Teorema de Cantor-Schröder-Bernstein
 
 **Ubicación**: `Functions.lean`, línea 580  
-**Orden**: Teorema principal
+**Orden**: 54º teorema principal (TEOREMA FUNDAMENTAL)
 
 **Enunciado Matemático**: Si A ≼ B y B ≼ A, entonces A ≃ B.
 
@@ -2659,13 +3771,32 @@ export SetUniverse.Relations (
 
 ```lean
 export Functions (
-  isSingleValued isFunctionFromTo Dom Ran apply
-  IdFunction FunctionComposition InverseFunction
+  isSingleValued isFunctionFromTo
+  Dom Ran Dom_is_specified Ran_is_specified
+  apply apply_eq apply_mem
+  IdFunction IdFunction_is_specified IdFunction_single_valued IdFunction_is_function apply_id
+  FunctionComposition comp_is_specified comp_single_valued comp_is_function
+  comp_id_right comp_id_left
+  InverseFunction inverse_is_specified
   isInjective isSurjectiveOnto isBijection
-  isEquipotent isDominatedBy isStrictlyDominatedBy
-  equipotent_refl equipotent_symm equipotent_trans
-  dominated_refl dominated_trans
-  bijection_iff_invertible cantor_schroeder_bernstein
+  injective_inverse_single_valued single_valued_inverse_injective
+  -- Invertibility
+  hasLeftInverse hasRightInverse isLeftInvertible isRightInvertible isInvertible
+  injective_iff_inverse_functional injective_apply_eq
+  surjective_iff_range_eq surjective_inverse_total
+  bijection_inverse_is_function bijection_comp_inverse_right bijection_comp_inverse_left
+  inverse_inverse inverse_is_bijection
+  bijection_implies_invertible left_invertible_implies_injective right_invertible_implies_surjective
+  invertible_implies_bijection bijection_iff_invertible
+  comp_injective comp_surjective comp_bijection id_is_bijection id_is_injective
+  -- Image/Preimage
+  ImageSet ImageSet_is_specified PreimageSet PreimageSet_is_specified
+  image_empty image_mono image_union preimage_union preimage_inter_subset preimage_inter_eq
+  -- Equipotence and Dominance
+  isEquipotent equipotent_refl equipotent_symm equipotent_trans equipotent_is_equivalence
+  isDominatedBy dominated_refl dominated_trans dominated_is_preorder
+  equipotent_implies_dominated_both
+  isStrictlyDominatedBy strict_dominated_irrefl strict_dominated_trans
 )
 ```
 
@@ -2881,12 +4012,12 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `SetStrictOrder.lean` - Teoría de órdenes estrictos, irreflexividad, asimetría y transitividad
 - `OrderedPair.lean` - Extensiones del par ordenado de Kuratowski, igualdad y propiedades
 - `CartesianProduct.lean` - Producto cartesiano A ×ₛ B, propiedades distributivas y monotonicidad
+- `Functions.lean` - Teoría completa de funciones, inyectividad, suryectividad, biyecciones, equipotencia y dominación
 
 ### 7.3 Archivos Parcialmente Proyectados
 
 Los siguientes archivos tienen **documentación parcial** (solo definiciones/teoremas principales):
 
-- `Functions.lean` - Solo definiciones básicas y Cantor-Schröder-Bernstein
 - `AtomicBooleanAlgebra.lean` - Solo definición de átomo y teoremas principales
 - `Cardinality.lean` - Solo conjunto diagonal y teorema de Cantor
 
@@ -2898,6 +4029,6 @@ Los siguientes archivos **no están documentados** en este REFERENCE.md:
 
 ---
 
-*Última actualización: 11 de febrero de 2026 - Completado módulo CartesianProduct.lean*
+*Última actualización: 11 de febrero de 2026 - Completado módulo Functions.lean*
 
 *Este documento contiene únicamente construcciones y teoremas que están completamente implementados y demostrados en el código Lean 4. La proyección se actualiza conforme se agregan archivos al contexto de trabajo.*
