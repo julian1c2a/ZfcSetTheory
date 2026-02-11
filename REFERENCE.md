@@ -335,7 +335,143 @@ notation:70 A:71 " ×ₛ " B:71 => CartesianProduct A B
 
 **Dependencias**: `SpecSet`, `PowerSet`, `BinUnion`, `isOrderedPair`, `fst`, `snd`
 
-### 3.8 Functions.lean
+### 3.8 Relations.lean
+
+#### Relación en un Conjunto (isRelationOn)
+
+**Ubicación**: `Relations.lean`, línea 44  
+**Orden**: 1ª definición principal
+
+**Enunciado Matemático**: R es una relación en A si R ⊆ A × A.
+
+**Firma Lean4**:
+```lean
+def isRelationOn (R A : U) : Prop := R ⊆ (A ×ₛ A)
+```
+
+**Dependencias**: `subseteq`, `CartesianProduct`
+
+#### Reflexividad (isReflexiveOn)
+
+**Ubicación**: `Relations.lean`, línea 53  
+**Orden**: 2ª definición principal
+
+**Enunciado Matemático**: R es reflexiva en A si ∀x ∈ A, (x,x) ∈ R.
+
+**Firma Lean4**:
+```lean
+def isReflexiveOn (R A : U) : Prop :=
+  ∀ x : U, x ∈ A → ⟨x, x⟩ ∈ R
+```
+
+**Dependencias**: `OrderedPair`
+
+#### Simetría (isSymmetricOn)
+
+**Ubicación**: `Relations.lean`, línea 61  
+**Orden**: 3ª definición principal
+
+**Enunciado Matemático**: R es simétrica en A si ∀x,y ∈ A, (x,y) ∈ R → (y,x) ∈ R.
+
+**Firma Lean4**:
+```lean
+def isSymmetricOn (R A : U) : Prop :=
+  ∀ x y : U, x ∈ A → y ∈ A → ⟨x, y⟩ ∈ R → ⟨y, x⟩ ∈ R
+```
+
+**Dependencias**: `OrderedPair`
+
+#### Antisimetría (isAntiSymmetricOn)
+
+**Ubicación**: `Relations.lean`, línea 65  
+**Orden**: 4ª definición principal
+
+**Enunciado Matemático**: R es antisimétrica en A si ∀x,y ∈ A, (x,y) ∈ R ∧ (y,x) ∈ R → x = y.
+
+**Firma Lean4**:
+```lean
+def isAntiSymmetricOn (R A : U) : Prop :=
+  ∀ x y : U, x ∈ A → y ∈ A → ⟨x, y⟩ ∈ R → ⟨y, x⟩ ∈ R → x = y
+```
+
+**Dependencias**: `OrderedPair`
+
+#### Transitividad (isTransitiveOn)
+
+**Ubicación**: `Relations.lean`, línea 73  
+**Orden**: 5ª definición principal
+
+**Enunciado Matemático**: R es transitiva en A si ∀x,y,z ∈ A, (x,y) ∈ R ∧ (y,z) ∈ R → (x,z) ∈ R.
+
+**Firma Lean4**:
+```lean
+def isTransitiveOn (R A : U) : Prop :=
+  ∀ x y z : U, x ∈ A → y ∈ A → z ∈ A → ⟨x, y⟩ ∈ R → ⟨y, z⟩ ∈ R → ⟨x, z⟩ ∈ R
+```
+
+**Dependencias**: `OrderedPair`
+
+#### Relación de Equivalencia (isEquivalenceOn)
+
+**Ubicación**: `Relations.lean`, línea 89  
+**Orden**: 6ª definición principal
+
+**Enunciado Matemático**: R es relación de equivalencia en A si es reflexiva, simétrica y transitiva.
+
+**Firma Lean4**:
+```lean
+def isEquivalenceOn (R A : U) : Prop :=
+  isRelationOn R A ∧ isReflexiveOn R A ∧ isSymmetricOn R A ∧ isTransitiveOn R A
+```
+
+**Dependencias**: `isRelationOn`, `isReflexiveOn`, `isSymmetricOn`, `isTransitiveOn`
+
+#### Orden Parcial (isPartialOrderOn)
+
+**Ubicación**: `Relations.lean`, línea 97  
+**Orden**: 7ª definición principal
+
+**Enunciado Matemático**: R es orden parcial en A si es reflexiva, antisimétrica y transitiva.
+
+**Firma Lean4**:
+```lean
+def isPartialOrderOn (R A : U) : Prop :=
+  isRelationOn R A ∧ isReflexiveOn R A ∧ isAntiSymmetricOn R A ∧ isTransitiveOn R A
+```
+
+**Dependencias**: `isRelationOn`, `isReflexiveOn`, `isAntiSymmetricOn`, `isTransitiveOn`
+
+#### Clase de Equivalencia (EqClass)
+
+**Ubicación**: `Relations.lean`, línea 125  
+**Orden**: 8ª definición principal
+
+**Enunciado Matemático**: La clase de equivalencia de a bajo R en A: {x ∈ A | (a,x) ∈ R}.
+
+**Firma Lean4**:
+```lean
+noncomputable def EqClass (a R A : U) : U :=
+  SpecSet A (fun x => ⟨a, x⟩ ∈ R)
+```
+
+**Dependencias**: `SpecSet`, `OrderedPair`
+
+#### Relación Identidad (IdRel)
+
+**Ubicación**: `Relations.lean`, línea 133  
+**Orden**: 9ª definición principal
+
+**Enunciado Matemático**: La relación identidad en A: {(x,x) | x ∈ A}.
+
+**Firma Lean4**:
+```lean
+noncomputable def IdRel (A : U) : U :=
+  SpecSet (A ×ₛ A) (fun p => fst p = snd p)
+```
+
+**Dependencias**: `SpecSet`, `CartesianProduct`, `fst`, `snd`
+
+### 3.9 Functions.lean
 
 #### Función (isFunctionFromTo)
 
@@ -416,7 +552,7 @@ theorem BinUnion_distrib_inter (A B C : U) :
 
 **Dependencias**: `BinUnion`, `BinInter`, `ExtSet`
 
-### 3.10 AtomicBooleanAlgebra.lean
+### 3.11 AtomicBooleanAlgebra.lean
 
 #### Átomo (isAtom)
 
@@ -433,7 +569,7 @@ def isAtom (A X : U) : Prop :=
 
 **Dependencias**: `PowerSet`, `EmptySet`, `subset`
 
-### 3.11 Cardinality.lean
+### 3.12 Cardinality.lean
 
 #### Conjunto Diagonal (DiagonalSet)
 
@@ -516,7 +652,86 @@ theorem CartesianProduct_is_specified (A B p : U) :
 
 **Dependencias**: `SpecSet`, `PowerSet`, `OrderedPair`
 
-### 4.4 Functions.lean
+### 4.4 Relations.lean
+
+#### La Asimetría Implica Irreflexividad
+
+**Ubicación**: `Relations.lean`, línea 142  
+**Orden**: 1º teorema principal
+
+**Enunciado Matemático**: Si R es asimétrica en A, entonces R es irreflexiva en A.
+
+**Firma Lean4**:
+```lean
+theorem Asymmetric_implies_Irreflexive (R A : U) :
+    isAsymmetricOn R A → isIrreflexiveOn R A
+```
+
+**Dependencias**: `isAsymmetricOn`, `isIrreflexiveOn`
+
+#### La Relación Identidad es de Equivalencia
+
+**Ubicación**: `Relations.lean`, línea 200  
+**Orden**: 2º teorema principal
+
+**Enunciado Matemático**: La relación identidad IdRel A es una relación de equivalencia en A.
+
+**Firma Lean4**:
+```lean
+theorem IdRel_is_Equivalence (A : U) :
+    isEquivalenceOn (IdRel A) A
+```
+
+**Dependencias**: `IdRel`, `isEquivalenceOn`, `mem_IdRel`
+
+#### Pertenencia en Clase de Equivalencia
+
+**Ubicación**: `Relations.lean`, línea 225  
+**Orden**: 3º teorema principal
+
+**Enunciado Matemático**: x ∈ EqClass a R A ↔ x ∈ A ∧ ⟨a,x⟩ ∈ R.
+
+**Firma Lean4**:
+```lean
+theorem mem_EqClass (a R A x : U) :
+    x ∈ EqClass a R A ↔ x ∈ A ∧ ⟨a, x⟩ ∈ R
+```
+
+**Dependencias**: `EqClass`, `SpecSet_is_specified`
+
+#### Igualdad de Clases de Equivalencia
+
+**Ubicación**: `Relations.lean`, línea 270  
+**Orden**: 4º teorema principal
+
+**Enunciado Matemático**: Para relaciones de equivalencia, EqClass a R A = EqClass b R A ↔ ⟨a,b⟩ ∈ R.
+
+**Firma Lean4**:
+```lean
+theorem EqClass_eq_iff (R A a b : U)
+    (hEq : isEquivalenceOn R A) (haA : a ∈ A) (hbA : b ∈ A) :
+    EqClass a R A = EqClass b R A ↔ ⟨a, b⟩ ∈ R
+```
+
+**Dependencias**: `EqClass`, `isEquivalenceOn`, `ExtSet`
+
+#### Las Clases de Equivalencia Particionan el Conjunto
+
+**Ubicación**: `Relations.lean`, línea 300  
+**Orden**: 5º teorema principal
+
+**Enunciado Matemático**: Las clases de equivalencia son iguales o disjuntas.
+
+**Firma Lean4**:
+```lean
+theorem EqClass_eq_or_disjoint (R A a b : U)
+    (hEq : isEquivalenceOn R A) (haA : a ∈ A) (hbA : b ∈ A) :
+    EqClass a R A = EqClass b R A ∨ BinInter (EqClass a R A) (EqClass b R A) = ∅
+```
+
+**Dependencias**: `EqClass`, `isEquivalenceOn`, `BinInter`, `EmptySet`
+
+### 4.5 Functions.lean
 
 #### Teorema de Cantor-Schröder-Bernstein
 
@@ -534,7 +749,7 @@ theorem cantor_schroeder_bernstein (A B : U)
 
 **Dependencias**: `isDominatedBy`, `isEquipotent`, `CSB_bijection`
 
-### 4.5 AtomicBooleanAlgebra.lean
+### 4.6 AtomicBooleanAlgebra.lean
 
 #### Los Singletons son Átomos
 
@@ -565,7 +780,7 @@ theorem atom_is_singleton (A X : U) (hAtom : isAtom A X) :
 
 **Dependencias**: `isAtom`, `Singleton`
 
-### 4.6 Cardinality.lean
+### 4.7 Cardinality.lean
 
 #### Teorema de Cantor
 
@@ -622,7 +837,24 @@ export SetUniverse.ExtensionAxiom (
 )
 ```
 
-### 6.2 Functions.lean
+### 6.2 Relations.lean
+```lean
+export SetUniverse.Relations (
+    isRelationOn isRelationFrom Related
+    isReflexiveOn isIrreflexiveOn isSymmetricOn
+    isAntiSymmetricOn isAsymmetricOn isTransitiveOn
+    isConnectedOn isStronglyConnectedOn isTrichotomousOn
+    isEquivalenceOn isPreorderOn isPartialOrderOn
+    isLinearOrderOn isStrictOrderOn isStrictPartialOrderOn
+    isStrictLinearOrderOn isWellFoundedOn isWellOrderOn
+    EqClass QuotientSet IdRel InverseRel
+    Asymmetric_implies_Irreflexive StrictOrder_is_Irreflexive
+    mem_IdRel IdRel_is_Equivalence mem_EqClass
+    EqClass_eq_iff EqClass_eq_or_disjoint
+)
+```
+
+### 6.3 Functions.lean
 ```lean
 export Functions (
   isSingleValued isFunctionFromTo Dom Ran apply
@@ -635,7 +867,7 @@ export Functions (
 )
 ```
 
-### 6.3 Cardinality.lean
+### 6.4 Cardinality.lean
 ```lean
 export Cardinality (
   DiagonalSet singletonMap
