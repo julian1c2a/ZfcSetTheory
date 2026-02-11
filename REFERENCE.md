@@ -26,7 +26,7 @@
 | `NaturalNumbers.lean` | `SetUniverse.NaturalNumbers` | `Cardinality` + todos los anteriores | ✅ Completo |
 | `Infinity.lean` | `SetUniverse.InfinityAxiom` | `NaturalNumbers` + todos los anteriores | ✅ Completo |
 | `GeneralizedDeMorgan.lean` | `SetUniverse.GeneralizedDeMorgan` | `PowerSetAlgebra` + anteriores | ✅ Completo |
-| `GeneralizedDistributive.lean` | `SetUniverse.GeneralizedDistributive` | `PowerSetAlgebra` + anteriores | ❌ No proyectado |
+| `GeneralizedDistributive.lean` | `SetUniverse.GeneralizedDistributive` | `PowerSetAlgebra` + anteriores | ✅ Completo |
 | `SetOrder.lean` | `SetUniverse.SetOrder` | `Relations` + anteriores | ❌ No proyectado |
 | `SetStrictOrder.lean` | `SetUniverse.SetStrictOrder` | `SetOrder` + anteriores | ❌ No proyectado |
 | `Recursion.lean` | `SetUniverse.Recursion` | `NaturalNumbers` + anteriores | ❌ No proyectado |
@@ -888,6 +888,94 @@ noncomputable def ComplementFunction (A : U) : U :=
 
 **Dependencias**: `SpecSet`, `PowerSet`, `CartesianProduct`, `OrderedPair`, `Difference`
 
+### 3.16 GeneralizedDistributive.lean
+
+#### Intersección Generalizada de Familia (GeneralizedIntersection)
+
+**Ubicación**: `GeneralizedDistributive.lean`, línea 25  
+**Orden**: 1ª definición principal
+
+**Enunciado Matemático**: La intersección generalizada de una familia F: ⋂ F = {x | ∀Y ∈ F, x ∈ Y}.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def GeneralizedIntersection (F : U) : U :=
+  if h : F = ∅ then ∅ else
+    SpecSet (⋃ F) (fun x => ∀ Y, Y ∈ F → x ∈ Y)
+notation "⋂ " F:100 => GeneralizedIntersection F
+```
+
+**Dependencias**: `SpecSet`, `UnionSet`, `EmptySet`
+
+#### Imagen de Familia por Intersección (IntersectionImageFamily)
+
+**Ubicación**: `GeneralizedDistributive.lean`, línea 45  
+**Orden**: 2ª definición principal
+
+**Enunciado Matemático**: La familia de intersecciones de X con cada elemento de F: {X ∩ Y | Y ∈ F}.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def IntersectionImageFamily (X F : U) : U :=
+  ImageFamily (IntersectionFunction X) F
+notation X " ∩ᶠ " F => IntersectionImageFamily X F
+```
+
+**Dependencias**: `ImageFamily`, `IntersectionFunction`
+
+#### Función Intersección (IntersectionFunction)
+
+**Ubicación**: `GeneralizedDistributive.lean`, línea 55  
+**Orden**: 3ª definición principal
+
+**Enunciado Matemático**: La función que mapea cada conjunto Y a X ∩ Y.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def IntersectionFunction (X : U) : U :=
+  SpecSet (𝒫 (⋃ {X, ⋃ (𝒫 X)}) ×ₛ 𝒫 (⋃ {X, ⋃ (𝒫 X)})) 
+    (fun p => isOrderedPair p ∧ snd p = X ∩ fst p)
+```
+
+**Dependencias**: `SpecSet`, `PowerSet`, `CartesianProduct`, `BinInter`, `OrderedPair`
+
+#### Imagen de Familia por Unión (UnionImageFamily)
+
+**Ubicación**: `GeneralizedDistributive.lean`, línea 75  
+**Orden**: 4ª definición principal
+
+**Enunciado Matemático**: La familia de uniones de X con cada elemento de F: {X ∪ Y | Y ∈ F}.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def UnionImageFamily (X F : U) : U :=
+  ImageFamily (UnionFunction X) F
+notation X " ∪ᶠ " F => UnionImageFamily X F
+```
+
+**Dependencias**: `ImageFamily`, `UnionFunction`
+
+#### Función Unión (UnionFunction)
+
+**Ubicación**: `GeneralizedDistributive.lean`, línea 85  
+**Orden**: 5ª definición principal
+
+**Enunciado Matemático**: La función que mapea cada conjunto Y a X ∪ Y.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def UnionFunction (X : U) : U :=
+  SpecSet (𝒫 (⋃ {X, ⋃ (𝒫 X)}) ×ₛ 𝒫 (⋃ {X, ⋃ (𝒫 X)})) 
+    (fun p => isOrderedPair p ∧ snd p = X ∪ fst p)
+```
+
+**Dependencias**: `SpecSet`, `PowerSet`, `CartesianProduct`, `BinUnion`, `OrderedPair`
+
 ## 4. Teoremas Principales por Módulo
 
 ### 4.1 Extension.lean
@@ -1592,6 +1680,168 @@ theorem complement_intersection_distrib (A F G : U) :
 
 **Dependencias**: `ComplementFamily`, `BinInter`, `ExtSet`
 
+### 4.11 GeneralizedDistributive.lean
+
+#### Primera Ley Distributiva Generalizada
+
+**Ubicación**: `GeneralizedDistributive.lean`, línea 125  
+**Orden**: 1º teorema principal (LEY FUNDAMENTAL)
+
+**Enunciado Matemático**: La intersección distribuye sobre la unión: X ∩ (⋃ F) = ⋃ (X ∩ᶠ F).
+
+**Firma Lean4**:
+
+```lean
+theorem generalized_distributive_intersection_union (X F : U) :
+  X ∩ (⋃ F) = ⋃ (X ∩ᶠ F)
+```
+
+**Dependencias**: `BinInter`, `UnionSet`, `IntersectionImageFamily`, `ExtSet`
+
+#### Segunda Ley Distributiva Generalizada
+
+**Ubicación**: `GeneralizedDistributive.lean`, línea 165  
+**Orden**: 2º teorema principal (LEY DUAL)
+
+**Enunciado Matemático**: La unión distribuye sobre la intersección: X ∪ (⋂ F) = ⋂ (X ∪ᶠ F) (para F ≠ ∅).
+
+**Firma Lean4**:
+
+```lean
+theorem generalized_distributive_union_intersection (X F : U) (hF_ne : F ≠ ∅) :
+  X ∪ (⋂ F) = ⋂ (X ∪ᶠ F)
+```
+
+**Dependencias**: `BinUnion`, `GeneralizedIntersection`, `UnionImageFamily`, `ExtSet`
+
+#### Distributividad de Intersección sobre Familia Vacía
+
+**Ubicación**: `GeneralizedDistributive.lean`, línea 205  
+**Orden**: 3º teorema principal
+
+**Enunciado Matemático**: X ∩ (⋃ ∅) = ⋃ (X ∩ᶠ ∅).
+
+**Firma Lean4**:
+
+```lean
+theorem distributive_intersection_empty_family (X : U) :
+  X ∩ (⋃ ∅) = ⋃ (X ∩ᶠ ∅)
+```
+
+**Dependencias**: `BinInter`, `UnionSet`, `IntersectionImageFamily`, `EmptySet`
+
+#### Distributividad de Intersección sobre Singleton
+
+**Ubicación**: `GeneralizedDistributive.lean`, línea 225  
+**Orden**: 4º teorema principal
+
+**Enunciado Matemático**: X ∩ (⋃ {Y}) = ⋃ (X ∩ᶠ {Y}).
+
+**Firma Lean4**:
+
+```lean
+theorem distributive_intersection_singleton_family (X Y : U) :
+  X ∩ (⋃ {Y}) = ⋃ (X ∩ᶠ {Y})
+```
+
+**Dependencias**: `BinInter`, `UnionSet`, `IntersectionImageFamily`, `Singleton`
+
+#### Distributividad de Unión sobre Singleton
+
+**Ubicación**: `GeneralizedDistributive.lean`, línea 245  
+**Orden**: 5º teorema principal
+
+**Enunciado Matemático**: X ∪ (⋂ {Y}) = ⋂ (X ∪ᶠ {Y}).
+
+**Firma Lean4**:
+
+```lean
+theorem distributive_union_singleton_family (X Y : U) :
+  X ∪ (⋂ {Y}) = ⋂ (X ∪ᶠ {Y})
+```
+
+**Dependencias**: `BinUnion`, `GeneralizedIntersection`, `UnionImageFamily`, `Singleton`
+
+#### Monotonicidad de la Intersección
+
+**Ubicación**: `GeneralizedDistributive.lean`, línea 265  
+**Orden**: 6º teorema principal
+
+**Enunciado Matemático**: Si F ⊆ G, entonces X ∩ᶠ F ⊆ X ∩ᶠ G.
+
+**Firma Lean4**:
+
+```lean
+theorem intersection_family_monotonic (X F G : U) (hFG : F ⊆ G) :
+  X ∩ᶠ F ⊆ X ∩ᶠ G
+```
+
+**Dependencias**: `IntersectionImageFamily`, `subseteq`, `ImageFamily`
+
+#### Monotonicidad de la Unión
+
+**Ubicación**: `GeneralizedDistributive.lean`, línea 285  
+**Orden**: 7º teorema principal
+
+**Enunciado Matemático**: Si F ⊆ G, entonces X ∪ᶠ F ⊆ X ∪ᶠ G.
+
+**Firma Lean4**:
+
+```lean
+theorem union_family_monotonic (X F G : U) (hFG : F ⊆ G) :
+  X ∪ᶠ F ⊆ X ∪ᶠ G
+```
+
+**Dependencias**: `UnionImageFamily`, `subseteq`, `ImageFamily`
+
+#### Distributividad sobre Unión de Familias
+
+**Ubicación**: `GeneralizedDistributive.lean`, línea 305  
+**Orden**: 8º teorema principal
+
+**Enunciado Matemático**: X ∩ᶠ (F ∪ G) = (X ∩ᶠ F) ∪ (X ∩ᶠ G).
+
+**Firma Lean4**:
+
+```lean
+theorem intersection_family_union_distrib (X F G : U) :
+  X ∩ᶠ (F ∪ G) = (X ∩ᶠ F) ∪ (X ∩ᶠ G)
+```
+
+**Dependencias**: `IntersectionImageFamily`, `BinUnion`, `ExtSet`
+
+#### Distributividad de Unión sobre Unión de Familias
+
+**Ubicación**: `GeneralizedDistributive.lean`, línea 325  
+**Orden**: 9º teorema principal
+
+**Enunciado Matemático**: X ∪ᶠ (F ∪ G) = (X ∪ᶠ F) ∪ (X ∪ᶠ G).
+
+**Firma Lean4**:
+
+```lean
+theorem union_family_union_distrib (X F G : U) :
+  X ∪ᶠ (F ∪ G) = (X ∪ᶠ F) ∪ (X ∪ᶠ G)
+```
+
+**Dependencias**: `UnionImageFamily`, `BinUnion`, `ExtSet`
+
+#### Asociatividad Generalizada de Intersección
+
+**Ubicación**: `GeneralizedDistributive.lean`, línea 345  
+**Orden**: 10º teorema principal
+
+**Enunciado Matemático**: (X ∩ Y) ∩ᶠ F = X ∩ᶠ (Y ∩ᶠ F).
+
+**Firma Lean4**:
+
+```lean
+theorem intersection_family_associative (X Y F : U) :
+  (X ∩ Y) ∩ᶠ F = X ∩ᶠ (Y ∩ᶠ F)
+```
+
+**Dependencias**: `IntersectionImageFamily`, `BinInter`, `ExtSet`
+
 ## 5. Notación y Sintaxis
 
 ### 5.1 Operadores Básicos
@@ -1637,6 +1887,12 @@ theorem complement_intersection_distrib (A F G : U) :
 ### 5.7 De Morgan Generalizado
 
 - `A \\ᶠ F` - Familia de complementos (`ComplementFamily`)
+
+### 5.8 Distributividad Generalizada
+
+- `⋂ F` - Intersección generalizada (`GeneralizedIntersection`)
+- `X ∩ᶠ F` - Familia de intersecciones (`IntersectionImageFamily`)
+- `X ∪ᶠ F` - Familia de uniones (`UnionImageFamily`)
 
 ## 6. Exports por Módulo
 
@@ -1773,6 +2029,34 @@ export GeneralizedDeMorgan (
 )
 ```
 
+### 6.8 GeneralizedDistributive.lean
+
+```lean
+export GeneralizedDistributive (
+  -- Core definitions
+  GeneralizedIntersection IntersectionImageFamily IntersectionFunction
+  UnionImageFamily UnionFunction
+  -- Basic properties
+  mem_GeneralizedIntersection mem_IntersectionImageFamily mem_UnionImageFamily
+  IntersectionFunction_is_function IntersectionFunction_apply
+  UnionFunction_is_function UnionFunction_apply
+  -- Main theorems
+  generalized_distributive_intersection_union generalized_distributive_union_intersection
+  distributive_intersection_empty_family distributive_intersection_singleton_family
+  distributive_union_singleton_family
+  -- Monotonicity
+  intersection_family_monotonic union_family_monotonic
+  -- Distributivity over family operations
+  intersection_family_union_distrib union_family_union_distrib
+  intersection_family_intersection_distrib union_family_intersection_distrib
+  -- Associativity
+  intersection_family_associative union_family_associative
+  -- Additional properties
+  intersection_family_empty union_family_empty
+  intersection_family_singleton union_family_singleton
+)
+```
+
 ## 7. Estado de Proyección por Módulo
 
 ### 7.1 Leyenda de Estados
@@ -1798,6 +2082,7 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `NaturalNumbers.lean` - Números naturales como ordinales de von Neumann
 - `Infinity.lean` - Axioma de infinito y conjunto ω de todos los naturales
 - `GeneralizedDeMorgan.lean` - Leyes de De Morgan generalizadas para familias de conjuntos
+- `GeneralizedDistributive.lean` - Leyes distributivas generalizadas para familias de conjuntos
 
 ### 7.3 Archivos Parcialmente Proyectados
 
@@ -1813,13 +2098,12 @@ Los siguientes archivos tienen **documentación parcial** (solo definiciones/teo
 
 Los siguientes archivos **no están documentados** en este REFERENCE.md:
 
-- `GeneralizedDistributive.lean` - Distributividad para familias
 - `SetOrder.lean` - Órdenes parciales y retículos
 - `SetStrictOrder.lean` - Órdenes estrictos
 - `Recursion.lean` - Definiciones recursivas
 
 ---
 
-*Última actualización: 11 de febrero de 2026 - Agregado módulo GeneralizedDeMorgan.lean*
+*Última actualización: 11 de febrero de 2026 - Agregado módulo GeneralizedDistributive.lean*
 
 *Este documento contiene únicamente construcciones y teoremas que están completamente implementados y demostrados en el código Lean 4. La proyección se actualiza conforme se agregan archivos al contexto de trabajo.*
