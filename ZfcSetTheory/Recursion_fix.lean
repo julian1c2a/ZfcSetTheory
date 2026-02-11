@@ -237,8 +237,7 @@ namespace SetUniverse
 
     /-- **TEOREMA**: Todo número natural (von Neumann) pertenece a ω -/
     theorem Nat_in_Omega (n : U) (hn : isNat n) : n ∈ ω := by
-      have : isInductive ω := Omega_is_inductive
-      exact nat_in_inductive_set n hn ω this
+      exact nat_in_inductive_set n hn (ω) (Omega_is_inductive)
 
     /-- **CARACTERIZACIÓN COMPLETA**: n es natural ↔ n ∈ ω -/
     theorem Nat_iff_mem_Omega (n : U) : isNat n ↔ n ∈ ω :=
@@ -290,8 +289,7 @@ namespace SetUniverse
           | inl hm_in_k => exact hk.2 m hm_in_k
           | inr hm_eq_k =>
             rw [hm_eq_k]
-            have : k ∈ T := ⟨hk.1, hk.2⟩
-            exact hT_sub_S k this
+            exact hT_sub_S k hk
 
       have hT_eq_omega : T = ω := by
         apply induction_principle T
@@ -312,16 +310,28 @@ namespace SetUniverse
     /-! ============================================================ -/
 
     /-- **TEOREMA**: ω es un conjunto transitivo -/
-    theorem Omega_is_transitive : isTransitiveSet ω := by
+    theorem Omega_is_transitive : isTransitiveSet (ω) := by
       intro n hn
-      -- Queremos probar n ⊆ ω
-      intro x hx_in_n
-      -- Como n ∈ ω, n es natural
-      have hn_nat : isNat n := mem_Omega_is_Nat n hn
-      -- Como x ∈ n y n es natural, x es natural
-      have hx_nat : isNat x := nat_element_is_nat n x hn_nat hx_in_n
-      -- Como x es natural, x ∈ ω
-      exact Nat_in_Omega x hx_nat
+      let S := SpecSet (ω) (fun n => n ⊆ ω)
+
+      have hS_strong : ∀ k, k ∈ ω → (∀ m, m ∈ k → m ∈ S) → k ∈ S := by
+        intro k hk_omega _
+        rw [SpecSet_is_specified]
+        constructor
+        · exact hk_omega
+        · intro x hx_in_k
+          have hk_nat : isNat k := mem_Omega_is_Nat k hk_omega
+          have hx_nat : isNat x := nat_element_is_nat k x hk_nat hx_in_k
+          exact Nat_in_Omega x hx_nat
+
+      have hS_eq_omega : S = ω := by
+        apply strong_induction_principle S
+        · intro z hz; rw [SpecSet_is_specified] at hz; exact hz.1
+        · exact hS_strong
+
+      have hn_in_S : n ∈ S := by rw [hS_eq_omega]; exact hn
+      rw [SpecSet_is_specified] at hn_in_S
+      exact hn_in_S.2
 
     /-- **TEOREMA**: Todo elemento de ω es transitivo -/
     theorem Omega_element_is_transitive (n : U) (hn : n ∈ ω) :
@@ -330,10 +340,9 @@ namespace SetUniverse
       exact hn_nat.1
 
     /-- **TEOREMA**: ω tiene un orden total estricto (membresía) -/
-    theorem Omega_has_total_order : isTotalStrictOrderMembershipGuided ω := by
-      have h_trans := Omega_is_transitive
+    theorem Omega_has_total_order : isTotalStrictOrderMembershipGuided (ω) := by
       constructor
-      · exact h_trans
+      · exact Omega_is_transitive
       · constructor
         · intro n m hn hm hnm
           have hn_nat : isNat n := mem_Omega_is_Nat n hn
@@ -373,3 +382,4 @@ namespace SetUniverse
   )
 
 end SetUniverse
+
