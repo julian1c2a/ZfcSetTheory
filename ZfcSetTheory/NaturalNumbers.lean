@@ -89,12 +89,15 @@
   - La existencia de máximo en subconjuntos distingue naturales de ordinales infinitos
   - Los teoremas sobre conjuntos inductivos NO requieren que ω exista
 
-  ## Trabajo Futuro (requiere desarrollos adicionales): se comienza en Recursion.lean
+  ## Archivos Relacionados
 
-  - Axioma de Infinito y existencia de ω
-  - Principio de inducción matemática
-  - Recursión sobre naturales
-  - Aritmética (suma, multiplicación, orden <, ≤)
+  Los siguientes desarrollos continúan en archivos específicos:
+
+  - **Recursion.lean**: Axioma de Infinito, conjunto ω, principio de inducción,
+    recursión sobre naturales, caracterización isNat n ↔ n ∈ ω
+
+  - **NaturalArithmetic.lean**: Aritmética básica (suma, multiplicación, exponenciación),
+    propiedades algebraicas, orden aritmético, divisibilidad, números primos
 -/
 
 import Init.Classical
@@ -1827,120 +1830,63 @@ namespace SetUniverse
     -/
 
     /-! ============================================================ -/
-    /-! ### DESARROLLOS FUTUROS (NO IMPLEMENTADOS) ### -/
+    /-! ### DESARROLLOS FUTUROS ### -/
     /-! ============================================================ -/
 
-    /- ## ÁREAS PENDIENTES
+    /- ## CONTINUACIÓN EN ARCHIVOS ESPECÍFICOS
 
-    ### 1. AXIOMA DE INFINITO Y EL CONJUNTO ω
+    Este archivo (NaturalNumbers.lean) establece los fundamentos teóricos de los
+    números naturales como ordinales de von Neumann, *sin* usar el Axioma de Infinito.
 
-    **Requiere**:
-    - Axioma de Infinito: ∃I, isInductive I
-    - Definir ω como la intersección de todos los conjuntos inductivos
-    - Probar que ω es inductivo
-    - Probar que ω es el MENOR conjunto inductivo
+    Los desarrollos que requieren conceptos adicionales continúan en:
 
-    **Teoremas derivables**:
-    - `isNat n ↔ n ∈ ω` (caracterización alternativa de natural)
-    - `ω es transitivo`
-    - `∈[ω] es un orden total estricto`
-    - `ω NO está bien ordenado en sentido finito` (ω no tiene máximo)
+    ### 1. AXIOMA DE INFINITO, ω E INDUCCIÓN → Ver Recursion.lean
 
-    **Dificultades**:
-    - Requiere trabajar con familias arbitrarias de conjuntos
-    - Definir intersección arbitraria (no solo binaria)
-    - Probar propiedades de clausura de ω
+    **Recursion.lean** contendrá:
 
-    ### 2. PRINCIPIO DE INDUCCIÓN MATEMÁTICA
+    - **Axioma de Infinito**: ∃I, isInductive I
+    - **Construcción de ω**: intersección de todos los conjuntos inductivos
+    - **Propiedades de ω**: ω es inductivo, transitivo, el menor conjunto inductivo
+    - **Caracterización alternativa**: isNat n ↔ n ∈ ω
+    - **Principio de inducción**:
+      * Forma débil: P(0) → (∀n ∈ ω, P(n) → P(σ(n))) → (∀n ∈ ω, P(n))
+      * Forma fuerte (inducción completa): (∀n ∈ ω, (∀m ∈ n, P(m)) → P(n)) → (∀n ∈ ω, P(n))
+    - **Teorema de recursión**: definiciones recursivas sobre naturales
+    - **Nota**: ω NO está bien ordenado en sentido finito (ω no tiene máximo)
 
-    **Formas del principio**:
+    ### 2. ARITMÉTICA DE NATURALES → Ver NaturalArithmetic.lean
 
-    a) Inducción débil:
-       P(0) → (∀n ∈ ω, P(n) → P(σ(n))) → (∀n ∈ ω, P(n))
+    **NaturalArithmetic.lean** contendrá (requiere Recursion.lean):
 
-    b) Inducción fuerte (descendente):
-       (∀n ∈ ω, (∀m ∈ n, P(m)) → P(n)) → (∀n ∈ ω, P(n))
+    - **Operaciones básicas** (definidas por recursión sobre ω):
+      * Suma: n + m
+      * Multiplicación: n × m
+      * Exponenciación: n^m
 
-    c) Inducción sobre bien-orden:
-       Usar que ω está bien ordenado (tiene mínimo para todo subconjunto)
+    - **Propiedades algebraicas**:
+      * Asociatividad, conmutatividad de +, ×
+      * Distributividad, teoremas de cancelación
+      * Propiedades de exponenciación
 
-    **Requiere**:
-    - Existencia de ω (Axioma de Infinito)
-    - Lógica de orden superior (para el predicado P)
-    - Manejo de esquemas de axiomas en Lean
+    - **Orden aritmético**:
+      * Definiciones formales de < y ≤
+      * Compatibilidad: n < m → n + k < m + k, etc.
+      * Teoremas de orden total
 
-    **Aplicaciones**:
-    - Definiciones recursivas sobre naturales
-    - Pruebas por inducción (obviamente)
-    - Teorema de recursión sobre ω
+    - **Divisibilidad**:
+      * Algoritmo de división con resto
+      * Máximo común divisor (MCD) y algoritmo de Euclides
+      * Mínimo común múltiplo (MCM)
 
-    ### 3. ARITMÉTICA DE NATURALES
+    - **Números primos**:
+      * Definición de primo, infinitud de primos
+      * Teorema fundamental de aritmética (factorización única)
+      * Lema de Euclides para primos
 
-    **Operaciones básicas** (vía recursión):
-
-    a) Suma: n + m
-       - 0 + m = m
-       - σ(n) + m = σ(n + m)
-
-    b) Multiplicación: n × m
-       - 0 × m = 0
-       - σ(n) × m = (n × m) + m
-
-    c) Exponenciación: n^m
-       - n^0 = 1
-       - n^(σ(m)) = n^m × n
-
-    **Propiedades algebraicas**:
-    - Asociatividad, conmutatividad de suma
-    - Asociatividad, conmutatividad de multiplicación
-    - Distributividad: n × (m + k) = n×m + n×k
-    - Leyes de exponenciación: n^(m+k) = n^m × n^k
-
-    **Orden aritmético**:
-    - Definir n < m ≝ n ∈ m (ya hecho implícitamente)
-    - Definir n ≤ m ≝ n < m ∨ n = m
-    - Probar compatibilidad con suma: n < m → n + k < m + k
-    - Probar compatibilidad con producto: n < m → n × σ(k) < m × σ(k)
-
-    **Dificultades**:
-    - Requiere inducción fuerte y/o recursión sobre ω
-    - Muchas propiedades "obvias" requieren pruebas técnicas
-    - Definir funciones recursivas en Lean 4 requiere terminación
-
-    ### 4. DIVISIBILIDAD Y NÚMEROS PRIMOS
-
-    **Conceptos básicos**:
-    - m | n (m divide a n)
-    - Algoritmo de división: ∀n m, ∃q r, n = m×q + r ∧ r < m
-    - MCD y MCM
-    - Números primos y factorización
-
-    **Teoremas**:
-    - Infinitud de primos
-    - Teorema fundamental de aritmética (factorización única)
-    - Lema de Euclides: p primo ∧ p | a×b → p | a ∨ p | b
-
-    **Dificultades**:
-    - Requiere toda la aritmética básica
-    - Algoritmo de Euclides para MCD
-    - Manejo de existenciales constructivos
-
-    ### 5. CONEXIÓN CON CARDINALIDAD
-
-    **Teoremas de equivalencia**:
-    - n ≈ m ↔ n = m (equipotencia implica igualdad para naturales)
-    - n ⪯ m ↔ n ⊆ m (inyección implica subconjunto)
-    - Tricotomía cardinal: n ⪯ m ∨ m ⪯ n (para naturales, trivial vía tricotomía)
-
-    **Teoremas de Cantor para finitos**:
-    - |𝒫(n)| = 2^n (cardinalidad del conjunto potencia)
-    - Todo subconjunto de natural es finito
-    - Caracterización de finitud vía biyección con natural
-
-    **Dificultades**:
-    - Requiere teoría de funciones bien desarrollada
-    - Manejo de cardinales en Lean
-    - Interfaz con teoría de cardinalidad de Mathlib
+    - **Conexión con cardinalidad**:
+      * n ≈ m ↔ n = m para naturales
+      * Caracterización de finitud vía biyecciones
+      * |𝒫(n)| = 2^n
 
     ## NOTAS TÉCNICAS FINALES
 
@@ -1967,23 +1913,26 @@ namespace SetUniverse
     - Generalizable a ordinales transfinitos (con modificaciones)
     - Lista para conectar con Mathlib (vía compatibilidad de definiciones)
 
-    ### LÍNEA TEMPORAL ESTIMADA DE DESARROLLO:
-    1. Axioma de Infinito y ω: ~200 líneas, dificultad media
-    2. Principio de inducción: ~100 líneas, dificultad media-alta
-    3. Suma y multiplicación: ~300 líneas, dificultad media
-    4. Propiedades algebraicas: ~500 líneas, dificultad media
-    5. Divisibilidad básica: ~400 líneas, dificultad media-alta
-    6. Números primos: ~600 líneas, dificultad alta
-    7. Cardinalidad: ~300 líneas, dificultad media
+    ### PLAN DE CONTINUACIÓN:
 
-    TOTAL ESTIMADO: ~2400 líneas adicionales
+    Los desarrollos futuros están organizados en archivos específicos:
 
-    ### PRIORIDADES SUGERIDAS:
-    1. ω y caracterización isNat n ↔ n ∈ ω (fundamental)
-    2. Inducción (desbloquea todo lo demás)
-    3. Suma y multiplicación (base de aritmética)
-    4. Orden aritmético ≤ (conecta orden con álgebra)
-    5. Resto según necesidades del proyecto
+    1. **Recursion.lean** (prioridad alta):
+       - Axioma de Infinito y construcción de ω
+       - Caracterización: isNat n ↔ n ∈ ω
+       - Principio de inducción (débil y fuerte)
+       - Teorema de recursión sobre naturales
+       - ~300-400 líneas estimadas
+
+    2. **NaturalArithmetic.lean** (depende de Recursion.lean):
+       - Definiciones recursivas de +, ×, ^
+       - Propiedades algebraicas completas
+       - Divisibilidad, primos, factorización
+       - Conexión con cardinalidad
+       - ~1500-2000 líneas estimadas
+
+    Este archivo (NaturalNumbers.lean) constituye la base teórica fundamental
+    que permite construir toda la teoría de naturales sin circular dependencies.
 
     -/
 
