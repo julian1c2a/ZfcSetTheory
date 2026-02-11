@@ -24,7 +24,7 @@
 | `AtomicBooleanAlgebra.lean` | `SetUniverse.AtomicBooleanAlgebra` | `PowerSetAlgebra`, `SetOrder`, `SetStrictOrder` + anteriores | 🔶 Parcial |
 | `Cardinality.lean` | `SetUniverse.Cardinality` | `Functions` + todos los anteriores | 🔶 Parcial |
 | `NaturalNumbers.lean` | `SetUniverse.NaturalNumbers` | `Cardinality` + todos los anteriores | ✅ Completo |
-| `Infinity.lean` | `SetUniverse.InfinityAxiom` | `NaturalNumbers` + todos los anteriores | ❌ No proyectado |
+| `Infinity.lean` | `SetUniverse.InfinityAxiom` | `NaturalNumbers` + todos los anteriores | ✅ Completo |
 | `GeneralizedDeMorgan.lean` | `SetUniverse.GeneralizedDeMorgan` | `PowerSetAlgebra` + anteriores | ❌ No proyectado |
 | `GeneralizedDistributive.lean` | `SetUniverse.GeneralizedDistributive` | `PowerSetAlgebra` + anteriores | ❌ No proyectado |
 | `SetOrder.lean` | `SetUniverse.SetOrder` | `Relations` + anteriores | ❌ No proyectado |
@@ -115,6 +115,22 @@
 ```
 
 **Dependencias**: `ExtSet`, `PairSet`, `Singleton`
+
+### 2.6 Axioma de Infinito
+
+**Ubicación**: `Infinity.lean`, línea 45  
+**Namespace**: `SetUniverse.InfinityAxiom`  
+**Orden**: 6º axioma declarado
+
+**Enunciado Matemático**: Existe un conjunto inductivo (que contiene ∅ y es cerrado bajo sucesores).
+
+**Firma Lean4**:
+
+```lean
+axiom ExistsInductiveSet : ∃ (I : U), isInductive I
+```
+
+**Dependencias**: `isInductive` (de NaturalNumbers.lean)
 
 ## 3. Definiciones Principales por Módulo
 
@@ -785,6 +801,41 @@ noncomputable def three : U := σ two
 
 **Dependencias**: `EmptySet`, `successor`
 
+### 3.14 Infinity.lean
+
+#### Conjunto Inductivo Testigo (WitnessInductiveSet)
+
+**Ubicación**: `Infinity.lean`, línea 55  
+**Orden**: 1ª definición principal
+
+**Enunciado Matemático**: Selección de un conjunto inductivo específico garantizado por el axioma.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def WitnessInductiveSet : U := ExistsInductiveSet.choose
+```
+
+**Dependencias**: `ExistsInductiveSet`
+
+#### Conjunto Omega (Omega)
+
+**Ubicación**: `Infinity.lean`, línea 64  
+**Orden**: 2ª definición principal (DEFINICIÓN CENTRAL)
+
+**Enunciado Matemático**: El conjunto de todos los números naturales, definido como la intersección de todos los conjuntos inductivos.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def Omega : U :=
+  SpecSet WitnessInductiveSet (fun x =>
+    ∀ (J : U), J ⊆ WitnessInductiveSet → isInductive J → x ∈ J)
+notation "ω" => Omega
+```
+
+**Dependencias**: `SpecSet`, `WitnessInductiveSet`, `isInductive`
+
 ## 4. Teoremas Principales por Módulo
 
 ### 4.1 Extension.lean
@@ -1202,6 +1253,163 @@ theorem nat_has_max (n T : U) (hn : isNat n) (hT_sub : T ⊆ n) (hT_ne : T ≠ �
 
 **Dependencias**: `isNat`, `isWellOrderMembershipGuided`, `nat_not_mem_self`
 
+### 4.9 Infinity.lean
+
+#### Omega es Inductivo
+
+**Ubicación**: `Infinity.lean`, línea 95  
+**Orden**: 1º teorema principal (TEOREMA BASE)
+
+**Enunciado Matemático**: ω es un conjunto inductivo.
+
+**Firma Lean4**:
+
+```lean
+theorem Omega_is_inductive : isInductive (ω : U)
+```
+
+**Dependencias**: `Omega`, `isInductive`, `zero_in_Omega`, `succ_in_Omega`
+
+#### Minimalidad de Omega
+
+**Ubicación**: `Infinity.lean`, línea 100  
+**Orden**: 2º teorema principal (PROPIEDAD FUNDAMENTAL)
+
+**Enunciado Matemático**: ω es subconjunto de cualquier conjunto inductivo K.
+
+**Firma Lean4**:
+
+```lean
+theorem Omega_subset_all_inductive (K : U) (hK : isInductive K) : ω ⊆ K
+```
+
+**Dependencias**: `Omega`, `isInductive`, `BinInter`
+
+#### Principio de Inducción Matemática
+
+**Ubicación**: `Infinity.lean`, línea 125  
+**Orden**: 3º teorema principal (INDUCCIÓN DÉBIL)
+
+**Enunciado Matemático**: Si S ⊆ ω, 0 ∈ S y S es cerrado bajo sucesores, entonces S = ω.
+
+**Firma Lean4**:
+
+```lean
+theorem induction_principle (S : U) (hS_sub : S ⊆ ω)
+  (h_zero : (∅ : U) ∈ S)
+  (h_succ : ∀ n, n ∈ S → σ n ∈ S) :
+  S = ω
+```
+
+**Dependencias**: `Omega`, `ExtSet_wc`, `Omega_subset_all_inductive`
+
+#### Elementos de Omega son Naturales
+
+**Ubicación**: `Infinity.lean`, línea 140  
+**Orden**: 4º teorema principal
+
+**Enunciado Matemático**: Todo elemento de ω es un número natural.
+
+**Firma Lean4**:
+
+```lean
+theorem mem_Omega_is_Nat (n : U) (hn : n ∈ ω) : isNat n
+```
+
+**Dependencias**: `Omega`, `isNat`, `induction_principle`, `zero_is_nat`, `nat_successor_is_nat`
+
+#### Naturales Pertenecen a Omega
+
+**Ubicación**: `Infinity.lean`, línea 165  
+**Orden**: 5º teorema principal
+
+**Enunciado Matemático**: Todo número natural pertenece a ω.
+
+**Firma Lean4**:
+
+```lean
+theorem Nat_in_Omega (n : U) (hn : isNat n) : n ∈ ω
+```
+
+**Dependencias**: `isNat`, `Omega`, `nat_in_inductive_set`, `Omega_is_inductive`
+
+#### Caracterización Completa de Naturales
+
+**Ubicación**: `Infinity.lean`, línea 170  
+**Orden**: 6º teorema principal (TEOREMA CENTRAL)
+
+**Enunciado Matemático**: n es natural si y solo si n ∈ ω.
+
+**Firma Lean4**:
+
+```lean
+theorem Nat_iff_mem_Omega (n : U) : isNat n ↔ n ∈ ω
+```
+
+**Dependencias**: `isNat`, `Omega`, `Nat_in_Omega`, `mem_Omega_is_Nat`
+
+#### Principio de Inducción Fuerte
+
+**Ubicación**: `Infinity.lean`, línea 175  
+**Orden**: 7º teorema principal (INDUCCIÓN COMPLETA)
+
+**Enunciado Matemático**: Si para todo n ∈ ω, (∀m ∈ n, m ∈ S) → n ∈ S, entonces S = ω.
+
+**Firma Lean4**:
+
+```lean
+theorem strong_induction_principle (S : U) (hS_sub : S ⊆ ω)
+  (h_strong : ∀ n, n ∈ ω → (∀ m, m ∈ n → m ∈ S) → n ∈ S) :
+  S = ω
+```
+
+**Dependencias**: `Omega`, `SpecSet`, `successor_is_specified`, `induction_principle`
+
+#### Omega es Transitivo
+
+**Ubicación**: `Infinity.lean`, línea 210  
+**Orden**: 8º teorema principal
+
+**Enunciado Matemático**: ω es un conjunto transitivo.
+
+**Firma Lean4**:
+
+```lean
+theorem Omega_is_transitive : isTransitiveSet (ω : U)
+```
+
+**Dependencias**: `Omega`, `isTransitiveSet`, `mem_Omega_is_Nat`, `nat_element_is_nat`, `Nat_in_Omega`
+
+#### Omega tiene Orden Total
+
+**Ubicación**: `Infinity.lean`, línea 220  
+**Orden**: 9º teorema principal
+
+**Enunciado Matemático**: ω tiene un orden total estricto guiado por membresía.
+
+**Firma Lean4**:
+
+```lean
+theorem Omega_has_total_order : isTotalStrictOrderMembershipGuided (ω : U)
+```
+
+**Dependencias**: `Omega`, `isTotalStrictOrderMembershipGuided`, `Omega_is_transitive`, `mem_Omega_is_Nat`, `nat_trichotomy`
+
+#### Omega no tiene Máximo
+
+**Ubicación**: `Infinity.lean`, línea 235  
+**Orden**: 10º teorema principal (TEOREMA DE INFINITUD)
+
+**Enunciado Matemático**: ω no tiene elemento máximo (caracteriza la infinitud).
+
+**Firma Lean4**:
+
+```lean
+theorem Omega_no_maximum : ∀ n : U, n ∈ ω → ∃ m : U, m ∈ ω ∧ n ∈ m
+```
+
+**Dependencias**: `Omega`, `successor`, `succ_in_Omega`, `mem_successor_self`
+
 ## 5. Notación y Sintaxis
 
 ### 5.1 Operadores Básicos
@@ -1239,6 +1447,10 @@ theorem nat_has_max (n T : U) (hn : isNat n) (hT_sub : T ⊆ n) (hT_ne : T ≠ �
 - `σ n` - Función sucesor (`successor`)
 - `∈[S]` - Orden estricto guiado por membresía (`StrictOrderMembershipGuided`)
 - `0`, `1`, `2`, `3` - Naturales específicos (`zero`, `one`, `two`, `three`)
+
+### 5.6 Infinito
+
+- `ω` - Conjunto de todos los números naturales (`Omega`)
 
 ## 6. Exports por Módulo
 
@@ -1332,6 +1544,28 @@ export NaturalNumbers (
 )
 ```
 
+### 6.6 Infinity.lean
+
+```lean
+export InfinityAxiom (
+  ExistsInductiveSet
+  Omega
+  Omega_is_inductive
+  Omega_subset_all_inductive
+  zero_in_Omega
+  succ_in_Omega
+  induction_principle
+  mem_Omega_is_Nat
+  Nat_in_Omega
+  Nat_iff_mem_Omega
+  strong_induction_principle
+  Omega_is_transitive
+  Omega_element_is_transitive
+  Omega_has_total_order
+  Omega_no_maximum
+)
+```
+
 ## 7. Estado de Proyección por Módulo
 
 ### 7.1 Leyenda de Estados
@@ -1355,6 +1589,7 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `Relations.lean` - Relaciones binarias y equivalencia
 - `BooleanAlgebra.lean` - Teoremas de álgebra booleana
 - `NaturalNumbers.lean` - Números naturales como ordinales de von Neumann
+- `Infinity.lean` - Axioma de infinito y conjunto ω de todos los naturales
 
 ### 7.3 Archivos Parcialmente Proyectados
 
@@ -1370,7 +1605,6 @@ Los siguientes archivos tienen **documentación parcial** (solo definiciones/teo
 
 Los siguientes archivos **no están documentados** en este REFERENCE.md:
 
-- `Infinity.lean` - Axioma de infinito y conjunto ω
 - `GeneralizedDeMorgan.lean` - De Morgan para familias
 - `GeneralizedDistributive.lean` - Distributividad para familias
 - `SetOrder.lean` - Órdenes parciales y retículos
@@ -1379,6 +1613,6 @@ Los siguientes archivos **no están documentados** en este REFERENCE.md:
 
 ---
 
-*Última actualización: 11 de febrero de 2026 - Agregado módulo NaturalNumbers.lean*
+*Última actualización: 11 de febrero de 2026 - Agregado módulo Infinity.lean*
 
 *Este documento contiene únicamente construcciones y teoremas que están completamente implementados y demostrados en el código Lean 4. La proyección se actualiza conforme se agregan archivos al contexto de trabajo.*
