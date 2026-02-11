@@ -27,7 +27,7 @@
 | `Infinity.lean` | `SetUniverse.InfinityAxiom` | `NaturalNumbers` + todos los anteriores | ✅ Completo |
 | `GeneralizedDeMorgan.lean` | `SetUniverse.GeneralizedDeMorgan` | `PowerSetAlgebra` + anteriores | ✅ Completo |
 | `GeneralizedDistributive.lean` | `SetUniverse.GeneralizedDistributive` | `PowerSetAlgebra` + anteriores | ✅ Completo |
-| `SetOrder.lean` | `SetUniverse.SetOrder` | `Relations` + anteriores | ❌ No proyectado |
+| `SetOrder.lean` | `SetUniverse.SetOrder` | `Relations` + anteriores | ✅ Completo |
 | `SetStrictOrder.lean` | `SetUniverse.SetStrictOrder` | `SetOrder` + anteriores | ❌ No proyectado |
 | `Recursion.lean` | `SetUniverse.Recursion` | `NaturalNumbers` + anteriores | ❌ No proyectado |
 
@@ -976,6 +976,104 @@ noncomputable def UnionFunction (X : U) : U :=
 
 **Dependencias**: `SpecSet`, `PowerSet`, `CartesianProduct`, `BinUnion`, `OrderedPair`
 
+### 3.17 SetOrder.lean
+
+#### Cota Superior (isUpperBound)
+
+**Ubicación**: `SetOrder.lean`, línea 35  
+**Orden**: 1ª definición principal
+
+**Enunciado Matemático**: x es cota superior de S si todo elemento de S es subconjunto de x.
+
+**Firma Lean4**:
+
+```lean
+def isUpperBound (S x : U) : Prop :=
+  ∀ y, y ∈ S → y ⊆ x
+```
+
+**Dependencias**: `subseteq`
+
+#### Cota Inferior (isLowerBound)
+
+**Ubicación**: `SetOrder.lean`, línea 39  
+**Orden**: 2ª definición principal
+
+**Enunciado Matemático**: x es cota inferior de S si x es subconjunto de todo elemento de S.
+
+**Firma Lean4**:
+
+```lean
+def isLowerBound (S x : U) : Prop :=
+  ∀ y, y ∈ S → x ⊆ y
+```
+
+**Dependencias**: `subseteq`
+
+#### Supremo (isSupremum)
+
+**Ubicación**: `SetOrder.lean`, línea 43  
+**Orden**: 3ª definición principal
+
+**Enunciado Matemático**: x es supremo de S si es cota superior y la menor de todas las cotas superiores.
+
+**Firma Lean4**:
+
+```lean
+def isSupremum (S x : U) : Prop :=
+  isUpperBound S x ∧ ∀ z, isUpperBound S z → x ⊆ z
+```
+
+**Dependencias**: `isUpperBound`, `subseteq`
+
+#### Ínfimo (isInfimum)
+
+**Ubicación**: `SetOrder.lean`, línea 47  
+**Orden**: 4ª definición principal
+
+**Enunciado Matemático**: x es ínfimo de S si es cota inferior y la mayor de todas las cotas inferiores.
+
+**Firma Lean4**:
+
+```lean
+def isInfimum (S x : U) : Prop :=
+  isLowerBound S x ∧ ∀ z, isLowerBound S z → z ⊆ x
+```
+
+**Dependencias**: `isLowerBound`, `subseteq`
+
+#### Acotado Superiormente (isBoundedAbove)
+
+**Ubicación**: `SetOrder.lean`, línea 51  
+**Orden**: 5ª definición principal
+
+**Enunciado Matemático**: S está acotado superiormente si existe una cota superior.
+
+**Firma Lean4**:
+
+```lean
+def isBoundedAbove (S : U) : Prop :=
+  ∃ x, isUpperBound S x
+```
+
+**Dependencias**: `isUpperBound`
+
+#### Acotado Inferiormente (isBoundedBelow)
+
+**Ubicación**: `SetOrder.lean`, línea 55  
+**Orden**: 6ª definición principal
+
+**Enunciado Matemático**: S está acotado inferiormente si existe una cota inferior.
+
+**Firma Lean4**:
+
+```lean
+def isBoundedBelow (S : U) : Prop :=
+  ∃ x, isLowerBound S x
+```
+
+**Dependencias**: `isLowerBound`
+
 ## 4. Teoremas Principales por Módulo
 
 ### 4.1 Extension.lean
@@ -1842,6 +1940,197 @@ theorem intersection_family_associative (X Y F : U) :
 
 **Dependencias**: `IntersectionImageFamily`, `BinInter`, `ExtSet`
 
+### 4.12 SetOrder.lean
+
+#### El Vacío es Mínimo Global
+
+**Ubicación**: `SetOrder.lean`, línea 18  
+**Orden**: 1º teorema principal (TEOREMA BASE)
+
+**Enunciado Matemático**: ∅ es subconjunto de cualquier conjunto.
+
+**Firma Lean4**:
+
+```lean
+theorem empty_is_minimum (x : U) : ∅ ⊆ x
+```
+
+**Dependencias**: `EmptySet`, `subseteq`, `EmptySet_is_empty`
+
+#### Unicidad del Mínimo Global
+
+**Ubicación**: `SetOrder.lean`, línea 23  
+**Orden**: 2º teorema principal
+
+**Enunciado Matemático**: Si x es subconjunto de todo conjunto, entonces x = ∅.
+
+**Firma Lean4**:
+
+```lean
+theorem empty_is_unique_minimum (x : U) :
+  (∀ y, x ⊆ y) → x = ∅
+```
+
+**Dependencias**: `subseteq`, `EmptySet`, `EqualityOfSubset`
+
+#### Toda Familia está Acotada Inferiormente
+
+**Ubicación**: `SetOrder.lean`, línea 59  
+**Orden**: 3º teorema principal
+
+**Enunciado Matemático**: Cualquier familia S está acotada inferiormente (por ∅).
+
+**Firma Lean4**:
+
+```lean
+theorem any_family_bounded_below (S : U) : isBoundedBelow S
+```
+
+**Dependencias**: `isBoundedBelow`, `empty_is_minimum`
+
+#### La Intersección es Greatest Lower Bound
+
+**Ubicación**: `SetOrder.lean`, línea 64  
+**Orden**: 4º teorema principal (TEOREMA FUNDAMENTAL)
+
+**Enunciado Matemático**: A ∩ B es el mayor elemento que es subconjunto de ambos A y B.
+
+**Firma Lean4**:
+
+```lean
+theorem inter_is_glb (A B : U) :
+  (∀ x, (x ⊆ A ∧ x ⊆ B) → x ⊆ (A ∩ B)) ∧
+  (∀ z, (∀ x, (x ⊆ A ∧ x ⊆ B) → x ⊆ z) → (A ∩ B) ⊆ z)
+```
+
+**Dependencias**: `BinInter`, `subseteq`, `BinInter_is_specified`, `BinInter_subset`
+
+#### La Unión es Least Upper Bound
+
+**Ubicación**: `SetOrder.lean`, línea 76  
+**Orden**: 5º teorema principal (TEOREMA DUAL)
+
+**Enunciado Matemático**: A ∪ B es el menor elemento que contiene tanto A como B.
+
+**Firma Lean4**:
+
+```lean
+theorem union_is_lub (A B : U) :
+  (∀ x, (A ⊆ x ∧ B ⊆ x) → (A ∪ B) ⊆ x) ∧
+  (∀ z, (∀ x, (A ⊆ x ∧ B ⊆ x) → z ⊆ x) → z ⊆ (A ∪ B))
+```
+
+**Dependencias**: `BinUnion`, `subseteq`, `BinUnion_is_specified`
+
+#### Reflexividad del Orden
+
+**Ubicación**: `SetOrder.lean`, línea 91  
+**Orden**: 6º teorema principal
+
+**Enunciado Matemático**: La relación ⊆ es reflexiva.
+
+**Firma Lean4**:
+
+```lean
+theorem order_reflexive (x : U) : x ⊆ x
+```
+
+**Dependencias**: `subseteq`, `subseteq_reflexive`
+
+#### Transitividad del Orden
+
+**Ubicación**: `SetOrder.lean`, línea 94  
+**Orden**: 7º teorema principal
+
+**Enunciado Matemático**: La relación ⊆ es transitiva.
+
+**Firma Lean4**:
+
+```lean
+theorem order_transitive (x y z : U) : x ⊆ y → y ⊆ z → x ⊆ z
+```
+
+**Dependencias**: `subseteq`, `subseteq_transitive`
+
+#### Antisimetría del Orden
+
+**Ubicación**: `SetOrder.lean`, línea 97  
+**Orden**: 8º teorema principal
+
+**Enunciado Matemático**: La relación ⊆ es antisimétrica.
+
+**Firma Lean4**:
+
+```lean
+theorem order_antisymmetric (x y : U) : x ⊆ y → y ⊆ x → x = y
+```
+
+**Dependencias**: `subseteq`, `subseteq_antisymmetric`
+
+#### Monotonicidad de la Unión (Izquierda)
+
+**Ubicación**: `SetOrder.lean`, línea 100  
+**Orden**: 9º teorema principal
+
+**Enunciado Matemático**: Si A ⊆ B, entonces A ∪ C ⊆ B ∪ C.
+
+**Firma Lean4**:
+
+```lean
+theorem union_monotone_left (A B C : U) :
+  A ⊆ B → (A ∪ C) ⊆ (B ∪ C)
+```
+
+**Dependencias**: `subseteq`, `BinUnion`, `BinUnion_is_specified`
+
+#### Monotonicidad de la Unión (Derecha)
+
+**Ubicación**: `SetOrder.lean`, línea 108  
+**Orden**: 10º teorema principal
+
+**Enunciado Matemático**: Si A ⊆ B, entonces C ∪ A ⊆ C ∪ B.
+
+**Firma Lean4**:
+
+```lean
+theorem union_monotone_right (A B C : U) :
+  A ⊆ B → (C ∪ A) ⊆ (C ∪ B)
+```
+
+**Dependencias**: `subseteq`, `BinUnion`, `BinUnion_is_specified`
+
+#### Monotonicidad de la Intersección (Izquierda)
+
+**Ubicación**: `SetOrder.lean`, línea 116  
+**Orden**: 11º teorema principal
+
+**Enunciado Matemático**: Si A ⊆ B, entonces A ∩ C ⊆ B ∩ C.
+
+**Firma Lean4**:
+
+```lean
+theorem inter_monotone_left (A B C : U) :
+  A ⊆ B → (A ∩ C) ⊆ (B ∩ C)
+```
+
+**Dependencias**: `subseteq`, `BinInter`, `BinInter_is_specified`
+
+#### Monotonicidad de la Intersección (Derecha)
+
+**Ubicación**: `SetOrder.lean`, línea 123  
+**Orden**: 12º teorema principal
+
+**Enunciado Matemático**: Si A ⊆ B, entonces C ∩ A ⊆ C ∩ B.
+
+**Firma Lean4**:
+
+```lean
+theorem inter_monotone_right (A B C : U) :
+  A ⊆ B → (C ∩ A) ⊆ (C ∩ B)
+```
+
+**Dependencias**: `subseteq`, `BinInter`, `BinInter_is_specified`
+
 ## 5. Notación y Sintaxis
 
 ### 5.1 Operadores Básicos
@@ -1893,6 +2182,12 @@ theorem intersection_family_associative (X Y F : U) :
 - `⋂ F` - Intersección generalizada (`GeneralizedIntersection`)
 - `X ∩ᶠ F` - Familia de intersecciones (`IntersectionImageFamily`)
 - `X ∪ᶠ F` - Familia de uniones (`UnionImageFamily`)
+
+### 5.9 Órdenes Parciales
+
+- Conceptos de orden: cotas superiores/inferiores, supremo/ínfimo
+- Propiedades de orden: reflexividad, transitividad, antisimetría
+- Monotonicidad de operaciones de conjuntos
 
 ## 6. Exports por Módulo
 
@@ -2057,6 +2352,25 @@ export GeneralizedDistributive (
 )
 ```
 
+### 6.9 SetOrder.lean
+
+```lean
+export SetOrder (
+  -- Core definitions
+  isUpperBound isLowerBound isSupremum isInfimum
+  isBoundedAbove isBoundedBelow
+  -- Fundamental theorems
+  empty_is_minimum empty_is_unique_minimum
+  any_family_bounded_below
+  inter_is_glb union_is_lub
+  -- Order properties
+  order_reflexive order_transitive order_antisymmetric
+  -- Monotonicity
+  union_monotone_left union_monotone_right
+  inter_monotone_left inter_monotone_right
+)
+```
+
 ## 7. Estado de Proyección por Módulo
 
 ### 7.1 Leyenda de Estados
@@ -2083,6 +2397,7 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `Infinity.lean` - Axioma de infinito y conjunto ω de todos los naturales
 - `GeneralizedDeMorgan.lean` - Leyes de De Morgan generalizadas para familias de conjuntos
 - `GeneralizedDistributive.lean` - Leyes distributivas generalizadas para familias de conjuntos
+- `SetOrder.lean` - Teoría de órdenes parciales, cotas, supremos e ínfimos
 
 ### 7.3 Archivos Parcialmente Proyectados
 
@@ -2098,12 +2413,11 @@ Los siguientes archivos tienen **documentación parcial** (solo definiciones/teo
 
 Los siguientes archivos **no están documentados** en este REFERENCE.md:
 
-- `SetOrder.lean` - Órdenes parciales y retículos
 - `SetStrictOrder.lean` - Órdenes estrictos
 - `Recursion.lean` - Definiciones recursivas
 
 ---
 
-*Última actualización: 11 de febrero de 2026 - Agregado módulo GeneralizedDistributive.lean*
+*Última actualización: 11 de febrero de 2026 - Agregado módulo SetOrder.lean*
 
 *Este documento contiene únicamente construcciones y teoremas que están completamente implementados y demostrados en el código Lean 4. La proyección se actualiza conforme se agregan archivos al contexto de trabajo.*
