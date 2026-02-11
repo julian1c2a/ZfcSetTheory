@@ -29,7 +29,7 @@ namespace SetUniverse
     /-! ### Teorema de Existencia Única para el Axioma de Potencia ### -/
     @[simp]
     theorem PowerSetExistsUnique (A : U) :
-      ExistsUnique fun (P : U) => ∀ (x : U), x ∈ P ↔ x ⊆ A
+      ∃! P, ∀ x : U, x ∈ P ↔ x ⊆ A
         := by
       obtain ⟨P, hP⟩ := PowerSet A
       apply ExistsUnique.intro P
@@ -46,7 +46,7 @@ namespace SetUniverse
     /-! ### Definición del Conjunto Potencia ### -/
     @[simp]
     noncomputable def PowerSetOf (A : U) : U :=
-      choose (PowerSetExistsUnique A)
+      (PowerSetExistsUnique A).choose
 
     notation " 𝒫 " A: 100 => PowerSetOf A
 
@@ -56,7 +56,7 @@ namespace SetUniverse
       x ∈ (𝒫 A) ↔ x ⊆ A
         := by
       unfold PowerSetOf
-      exact (choose_spec (PowerSetExistsUnique A)).1 x
+      exact (PowerSetExistsUnique A).choose_spec x
 
     /-! ### Unicidad del Conjunto Potencia ### -/
     @[simp]

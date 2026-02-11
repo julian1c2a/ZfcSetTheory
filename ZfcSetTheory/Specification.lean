@@ -23,12 +23,11 @@ namespace SetUniverse
     /-! ### SpecificationUnique : existe un único conjunto que cumple la especificación P ### -/
     @[simp]
     theorem SpecificationUnique (x : U) (P : U → Prop) :
-      ExistsUnique fun (y : U) => ∀ (z : U), z ∈ y ↔ (z ∈ x ∧ P z)
+      ∃! y, ∀ z : U, z ∈ y ↔ (z ∈ x ∧ P z)
         := by
       obtain ⟨y, hy⟩ := Specification x P
       apply ExistsUnique.intro y
-      · -- Existencia del conjunto especificado
-        exact hy
+      · exact hy
       · -- Unicidad del conjunto especificado
         intro z hz_spec
         apply (ExtSet z y)
@@ -53,35 +52,34 @@ namespace SetUniverse
     /-! ### Definición del conjunto especificado por el Axioma de Especificación ### -/
     @[simp]
     noncomputable def SpecSet (x : U) (P : U → Prop) : U :=
-      choose (SpecificationUnique x P)
+      (SpecificationUnique x P).choose
 
     @[simp]
     theorem SpecSet_is_specified (x z : U) (P : U → Prop) :
       z ∈ SpecSet x P ↔ (z ∈ x ∧ P z)
         := by
-      exact (choose_spec (SpecificationUnique x P)).1 z
+      exact (SpecificationUnique x P).choose_spec z
 
     notation " { " x " | " P " } " => SpecSet x P
 
     /-! ### Definición del conjunto especificado por el Axioma de Especificación ### -/
     @[simp]
     noncomputable def BinInter (x y : U) : U :=
-      choose (SpecificationUnique x fun z => z ∈ y)
+      (SpecificationUnique x fun z => z ∈ y).choose
 
     @[simp]
     theorem BinInter_is_specified (x y z : U) :
       z ∈ BinInter x y ↔ (z ∈ x ∧ z ∈ y)
         := by
-      have h := choose_spec (SpecificationUnique x fun z => z ∈ y)
-      exact h.1 z
+      have h := (SpecificationUnique x fun z => z ∈ y).choose_spec
+      exact h z
 
     @[simp]
     theorem BinInterUniqueSet (x y : U) :
-      ExistsUnique fun (z : U) => ∀ (w : U), w ∈ z ↔ (w ∈ x ∧ w ∈ y)
+      ∃! z, ∀ w : U, w ∈ z ↔ (w ∈ x ∧ w ∈ y)
         := by
       apply ExistsUnique.intro (BinInter x y)
-      · -- Existencia del conjunto de intersección binaria
-        exact BinInter_is_specified x y
+      · exact BinInter_is_specified x y
       · -- Unicidad del conjunto de intersección binaria
         intro z hz_inter
         apply (ExtSet z (BinInter x y))
@@ -291,7 +289,7 @@ namespace SetUniverse
     /-! ### Definición de la Diferencia de Conjuntos ### -/
     @[simp]
     noncomputable def Difference (x y : U) : U :=
-      choose (SpecificationUnique x (fun z => z ∉ y))
+      (SpecificationUnique x (fun z => z ∉ y)).choose
 
     /-! ### Notación estándar de la Diferencia de Conjuntos ### -/
     notation:50 lhs:51 " \\ " rhs:51 => Difference lhs rhs
@@ -300,16 +298,15 @@ namespace SetUniverse
     theorem Difference_is_specified (x y z : U) :
       z ∈ (x \ y) ↔ (z ∈ x ∧ z ∉ y)
         := by
-      have h := choose_spec (SpecificationUnique x fun z => z ∉ y)
-      exact h.1 z
+      have h := (SpecificationUnique x fun z => z ∉ y).choose_spec
+      exact h z
 
     @[simp]
     theorem DifferenceUniqueSet (x y : U) :
-      ExistsUnique fun (z : U) => ∀ (w : U), w ∈ z ↔ (w ∈ x ∧ w ∉ y)
+      ∃! z, ∀ w : U, w ∈ z ↔ (w ∈ x ∧ w ∉ y)
         := by
       apply ExistsUnique.intro (Difference x y)
-      · -- Existencia de la diferencia binaria
-        exact Difference_is_specified x y
+      · exact Difference_is_specified x y
       · -- Unicidad de la diferencia binaria
         intro z hz_difference
         apply (ExtSet z (Difference x y))

@@ -24,21 +24,20 @@ namespace SetUniverse
     /-! ### Teorema de Existencia Única para el Axioma de Unión ### -/
     @[simp]
     theorem UnionExistsUnique (C : U) :
-      ExistsUnique fun (UC : U) => ∀ (x : U), x ∈ UC ↔ ∃ (y : U), y ∈ C ∧ x ∈ y
+      ∃! UC, ∀ x : U, x ∈ UC ↔ ∃ y : U, y ∈ C ∧ x ∈ y
         := by
       obtain ⟨UC, hUC⟩ := Union C
       apply ExistsUnique.intro UC
-      · -- proof that the witness satisfies the property
-        exact hUC
+      · exact hUC
       · -- proof of uniqueness
         intros UC₁ h₁
         apply ExtSet
         intro x
         constructor
-        . intro hx
+        · intro hx
           have h_ex : ∃ y, y ∈ C ∧ x ∈ y := (h₁ x).mp hx
           exact (hUC x).mpr h_ex
-        . intro hx
+        · intro hx
           have h_ex : ∃ y, y ∈ C ∧ x ∈ y := (hUC x).mp hx
           exact (h₁ x).mpr h_ex
 
@@ -55,7 +54,7 @@ namespace SetUniverse
 
     @[simp]
     noncomputable def UnionSet (C : U) : U :=
-      choose (UnionExistsUnique C)
+      (UnionExistsUnique C).choose
 
     notation " ⋃ " C: 100 => UnionSet C
 
@@ -66,9 +65,9 @@ namespace SetUniverse
       unfold UnionSet
       constructor
       . intro h
-        exact ((choose_spec (UnionExistsUnique C)).1 x).mp h
+        exact ((UnionExistsUnique C).choose_spec x).mp h
       . intro h
-        exact ((choose_spec (UnionExistsUnique C)).1 x).mpr h
+        exact ((UnionExistsUnique C).choose_spec x).mpr h
 
     @[simp]
     theorem UnionSet_is_unique (C UC : U) :

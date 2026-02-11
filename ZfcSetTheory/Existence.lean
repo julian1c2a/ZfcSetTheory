@@ -16,37 +16,36 @@ namespace SetUniverse
     axiom ExistsAnEmptySet : ∃ (x : U), ∀ (y : U), y ∉ x
 
     /-! ### Teorema de Existencia Única ### -/
-    /-! ### ExistenceUnique : existe un único conjunto vacío en el universo U ### -/
+    /-! ### ExistsUniqueEmptySet : existe un único conjunto vacío en el universo U ### -/
     @[simp]
     theorem ExistsUniqueEmptySet :
-      ExistsUnique fun (x : U) => ∀ (y : U), y ∉ x
+      ∃! x, ∀ y : U, y ∉ x
         := by
       obtain ⟨x, hx⟩ := ExistsAnEmptySet
       apply ExistsUnique.intro x
-      · -- Existencia de un conjunto vacío
-        exact hx
+      · exact hx
       · -- Unicidad del conjunto vacío
         intro y hy_empty
         apply (ExtSet y x)
         intro z
         constructor
-        . -- Dirección ->
+        · -- Dirección ->
           intro hz_in_y
           exfalso
           exact hy_empty z hz_in_y
-        . -- Dirección <-
+        · -- Dirección <-
           intro hz_in_x
           exfalso
           exact hx z hz_in_x
 
     @[simp]
     noncomputable def EmptySet : U :=
-      ExistsUniqueEmptySet.choose
+      ExistsUnique.choose ExistsUniqueEmptySet
 
     @[simp]
     theorem EmptySet_is_empty : ∀ (y : U), y ∉ EmptySet := by
       intro y
-      exact ExistsUniqueEmptySet.choose_spec y
+      exact (ExistsUnique.choose_spec ExistsUniqueEmptySet) y
 
     @[simp]
     theorem EmptySet_unique : ∀ (x : U), (∀ (y : U), y ∉ x) → (x = EmptySet) := by

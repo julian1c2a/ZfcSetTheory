@@ -22,38 +22,36 @@ namespace SetUniverse
     /-! ### Teorema de Existencia Única para el Axioma de Pares ### -/
     @[simp]
     theorem PairingUniqueSet (x y : U) :
-    ExistsUnique fun (z : U) => ∀ (w : U), w ∈ z ↔ (w = x ∨ w = y)
+    ∃! z, ∀ w : U, w ∈ z ↔ (w = x ∨ w = y)
       := by
-    apply ExistsUnique.intro (choose (Pairing x y))
-    · -- Existencia del conjunto especificado por el Axioma de Pares
-      exact choose_spec (Pairing x y)
+    obtain ⟨z, hz⟩ := Pairing x y
+    apply ExistsUnique.intro z
+    · exact hz
     · -- Unicidad del conjunto especificado por el Axioma de Pares
-      intro z hz_pairing
-      apply (ExtSet z (choose (Pairing x y)))
+      intro z' hz_pairing
+      apply (ExtSet z' z)
       intro w
       constructor
       · -- Dirección ->
-        intro hw_in_z
+        intro hw_in_z'
         have h := hz_pairing w
-        have h_spec := choose_spec (Pairing x y)
-        exact (h_spec w).mpr (h.mp hw_in_z)
+        exact (hz w).mpr (h.mp hw_in_z')
       · -- Dirección <-
-        intro hw_in_pairing
-        have h := choose_spec (Pairing x y)
-        have h_w_in_x_or_y : w = x ∨ w = y := (h w).mp hw_in_pairing
+        intro hw_in_z
+        have h_w_in_x_or_y : w = x ∨ w = y := (hz w).mp hw_in_z
         exact (hz_pairing w).mpr h_w_in_x_or_y
 
     /-! ### Definición del conjunto especificado por el Axioma de Pares ### -/
     @[simp]
     noncomputable def PairSet (x y : U) : U :=
-    choose (PairingUniqueSet x y)
+    (PairingUniqueSet x y).choose
 
     @[simp]
     theorem PairSet_is_specified (x y : U) :
     ∀ (z : U), z ∈ PairSet x y ↔ (z = x ∨ z = y)
       := by
     intro z
-    exact (choose_spec (PairingUniqueSet x y)).1 z
+    exact (PairingUniqueSet x y).choose_spec z
 
     notation " { " x ", " y " } " => PairSet x y
 
