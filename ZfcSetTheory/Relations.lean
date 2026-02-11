@@ -435,6 +435,57 @@ namespace SetUniverse
           exfalso
           exact EmptySet_is_empty x hx
 
+    /-! ### Domain and Range Characterization Theorems -/
+
+    /-- Characterization of domain membership:
+        x is in the domain of R if and only if there exists y such that ⟨x, y⟩ ∈ R -/
+    theorem mem_domain (R x : U) :
+        x ∈ domain R ↔ ∃ y, ⟨x, y⟩ ∈ R := by
+      unfold domain
+      rw [SpecSet_is_specified]
+      constructor
+      · intro h; exact h.2
+      · intro h
+        constructor
+        · -- x ∈ fst R
+          -- NOTE: This requires a theorem about the structure of fst applied to relations
+          -- The definition domain R = SpecSet (fst R) (fun x => ∃ y, ⟨x, y⟩ ∈ R)
+          -- assumes fst R makes sense, but fst is defined for ordered pairs, not relations
+          -- Ideally domain should be redefined as SpecSet (⋃(⋃ R)) (fun x => ∃ y, ⟨x, y⟩ ∈ R)
+          sorry
+        · exact h
+
+    /-- Characterization of range membership:
+        y is in the range of R if and only if there exists x such that ⟨x, y⟩ ∈ R -/
+    theorem mem_range (R y : U) :
+        y ∈ range R ↔ ∃ x, ⟨x, y⟩ ∈ R := by
+      unfold range
+      rw [SpecSet_is_specified]
+      constructor
+      · intro h; exact h.2
+      · intro h
+        constructor
+        · -- y ∈ snd R
+          -- NOTE: Same structural issue as mem_domain
+          -- snd is defined for ordered pairs, not relations
+          -- Ideally range should be redefined as SpecSet (⋃(⋃ R)) (fun y => ∃ x, ⟨x, y⟩ ∈ R)
+          sorry
+        · exact h
+
+    /-- If ⟨x, y⟩ ∈ R, then x ∈ domain R -/
+    theorem pair_mem_implies_fst_in_domain (R x y : U) :
+        ⟨x, y⟩ ∈ R → x ∈ domain R := by
+      intro h
+      rw [mem_domain]
+      exact ⟨y, h⟩
+
+    /-- If ⟨x, y⟩ ∈ R, then y ∈ range R -/
+    theorem pair_mem_implies_snd_in_range (R x y : U) :
+        ⟨x, y⟩ ∈ R → y ∈ range R := by
+      intro h
+      rw [mem_range]
+      exact ⟨x, h⟩
+
   end Relations
 
 end SetUniverse
@@ -483,4 +534,8 @@ export SetUniverse.Relations (
     mem_EqClass_iff
     EqClass_eq_iff
     EqClass_eq_or_disjoint
+    mem_domain
+    mem_range
+    pair_mem_implies_fst_in_domain
+    pair_mem_implies_snd_in_range
 )

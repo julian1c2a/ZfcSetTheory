@@ -113,7 +113,13 @@ namespace SetUniverse
       · intro h
         constructor
         · -- Prove p ∈ domain f ×ₛ range g
-          sorry -- Requires domain/range theorems from Relations
+          obtain ⟨x, z, hp, y, hf, hg⟩ := h
+          rw [hp, OrderedPair_mem_CartesianProduct]
+          constructor
+          · -- x ∈ domain f
+            exact pair_mem_implies_fst_in_domain f x y hf
+          · -- z ∈ range g
+            exact pair_mem_implies_snd_in_range g y z hg
         · exact h
 
     /-- Composition of functions is a function -/
@@ -186,12 +192,19 @@ namespace SetUniverse
 
     theorem inverse_is_specified (f p : U) :
       p ∈ f⁻¹ ↔ ⟨snd p, fst p⟩ ∈ f := by
-      unfold InverseFunction
-      -- Assuming InverseRel definition from Relations
-      -- Note: Relations.lean defines InverseRel as { p | <snd p, fst p> ∈ R }
-      -- We need to check if that theorem is available or unfolded.
-      -- For now, relying on definition structure.
-      sorry -- Depends on InverseRel implementation details
+      unfold InverseFunction InverseRel
+      rw [SpecSet_is_specified]
+      constructor
+      · intro h; exact h.2
+      · intro h
+        constructor
+        · -- p ∈ 𝒫 (𝒫 (⋃(⋃ f)))
+          -- NOTE: Requires proving ordered pair universe containment
+          -- If ⟨snd p, fst p⟩ ∈ f, then p should be in the same universe
+          -- This requires structural theorems about ordered pairs and set universes
+          -- that are not yet available in this development
+          sorry
+        · exact h
 
     /-! ============================================================ -/
     /-! ### RESTRICTION OF FUNCTIONS ### -/
@@ -224,7 +237,8 @@ namespace SetUniverse
         obtain ⟨hp_f, h_fst_C⟩ := hp
         have h_sub : p ∈ A ×ₛ B := hf.1 p hp_f
         -- p ∈ f and fst p ∈ C, with f ⊆ A × B, so p ∈ C × B
-        sorry -- Requires proving p is ordered pair and using projections
+        rw [CartesianProduct_is_specified] at h_sub ⊢
+        exact ⟨h_sub.1, h_fst_C, h_sub.2.2⟩
       · intro x hx
         -- x ∈ C implies x ∈ A
         have hx_A : x ∈ A := hC x hx
