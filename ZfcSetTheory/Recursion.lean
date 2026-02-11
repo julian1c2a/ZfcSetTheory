@@ -13,9 +13,6 @@
   - `Omega_is_inductive`: ω es un conjunto inductivo.
   - `Omega_subset_all_inductive`: ω es subconjunto de cualquier conjunto inductivo.
   - `induction_principle`: El Principio de Inducción Matemática para ω.
-  - `Nat_iff_mem_Omega`: Caracterización completa de los naturales en términos de ω.
-  - `strong_induction_principle`: Principio de inducción fuerte sobre ω.
-  - Propiedades estructurales: transitividad, orden total, infinitud de ω.
 -/
 
 import Init.Classical
@@ -58,16 +55,11 @@ namespace SetUniverse
     /-! ============================================================ -/
 
     /-!
-      **AXIOMA DE INFINITO**: Existe un conjunto I tal que:
+      Existe un conjunto I tal que:
       1. ∅ ∈ I
       2. ∀ x ∈ I, σ(x) ∈ I
 
       Es decir, existe un conjunto inductivo.
-
-      **Justificación filosófica**: Los axiomas anteriores de ZFC
-      permiten construir conjuntos finitos (usando Existencia, Pairing, Union, PowerSet).
-      Sin embargo, no garantizan la existencia de conjuntos infinitos.
-      Este axioma afirma la existencia del infinito actual (no potencial).
     -/
     axiom ExistsInductiveSet : ∃ (I : U), isInductive I
 
@@ -76,39 +68,24 @@ namespace SetUniverse
     /-! ============================================================ -/
 
     /-!
-      **ESTRATEGIA DE CONSTRUCCIÓN**:
+      Definimos ω como la intersección de todos los conjuntos inductivos.
+      Técnicamente, para usar el esquema de especificación, tomamos un conjunto
+      inductivo I₀ (dado por el axioma) y definimos ω como la intersección de
+      todos los subconjuntos inductivos de I₀.
 
-      Queremos definir ω como la intersección de todos los conjuntos inductivos:
-        ω = ⋂ {I | isInductive I}
-
-      **Problema técnico**: No podemos formar directamente "el conjunto de todos
-      los conjuntos inductivos" (violaría el esquema de especificación).
-
-      **Solución**: Usamos un conjunto inductivo testigo I₀ (garantizado por el axioma)
-      y definimos:
-        ω = {x ∈ I₀ | ∀J ⊆ I₀, isInductive J → x ∈ J}
-
-      **Observación clave**: Este conjunto NO depende de la elección de I₀.
-      Cualquier conjunto inductivo contiene a ω, por lo que ω es intrínseco.
+      Luego probamos que este conjunto no depende de la elección de I₀.
     -/
 
-    /-- Selección de un conjunto inductivo testigo del axioma -/
+    /-- Selección de un conjunto inductivo testigo -/
     noncomputable def WitnessInductiveSet : U := ExistsInductiveSet.choose
 
-    /-- El conjunto testigo es efectivamente inductivo (por el axioma) -/
-    theorem Witness_is_inductive : isInductive WitnessInductiveSet :=
-      ExistsInductiveSet.choose_spec
+    theorem Witness_is_inductive : isInductive (WitnessInductiveSet : U) := by
+      exact ExistsInductiveSet.choose_spec
 
     /--
-      **DEFINICIÓN DE ω**: El conjunto de todos los números naturales.
-
-      **Def formal**: ω = {x ∈ Witness | ∀J, (J ⊆ Witness ∧ isInductive J) → x ∈ J}
-
-      Es decir, ω contiene exactamente aquellos elementos que están en
-      TODOS los subconjuntos inductivos del testigo.
-
-      **Interpretación**: ω es el menor conjunto inductivo, la intersección
-      de todos los conjuntos inductivos.
+      Definición de ω: La intersección de todos los subconjuntos inductivos
+      del conjunto testigo.
+      ω = { x ∈ Witness | ∀ J, (J ⊆ Witness ∧ isInductive J) → x ∈ J }
     -/
     noncomputable def Omega : U :=
       SpecSet WitnessInductiveSet (fun x =>
@@ -116,63 +93,73 @@ namespace SetUniverse
 
     notation "ω" => Omega
 
-    /-! ============================================================ -/
-    /-! ### PROPIEDADES BÁSICAS DE ω ### -/
-    /-! ============================================================ -/
+    /-! ### Propiedades de ω ### -/
 
-    /-- ω es un subconjunto del testigo inductivo (propiedad técnica) -/
-    theorem Omega_subset_witness : ω ⊆ WitnessInductiveSet := by
+    /-- ω es un subconjunto del testigo inductivo -/
+    theorem Omega_subset_witness : Omega ⊆ (WitnessInductiveSet : U) := by
       intro x hx
       unfold Omega at hx
       rw [SpecSet_is_specified] at hx
       exact hx.1
 
-    /-- **TEOREMA**: El conjunto vacío (cero) pertenece a ω -/
+    /-- ω contiene al vacío (0) -/
     theorem zero_in_Omega : (∅ : U) ∈ ω := by
-      unfold Omega
       rw [SpecSet_is_specified]
       constructor
-      · exact Witness_is_inductive.1
-      · intro J _ hJ_ind
+      · -- ∅ ∈ Witness
+        exact Witness_is_inductive.1
+      · -- Para todo subconjunto inductivo J, ∅ ∈ J
+        intro J _ hJ_ind
         exact hJ_ind.1
 
-    /-- **TEOREMA**: ω es cerrado bajo la función sucesor -/
+    /-- ω es cerrado bajo sucesor -/
     theorem succ_in_Omega (n : U) (hn : n ∈ ω) : σ n ∈ ω := by
-      unfold Omega at hn ⊢
       rw [SpecSet_is_specified] at hn ⊢
       constructor
-      · apply Witness_is_inductive.2
+      · -- σ(n) ∈ Witness
+        apply Witness_is_inductive.2
         exact hn.1
-      · intro J hJ_sub hJ_ind
+      · -- Para todo subconjunto inductivo J...
+        intro J hJ_sub hJ_ind
+        -- Sabemos que n ∈ J
         have hn_in_J : n ∈ J := hn.2 J hJ_sub hJ_ind
+        -- Como J es inductivo, σ(n) ∈ J
         exact hJ_ind.2 n hn_in_J
 
-    /-- **TEOREMA FUNDAMENTAL**: ω es un conjunto inductivo -/
+    /-- Teorema: ω es un conjunto inductivo -/
     theorem Omega_is_inductive : isInductive ω :=
       ⟨zero_in_Omega, succ_in_Omega⟩
 
-    /-- **TEOREMA DE MINIMALIDAD**: ω es subconjunto de CUALQUIER conjunto inductivo -/
+    /-- Teorema: ω es subconjunto de CUALQUIER conjunto inductivo K.
+        (No solo de los subconjuntos del testigo).
+        Esta es la propiedad de minimalidad de ω. -/
     theorem Omega_subset_all_inductive (K : U) (hK : isInductive K) : ω ⊆ K := by
       intro x hx
+      -- Sea I el testigo. Consideramos L = I ∩ K.
       let I := WitnessInductiveSet
       let L := I ∩ K
 
+      -- L es inductivo
       have hL_ind : isInductive L := by
         constructor
-        · rw [BinInter_is_specified]
+        · -- 0 ∈ I ∩ K
+          rw [BinInter_is_specified]
           exact ⟨Witness_is_inductive.1, hK.1⟩
-        · intro y hy
+        · -- Si y ∈ L, entonces σ(y) ∈ L
+          intro y hy
           rw [BinInter_is_specified] at hy ⊢
           constructor
           · exact Witness_is_inductive.2 y hy.1
           · exact hK.2 y hy.2
 
+      -- L es subconjunto de I
       have hL_sub_I : L ⊆ I := BinInter_subset I K |>.1
 
-      unfold Omega at hx
+      -- Por definición de ω, x debe estar en L (porque L es inductivo y L ⊆ I)
       rw [SpecSet_is_specified] at hx
       have hx_in_L : x ∈ L := hx.2 L hL_sub_I hL_ind
 
+      -- Si x ∈ L, entonces x ∈ K
       rw [BinInter_is_specified] at hx_in_L
       exact hx_in_L.2
 
@@ -180,40 +167,36 @@ namespace SetUniverse
     /-! ### PRINCIPIO DE INDUCCIÓN MATEMÁTICA ### -/
     /-! ============================================================ -/
 
-    /--
-      **PRINCIPIO DE INDUCCIÓN** (forma débil/clásica).
-
+    /-!
       Si un conjunto S ⊆ ω satisface:
-      1. 0 ∈ S (caso base)
-      2. ∀n ∈ S, σ(n) ∈ S (paso inductivo)
+      1. 0 ∈ S
+      2. ∀ n, n ∈ S → σ(n) ∈ S
       Entonces S = ω.
-
-      **Interpretación**: Para probar que una propiedad P(n) vale para todo n ∈ ω,
-      basta probar P(0) y que P(n) implica P(σ(n)).
     -/
     theorem induction_principle (S : U) (hS_sub : S ⊆ ω)
       (h_zero : (∅ : U) ∈ S)
       (h_succ : ∀ n, n ∈ S → σ n ∈ S) :
       S = ω := by
       apply ExtSet_wc
-      · exact hS_sub
-      · have hS_ind : isInductive S := ⟨h_zero, h_succ⟩
+      · -- S ⊆ ω (hipótesis)
+        exact hS_sub
+      · -- ω ⊆ S
+        -- S es un conjunto inductivo (por hipótesis h_zero y h_succ)
+        have hS_ind : isInductive S := ⟨h_zero, h_succ⟩
+        -- ω es el conjunto inductivo más pequeño
         exact Omega_subset_all_inductive S hS_ind
 
-    /-! ============================================================ -/
-    /-! ### CARACTERIZACIÓN DE NATURALES ### -/
-    /-! ============================================================ -/
+    /-! ### Caracterización de Naturales en términos de ω ### -/
 
     /--
-      **TEOREMA**: Todo elemento de ω es un número natural (von Neumann).
-
-      **Enunciado**: n ∈ ω → isNat n
-
-      Conecta el conjunto ω con la definición estructural de isNat.
+      Todo elemento de ω es un número natural (en el sentido de von Neumann: isNat).
+      Esto conecta nuestra definición estructural anterior con el conjunto ω.
     -/
     theorem mem_Omega_is_Nat (n : U) (hn : n ∈ ω) : isNat n := by
-      let S := SpecSet (ω) (fun x : U => isNat x)
+      -- Definimos S = {x ∈ ω | isNat x}
+      let S := SpecSet ω (fun x => isNat x)
 
+      -- Demostramos que S es inductivo
       have h_zero : (∅ : U) ∈ S := by
         rw [SpecSet_is_specified]
         exact ⟨zero_in_Omega, zero_is_nat⟩
@@ -225,22 +208,23 @@ namespace SetUniverse
         · exact succ_in_Omega k hk.1
         · exact nat_successor_is_nat k hk.2
 
+      -- Por inducción, S = ω
       have hS_eq_Omega : S = ω := by
         apply induction_principle S
         · intro z hz; rw [SpecSet_is_specified] at hz; exact hz.1
         · exact h_zero
         · exact h_succ
 
+      -- Por tanto, si n ∈ ω, entonces n ∈ S, lo que implica isNat n
       have hn_in_S : n ∈ S := by rw [hS_eq_Omega]; exact hn
       rw [SpecSet_is_specified] at hn_in_S
       exact hn_in_S.2
 
-    /-- **TEOREMA**: Todo número natural (von Neumann) pertenece a ω -/
+    /-- Todo número natural (von Neumann) pertenece a ω -/
     theorem Nat_in_Omega (n : U) (hn : isNat n) : n ∈ ω := by
-      have : isInductive ω := Omega_is_inductive
-      exact nat_in_inductive_set n hn ω this
+      exact nat_in_inductive_set n hn ω Omega_is_inductive
 
-    /-- **CARACTERIZACIÓN COMPLETA**: n es natural ↔ n ∈ ω -/
+    /-- Caracterización completa: n es natural ↔ n ∈ ω -/
     theorem Nat_iff_mem_Omega (n : U) : isNat n ↔ n ∈ ω :=
       ⟨Nat_in_Omega n, mem_Omega_is_Nat n⟩
 
@@ -248,23 +232,11 @@ namespace SetUniverse
     /-! ### INDUCCIÓN FUERTE ### -/
     /-! ============================================================ -/
 
-    /--
-      **PRINCIPIO DE INDUCCIÓN FUERTE** (también llamado inducción completa).
-
-      Si S ⊆ ω sat isface:
-      ∀n ∈ ω, (∀m ∈ n, m ∈ S) → n ∈ S
-      Entonces S = ω.
-
-      **Diferencia con inducción débil**:
-      - Inducción débil: asume P(n) para probar P(σ(n))
-      - Inducción fuerte: asume P(m) para TODO m ∈ n para probar P(n)
-
-      **Ventaja**: No necesita caso base explícito. El caso n = ∅ es vacuamente verdadero.
-    -/
+    /-- **Principio de Inducción Fuerte** (inducción completa). -/
     theorem strong_induction_principle (S : U) (hS_sub : S ⊆ ω)
       (h_strong : ∀ n, n ∈ ω → (∀ m, m ∈ n → m ∈ S) → n ∈ S) :
       S = ω := by
-      let T := SpecSet (ω) (fun n => ∀ m, m ∈ n → m ∈ S)
+      let T := SpecSet ω (fun n => ∀ m, m ∈ n → m ∈ S)
 
       have hT_sub_S : T ⊆ S := by
         intro n hn
@@ -290,8 +262,7 @@ namespace SetUniverse
           | inl hm_in_k => exact hk.2 m hm_in_k
           | inr hm_eq_k =>
             rw [hm_eq_k]
-            have : k ∈ T := ⟨hk.1, hk.2⟩
-            exact hT_sub_S k this
+            exact hT_sub_S k ⟨hk.1, hk.2⟩
 
       have hT_eq_omega : T = ω := by
         apply induction_principle T
@@ -308,32 +279,26 @@ namespace SetUniverse
         exact hT_sub_S x hx_in_T
 
     /-! ============================================================ -/
-    /-! ### PROPIEDADES ESTRUCTURALES DE ω ### -/
+    /-! ### PROPIEDADES ESTRUCTURALES ### -/
     /-! ============================================================ -/
 
-    /-- **TEOREMA**: ω es un conjunto transitivo -/
+    /-- ω es un conjunto transitivo -/
     theorem Omega_is_transitive : isTransitiveSet ω := by
-      intro n hn
-      -- Queremos probar n ⊆ ω
-      intro x hx_in_n
-      -- Como n ∈ ω, n es natural
+      intro n hn x hx_in_n
       have hn_nat : isNat n := mem_Omega_is_Nat n hn
-      -- Como x ∈ n y n es natural, x es natural
       have hx_nat : isNat x := nat_element_is_nat n x hn_nat hx_in_n
-      -- Como x es natural, x ∈ ω
       exact Nat_in_Omega x hx_nat
 
-    /-- **TEOREMA**: Todo elemento de ω es transitivo -/
+    /-- Todo elemento de ω es transitivo -/
     theorem Omega_element_is_transitive (n : U) (hn : n ∈ ω) :
       isTransitiveSet n := by
       have hn_nat : isNat n := mem_Omega_is_Nat n hn
       exact hn_nat.1
 
-    /-- **TEOREMA**: ω tiene un orden total estricto (membresía) -/
+    /-- ω tiene un orden total estricto (membresía) -/
     theorem Omega_has_total_order : isTotalStrictOrderMembershipGuided ω := by
-      have h_trans := Omega_is_transitive
       constructor
-      · exact h_trans
+      · exact Omega_is_transitive
       · constructor
         · intro n m hn hm hnm
           have hn_nat : isNat n := mem_Omega_is_Nat n hn
@@ -344,7 +309,7 @@ namespace SetUniverse
           have hm_nat : isNat m := mem_Omega_is_Nat m hm
           exact nat_trichotomy n m hn_nat hm_nat
 
-    /-- **TEOREMA**: ω NO tiene elemento máximo (infinitud de ω) -/
+    /-- ω NO tiene elemento máximo (infinitud) -/
     theorem Omega_no_maximum : ∀ n : U, n ∈ ω → ∃ m : U, m ∈ ω ∧ n ∈ m := by
       intro n hn
       exists (σ n)
