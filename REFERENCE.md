@@ -16,7 +16,7 @@
 | `Union.lean` | `SetUniverse.UnionAxiom` | `Prelim`, `Extension`, `Existence`, `Specification`, `Pairing` | ✅ Completo |
 | `PowerSet.lean` | `SetUniverse.PowerSetAxiom` | `Prelim`, `Extension`, `Existence`, `Specification`, `Pairing`, `Union` | ✅ Completo |
 | `PowerSetAlgebra.lean` | `SetUniverse.PowerSetAlgebra` | `PowerSet`, `BooleanAlgebra` + anteriores | ✅ Completo |
-| `OrderedPair.lean` | `SetUniverse.OrderedPairExtensions` | Todos los anteriores + `PowerSet` | 🔶 Parcial |
+| `OrderedPair.lean` | `SetUniverse.OrderedPairExtensions` | Todos los anteriores + `PowerSet` | ✅ Completo |
 | `CartesianProduct.lean` | `SetUniverse.CartesianProduct` | `OrderedPair` + anteriores | 🔶 Parcial |
 | `Relations.lean` | `SetUniverse.Relations` | `CartesianProduct` + anteriores | ✅ Completo |
 | `Functions.lean` | `SetUniverse.Functions` | `CartesianProduct`, `Relations` + anteriores | 🔶 Parcial |
@@ -1093,6 +1093,59 @@ notation:50 lhs:51 " ⊂ " rhs:51 => (lhs ⊆ rhs ∧ lhs ≠ rhs)
 ```
 
 **Dependencias**: `subseteq`
+
+### 3.19 OrderedPair.lean (Extensiones)
+
+*Nota: Las definiciones principales del par ordenado están en `Pairing.lean`. Este módulo agrega teoremas adicionales.*
+
+#### Igualdad de Pares Ordenados (Directa) (OrderedPair_eq_of)
+
+**Ubicación**: `OrderedPair.lean`, línea 25  
+**Orden**: 1ª definición adicional
+
+**Enunciado Matemático**: Si a = c y b = d, entonces ⟨a,b⟩ = ⟨c,d⟩.
+
+**Firma Lean4**:
+
+```lean
+theorem OrderedPair_eq_of (a b c d : U) :
+  (a = c ∧ b = d) → ⟨a, b⟩ = ⟨c, d⟩
+```
+
+**Dependencias**: `OrderedPair`
+
+#### Caracterización Completa de Igualdad (OrderedPair_eq_iff)
+
+**Ubicación**: `OrderedPair.lean`, línea 32  
+**Orden**: 2ª definición adicional
+
+**Enunciado Matemático**: ⟨a,b⟩ = ⟨c,d⟩ si y solo si a = c y b = d.
+
+**Firma Lean4**:
+
+```lean
+theorem OrderedPair_eq_iff (a b c d : U) :
+  ⟨a, b⟩ = ⟨c, d⟩ ↔ (a = c ∧ b = d)
+```
+
+**Dependencias**: `OrderedPair`, `Eq_of_OrderedPairs_given_projections`, `OrderedPair_eq_of`
+
+#### Pertenencia en Conjunto Potencia (OrderedPair_in_PowerSet)
+
+**Ubicación**: `OrderedPair.lean`, línea 42  
+**Orden**: 3ª definición adicional
+
+**Enunciado Matemático**: Si a ∈ A y b ∈ B, entonces ⟨a,b⟩ ∈ 𝒫(𝒫(A ∪ B)).
+
+**Firma Lean4**:
+
+```lean
+theorem OrderedPair_in_PowerSet (a b A B : U)
+  (ha : a ∈ A) (hb : b ∈ B) :
+    ⟨a, b⟩ ∈ 𝒫 (𝒫 (A ∪ B))
+```
+
+**Dependencias**: `OrderedPair`, `PowerSet`, `BinUnion`, `Singleton`, `PairSet`
 
 ## 4. Teoremas Principales por Módulo
 
@@ -2326,6 +2379,57 @@ theorem strict_subset_nonempty (x y : U) :
 
 **Dependencias**: `subset`, `order_antisymmetric`, `Classical.byContradiction`
 
+### 4.14 OrderedPair.lean (Extensiones)
+
+#### Igualdad Directa de Pares Ordenados
+
+**Ubicación**: `OrderedPair.lean`, línea 25  
+**Orden**: 1º teorema adicional
+
+**Enunciado Matemático**: Si a = c y b = d, entonces ⟨a,b⟩ = ⟨c,d⟩.
+
+**Firma Lean4**:
+
+```lean
+theorem OrderedPair_eq_of (a b c d : U) :
+  (a = c ∧ b = d) → ⟨a, b⟩ = ⟨c, d⟩
+```
+
+**Dependencias**: `OrderedPair`
+
+#### Caracterización Bidireccional de Igualdad
+
+**Ubicación**: `OrderedPair.lean`, línea 32  
+**Orden**: 2º teorema adicional (TEOREMA CENTRAL)
+
+**Enunciado Matemático**: ⟨a,b⟩ = ⟨c,d⟩ si y solo si a = c y b = d.
+
+**Firma Lean4**:
+
+```lean
+theorem OrderedPair_eq_iff (a b c d : U) :
+  ⟨a, b⟩ = ⟨c, d⟩ ↔ (a = c ∧ b = d)
+```
+
+**Dependencias**: `OrderedPair`, `Eq_of_OrderedPairs_given_projections`, `OrderedPair_eq_of`
+
+#### Inclusión en Conjunto Potencia Doble
+
+**Ubicación**: `OrderedPair.lean`, línea 42  
+**Orden**: 3º teorema adicional
+
+**Enunciado Matemático**: Si a ∈ A y b ∈ B, entonces ⟨a,b⟩ ∈ 𝒫(𝒫(A ∪ B)).
+
+**Firma Lean4**:
+
+```lean
+theorem OrderedPair_in_PowerSet (a b A B : U)
+  (ha : a ∈ A) (hb : b ∈ B) :
+    ⟨a, b⟩ ∈ 𝒫 (𝒫 (A ∪ B))
+```
+
+**Dependencias**: `OrderedPair`, `PowerSet`, `BinUnion`, `Singleton`, `PairSet`
+
 ## 5. Notación y Sintaxis
 
 ### 5.1 Operadores Básicos
@@ -2591,6 +2695,16 @@ export SetStrictOrder (
 )
 ```
 
+### 6.11 OrderedPair.lean (Extensiones)
+
+```lean
+export OrderedPairExtensions (
+  OrderedPair_eq_of
+  OrderedPair_eq_iff
+  OrderedPair_in_PowerSet
+)
+```
+
 ## 7. Estado de Proyección por Módulo
 
 ### 7.1 Leyenda de Estados
@@ -2619,12 +2733,12 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `GeneralizedDistributive.lean` - Leyes distributivas generalizadas para familias de conjuntos
 - `SetOrder.lean` - Teoría de órdenes parciales, cotas, supremos e ínfimos
 - `SetStrictOrder.lean` - Teoría de órdenes estrictos, irreflexividad, asimetría y transitividad
+- `OrderedPair.lean` - Extensiones del par ordenado de Kuratowski, igualdad y propiedades
 
 ### 7.3 Archivos Parcialmente Proyectados
 
 Los siguientes archivos tienen **documentación parcial** (solo definiciones/teoremas principales):
 
-- `OrderedPair.lean` - Solo proyecciones fst/snd y igualdad de pares
 - `CartesianProduct.lean` - Solo definición principal y caracterización
 - `Functions.lean` - Solo definiciones básicas y Cantor-Schröder-Bernstein
 - `AtomicBooleanAlgebra.lean` - Solo definición de átomo y teoremas principales
@@ -2638,6 +2752,6 @@ Los siguientes archivos **no están documentados** en este REFERENCE.md:
 
 ---
 
-*Última actualización: 11 de febrero de 2026 - Agregado módulo SetStrictOrder.lean*
+*Última actualización: 11 de febrero de 2026 - Completado módulo OrderedPair.lean*
 
 *Este documento contiene únicamente construcciones y teoremas que están completamente implementados y demostrados en el código Lean 4. La proyección se actualiza conforme se agregan archivos al contexto de trabajo.*
