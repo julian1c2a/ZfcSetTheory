@@ -761,11 +761,7 @@ namespace SetUniverse
                 contradiction
             -- Como A ⊆ n y A ≠ ∅, y n es natural, A tiene máximo en n.
             obtain ⟨M, hM_in_A, hM_max⟩ := (hn_wo A hA_sub_n hA_nonempty).2
-            exists M
-            constructor
-            · exact hM_in_A
-            · -- El orden en n es el mismo que en σ(n) para elementos de n
-              exact hM_max
+            refine ⟨M, hM_in_A, hM_max⟩
 
         constructor
         · exact h_min
@@ -1062,7 +1058,9 @@ namespace SetUniverse
       · left; exact h_zero
       · right
         -- Como n ≠ ∅ y isNat n, n tiene un máximo M.
-        obtain ⟨_, _, hn_wo⟩ := hn
+        obtain ⟨hn_trans, hn_order, hn_wo⟩ := hn
+        -- Reconstruimos hn para usarlo después
+        have hn_reconstructed : isNat n := ⟨hn_trans, hn_order, hn_wo⟩
         obtain ⟨M, hM_in, hM_max⟩ := (hn_wo n (subseteq_reflexive n) h_zero).2
 
         -- Afirmamos que n = σ(M)
@@ -1082,7 +1080,7 @@ namespace SetUniverse
           cases hx with
           | inl hx_M =>
             -- x ∈ M y M ∈ n → x ∈ n (transitividad)
-            exact hn.1 M hM_in x hx_M
+            exact hn_trans M hM_in x hx_M
           | inr hx_eq =>
             rw [hx_eq]; exact hM_in
 
@@ -1105,7 +1103,9 @@ namespace SetUniverse
           exact False.elim (EmptySet_is_empty x hxS)
 
       · -- Si S no es vacío, tiene un mínimo m (porque n está bien ordenado).
-        obtain ⟨_, _, hn_wo⟩ := hn
+        obtain ⟨hn_trans, hn_order, hn_wo⟩ := hn
+        -- Reconstruimos hn para usarlo después
+        have hn_reconstructed : isNat n := ⟨hn_trans, hn_order, hn_wo⟩
         -- S ⊆ n
         have hS_sub : S ⊆ n := by
           intro z hz
@@ -1118,7 +1118,7 @@ namespace SetUniverse
         have hm_notin_I : m ∉ I := hm_in_S.2
 
         -- Analizamos qué es m: ¿0 o sucesor?
-        have hm_nat : isNat m := nat_element_is_nat n m hn hm_in_n
+        have hm_nat : isNat m := nat_element_is_nat n m hn_reconstructed hm_in_n
 
         -- Ahora usamos el teorema derivado
         have h_cases := nat_is_zero_or_succ m hm_nat
@@ -1133,7 +1133,7 @@ namespace SetUniverse
           -- Si m = σ(k), entonces k ∈ m.
           have hk_in_m : k ∈ m := by rw [hk_eq]; apply mem_successor_self
           -- Como m ∈ n y n es transitivo, k ∈ n.
-          have hk_in_n : k ∈ n := hn.1 m hm_in_n k hk_in_m
+          have hk_in_n : k ∈ n := hn_trans m hm_in_n k hk_in_m
 
           -- ¿Está k en S?
           -- Como k ∈ m y m es el mínimo de S, k NO puede estar en S.
@@ -1143,17 +1143,19 @@ namespace SetUniverse
             cases h_min with
             | inl h_eq =>
               -- k = m. Imposible porque k ∈ m (regularidad / irreflexividad)
-              rw [h_eq] at hk_in_m
+              -- h_eq : m = k, entonces después de rewrite tenemos m ∈ m
+              rw [←h_eq] at hk_in_m
               exact nat_not_mem_self m hm_nat hk_in_m
             | inr h_mem =>
               -- m ∈ k. Imposible porque k ∈ m (asimetría)
-              exact nat_mem_asymm m k hm_nat (nat_element_is_nat n k hn hk_in_n) h_mem hk_in_m
+              exact nat_mem_asymm m k hm_nat (nat_element_is_nat n k hn_reconstructed hk_in_n) h_mem hk_in_m
 
           -- Si k ∈ n pero k ∉ S, entonces k debe estar en I (por definición de S).
           have hk_in_I : k ∈ I := by
-            by_contra h_absurd
-            have h_in_S : k ∈ S := (SpecSet_is_specified n k (fun z => z ∉ I)).mpr ⟨hk_in_n, h_absurd⟩
-            exact hk_notin_S h_in_S
+            by_cases h_k_in_I : k ∈ I
+            · exact h_k_in_I
+            · have h_in_S : k ∈ S := (SpecSet_is_specified n k (fun z => z ∉ I)).mpr ⟨hk_in_n, h_k_in_I⟩
+              exact absurd h_in_S hk_notin_S
 
           -- Si k ∈ I, entonces σ(k) ∈ I (por ser I inductivo).
           have h_succ_in_I : σ k ∈ I := hI.2 k hk_in_I
