@@ -933,6 +933,51 @@ export Cardinality (
 )
 ```
 
+## 7. Estado de Proyección por Módulo
+
+### 7.1 Leyenda de Estados
+
+- ✅ **Completo**: Todas las definiciones, teoremas y exports están proyectados
+- 🔶 **Parcial**: Solo algunas definiciones/teoremas principales están proyectados
+- ❌ **No proyectado**: El archivo no está documentado en este REFERENCE.md
+
+### 7.2 Archivos Completamente Proyectados
+
+Los siguientes archivos están **completamente documentados** con todas sus definiciones, teoremas y exports:
+
+- `Prelim.lean` - ExistsUnique
+- `Extension.lean` - Extensionalidad, subconjuntos, disjunción
+- `Existence.lean` - Conjunto vacío
+- `Specification.lean` - Especificación, intersección, diferencia
+- `Pairing.lean` - Pares, singletons, pares ordenados
+- `Union.lean` - Uniones familiares y binarias
+- `PowerSet.lean` - Axioma y operaciones de conjunto potencia
+- `PowerSetAlgebra.lean` - Complementos y De Morgan
+- `Relations.lean` - Relaciones binarias y equivalencia
+- `BooleanAlgebra.lean` - Teoremas de álgebra booleana
+
+### 7.3 Archivos Parcialmente Proyectados
+
+Los siguientes archivos tienen **documentación parcial** (solo definiciones/teoremas principales):
+
+- `OrderedPair.lean` - Solo proyecciones fst/snd y igualdad de pares
+- `CartesianProduct.lean` - Solo definición principal y caracterización
+- `Functions.lean` - Solo definiciones básicas y Cantor-Schröder-Bernstein
+- `AtomicBooleanAlgebra.lean` - Solo definición de átomo y teoremas principales
+- `Cardinality.lean` - Solo conjunto diagonal y teorema de Cantor
+
+### 7.4 Archivos No Proyectados
+
+Los siguientes archivos **no están documentados** en este REFERENCE.md:
+
+- `NaturalNumbers.lean` - Números naturales y inducción
+- `Infinity.lean` - Axioma de infinito y conjunto ω
+- `GeneralizedDeMorgan.lean` - De Morgan para familias
+- `GeneralizedDistributive.lean` - Distributividad para familias
+- `SetOrder.lean` - Órdenes parciales y retículos
+- `SetStrictOrder.lean` - Órdenes estrictos
+- `Recursion.lean` - Definiciones recursivas
+
 ---
 
-*Este documento contiene únicamente construcciones y teoremas que están completamente implementados y demostrados en el código Lean 4.*
+*Este documento contiene únicamente construcciones y teoremas que están completamente implementados y demostrados en el código Lean 4. La proyección se actualiza conforme se agregan archivos al contexto de trabajo.*
