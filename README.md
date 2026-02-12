@@ -155,14 +155,12 @@ lake build
   - Analysis of 4 pending `sorry` with difficulty levels
   - Architecture and dependency hierarchies
   - Next steps with time estimates
+- **[REFERENCE.md](REFERENCE.md)** - 📖 **Complete technical reference** (4500+ lines)
+  - 18 fully documented modules with mathematical descriptions
+  - All definitions, theorems, and exports with Lean4 signatures
+  - Dependency tracking and namespace organization
 - [CHANGELOG.md](CHANGELOG.md) - Detailed change history
-- [NEXT_STEPS.md](NEXT_STEPS.md) - Next steps and pending tasks
-
-### Informes Técnicos
-
-- [COMPLETION_REPORT.md](COMPLETION_REPORT.md) - Reporte detallado del estado del proyecto
-- [DEPENDENCIES.md](DEPENDENCIES.md) - Diagrama de dependencias entre módulos
-- [BOOLEAN_ALGEBRA_PLAN.md](BOOLEAN_ALGEBRA_PLAN.md) - Plan para teoremas de álgebra booleana
+- [DEPENDENCIES.md](DEPENDENCIES.md) - Dependency diagrams and module relationships
 
 ## 📄 Licencia
 
@@ -174,4 +172,4 @@ Este proyecto está bajo la licencia MIT. Ver [LICENSE](LICENSE) para más detal
 
 ---
 
-*Última actualización: 7 de febrero de 2026*
+*Last update: February 12, 2026*
