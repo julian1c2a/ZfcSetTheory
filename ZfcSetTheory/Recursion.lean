@@ -70,6 +70,7 @@ namespace SetUniverse
         rw [OrderedPair_mem_CartesianProduct] at hp
         exact hp.1
       · intro hx
+        -- h.2 es ∀ x ∈ A, ∃! y, ...
         obtain ⟨y, hy⟩ := h.2 x hx
         rw [mem_domain]
         exists y
@@ -154,12 +155,12 @@ namespace SetUniverse
                 rw [mem_domain]; exists y; rw [←hp_eq]; exact hp
 
               -- Como dominio es σ(∅) = {∅}, tenemos x ∈ {∅}, así x = ∅
+              rw [h_dom1] at hx_dom
+              rw [successor_is_specified] at hx_dom
               have hx_eq_zero : x = ∅ := by
-                rw [h_dom1] at hx_dom
-                rw [successor_is_specified] at hx_dom
                 cases hx_dom with
-                | inl hx_in_empty => exact False.elim (EmptySet_is_empty x hx_in_empty)
-                | inr hx_eq => exact hx_eq
+                | inl h => exact False.elim (EmptySet_is_empty x h)
+                | inr h => exact h
 
               rw [hx_eq_zero] at hp_eq
 
@@ -170,6 +171,7 @@ namespace SetUniverse
                 have h_zero_mem : (∅ : U) ∈ σ (∅ : U) := by
                   rw [successor_is_specified]
                   right; rfl
+                -- Corrección: Llamamos a la unicidad con los argumentos
                 apply apply_eq f₁ (∅ : U) y (hfunc1.2 ∅ h_zero_mem)
                 rw [←hp_eq]; exact hp
 
@@ -201,16 +203,16 @@ namespace SetUniverse
 
               -- Como dominio es σ(∅) = {∅}, tenemos x ∈ {∅}, así x = ∅
               rw [h_dom2] at hx_dom
+              rw [successor_is_specified] at hx_dom
               have hx_eq_zero : x = ∅ := by
                 cases hx_dom with
-                | inl hx_in_empty => exact False.elim (EmptySet_is_empty x hx_in_empty)
-                | inr hx_eq => exact hx_eq
+                | inl h => exact False.elim (EmptySet_is_empty x h)
+                | inr h => exact h
 
               rw [hx_eq_zero] at hp_eq
 
               have hy_val : y = a := by
                 rw [←hval2]
-                -- Necesitamos ∃! y, ⟨∅, y⟩ ∈ f₂. Lo obtenemos de hfunc2.2 con ∅ ∈ σ ∅
                 have h_zero_mem : (∅ : U) ∈ σ (∅ : U) := by
                   rw [successor_is_specified]
                   right; rfl
@@ -224,9 +226,6 @@ namespace SetUniverse
                   rw [successor_is_specified]
                   right; rfl
                 apply apply_mem f₁ (∅ : U) (hfunc1.2 ∅ h_zero_mem)
-                rw [h_dom1]
-                rw [successor_is_specified]
-                right; rfl
 
               rw [←hp_eq] at h_in_f1
               exact h_in_f1
@@ -376,7 +375,8 @@ namespace SetUniverse
                 -- f₂(σ n) = g(f₂(n))
                 have h_val1 : y = apply g (apply f₁ n) := by
                    -- apply f₁ x = y. Para esto, necesitamos x ∈ dominio de f₁ (σ(σ n))
-                   have hx_in_domain : x ∈ σ (σ n) := by rw [hx_eq_succ]; exact hx_dom
+                   have hx_in_domain : x ∈ σ (σ n) := by rw [hx_eq_succ]; exact mem_successor_self (σ n)
+                   -- Corrección aquí: hf₁.1.2 x hx_in_domain
                    have h_unique := hf₁.1.2 x hx_in_domain
                    have h_app : apply f₁ x = y := apply_eq f₁ x y h_unique (by rw [←hp_eq]; exact hp_in_f1)
                    rw [hx_eq_succ] at h_app
@@ -404,18 +404,23 @@ namespace SetUniverse
 
                 -- ⟨x, f₂(x)⟩ ∈ f₂
                 have h_in_f2 : ⟨x, apply f₂ x⟩ ∈ f₂ := by
-                   apply apply_mem f₂ x hf₂.1.2.2
-                   -- x ∈ domain f₂ ?
-                   rw [function_domain_eq f₂ (σ succ_n) A hf₂.1]
-                   rw [hx_eq_succ]
-                   exact mem_successor_self succ_n
+                   have hx_in_dom : x ∈ domain f₂ := by
+                      rw [function_domain_eq f₂ (σ succ_n) A hf₂.1]
+                      rw [hx_eq_succ]; exact mem_successor_self succ_n
+                   apply apply_mem f₂ x (hf₂.1.2 x hx_in_dom)
 
-                rw [h_val1] at h_in_f2 -- y = g(f2(n)) ? No, h_val1 es y = g(...)
-                -- h_val1 : y = apply g (apply f₂ n)
-                -- h_val2_src : apply f₂ x = apply g (apply f₂ n)
-                -- => y = apply f₂ x
-                rw [h_val2_src] at h_in_f2
-                rw [←h_val1] at h_in_f2
+                -- Ahora y = f₂(x). Reemplazamos en h_val1
+                -- h_val1: y = g(f2(n))
+                -- h_val2_src: f2(x) = g(f2(n))
+                rw [h_val2_src] at h_val1 -- y = f2(x) ? No directamente.
+                -- Queremos demostrar y = f2(x)
+                -- Sabemos y = g(f1(n))
+                -- Sabemos f2(x) = g(f2(n))
+                -- Sabemos f1(n) = f2(n)
+                -- Entonces y = f2(x)
+                rw [←h_val2_src] at h_val1 -- y = f₂(x)
+
+                rw [h_val1]
                 rw [←hp_eq] at h_in_f2
                 exact h_in_f2
 
@@ -448,7 +453,9 @@ namespace SetUniverse
                 exact hp_restr.1
               | inr hx_eq_succ =>
                 have h_val2 : y = apply g (apply f₂ n) := by
-                   have h_app : apply f₂ x = y := apply_eq f₂ x y hf₂.1.2.2 (by rw [←hp_eq]; exact hp_in_f2)
+                   have hx_in_domain : x ∈ σ (σ n) := by rw [hx_eq_succ]; exact mem_successor_self (σ n)
+                   have h_unique := hf₂.1.2 x hx_in_domain
+                   have h_app : apply f₂ x = y := apply_eq f₂ x y h_unique (by rw [←hp_eq]; exact hp_in_f2)
                    rw [hx_eq_succ] at h_app; rw [←h_app]; exact hf₂.2.2 n (mem_successor_self n)
 
                 have hn_in_succ : n ∈ succ_n := mem_successor_self n
@@ -459,14 +466,15 @@ namespace SetUniverse
                 have h_val1_src : apply f₁ x = apply g (apply f₁ n) := by rw [hx_eq_succ]; exact hf₁.2.2 n (mem_successor_self n)
 
                 rw [←h_f2_n, h_f1_n] at h_val2 -- y = g(f₁(n))
+                rw [←h_val1_src] at h_val2
 
                 have h_in_f1 : ⟨x, apply f₁ x⟩ ∈ f₁ := by
-                   apply apply_mem f₁ x hf₁.1.2.2
-                   rw [function_domain_eq f₁ (σ succ_n) A hf₁.1, hx_eq_succ]
-                   exact mem_successor_self succ_n
+                   have hx_in_dom : x ∈ domain f₁ := by
+                      rw [function_domain_eq f₁ (σ succ_n) A hf₁.1]
+                      rw [hx_eq_succ]; exact mem_successor_self succ_n
+                   apply apply_mem f₁ x (hf₁.1.2 x hx_in_dom)
 
-                rw [h_val1_src] at h_in_f1
-                rw [←h_val2] at h_in_f1
+                rw [h_val2]
                 rw [←hp_eq] at h_in_f1
                 exact h_in_f1
 
