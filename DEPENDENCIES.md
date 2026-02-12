@@ -1,6 +1,6 @@
 # Diagrama de Dependencias - ZfcSetTheory
 
-**Última actualización:** 2026-02-12 13:52
+**Última actualización:** 2026-02-12 14:40
 
 ## Estructura General del Proyecto
 

@@ -65,16 +65,16 @@ Este proyecto desarrolla los axiomas fundamentales de ZFC de manera progresiva, 
 
 Definiciones **matemáticamente correctas** usando `⋃(⋃ R)`:
 
-- **`domain_rel R`**: Dominio de relación (completamente probado ✅)
-- **`range_rel R`**: Rango de relación (completamente probado ✅)
-- **`imag_rel R`**: Imagen de relación (alias de `range_rel`)
+- **`domain R`**: Dominio de relación (completamente probado ✅)
+- **`range R`**: Rango de relación (completamente probado ✅)
+- **`imag R`**: Imagen de relación (alias de `range`)
 
 Teoremas clave:
 
-- `mem_domain_rel`: `x ∈ domain_rel R ↔ ∃ y, ⟨x, y⟩ ∈ R`
-- `mem_range_rel`: `y ∈ range_rel R ↔ ∃ x, ⟨x, y⟩ ∈ R`
+- `mem_domain`: `x ∈ domain R ↔ ∃ y, ⟨x, y⟩ ∈ R`
+- `mem_range`: `y ∈ range R ↔ ∃ x, ⟨x, y⟩ ∈ R`
 
-*Nota*: Las definiciones legacy `domain`/`range` en `Pairing.lean` tienen limitaciones estructurales. Usar `domain_rel`/`range_rel` para desarrollos nuevos.
+*Nota*: Las definiciones legacy `domain`/`range` en `Pairing.lean` tienen limitaciones estructurales. Usar las definiciones de `Relations.lean` para desarrollos nuevos.
 
 ### Álgebras de Boole Atómicas
 
@@ -172,8 +172,8 @@ lake build
 
 ### Status and Development
 
-- **[CURRENT-STATUS-PROJECT.md](CURRENT-STATUS-PROJECT.md)** - ⭐ **Complete project status** (updated 2026-02-12)
-  - Recent achievements (ExistsUnique, domain_rel/range_rel, documentation projection)
+- **[CURRENT-STATUS-PROJECT.md](CURRENT-STATUS-PROJECT.md)** - ⭐ **Complete project status**  (updated 2026-02-12)
+  - Recent achievements (ExistsUnique, domain/range, documentation projection)
   - Analysis of 4 pending `sorry` with difficulty levels
   - Architecture and dependency hierarchies
   - Next steps with time estimates
@@ -222,4 +222,4 @@ Este proyecto se desarrolló basándose en las siguientes fuentes:
 
 ---
 
-*Last updated: 2026-02-12 13:52*
+*Last updated: 2026-02-12 14:40*

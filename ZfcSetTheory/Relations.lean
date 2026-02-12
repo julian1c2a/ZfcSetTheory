@@ -172,17 +172,17 @@ namespace SetUniverse
     /-! ### Domain and Range for Relations -/
 
     /-- Domain of a relation R (properly defined for relations):
-        domain_rel R = {x | ∃ y, ⟨x, y⟩ ∈ R} -/
-    noncomputable def domain_rel (R : U) : U :=
+        domain R = {x | ∃ y, ⟨x, y⟩ ∈ R} -/
+    noncomputable def domain (R : U) : U :=
       SpecSet (⋃(⋃ R)) (fun x => ∃ y, ⟨x, y⟩ ∈ R)
 
     /-- Range (image) of a relation R (properly defined for relations):
-        range_rel R = {y | ∃ x, ⟨x, y⟩ ∈ R} -/
-    noncomputable def range_rel (R : U) : U :=
+        range R = {y | ∃ x, ⟨x, y⟩ ∈ R} -/
+    noncomputable def range (R : U) : U :=
       SpecSet (⋃(⋃ R)) (fun y => ∃ x, ⟨x, y⟩ ∈ R)
 
-    /-- Alternative name for range_rel -/
-    noncomputable def imag_rel (R : U) : U := range_rel R
+    /-- Alternative name for range -/
+    noncomputable def imag (R : U) : U := range R
 
     /-! ### Theorems about Relation Properties -/
 
@@ -452,17 +452,17 @@ namespace SetUniverse
 
     /-! ### Domain and Range for Relations (Properly Defined) -/
 
-    /-- Characterization of domain_rel membership:
+    /-- Characterization of domain membership:
         x is in the domain of R if and only if there exists y such that ⟨x, y⟩ ∈ R -/
-    theorem mem_domain_rel (R x : U) :
-        x ∈ domain_rel R ↔ ∃ y, ⟨x, y⟩ ∈ R := by
-      unfold domain_rel
+    theorem mem_domain (R x : U) :
+        x ∈ domain R ↔ ∃ y, ⟨x, y⟩ ∈ R := by
+      unfold domain
       rw [SpecSet_is_specified]
       constructor
-      · -- Forward direction: x ∈ domain_rel R → ∃ y, ⟨x, y⟩ ∈ R
+      · -- Forward direction: x ∈ domain R → ∃ y, ⟨x, y⟩ ∈ R
         intro h
         exact h.2
-      · -- Backward direction: ∃ y, ⟨x, y⟩ ∈ R → x ∈ domain_rel R
+      · -- Backward direction: ∃ y, ⟨x, y⟩ ∈ R → x ∈ domain R
         intro h
         obtain ⟨y, hxy⟩ := h
         refine ⟨?_, ⟨y, hxy⟩⟩
@@ -472,17 +472,17 @@ namespace SetUniverse
         apply (UnionSet_is_specified R {x}).mpr
         exact ⟨⟨x, y⟩, hxy, (OrderedPair_is_specified x y {x}).mpr (Or.inl rfl)⟩
 
-    /-- Characterization of range_rel membership:
+    /-- Characterization of range membership:
         y is in the range of R if and only if there exists x such that ⟨x, y⟩ ∈ R -/
-    theorem mem_range_rel (R y : U) :
-        y ∈ range_rel R ↔ ∃ x, ⟨x, y⟩ ∈ R := by
-      unfold range_rel
+    theorem mem_range (R y : U) :
+        y ∈ range R ↔ ∃ x, ⟨x, y⟩ ∈ R := by
+      unfold range
       rw [SpecSet_is_specified]
       constructor
-      · -- Forward direction: y ∈ range_rel R → ∃ x, ⟨x, y⟩ ∈ R
+      · -- Forward direction: y ∈ range R → ∃ x, ⟨x, y⟩ ∈ R
         intro h
         exact h.2
-      · -- Backward direction: ∃ x, ⟨x, y⟩ ∈ R → y ∈ range_rel R
+      · -- Backward direction: ∃ x, ⟨x, y⟩ ∈ R → y ∈ range R
         intro h
         obtain ⟨x, hxy⟩ := h
         refine ⟨?_, ⟨x, hxy⟩⟩
@@ -492,31 +492,31 @@ namespace SetUniverse
         apply (UnionSet_is_specified R {x, y}).mpr
         exact ⟨⟨x, y⟩, hxy, (OrderedPair_is_specified x y {x, y}).mpr (Or.inr rfl)⟩
 
-    /-- Characterization of imag_rel (alias for range_rel) -/
-    theorem mem_imag_rel (R y : U) :
-        y ∈ imag_rel R ↔ ∃ x, ⟨x, y⟩ ∈ R := by
-      unfold imag_rel
-      exact mem_range_rel R y
+    /-- Characterization of imag (alias for range) -/
+    theorem mem_imag (R y : U) :
+        y ∈ imag R ↔ ∃ x, ⟨x, y⟩ ∈ R := by
+      unfold imag
+      exact mem_range R y
 
-    /-- If ⟨x, y⟩ ∈ R, then x ∈ domain_rel R -/
-    theorem pair_mem_implies_fst_in_domain_rel (R x y : U) :
-        ⟨x, y⟩ ∈ R → x ∈ domain_rel R := by
+    /-- If ⟨x, y⟩ ∈ R, then x ∈ domain R -/
+    theorem pair_mem_implies_fst_in_domain (R x y : U) :
+        ⟨x, y⟩ ∈ R → x ∈ domain R := by
       intro h
-      rw [mem_domain_rel]
+      rw [mem_domain]
       exact ⟨y, h⟩
 
-    /-- If ⟨x, y⟩ ∈ R, then y ∈ range_rel R -/
-    theorem pair_mem_implies_snd_in_range_rel (R x y : U) :
-        ⟨x, y⟩ ∈ R → y ∈ range_rel R := by
+    /-- If ⟨x, y⟩ ∈ R, then y ∈ range R -/
+    theorem pair_mem_implies_snd_in_range (R x y : U) :
+        ⟨x, y⟩ ∈ R → y ∈ range R := by
       intro h
-      rw [mem_range_rel]
+      rw [mem_range]
       exact ⟨x, h⟩
 
-    /-- If ⟨x, y⟩ ∈ R, then y ∈ imag_rel R -/
-    theorem pair_mem_implies_snd_in_imag_rel (R x y : U) :
-        ⟨x, y⟩ ∈ R → y ∈ imag_rel R := by
+    /-- If ⟨x, y⟩ ∈ R, then y ∈ imag R -/
+    theorem pair_mem_implies_snd_in_imag (R x y : U) :
+        ⟨x, y⟩ ∈ R → y ∈ imag R := by
       intro h
-      rw [mem_imag_rel]
+      rw [mem_imag]
       exact ⟨x, h⟩
 
   end Relations
@@ -567,13 +567,13 @@ export SetUniverse.Relations (
     mem_EqClass_iff
     EqClass_eq_iff
     EqClass_eq_or_disjoint
-    domain_rel
-    range_rel
-    imag_rel
-    mem_domain_rel
-    mem_range_rel
-    mem_imag_rel
-    pair_mem_implies_fst_in_domain_rel
-    pair_mem_implies_snd_in_range_rel
-    pair_mem_implies_snd_in_imag_rel
+    domain
+    range
+    imag
+    mem_domain
+    mem_range
+    mem_imag
+    pair_mem_implies_fst_in_domain
+    pair_mem_implies_snd_in_range
+    pair_mem_implies_snd_in_imag
 )

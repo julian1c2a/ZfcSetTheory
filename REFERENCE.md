@@ -1,6 +1,6 @@
 # Referencia Técnica - ZfcSetTheory
 
-*Última actualización: 2026-02-12 13:52*  
+*Última actualización: 2026-02-12 14:40*  
 **Autor**: Julián Calderón Almendros
 
 ## 📋 Cumplimiento con AIDER-AI-GUIDE.md
@@ -4503,7 +4503,7 @@ Los siguientes archivos tienen **documentación parcial** (solo definiciones/teo
 
 Los siguientes archivos están **casi completos** pero contienen algunos `sorry` documentados:
 
-- `Relations.lean` - Completo excepto 2 `sorry` en versiones legacy de `mem_domain` y `mem_range` (usar `domain_rel`/`range_rel` en su lugar)
+- `Relations.lean` - Completo excepto 2 `sorry` en versiones legacy de `mem_domain` y `mem_range` (usar versiones actualizadas en su lugar)
 - `Functions.lean` - Completo excepto 1 `sorry` en `inverse_is_specified` (línea 206)
 - `Recursion.lean` - Teorema de Recursión en ℕ con casos base completos (1 `sorry` en paso inductivo, línea 180)
 

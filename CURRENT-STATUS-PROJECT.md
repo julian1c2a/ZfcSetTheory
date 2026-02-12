@@ -1,6 +1,6 @@
 # Current Status - ZfcSetTheory Project
 
-**Date**: 2026-02-12 13:52  
+**Date**: 2026-02-12 14:40  
 **Lean Version**: 4.23.0-rc2
 
 ## Executive Summary
@@ -154,10 +154,10 @@ theorem mem_range (R y : U) : y ∈ range R ↔ ∃ x, ⟨x, y⟩ ∈ R
 **Status**:
 
 - ❌ Cannot be completed with current definitions
-- ✅ Complete alternative versions: `mem_domain_rel`, `mem_range_rel`
+- ✅ Complete alternative versions: `mem_domain`, `mem_range`
 - 📝 Well documented with explanatory notes
 
-**Recommendation**: Use `domain_rel`/`range_rel` instead of `domain`/`range`
+**Recommendation**: Use `domain`/`range` instead of legacy versions
 
 #### 2. **Functions.lean** (1 `sorry` - line 206)
 
@@ -219,7 +219,7 @@ Axioms (Existence, Extension, Specification, Pairing, Union, PowerSet)
    ↓
 OrderedPair.lean, CartesianProduct.lean
    ↓
-Relations.lean (domain_rel, range_rel)
+Relations.lean (domain, range)
    ↓
 Functions.lean (apply, composition, inverse)
    ↓
@@ -259,20 +259,20 @@ PowerSetAlgebra.lean
 - Complete API with convenience methods
 - Transparent to user (identical syntax)
 
-### 2. Separation domain/domain_rel
+### 2. Separation domain/legacy domain
 
 **Decision**: Maintain both definitions instead of replacing
 
 **Reasons**:
 
-1. `domain` used in existing code (Functions.lean)
+1. Legacy `domain` used in existing code (Pairing.lean)
 2. Global change would require updating multiple modules
 3. Both can coexist with clear documentation
 
 **Strategy**:
 
-- New developments: use `domain_rel`/`range_rel`
-- Legacy code: keep `domain`/`range` with documented `sorry`
+- New developments: use `domain`/`range` from Relations.lean
+- Legacy code: keep old `domain`/`range` with documented `sorry`
 - Dedicated "Legacy" section at end of Relations.lean
 
 ### 3. Binary isFunctionFromTo
@@ -303,7 +303,7 @@ PowerSetAlgebra.lean
 
 ### Prioridad Media
 
-1. **Documentar domain_rel vs domain**
+1. **Documentar domain vs legacy domain**
    - Agregar sección en README
    - Guía de migración para código existente
    - Ejemplos de uso recomendado
@@ -316,7 +316,7 @@ PowerSetAlgebra.lean
 ### Prioridad Baja
 
 1. **Consider global refactoring**
-   - Replace `domain`/`range` with `domain_rel`/`range_rel` throughout code
+   - Replace legacy `domain`/`range` in `Pairing.lean` with improved `domain`/`range` from `Relations.lean` throughout code
    - Update Pairing.lean with correct definitions
    - Impact: High - requires reviewing Functions.lean, Cardinality.lean
 
@@ -381,7 +381,7 @@ ZfcSetTheory/
 ├── PowerSet.lean           # Axiom of power set
 ├── CartesianProduct.lean   # Cartesian products
 ├── OrderedPair.lean        # Ordered pairs
-├── Relations.lean          # Relations + domain_rel/range_rel ⭐
+├── Relations.lean          # Relations + domain/range ⭐
 ├── Functions.lean          # Functions (1 sorry)
 ├── Cardinality.lean        # Cardinality (1 sorry)
 ├── NaturalNumbers.lean     # ℕ construction
@@ -420,7 +420,7 @@ The code is well structured, documented, and ready for continued development or 
 
 ---
 
-**Last updated**: 2026-02-12 13:52  
+**Last updated**: 2026-02-12 14:40  
 **Author**: Julián Calderón Almendros  
 **GitHub**: [@julian1c2a](https://github.com/julian1c2a)  
 **License**: MIT License (see [LICENSE](LICENSE))

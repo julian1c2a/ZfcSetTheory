@@ -16,13 +16,13 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
   - Resuelve incompatibilidades con la implementación estándar de Lean 4
 
 - **Domain y Range para Relaciones** en `Relations.lean`:
-  - `domain_rel R` - Dominio correcto usando `⋃(⋃ R)` en lugar de `fst R`
-  - `range_rel R` - Rango correcto usando `⋃(⋃ R)` en lugar de `snd R`
-  - `imag_rel R` - Alias para `range_rel`
-  - `mem_domain_rel` - Caracterización completa (sin `sorry`)
-  - `mem_range_rel` - Caracterización completa (sin `sorry`)
-  - `mem_imag_rel` - Caracterización completa (sin `sorry`)
-  - Teoremas auxiliares: `pair_mem_implies_fst_in_domain_rel`, etc.
+  - `domain R` - Dominio correcto usando `⋃(⋃ R)` en lugar de `fst R`
+  - `range R` - Rango correcto usando `⋃(⋃ R)` en lugar de `snd R`
+  - `imag R` - Alias para `range`
+  - `mem_domain` - Caracterización completa (sin `sorry`)
+  - `mem_range` - Caracterización completa (sin `sorry`)
+  - `mem_imag` - Caracterización completa (sin `sorry`)
+  - Teoremas auxiliares: `pair_mem_implies_fst_in_domain`, etc.
 
 ### Cambiado
 
@@ -32,9 +32,9 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
   - Actualizadas todas las referencias en `Cardinality.lean`
 
 - **Reorganización de Relations.lean**:
-  - Definiciones correctas (`domain_rel`, `range_rel`) primero
+  - Definiciones correctas (`domain`, `range`) primero
   - Sección "Legacy Domain and Range" al final con `sorry` documentados
-  - Explicaciones claras sobre problemas estructurales de `domain`/`range`
+  - Explicaciones claras sobre problemas estructurales de versiones legacy
 
 ### Corregido
 
