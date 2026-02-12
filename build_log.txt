@@ -1,57 +1,20 @@
-✖ [20/24] Building ZfcSetTheory.Cardinality (1.1s)
-trace: .> LEAN_PATH=E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean c:\Users\julia\.elan\toolchains\leanprover--lean4---v4.23.0-rc2\bin\lean.exe E:\Dropbox\GitHub\lean4\ZfcSetTheory\ZfcSetTheory\Cardinality.lean -o E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZfcSetTheory\Cardinality.olean -i E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZfcSetTheory\Cardinality.ilean -c E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZfcSetTheory\Cardinality.c --setup E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZfcSetTheory\Cardinality.setup.json --json
-error: ZfcSetTheory/Cardinality.lean:192:6: No goals to be solved
-error: ZfcSetTheory/Cardinality.lean:321:39: Invalid projection: Projections cannot be used on functions
-  hf.right
-has type
-  ∀ (x : U), x ∈ A → ExistsUnique fun y =>  ⟨ x , y ⟩ ∈ f
-error: ZfcSetTheory/Cardinality.lean:325:42: Invalid projection: Projections cannot be used on functions
-  hg.right
-has type
-  ∀ (x : U), x ∈ B → ExistsUnique fun y =>  ⟨ x , y ⟩ ∈ g
-error: ZfcSetTheory/Cardinality.lean:384:8: Tactic `constructor` failed: target is not an inductive datatype
+===== ZfcSetTheory Build Log =====
+Timestamp: 12/02/2026 16:48:25,90
 
-case right
-U : Type u
-f g A B : U
-hf : isFunctionFromTo f A B
-hg : isFunctionFromTo g B A
-x✝ : isInjective f
-hg_inj : isInjective g
-⊢ ∀ (x : U), x ∈ A → ExistsUnique fun y =>  ⟨ x , y ⟩ ∈ CSB_bijection f g A B
-error: ZfcSetTheory/Cardinality.lean:454:39: Invalid projection: Projections cannot be used on functions
-  hf.right
-has type
-  ∀ (x : U), x ∈ A → ExistsUnique fun y =>  ⟨ x , y ⟩ ∈ f
-error: ZfcSetTheory/Cardinality.lean:471:35: Invalid projection: Projections cannot be used on functions
-  hg.right
-has type
-  ∀ (x : U), x ∈ B → ExistsUnique fun y =>  ⟨ x , y ⟩ ∈ g
-error: ZfcSetTheory/Cardinality.lean:484:35: Invalid projection: Projections cannot be used on functions
-  hg.right
-has type
-  ∀ (x : U), x ∈ B → ExistsUnique fun y =>  ⟨ x , y ⟩ ∈ g
-error: ZfcSetTheory/Cardinality.lean:491:27: Invalid projection: Projections cannot be used on functions
-  hg.right
-has type
-  ∀ (x : U), x ∈ B → ExistsUnique fun y =>  ⟨ x , y ⟩ ∈ g
-error: ZfcSetTheory/Cardinality.lean:503:37: Invalid projection: Projections cannot be used on functions
-  hg.right
-has type
-  ∀ (x : U), x ∈ B → ExistsUnique fun y =>  ⟨ x , y ⟩ ∈ g
-error: ZfcSetTheory/Cardinality.lean:518:35: Invalid projection: Projections cannot be used on functions
-  hg.right
-has type
-  ∀ (x : U), x ∈ B → ExistsUnique fun y =>  ⟨ x , y ⟩ ∈ g
-error: ZfcSetTheory/Cardinality.lean:563:47: Invalid projection: Projections cannot be used on functions
-  hf.right
-has type
-  ∀ (x : U), x ∈ A → ExistsUnique fun y =>  ⟨ x , y ⟩ ∈ f
-error: ZfcSetTheory/Cardinality.lean:593:39: Invalid projection: Projections cannot be used on functions
-  hg.right
-has type
-  ∀ (x : U), x ∈ B → ExistsUnique fun y =>  ⟨ x , y ⟩ ∈ g
-error: Lean exited with code 1
-Some required targets logged failures:
-- ZfcSetTheory.Cardinality
-error: build failed
+Build completed successfully (24 jobs).
+ 
+===== SORRY STATEMENTS ===== 
+ 
+File: E:\Dropbox\GitHub\lean4\ZfcSetTheory\ZfcSetTheory\PowerSet.lean 
+272:    --   sorry
+ 
+File: E:\Dropbox\GitHub\lean4\ZfcSetTheory\ZfcSetTheory\Recursion.lean 
+186:            sorry -- (Aquí va la lógica detallada del paso inductivo, que es larga)
+ 
+ 
+===== BUILD WARNINGS ===== 
+No warnings detected. 
+ 
+===== SUMMARY ===== 
+Sorry statements: 2 
+Completed at: 12/02/2026 16:48:27,47 

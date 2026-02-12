@@ -7,6 +7,15 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ## [Unreleased]
 
+### Corregido (2026-02-12 14:35)
+
+- **Cardinality.lean - CSB_bijection_is_function reparado**:
+  - Corregidas proyecciones en función `hg.2` sobre función universal
+  - Arregladas aplicaciones de función `g` a valores en `B`
+  - Utilización correcta de `ExistsUnique.unique` para destructuración
+  - **CSB_bijection_is_function ahora compila sin errores** ✅
+  - **Proyecto completo: 24/24 módulos compilados exitosamente** ✅
+
 ### Corregido (2026-02-12 14:52)
 
 - **Functions.lean - Errores de compilación resueltos**:

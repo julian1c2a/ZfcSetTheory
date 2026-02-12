@@ -1,18 +1,81 @@
 @echo off
-REM Script para ejecutar lake build con toda la información disponible
-REM Captura stdout, stderr y lo guarda en build_log.txt
+REM Script para ejecutar lake build con información sobre sorry y warnings
+REM Captura diagnosticos completos, busca sorry statements y warnings
 
-echo Building ZfcSetTheory project...
+setlocal enabledelayedexpansion
+
+echo ====================================================================
+echo Building ZfcSetTheory - Detailed Diagnostics
+echo ====================================================================
 echo Timestamp: %date% %time%
 echo.
 
-REM Ejecutar lake build y capturar toda la salida
-lake build > build_log.txt 2>&1
+REM Crear archivo de log con timestamp
+(
+    echo ===== ZfcSetTheory Build Log =====
+    echo Timestamp: %date% %time%
+    echo.
+) > build_log.txt
 
-REM Mostrar el resultado
+REM Ejecutar lake build
+echo Building...
+lake build >> build_log.txt 2>&1
+
+REM Buscar sorry statements
+echo. >> build_log.txt
+echo ===== SORRY STATEMENTS ===== >> build_log.txt
+echo. >> build_log.txt
+
+setlocal enabledelayedexpansion
+set sorryCount=0
+for /r ZfcSetTheory %%f in (*.lean) do (
+    findstr "sorry" "%%f" > nul 2>&1
+    if not errorlevel 1 (
+        echo File: %%f >> build_log.txt
+        findstr /n "sorry" "%%f" >> build_log.txt
+        set /a sorryCount+=1
+        echo. >> build_log.txt
+    )
+)
+
+if %sorryCount% equ 0 (
+    echo No sorry statements found. >> build_log.txt
+)
+
+REM Búsqueda de warnings
+echo. >> build_log.txt
+echo ===== BUILD WARNINGS ===== >> build_log.txt
+setlocal enabledelayedexpansion
+findstr /i "warning" build_log.txt > nul 2>&1
+if not errorlevel 1 (
+    echo Warnings detected in build output. >> build_log.txt
+    echo (See full build output above for details) >> build_log.txt
+) else (
+    echo No warnings detected. >> build_log.txt
+)
+
+REM Resumen final
+echo. >> build_log.txt
+echo ===== SUMMARY ===== >> build_log.txt
+echo Sorry statements: %sorryCount% >> build_log.txt
+echo Completed at: %date% %time% >> build_log.txt
+
+REM Mostrar resumen en consola
 echo.
-echo Build completado. Revisa build_log.txt para ver los detalles.
+echo ====================================================================
+echo BUILD COMPLETE
+echo ====================================================================
+echo Sorry statements found: %sorryCount%
+echo Full log: build_log.txt
 echo.
+
+REM Mostrar últimas líneas del log
+echo --- Last 30 lines of build log ---
+for /f "skip=999999 tokens=*" %%a in ('findstr /n "." build_log.txt') do set "var=%%a"
+REM Mostrar el contenido del log
 type build_log.txt
 
-pause
+echo.
+echo Press any key to continue...
+pause >nul
+
