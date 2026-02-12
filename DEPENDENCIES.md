@@ -15,7 +15,7 @@ ZfcSetTheory/
 ├── PowerSet.lean                   # Axioma del Conjunto Potencia
 ├── OrderedPair.lean                # Extensiones del Par Ordenado
 ├── CartesianProduct.lean           # Producto Cartesiano A ×ₛ B
-├── Relations.lean                  # Relaciones: equivalencia, orden, clases
+├── Relations.lean                  # Relaciones: equivalencia, orden, clases, dominio, rango
 ├── Functions.lean                  # Funciones, aplicación, composición, inversa
 ├── Infinity.lean                   # Axioma del Infinito y conjunto ω
 ├── NaturalNumbers.lean             # Números naturales como ordinales de von Neumann
@@ -241,7 +241,8 @@ namespace SetUniverse.Relations
   -- Definiciones: isRelationOn, isReflexiveOn, isSymmetricOn, etc.
   -- Tipos: equivalencia, preorden, orden parcial, orden lineal, orden estricto
   -- Construcciones: EqClass, QuotientSet, IdRel, InverseRel
-  -- Teoremas: propiedades de relaciones, clases de equivalencia
+  -- Operadores: domain, range, imag (dominio y rango de relaciones)
+  -- Teoremas: propiedades de relaciones, clases de equivalencia, dominio y rango
 ```
 
 ### 11. **SetUniverse.Functions**
@@ -391,7 +392,7 @@ namespace SetUniverse.Cardinality
 
 ### **Nivel 6: Relaciones**
 
-- `Relations.lean` - Relaciones, equivalencias, órdenes, clases de equivalencia
+- `Relations.lean` - Relaciones, equivalencias, órdenes, clases de equivalencia, dominio y rango
 
 ### **Nivel 7: Funciones**
 
@@ -467,7 +468,7 @@ export SetUniverse.PairingAxiom (
     OrderedPair, OrderedPair_is_specified, isOrderedPair,
     fst, snd, fst_of_ordered_pair, snd_of_ordered_pair,
     OrderedPairSet_is_WellConstructed,
-    isRelation, isRelation_in_Sets, domain, range,
+    isRelation, isRelation_in_Sets,
     isReflexive, isIReflexive, isSymmetric, isAsymmetric,
     isAntiSymmetric, isTransitive,
     isEquivalenceRelation, isEquivalenceRelation_in_Set,
@@ -545,9 +546,13 @@ export SetUniverse.Relations (
     StrictPartialOrder_is_Irreflexive, Irreflexive_Transitive_implies_Asymmetric,
     Asymmetric_iff_Irreflexive_and_AntiSymmetric,
     PartialOrder_Connected_is_LinearOrder, LinearOrder_comparable,
+    StrictOrder_Connected_is_Trichotomous, StrictLinearOrder_iff_StrictOrder_Connected,
     mem_IdRel, IdRel_is_Equivalence, mem_EqClass, EqClass_mem_self,
     mem_EqClass_of_Related, Related_of_mem_EqClass, mem_EqClass_iff,
-    EqClass_eq_iff, EqClass_eq_or_disjoint
+    EqClass_eq_iff, EqClass_eq_or_disjoint,
+    domain, range, imag,
+    mem_domain, mem_range, mem_imag,
+    pair_mem_implies_fst_in_domain, pair_mem_implies_snd_in_range, pair_mem_implies_snd_in_imag
 )
 ```
 

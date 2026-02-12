@@ -24,7 +24,7 @@ Este documento cumple con todos los requisitos especificados en [AIDER-AI-GUIDE.
 ✅ **(8)** Actualización continua al cargar archivos .lean  
 ✅ **(9)** Suficiente como única referencia (no requiere cargar proyecto completo)
 
-**Estado de verificación**: 4 `sorry` activos confirmados (Relations.lean: 2, Functions.lean: 1, Cardinality.lean: 1, Recursion.lean: 1)
+**Estado de verificación**: 2 `sorry` activos confirmados (Functions.lean: 1, Cardinality.lean: 1) + Recursion.lean con errores de compilación
 
 ---
 
@@ -44,7 +44,7 @@ Este documento cumple con todos los requisitos especificados en [AIDER-AI-GUIDE.
 | `PowerSetAlgebra.lean` | `SetUniverse.PowerSetAlgebra` | `PowerSet`, `BooleanAlgebra` + anteriores | ✅ Completo |
 | `OrderedPair.lean` | `SetUniverse.OrderedPairExtensions` | Todos los anteriores + `PowerSet` | ✅ Completo |
 | `CartesianProduct.lean` | `SetUniverse.CartesianProduct` | `OrderedPair` + anteriores | ✅ Completo |
-| `Relations.lean` | `SetUniverse.Relations` | `CartesianProduct` + anteriores | 🔶 Parcial (2 sorry legacy) |
+| `Relations.lean` | `SetUniverse.Relations` | `CartesianProduct` + anteriores | ✅ Completo |
 | `Functions.lean` | `SetUniverse.Functions` | `CartesianProduct`, `Relations` + anteriores | 🔶 Parcial (1 sorry) |
 | `BooleanAlgebra.lean` | `SetUniverse.BooleanAlgebra` | `Union`, `Specification`, `Pairing`, `Extension`, `Existence`, `Prelim` | ✅ Completo |
 | `BooleanRing.lean` | `SetUniverse.BooleanRing` | `PowerSetAlgebra` + anteriores | ✅ Completo |
@@ -551,6 +551,53 @@ noncomputable def IdRel (A : U) : U :=
 ```
 
 **Dependencias**: `SpecSet`, `CartesianProduct`, `fst`, `snd`
+
+#### Dominio de una Relación (domain)
+
+**Ubicación**: `Relations.lean`, línea 176  
+**Orden**: 10ª definición principal
+
+**Enunciado Matemático**: domain R = {x | ∃ y, ⟨x, y⟩ ∈ R}
+
+**Firma Lean4**:
+
+```lean
+noncomputable def domain (R : U) : U :=
+  SpecSet (⋃(⋃ R)) (fun x => ∃ y, ⟨x, y⟩ ∈ R)
+```
+
+**Dependencias**: `SpecSet`, `UnionSet`, `OrderedPair`
+
+#### Rango de una Relación (range)
+
+**Ubicación**: `Relations.lean`, línea 181  
+**Orden**: 11ª definición principal
+
+**Enunciado Matemático**: range R = {y | ∃ x, ⟨x, y⟩ ∈ R}
+
+**Firma Lean4**:
+
+```lean
+noncomputable def range (R : U) : U :=
+  SpecSet (⋃(⋃ R)) (fun y => ∃ x, ⟨x, y⟩ ∈ R)
+```
+
+**Dependencias**: `SpecSet`, `UnionSet`, `OrderedPair`
+
+#### Imagen de una Relación (imag)
+
+**Ubicación**: `Relations.lean`, línea 185  
+**Orden**: 12ª definición principal
+
+**Enunciado Matemático**: imag R = range R (alias para rango)
+
+**Firma Lean4**:
+
+```lean
+noncomputable def imag (R : U) : U := range R
+```
+
+**Dependencias**: `range`
 
 ### 3.9 Functions.lean
 
@@ -1741,6 +1788,102 @@ theorem EqClass_eq_or_disjoint (R A a b : U)
 ```
 
 **Dependencias**: `EqClass`, `isEquivalenceOn`, `BinInter`, `EmptySet`
+
+#### Caracterización de Pertenencia al Dominio
+
+**Ubicación**: `Relations.lean`, línea 452  
+**Orden**: 6º teorema principal
+
+**Enunciado Matemático**: x es miembro del dominio de R si y solo si existe y tal que ⟨x, y⟩ ∈ R.
+
+**Firma Lean4**:
+
+```lean
+theorem mem_domain (R x : U) :
+    x ∈ domain R ↔ ∃ y, ⟨x, y⟩ ∈ R
+```
+
+**Dependencias**: `domain`, `SpecSet_is_specified`
+
+#### Caracterización de Pertenencia al Rango
+
+**Ubicación**: `Relations.lean`, línea 471  
+**Orden**: 7º teorema principal
+
+**Enunciado Matemático**: y es miembro del rango de R si y solo si existe x tal que ⟨x, y⟩ ∈ R.
+
+**Firma Lean4**:
+
+```lean
+theorem mem_range (R y : U) :
+    y ∈ range R ↔ ∃ x, ⟨x, y⟩ ∈ R
+```
+
+**Dependencias**: `range`, `SpecSet_is_specified`
+
+#### Caracterización de Pertenencia a la Imagen
+
+**Ubicación**: `Relations.lean`, línea 495  
+**Orden**: 8º teorema principal
+
+**Enunciado Matemático**: y es miembro de la imagen de R si y solo si existe x tal que ⟨x, y⟩ ∈ R.
+
+**Firma Lean4**:
+
+```lean
+theorem mem_imag (R y : U) :
+    y ∈ imag R ↔ ∃ x, ⟨x, y⟩ ∈ R
+```
+
+**Dependencias**: `imag`, `mem_range`
+
+#### Par en Relación Implica Primera Componente en Dominio
+
+**Ubicación**: `Relations.lean`, línea 501  
+**Orden**: 9º teorema principal
+
+**Enunciado Matemático**: Si ⟨x, y⟩ ∈ R, entonces x ∈ domain R.
+
+**Firma Lean4**:
+
+```lean
+theorem pair_mem_implies_fst_in_domain (R x y : U) :
+    ⟨x, y⟩ ∈ R → x ∈ domain R
+```
+
+**Dependencias**: `domain`, `mem_domain`
+
+#### Par en Relación Implica Segunda Componente en Rango
+
+**Ubicación**: `Relations.lean`, línea 507  
+**Orden**: 10º teorema principal
+
+**Enunciado Matemático**: Si ⟨x, y⟩ ∈ R, entonces y ∈ range R.
+
+**Firma Lean4**:
+
+```lean
+theorem pair_mem_implies_snd_in_range (R x y : U) :
+    ⟨x, y⟩ ∈ R → y ∈ range R
+```
+
+**Dependencias**: `range`, `mem_range`
+
+#### Par en Relación Implica Segunda Componente en Imagen
+
+**Ubicación**: `Relations.lean`, línea 513  
+**Orden**: 11º teorema principal
+
+**Enunciado Matemático**: Si ⟨x, y⟩ ∈ R, entonces y ∈ imag R.
+
+**Firma Lean4**:
+
+```lean
+theorem pair_mem_implies_snd_in_imag (R x y : U) :
+    ⟨x, y⟩ ∈ R → y ∈ imag R
+```
+
+**Dependencias**: `imag`, `mem_imag`
 
 ### 4.5 Functions.lean
 
@@ -4186,8 +4329,22 @@ export SetUniverse.Relations (
     isStrictLinearOrderOn isWellFoundedOn isWellOrderOn
     EqClass QuotientSet IdRel InverseRel
     Asymmetric_implies_Irreflexive StrictOrder_is_Irreflexive
+    StrictPartialOrder_is_Irreflexive
+    Irreflexive_Transitive_implies_Asymmetric
+    Asymmetric_iff_Irreflexive_and_AntiSymmetric
+    PartialOrder_Connected_is_LinearOrder
+    LinearOrder_comparable
+    StrictOrder_Connected_is_Trichotomous
+    StrictLinearOrder_iff_StrictOrder_Connected
     mem_IdRel IdRel_is_Equivalence mem_EqClass
+    EqClass_mem_self mem_EqClass_of_Related
+    Related_of_mem_EqClass mem_EqClass_iff
     EqClass_eq_iff EqClass_eq_or_disjoint
+    domain range imag
+    mem_domain mem_range mem_imag
+    pair_mem_implies_fst_in_domain
+    pair_mem_implies_snd_in_range
+    pair_mem_implies_snd_in_imag
 )
 ```
 
@@ -4503,9 +4660,10 @@ Los siguientes archivos tienen **documentación parcial** (solo definiciones/teo
 
 Los siguientes archivos están **casi completos** pero contienen algunos `sorry` documentados:
 
-- `Relations.lean` - Completo excepto 2 `sorry` en versiones legacy de `mem_domain` y `mem_range` (usar versiones actualizadas en su lugar)
-- `Functions.lean` - Completo excepto 1 `sorry` en `inverse_is_specified` (línea 206)
-- `Recursion.lean` - Teorema de Recursión en ℕ con casos base completos (1 `sorry` en paso inductivo, línea 180)
+- `Functions.lean` - Completo excepto 1 `sorry` en `inverse_is_specified` (línea 193)
+- `Recursion.lean` - Teorema de Recursión en ℕ con errores de compilación (7 errores + 1 `sorry` en paso inductivo, línea 180)
+
+**Nota**: `Relations.lean` está ahora ✅ **100% completo** tras el renombrado de `domain_rel` → `domain`, `range_rel` → `range`, `imag_rel` → `imag`.
 
 ### 7.5 Archivos Completos Pendientes de Proyectar
 
@@ -4513,7 +4671,7 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 
 ---
 
-*Última actualización: 2026-02-12 13:52 - Verificación completa de consistencia con código fuente*
+*Última actualización: 2026-02-12 14:40 - Actualizado tras renombrado domain_rel→domain, Relations.lean ahora 100% completo*
 
 *Actualización anterior: 2026-02-11 - Completado módulo Functions.lean*
 
