@@ -17,7 +17,7 @@ Una implementación formal de la **Teoría de Conjuntos de Zermelo-Fraenkel (ZFC
 
 Este proyecto desarrolla los axiomas fundamentales de ZFC de manera progresiva, construyendo desde los fundamentos hasta estructuras algebraicas más complejas como álgebras de Boole y retículos. Incluye infraestructura personalizada para existencia única (`ExistsUnique`) y definiciones correctas de dominio y rango para relaciones.
 
-## 🧱 Axiomas Implementados
+## 🧱 Axiomas ZFC Implementados
 
 | # | Axioma | Archivo | Estado |
 |---|--------|---------|--------|
@@ -26,10 +26,32 @@ Este proyecto desarrolla los axiomas fundamentales de ZFC de manera progresiva, 
 | 3 | **Especificación** (Separación) | `Specification.lean` | ✅ Completo |
 | 4 | **Par** | `Pairing.lean` | ✅ Completo |
 | 5 | **Unión** | `Union.lean` | ✅ Completo |
-| 6 | **Conjunto Potencia** | `Potencia.lean` | ✅ Completo |
-| 7 | Infinito | - | ⏳ Pendiente |
-| 8 | Reemplazo | - | ⏳ Pendiente |
-| 9 | Fundación | - | ⏳ Pendiente |
+| 6 | **Conjunto Potencia** | `PowerSet.lean` | ✅ Completo |
+| 7 | **Infinito** | `Infinity.lean` | ✅ Completo |
+| 8 | Reemplazo | - | 🔄 Futuro |
+| 9 | Fundación | - | 🔄 Futuro |
+
+## 🚀 Construcciones Avanzadas (más allá de los axiomas básicos)
+
+| Categoría | Módulos | Descripción | Estado |
+|-----------|---------|-------------|--------|
+| **Pares Ordenados** | `OrderedPair.lean` | Par de Kuratowski, teoremas fundamentales | ✅ Completo |
+| **Producto Cartesiano** | `CartesianProduct.lean` | A ×ₛ B, pertenencia, proyecciones | ✅ Completo |
+| **Relaciones** | `Relations.lean` | Equivalencia, orden parcial/lineal, clases | ✅ ~95% |
+| **Funciones** | `Functions.lean` | Inyectivas, suryectivas, biyectivas, composición | ✅ ~95% |
+| **Números Naturales** | `NaturalNumbers.lean` | ℕ como ordinales de von Neumann | ✅ Completo |
+| **Recursión en ℕ** | `Recursion.lean` | Teorema de recursión sobre naturales | ✅ ~90% |
+| **Álgebra Booleana** | `BooleanAlgebra.lean` | Leyes fundamentales, idempotencia, absorción | ✅ Completo |
+| **Anillo Booleano** | `BooleanRing.lean` | Diferencia simétrica, propiedades de anillo | ✅ Completo |
+| **Álgebra de 𝒫(A)** | `PowerSetAlgebra.lean` | Complemento, De Morgan, distributividad | ✅ Completo |
+| **De Morgan Generalizado** | `GeneralizedDeMorgan.lean` | Leyes para familias arbitrarias | ✅ Completo |
+| **Distributividad Generalizada** | `GeneralizedDistributive.lean` | Leyes para familias arbitrarias | ✅ Completo |
+| **Álgebra Booleana Atómica** | `AtomicBooleanAlgebra.lean` | 𝒫(A) es atómica, representación por átomos | ✅ Completo |
+| **Orden Parcial** | `SetOrder.lean` | Retículos, orden en conjuntos | ✅ Completo |
+| **Orden Estricto** | `SetStrictOrder.lean` | Propiedades de orden estricto | ✅ Completo |
+| **Cardinalidad** | `Cardinality.lean` | Teorema de Cantor, CSB | ✅ ~95% |
+
+**Total: 24 módulos, ~95% de teoremas completamente probados**
 
 ## ✨ Características Destacadas
 
