@@ -165,10 +165,6 @@ namespace SetUniverse
     noncomputable def IdRel (A : U) : U :=
       SpecSet (A ×ₛ A) (fun p => fst p = snd p)
 
-    /-- The inverse relation R⁻¹ = {(y, x) | (x, y) ∈ R} -/
-    noncomputable def InverseRel (R : U) : U :=
-      SpecSet (𝒫 (𝒫 (⋃(⋃ R)))) (fun p => ⟨snd p, fst p⟩ ∈ R)
-
     /-! ### Domain and Range for Relations -/
 
     /-- Domain of a relation R (properly defined for relations):
@@ -183,6 +179,10 @@ namespace SetUniverse
 
     /-- Alternative name for range -/
     noncomputable def imag (R : U) : U := range R
+
+    /-- The inverse relation R⁻¹ = {(y, x) | (x, y) ∈ R} -/
+    noncomputable def InverseRel (R : U) : U :=
+      SpecSet (range R ×ₛ domain R) (fun p => ⟨snd p, fst p⟩ ∈ R)
 
     /-! ### Theorems about Relation Properties -/
 

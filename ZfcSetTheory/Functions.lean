@@ -60,6 +60,10 @@ namespace SetUniverse
     /-! ### BASIC FUNCTION DEFINITIONS ### -/
     /-! ============================================================ -/
 
+    /-- A relation f is single-valued if each x has at most one associated y -/
+    def isSingleValued (f : U) : Prop :=
+      ∀ x y₁ y₂, ⟨x, y₁⟩ ∈ f → ⟨x, y₂⟩ ∈ f → y₁ = y₂
+
     /-- f is a function from A to B iff:
         1. f ⊆ A × B
         2. ∀ x ∈ A, ∃! y, ⟨x, y⟩ ∈ f
@@ -69,7 +73,8 @@ namespace SetUniverse
       (∀ x, x ∈ A → ∃! y, ⟨x, y⟩ ∈ f)
 
     /-- Application of f to x, denoted f⦅x⦆.
-        If f is not a function or x is not in domain, returns ∅ (by default of choose). -/
+        If f is not a function or x is not in domain, returns ∅ (by default of choose).
+    -/
     noncomputable def apply (f x : U) : U :=
       if h : ∃! y, ⟨x, y⟩ ∈ f then
         ExistsUnique.choose h
@@ -78,14 +83,16 @@ namespace SetUniverse
 
     notation:90 f "⦅" x "⦆" => apply f x
 
-    /-- Theorem: If f is a function from A to B and x ∈ A, then ⟨x, f(x)⟩ ∈ f. -/
+    /-- Theorem: If f is a function from A to B and x ∈ A, then ⟨x, f(x)⟩ ∈ f.
+    -/
     theorem apply_mem (f x : U) (h_unique : ∃! y, ⟨x, y⟩ ∈ f) :
       ⟨x, f⦅x⦆⟩ ∈ f := by
       unfold apply
       simp only [dif_pos h_unique]
       exact choose_spec h_unique
 
-    /-- Theorem: If f is a function and ⟨x, y⟩ ∈ f, then f(x) = y. -/
+    /-- Theorem: If f is a function and ⟨x, y⟩ ∈ f, then f(x) = y.
+    -/
     theorem apply_eq (f x y : U) (h_unique : ∃! y, ⟨x, y⟩ ∈ f) (h_in : ⟨x, y⟩ ∈ f) :
       f⦅x⦆ = y := by
       unfold apply
@@ -97,7 +104,8 @@ namespace SetUniverse
     /-! ============================================================ -/
 
     /-- Function composition g ∘ f.
-        Defined as {⟨x, z⟩ | ∃ y, ⟨x, y⟩ ∈ f ∧ ⟨y, z⟩ ∈ g}. -/
+        Defined as {⟨x, z⟩ | ∃ y, ⟨x, y⟩ ∈ f ∧ ⟨y, z⟩ ∈ g}.
+    -/
     noncomputable def FunctionComposition (g f : U) : U :=
       SpecSet (domain f ×ₛ range g) (fun p =>
         ∃ x z, p = ⟨x, z⟩ ∧ ∃ y, ⟨x, y⟩ ∈ f ∧ ⟨y, z⟩ ∈ g)
@@ -191,20 +199,28 @@ namespace SetUniverse
     notation:100 f "⁻¹" => InverseFunction f
 
     theorem inverse_is_specified (f p : U) :
-      p ∈ f⁻¹ ↔ ⟨snd p, fst p⟩ ∈ f := by
+      p ∈ f⁻¹ ↔ isOrderedPair p ∧ ⟨snd p, fst p⟩ ∈ f := by
       unfold InverseFunction InverseRel
       rw [SpecSet_is_specified]
       constructor
-      · intro h; exact h.2
       · intro h
         constructor
-        · -- p ∈ 𝒫 (𝒫 (⋃(⋃ f)))
-          -- NOTE: Requires proving ordered pair universe containment
-          -- If ⟨snd p, fst p⟩ ∈ f, then p should be in the same universe
-          -- This requires structural theorems about ordered pairs and set universes
-          -- that are not yet available in this development
-          sorry
-        · exact h
+        · -- p ∈ range f × domain f, so p is a pair
+          have : p ∈ range f ×ₛ domain f := h.1
+          rw [CartesianProduct_is_specified] at this
+          exact this.1
+        · exact h.2
+      · intro h
+        obtain ⟨hp_pair, h_in_f⟩ := h
+        constructor
+        · -- Need to prove p is in the universe (range f × domain f)
+          rw [CartesianProduct_is_specified]
+          refine ⟨hp_pair, ?_, ?_⟩
+          · -- fst p ∈ range f
+            exact pair_mem_implies_snd_in_range f (snd p) (fst p) h_in_f
+          · -- snd p ∈ domain f
+            exact pair_mem_implies_fst_in_domain f (snd p) (fst p) h_in_f
+        · exact h_in_f
 
     /-! ============================================================ -/
     /-! ### RESTRICTION OF FUNCTIONS ### -/
@@ -351,9 +367,23 @@ namespace SetUniverse
 
     infix:50 " ≺ₛ " => isStrictlyDominatedBy
 
+    /-! ============================================================ -/
+    /-! ### ADDITIONAL THEOREMS FOR INVERSE ### -/
+    /-! ============================================================ -/
+
+    theorem injective_inverse_single_valued (f : U) (hf : isInjective f) :
+      isSingleValued (f⁻¹) := by
+      intro x y z h1 h2
+      rw [inverse_is_specified] at h1 h2
+      -- h1 : isOrderedPair ⟨x,y⟩ ∧ ⟨snd ⟨x,y⟩, fst ⟨x,y⟩⟩ ∈ f
+      -- h2 : isOrderedPair ⟨x,z⟩ ∧ ⟨snd ⟨x,z⟩, fst ⟨x,z⟩⟩ ∈ f
+      simp only [fst_of_ordered_pair, snd_of_ordered_pair] at h1 h2
+      exact hf y z x h1.2 h2.2
+
   end Functions
 
   export Functions (
+    isSingleValued
     isFunctionFromTo
     apply apply_mem apply_eq
     FunctionComposition comp_is_specified comp_is_function
@@ -363,6 +393,7 @@ namespace SetUniverse
     ImageSet PreimageSet
     isInjective isSurjectiveOnto isBijection
     isEquipotent isDominatedBy isStrictlyDominatedBy
+    injective_inverse_single_valued
   )
 
 end SetUniverse
