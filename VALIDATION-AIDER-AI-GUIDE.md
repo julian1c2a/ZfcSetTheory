@@ -208,7 +208,6 @@
 
 ### Próximos Pasos Opcionales
 
-- [ ] Implementar `PowerSet_not_dominated_by_A` (actualmente con `sorry`)
 - [ ] Ampliar documentación de pruebas existentes
 - [ ] Agregar ejemplos de uso en README.md
 
@@ -216,4 +215,4 @@
 
 **Documento generado**: 2026-02-12 18:45  
 **Validador**: Verificación automática de conformidad  
-**Proyecto**: ZfcSetTheory - Formal Set Theory in Lean 4
+**Proyecto**: ZfcSetTheory - Formal Axiomatic Set Theory in Lean 4
