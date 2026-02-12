@@ -1,0 +1,165 @@
+
+================================================================================
+=== LEAN PROJECT BUILD DIAGNOSTICS ===
+================================================================================
+
+Project Root:     E:\Dropbox\GitHub\lean4\ZfcSetTheory
+Report Generated: 2026-02-12 17:56:22
+Report File:      LeanInfoView.txt
+
+
+================================================================================
+=== ENVIRONMENT INFORMATION ===
+================================================================================
+
+Operating System: Microsoft Windows 10.0.26200
+PowerShell Version: 7.5.4
+Current Directory: E:\Dropbox\GitHub\lean4\ZfcSetTheory
+
+Lean Version:     Lean (version 4.23.0-rc2, x86_64-w64-windows-gnu, commit ad1a017949674a947f0d6794cbf7130d642c6530, Release)
+Lake Version:     Lake version 5.0.0-src+ad1a017 (Lean version 4.23.0-rc2)
+
+
+================================================================================
+=== PROJECT STRUCTURE ===
+================================================================================
+
+Total Lean Files:  23
+
+Files:
+  •  (75 bytes)
+  •  (69 bytes)
+  •  (66 bytes)
+  •  (66 bytes)
+  •  (71 bytes)
+  •  (64 bytes)
+  •  (64 bytes)
+  •  (64 bytes)
+  •  (74 bytes)
+  •  (78 bytes)
+  •  (63 bytes)
+  •  (69 bytes)
+  •  (66 bytes)
+  •  (62 bytes)
+  •  (63 bytes)
+  •  (70 bytes)
+  •  (61 bytes)
+  •  (64 bytes)
+  •  (64 bytes)
+  •  (63 bytes)
+  •  (69 bytes)
+  •  (68 bytes)
+  •  (60 bytes)
+
+
+================================================================================
+=== BUILD DIAGNOSTICS ===
+================================================================================
+
+Build started: 2026-02-12 17:56:22
+
+Build completed successfully (24 jobs).
+
+⏱️  Time elapsed: 1.1172865 seconds
+Build completed: 2026-02-12 17:56:23
+
+
+================================================================================
+=== FILE-SPECIFIC DIAGNOSTICS: ZfcSetTheory\Recursion.lean ===
+================================================================================
+
+File Path:        E:\Dropbox\GitHub\lean4\ZfcSetTheory\ZfcSetTheory\Recursion.lean
+File Size:        22183 bytes
+Last Modified:    2026-02-12 17:43:31
+
+Total Lines:      425
+
+Sorry Statements: 0 ✓
+
+
+--- Lean Validation ---
+
+Could not run validation: The string ZfcSetTheory\Recursion.lean is not a valid regular expression: Invalid pattern 'ZfcSetTheory\Recursion.lean' at offset 14. Unrecognized escape sequence \R.
+
+
+--- Imports ---
+
+  import Init.Classical
+  import ZfcSetTheory.Prelim
+  import ZfcSetTheory.Extension
+  import ZfcSetTheory.Existence
+  import ZfcSetTheory.Specification
+  import ZfcSetTheory.Pairing
+  import ZfcSetTheory.Union
+  import ZfcSetTheory.PowerSet
+  import ZfcSetTheory.OrderedPair
+  import ZfcSetTheory.CartesianProduct
+  import ZfcSetTheory.Relations
+  import ZfcSetTheory.Functions
+  import ZfcSetTheory.NaturalNumbers
+  import ZfcSetTheory.Infinity
+
+
+================================================================================
+=== PROJECT STATUS ===
+================================================================================
+
+Sorry Statements: 0
+
+
+================================================================================
+=== FILE MODIFICATION TIMES ===
+================================================================================
+
+(Most recently modified files first)
+
+Recursion.lean - 2026-02-12 17:43:31
+PowerSet.lean - 2026-02-12 17:02:51
+Cardinality.lean - 2026-02-12 16:39:02
+SetStrictOrder.lean - 2026-02-12 15:45:07
+BooleanAlgebra.lean - 2026-02-12 15:45:07
+NaturalNumbers.lean - 2026-02-12 15:45:07
+SetOrder.lean - 2026-02-12 15:45:07
+Infinity.lean - 2026-02-12 15:45:07
+GeneralizedDistributive.lean - 2026-02-12 15:44:31
+AtomicBooleanAlgebra.lean - 2026-02-12 15:44:31
+
+
+================================================================================
+=== MODULE DEPENDENCIES ===
+================================================================================
+
+Scanning import statements...
+
+[No interdependencies found or unable to parse]
+
+
+================================================================================
+=== BUILD ARTIFACTS ===
+================================================================================
+
+Lake build directory exists: Yes
+Build artifacts count: 11214
+
+
+================================================================================
+=== CONFIGURATION FILES ===
+================================================================================
+
+✓ lakefile.lean (155 bytes)
+✓ lean-toolchain (28 bytes)
+✓ .aider.conf.yml (204 bytes)
+✓ lake-manifest.json (3099 bytes)
+
+
+================================================================================
+=== SUMMARY STATISTICS ===
+================================================================================
+
+Total source code lines: 0
+Total modules: 23
+Build artifacts: Generated
+
+================================================================================
+End of report: 2026-02-12 17:56:24
+================================================================================
