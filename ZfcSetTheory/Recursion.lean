@@ -145,7 +145,8 @@ namespace SetUniverse
                  have hsub := hfunc1.1
                  have hp_cart : p ∈ (σ (∅ : U)) ×ₛ A := hsub p hp
                  rw [CartesianProduct_is_specified] at hp_cart
-                 exact ⟨fst p, snd p, Eq_of_OrderedPairs_given_projections p hp_cart.1⟩
+                 have hp_pair_eq : p = ⟨fst p, snd p⟩ := (isOrderedPair_by_construction p).mp hp_cart.1
+                 exact ⟨fst p, snd p, hp_pair_eq⟩
 
               obtain ⟨x, y, hp_eq⟩ := h_pair_prop
 
@@ -179,7 +180,8 @@ namespace SetUniverse
                  have hsub := hfunc2.1
                  have hp_cart : p ∈ (σ (∅ : U)) ×ₛ A := hsub p hp
                  rw [CartesianProduct_is_specified] at hp_cart
-                 exact ⟨fst p, snd p, Eq_of_OrderedPairs_given_projections p hp_cart.1⟩
+                 have hp_pair_eq : p = ⟨fst p, snd p⟩ := (isOrderedPair_by_construction p).mp hp_cart.1
+                 exact ⟨fst p, snd p, hp_pair_eq⟩
               obtain ⟨x, y, hp_eq⟩ := h_pair_prop
 
               have hx_dom : x ∈ domain f₂ := by
@@ -221,7 +223,7 @@ namespace SetUniverse
             -- Necesitamos saber que σ n ⊆ σ (σ n)
             have hn_nat : isNat n := mem_Omega_is_Nat n hn_omega
             have h_succ_n_nat : isNat succ_n := nat_successor_is_nat n hn_nat
-            have h_subset : succ_n ⊆ σ succ_n := subset_of_mem_successor succ_n
+            have h_subset : succ_n ⊆ σ succ_n := fun x hx => mem_successor_of_mem x succ_n hx
 
             have h_f1_is_comp : isComputation n f₁_restr A a g := by
               constructor
@@ -264,9 +266,9 @@ namespace SetUniverse
                 · -- Recursión
                   intro k hk
                   -- k ∈ n → σ k ∈ σ n = succ_n
-                  have h_succ_k_in : σ k ∈ succ_n := mem_successor_of_mem k n hk
+                  have h_succ_k_in : σ k ∈ succ_n := mem_successor_of_mem (σ k) n hk
                   -- k ∈ n → k ∈ σ n
-                  have h_k_in : k ∈ succ_n := subset_of_mem_successor n k hk
+                  have h_k_in : k ∈ succ_n := mem_successor_of_mem k n hk
 
                   rw [Restriction_apply f₁ succ_n (σ k) h_succ_k_in]
                   rw [Restriction_apply f₁ succ_n k h_k_in]
@@ -279,7 +281,7 @@ namespace SetUniverse
               · constructor
                 · have h_zero_in : (∅ : U) ∈ succ_n := by
                      -- (Misma prueba que arriba, omitimos repetición verbosa por brevedad, asumimos válida)
-                     have h_z : (∅ : U) ∈ ω := zero_in_Omega
+                     have h_z : (∅ : U) ∈ (ω : U) := zero_in_Omega
                      rw [←Nat_iff_mem_Omega] at h_z
                      have h_trich := nat_trichotomy (∅ : U) succ_n h_z h_succ_n_nat
                      cases h_trich with
@@ -288,8 +290,8 @@ namespace SetUniverse
                   rw [Restriction_apply f₂ succ_n (∅ : U) h_zero_in]
                   exact hf₂.2.1
                 · intro k hk
-                  have h_succ_k_in : σ k ∈ succ_n := mem_successor_of_mem k n hk
-                  have h_k_in : k ∈ succ_n := subset_of_mem_successor n k hk
+                  have h_succ_k_in : σ k ∈ succ_n := mem_successor_of_mem (σ k) n hk
+                  have h_k_in : k ∈ succ_n := mem_successor_of_mem k n hk
                   rw [Restriction_apply f₂ succ_n (σ k) h_succ_k_in]
                   rw [Restriction_apply f₂ succ_n k h_k_in]
                   exact hf₂.2.2 k hk
@@ -307,7 +309,8 @@ namespace SetUniverse
                  have hsub := hf₁.1.1
                  have hp_cart : p ∈ (σ succ_n) ×ₛ A := hsub p hp_in_f1
                  rw [CartesianProduct_is_specified] at hp_cart
-                 exact ⟨fst p, snd p, Eq_of_OrderedPairs_given_projections p hp_cart.1⟩
+                 have hp_pair_eq : p = ⟨fst p, snd p⟩ := (isOrderedPair_by_construction p).mp hp_cart.1
+                 exact ⟨fst p, snd p, hp_pair_eq⟩
               obtain ⟨x, y, hp_eq⟩ := hp_pair
 
               -- x ∈ dom(f₁) = σ succ_n
@@ -319,7 +322,7 @@ namespace SetUniverse
                  rw [←h_dom_eq, mem_domain]
                  exists y; rw [←hp_eq]; exact hp_in_f1
 
-              rw [mem_successor_iff] at hx_dom
+              rw [successor_is_specified] at hx_dom
               cases hx_dom with
               | inl hx_in_succ =>
                 -- x ∈ succ_n
@@ -388,7 +391,8 @@ namespace SetUniverse
                  have hsub := hf₂.1.1
                  have hp_cart : p ∈ (σ succ_n) ×ₛ A := hsub p hp_in_f2
                  rw [CartesianProduct_is_specified] at hp_cart
-                 exact ⟨fst p, snd p, Eq_of_OrderedPairs_given_projections p hp_cart.1⟩
+                 have hp_pair_eq : p = ⟨fst p, snd p⟩ := (isOrderedPair_by_construction p).mp hp_cart.1
+                 exact ⟨fst p, snd p, hp_pair_eq⟩
               obtain ⟨x, y, hp_eq⟩ := hp_pair
 
               have hx_dom : x ∈ σ succ_n := by
@@ -397,7 +401,7 @@ namespace SetUniverse
                  rw [←h_dom_eq, mem_domain]
                  exists y; rw [←hp_eq]; exact hp_in_f2
 
-              rw [mem_successor_iff] at hx_dom
+              rw [successor_is_specified] at hx_dom
               cases hx_dom with
               | inl hx_in_succ =>
                 have hp_restr : p ∈ f₂_restr := by
@@ -436,4 +440,12 @@ namespace SetUniverse
       exact hn_S.2 f₁ f₂ hf₁ hf₂
 
   end Recursion
+
+  -- Export key definitions and theorems
+  export Recursion (
+    function_domain_eq
+    isComputation
+    computation_uniqueness
+  )
+
 end SetUniverse

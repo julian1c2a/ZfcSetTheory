@@ -7,6 +7,17 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ## [Unreleased]
 
+### Corregido (2026-02-12 17:35)
+
+- **Recursion.lean - Todos los errores de tipo resueltos**:
+  - Error 1 (líneas 148, 182, 310, 391): Reemplazado `Eq_of_OrderedPairs_given_projections` con `isOrderedPair_by_construction` para manejo correcto de proposiciones
+  - Error 2 (líneas 224, 269, 292): Corregido uso de `subset_of_mem_successor` por `mem_successor_of_mem` con argumentos apropiados
+  - Error 3 (líneas 322, 400): Reemplazado `mem_successor_iff` no existente con `successor_is_specified`
+  - Error de tipo en ω: Corregido a `(ω : U)` para alineación correcta de tipos
+  - Añadida sección de exportaciones: `function_domain_eq`, `isComputation`, `computation_uniqueness`
+  - **Recursion.lean ahora compila sin errores de tipo** ✅
+  - **Proyecto 100% completo: 0 `sorry` statements, 0 errores de compilación** ✅
+
 ### Corregido (2026-02-12 14:35)
 
 - **Cardinality.lean - CSB_bijection_is_function reparado**:

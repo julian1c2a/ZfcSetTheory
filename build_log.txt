@@ -1,5 +1,5 @@
 ===== ZfcSetTheory Build Log =====
-Timestamp: 2026-02-12 17:17
+Timestamp: 2026-02-12 17:33
 ===== LAKE BUILD OUTPUT =====
 Build completed successfully (24 jobs).
 
@@ -10,13 +10,11 @@ No sorry statements found.
 ===== LEAN TYPE ERRORS IN SOURCE FILES =====
 
 File with potential type errors: E:\Dropbox\GitHub\lean4\ZfcSetTheory\ZfcSetTheory\NaturalNumbers.lean
-File with potential type errors: E:\Dropbox\GitHub\lean4\ZfcSetTheory\ZfcSetTheory\Recursion.lean
-File with potential type errors: E:\Dropbox\GitHub\lean4\ZfcSetTheory\ZfcSetTheory\Recursion.lean
 
-Files with known problematic patterns: 3
+Files with known problematic patterns: 1
 
 ===== SUMMARY =====
 Sorry statements: 0
-Files with potential type errors: 3
-Completed at: 2026-02-12 17:17
+Files with potential type errors: 1
+Completed at: 2026-02-12 17:33
 

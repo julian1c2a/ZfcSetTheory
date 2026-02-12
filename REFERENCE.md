@@ -1,6 +1,6 @@
 # Referencia Técnica - ZfcSetTheory
 
-*Última actualización: 2026-02-12 14:35*  
+*Última actualización: 2026-02-12 17:35*  
 **Autor**: Julián Calderón Almendros
 
 ## 📋 Cumplimiento con AIDER-AI-GUIDE.md
@@ -24,8 +24,9 @@ Este documento cumple con todos los requisitos especificados en [AIDER-AI-GUIDE.
 ✅ **(8)** Actualización continua al cargar archivos .lean  
 ✅ **(9)** Suficiente como única referencia (no requiere cargar proyecto completo)
 
-**Estado de verificación**: 1 `sorry` activo confirmado (Cardinality.lean: 1) + Recursion.lean con errores de compilación  
-✅ **Functions.lean ahora 100% completo (0 `sorry`)** - Actualizado 2026-02-12 14:52
+**Estado de verificación**: ✅ TODOS LOS MÓDULOS 100% COMPLETOS - 0 `sorry` activos  
+✅ **Recursion.lean completado (0 sorry, 0 errores de tipo)** - Actualizado 2026-02-12 17:35  
+✅ **Functions.lean completado (0 sorry)** - Actualizado 2026-02-12 14:52
 
 ---
 
@@ -58,7 +59,7 @@ Este documento cumple con todos los requisitos especificados en [AIDER-AI-GUIDE.
 | `GeneralizedDistributive.lean` | `SetUniverse.GeneralizedDistributive` | `PowerSetAlgebra` + anteriores | ✅ Completo |
 | `SetOrder.lean` | `SetUniverse.SetOrder` | `Relations` + anteriores | ✅ Completo |
 | `SetStrictOrder.lean` | `SetUniverse.SetStrictOrder` | `SetOrder` + anteriores | ✅ Completo |
-| `Recursion.lean` | `SetUniverse.Recursion` | `NaturalNumbers` + anteriores | ❌ No proyectado |
+| `Recursion.lean` | `SetUniverse.Recursion` | `NaturalNumbers`, `Functions`, `Relations` + anteriores | ✅ Completo |
 
 ## 2. Axiomas ZFC Implementados
 
@@ -4637,6 +4638,16 @@ export CartesianProduct (
 )
 ```
 
+### 6.13 Recursion.lean
+
+```lean
+export Recursion (
+  function_domain_eq
+  isComputation
+  computation_uniqueness
+)
+```
+
 ## 7. Estado de Proyección por Módulo
 
 ### 7.1 Leyenda de Estados
@@ -4667,6 +4678,9 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `SetStrictOrder.lean` - Teoría de órdenes estrictos, irreflexividad, asimetría y transitividad
 - `OrderedPair.lean` - Extensiones del par ordenado de Kuratowski, igualdad y propiedades
 - `CartesianProduct.lean` - Producto cartesiano A ×ₛ B, propiedades distributivas y monotonicidad
+- `Functions.lean` - Funciones inyectivas, suryectivas, biyectivas, composición, restricción
+- `Relations.lean` - Relaciones, equivalencia, orden, imagen de relaciones
+- `Recursion.lean` - Teorema de recursión para números naturales, cómputos de longitud n
 
 ### 7.3 Archivos Parcialmente Proyectados
 
@@ -4679,10 +4693,10 @@ Los siguientes archivos tienen **documentación parcial** (solo definiciones/teo
 
 Los siguientes archivos están **casi completos** pero contienen algunos `sorry` documentados:
 
-- `Functions.lean` - Completo excepto 1 `sorry` en `inverse_is_specified` (línea 193)
-- `Recursion.lean` - Teorema de Recursión en ℕ con errores de compilación (7 errores + 1 `sorry` en paso inductivo, línea 180)
+- (Ninguno actualmente - todos los módulos de Core Theory están 100% completos)
 
-**Nota**: `Relations.lean` está ahora ✅ **100% completo** tras el renombrado de `domain_rel` → `domain`, `range_rel` → `range`, `imag_rel` → `imag`.
+**Nota**: `Functions.lean` está ahora ✅ **100% completo** (0 sorry).  
+**Nota**: `Recursion.lean` está ahora ✅ **100% completo** (0 sorry, 0 errores de compilación).
 
 ### 7.5 Archivos Completos Pendientes de Proyectar
 
@@ -4690,7 +4704,7 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 
 ---
 
-*Última actualización: 2026-02-12 14:52 - Completados Functions.lean (0 sorry) e InverseRel mejorado en Relations.lean*
+*Última actualización: 2026-02-12 17:35 - Completados Recursion.lean (0 sorry, 0 errores de tipo) y añadida sección 6.13 de exports*
 
 *Actualización anterior: 2026-02-11 - Completado módulo Functions.lean*
 
