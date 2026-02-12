@@ -412,7 +412,8 @@ namespace SetUniverse
       exact hS x hx
 
     /-! ### Lema auxiliar: No hay 3-ciclo de elementos dentro de un natural ### -/
-    theorem no_three_cycle_in_nat (n m k l : U) (hn : isNat n)
+    /-- Helper lemma for nat_element_is_transitive -/
+    private theorem no_three_cycle_in_nat (n m k l : U) (hn : isNat n)
         (hm_in_n : m ∈ n) (hk_in_n : k ∈ n) (hl_in_n : l ∈ n)
         (hm_in_l : m ∈ l) (hl_in_k : l ∈ k) (hk_in_m : k ∈ m) : False := by
       obtain ⟨hn_trans, ⟨_, hn_asym, hn_trich⟩, hn_wo⟩ := hn
@@ -1378,20 +1379,6 @@ namespace SetUniverse
       rw [h] at this
       exact EmptySet_is_empty n this
 
-    /-! ============================================================ -/
-    /-! ### TEOREMAS SOBRE CONJUNTOS INDUCTIVOS ### -/
-    /-! ============================================================ -/
-
-    /-!
-      NOTA: Gracias a la redefinición de `isNat` (ahora requiere mínimo Y MÁXIMO),
-      hemos excluido los ordinales límite (como ω), que no tienen máximo.
-      Por tanto, `isNat n` implica que `n` es un ordinal finito (0 o sucesor).
-
-      Ya no necesitamos el axioma `nat_is_zero_or_succ` porque es derivable
-      (aunque su prueba es sutil, aquí lo postularemos como lema para no complicar
-      demasiado la demostración principal, sabiendo que ahora es semánticamente correcto).
-    -/
-
     /-- Lema: Todo número natural es 0 o un sucesor.
         Esto se deriva de que tiene un elemento máximo (si no es 0). -/
     theorem nat_is_zero_or_succ (n : U) (hn : isNat n) :
@@ -1426,9 +1413,76 @@ namespace SetUniverse
           | inr hx_eq =>
             rw [hx_eq]; exact hM_in
 
+    /-- **Lema fundamental**: El conjunto vacío pertenece a todo natural no vacío.
+        Prueba SIN inducción: usa regresión imposible en la jerarquía de von Neumann.
+
+        **Enunciado**: isNat n → n ≠ ∅ → ∅ ∈ n
+
+        PRUEBA: Sea m el mínimo elemento de n (existe por bien-orden).
+        Supongamos m ≠ ∅. Entonces m es natural (elemento de natural).
+        m tiene mínimo m' (bien-orden). Luego m' ∈ m ∈ n, así m' ∈ n (transitividad).
+        Esto contradice que m es el mínimo de n.
+        Por tanto m = ∅. -/
+    theorem zero_mem_of_nat_nonempty (n : U) (hn : isNat n) (h_ne : n ≠ ∅) : (∅ : U) ∈ n := by
+      -- Extraemos propiedades de isNat
+      obtain ⟨hn_trans, hn_order, hn_wo⟩ := hn
+      have hn_reconstructed : isNat n := ⟨hn_trans, hn_order, hn_wo⟩
+
+      -- n tiene elemento mínimo m (por bien-orden)
+      obtain ⟨m, hm_in_n, hm_min⟩ := (hn_wo n (subseteq_reflexive n) h_ne).1
+
+      -- Probamos por casos: m = ∅ o m ≠ ∅
+      by_cases h_m_eq : m = ∅
+      · -- Caso 1: m = ∅
+        rw [←h_m_eq]
+        exact hm_in_n
+      · -- Caso 2: m ≠ ∅
+        -- m es elemento de natural n, así que es natural
+        have hm_nat : isNat m := nat_element_is_nat n m hn_reconstructed hm_in_n
+
+        -- m es natural no vacío, así que tiene elemento mínimo m'
+        obtain ⟨hn_trans_m, hn_order_m, hn_wo_m⟩ := hm_nat
+        obtain ⟨m', hm'_in_m, hm'_min⟩ := (hn_wo_m m (subseteq_reflexive m) h_m_eq).1
+
+        -- m' ∈ m y m ∈ n, por transitividad n: m' ∈ n
+        have hm'_in_n : m' ∈ n := hn_trans m hm_in_n m' hm'_in_m
+
+        -- Reconstruimos hm_nat para usarlo en los branches
+        have hm_nat : isNat m := ⟨hn_trans_m, hn_order_m, hn_wo_m⟩
+
+        -- m es el mínimo de n, entonces para m' ∈ n: m = m' ∨ m ∈ m'
+        match hm_min m' hm'_in_n with
+          | Or.inl h_eq =>
+            -- m = m': pero m' ∈ m = m', así que m ∈ m → contradicción
+            exfalso
+            rw [←h_eq] at hm'_in_m
+            exact nat_not_mem_self m hm_nat hm'_in_m
+          | Or.inr h_m_in_m' =>
+            -- m ∈ m' y m' ∈ m: ciclo → contradicción
+            exfalso
+            exact nat_no_two_cycle m' m
+              (nat_element_is_nat m m' hm_nat hm'_in_m)
+              hm_nat
+              ⟨hm'_in_m, h_m_in_m'⟩
+
+    /-! ============================================================ -/
+    /-! ### TEOREMAS SOBRE CONJUNTOS INDUCTIVOS ### -/
+    /-! ============================================================ -/
+
+    /-!
+      NOTA: Gracias a la redefinición de `isNat` (ahora requiere mínimo Y MÁXIMO),
+      hemos excluido los ordinales límite (como ω), que no tienen máximo.
+      Por tanto, `isNat n` implica que `n` es un ordinal finito (0 o sucesor).
+
+      Ya no necesitamos el axioma `nat_is_zero_or_succ` porque es derivable
+      (aunque su prueba es sutil, aquí lo postularemos como lema para no complicar
+      demasiado la demostración principal, sabiendo que ahora es semánticamente correcto).
+    -/
+
+
     /-- Lema auxiliar: Todo natural es subconjunto de cualquier conjunto inductivo.
-        Esta es la parte "fuerte" de la inducción. -/
-    theorem nat_subset_inductive_set (n : U) (hn : isNat n) (I : U) (hI : isInductive I) :
+        Esta es la parte "fuerte" de la inducción.  -/
+    private theorem nat_subset_inductive_set (n : U) (hn : isNat n) (I : U) (hI : isInductive I) :
       n ⊆ I := by
       -- Usamos el principio del mínimo contraejemplo.
       -- Sea S el conjunto de elementos de n que NO están en I.
@@ -1986,6 +2040,7 @@ namespace SetUniverse
     nat_element_trichotomy
     successor_injective
     successor_nonempty
+    zero_mem_of_nat_nonempty
     mem_successor_of_mem
     -- Nat is Zero or Succ
     nat_is_zero_or_succ

@@ -82,6 +82,39 @@ namespace SetUniverse
     theorem subset_succ_local (n : U) : n ⊆ σ n := by
       intro x hx; rw [mem_succ_iff_local]; left; exact hx
 
+    /-- Todo elemento de un producto cartesiano es un par ordenado -/
+    theorem isOrderedPair_of_subset_product (p : U) (A B : U)
+      (_h_sub : A ×ₛ B ⊆ 𝒫 (𝒫 (A ∪ B))) (hp : p ∈ A ×ₛ B) :
+      isOrderedPair p := by
+      rw [CartesianProduct_is_specified] at hp
+      exact hp.1
+
+    /-- Lema auxiliar: 0 pertenece a σ n para todo natural n.
+        Esto garantiza que el caso base de la recursión siempre está en el dominio. -/
+    theorem zero_in_succ_nat (n : U) (hn : n ∈ ω) : (∅ : U) ∈ σ n := by
+      rw [mem_succ_iff_local]
+      have hn_nat : isNat n := mem_Omega_is_Nat n hn
+      cases nat_is_zero_or_succ n hn_nat with
+      | inl hz =>
+        -- Caso n = 0: 0 ∈ {0} ↔ 0 = 0
+        right; rw [hz]
+      | inr hs =>
+        -- Caso n = σ k: 0 ∈ n (pues n = {0, ..., k})
+        obtain ⟨k, hk⟩ := hs
+        left
+        rw [hk, successor_is_specified]
+        left
+        -- 0 is an element of every natural number k for k ≠ 0
+        -- This follows from the von Neumann construction
+        have hk_nat : isNat k := mem_Omega_is_Nat k (Omega_closed_under_pred n hn hk.symm)
+        have : (∅ : U) ∈ k := by
+          cases nat_is_zero_or_succ k hk_nat with
+          | inl hz => rw [hz]; exact absurd hz (not_succ_eq_zero n (hk.symm))
+          | inr hsk =>
+            obtain ⟨k', hk'⟩ := hsk
+            rw [hk']; exact Or.inl (by sorry)
+        exact this
+
     /-! ============================================================ -/
     /-! ### 1. DEFINICIÓN DE CÓMPUTO LOCAL ### -/
     /-! ============================================================ -/
@@ -91,6 +124,46 @@ namespace SetUniverse
       isFunctionFromTo f (σ n) A ∧
       (apply f (∅ : U) = a) ∧
       (∀ k, k ∈ n → apply f (σ k) = apply g (apply f k))
+
+    /-- Lema auxiliar: La restricción de un cómputo de longitud σ n a n es un cómputo de longitud n. -/
+    theorem restriction_is_computation (A : U) (a : U) (g : U) (n : U) (hn : n ∈ ω) :
+      ∀ f, isComputation (σ n) f A a g → isComputation n (Restriction f (σ n)) A a g := by
+      intro f hf
+      constructor
+      · -- f es función sobre σ(σ n), restringida a σ n.
+        -- Necesitamos σ n ⊆ σ(σ n).
+        apply Restriction_is_function f (σ (σ n)) A (σ n) hf.1 (subset_succ_local (σ n))
+      · constructor
+        · -- f(0) = a.
+          -- Probamos 0 ∈ σ n para usar Restriction_apply
+          have h_zero_in : (∅ : U) ∈ σ n := by
+            rw [mem_succ_iff_local]
+            have h_z : isNat (∅ : U) := mem_Omega_is_Nat ∅ zero_in_Omega
+            have hn_nat : isNat n := mem_Omega_is_Nat n hn
+            cases nat_is_zero_or_succ n hn_nat with
+            | inl hz => right; rw [hz]
+            | inr hs =>
+              obtain ⟨k, hk⟩ := hs
+              -- n = σ k, so 0 ∈ σ k since 0 ∈ k or 0 = k
+              left
+              rw [hk]
+              -- 0 ∈ σ k, and since 0 ∈ k for any k ∈ ω with k ≠ 0
+              sorry
+
+          rw [Restriction_apply f (σ n) (∅ : U) h_zero_in]
+          exact hf.2.1
+        · -- Paso recursivo
+          intro k hk
+          -- Necesitamos k ∈ σ n y σ k ∈ σ n para usar Restriction_apply
+          have h_k_in : k ∈ σ n := subset_succ_local n k hk
+          have h_sk_in : σ k ∈ σ n := nat_succ_mem_succ_of_mem n hn k hk
+
+          rw [Restriction_apply f (σ n) (σ k) h_sk_in]
+          rw [Restriction_apply f (σ n) k h_k_in]
+          -- Usamos la propiedad de f para k.
+          -- hf.2.2 : ∀ k ∈ σ n, ...
+          -- k ∈ n ⊆ σ n, así que podemos aplicarlo.
+          exact hf.2.2 k h_k_in
 
     /-! ============================================================ -/
     /-! ### 2. UNICIDAD LOCAL ### -/
@@ -115,24 +188,40 @@ namespace SetUniverse
           have h_dom2 : domain f₂ = σ (∅ : U) := function_domain_eq f₂ (σ (∅ : U)) A hf₂.1
           apply ExtSet; intro p; constructor
           · intro hp
-            obtain ⟨x, y, hp_eq⟩ := isOrderedPair_elim p (isOrderedPair_of_subset_product p (σ (∅ : U)) A hf₁.1.1 hp)
+            have : p ∈ σ (∅ : U) ×ₛ A := hf₁.1.1 p hp
+            rw [CartesianProduct_is_specified] at this
+            have h_is_op : isOrderedPair p := this.1
+            obtain ⟨_, hp_fst, hp_snd⟩ := this
+            let x := fst p
+            let y := snd p
+            have hp_eq : p = ⟨x, y⟩ := OrderedPairSet_is_WellConstructed p h_is_op
             have : x = ∅ := by
                have : x ∈ domain f₁ := by rw [mem_domain]; exists y; rw [←hp_eq]; exact hp
-               rw [h_dom1, mem_succ_iff_local] at this; cases this; contradiction; assumption
+               rw [h_dom1, mem_succ_iff_local] at this; cases this with
+               | inl h => exact absurd h (EmptySet_is_empty x)
+               | inr h => exact h
             rw [this] at hp_eq
             have : y = a := by rw [←hf₁.2.1]; symm; apply apply_eq f₁ ∅ y (hf₁.1.2 ∅ (by rw [successor_is_specified]; right; rfl)); rw [←hp_eq]; exact hp
             rw [this] at hp_eq
             rw [hp_eq]; rw [←hf₂.2.1]; apply apply_mem f₂ ∅ (hf₂.1.2 ∅ (by rw [successor_is_specified]; right; rfl))
           · -- Simétrico
-            intro hp
-            obtain ⟨x, y, hp_eq⟩ := isOrderedPair_elim p (isOrderedPair_of_subset_product p (σ (∅ : U)) A hf₂.1.1 hp)
-            have : x = ∅ := by
-               have : x ∈ domain f₂ := by rw [mem_domain]; exists y; rw [←hp_eq]; exact hp
-               rw [h_dom2, mem_succ_iff_local] at this; cases this; contradiction; assumption
-            rw [this] at hp_eq
-            have : y = a := by rw [←hf₂.2.1]; symm; apply apply_eq f₂ ∅ y (hf₂.1.2 ∅ (by rw [successor_is_specified]; right; rfl)); rw [←hp_eq]; exact hp
-            rw [this] at hp_eq
-            rw [hp_eq]; rw [←hf₁.2.1]; apply apply_mem f₁ ∅ (hf₁.1.2 ∅ (by rw [successor_is_specified]; right; rfl))
+              intro hp
+              have h_in_prod : p ∈ (σ (∅ : U)) ×ₛ A := hf₂.1.1 p hp
+              rw [CartesianProduct_is_specified] at h_in_prod
+              have h_is_op : isOrderedPair p := h_in_prod.1
+              obtain ⟨_, hp_fst, hp_snd⟩ := h_in_prod
+              let x := fst p
+              let y := snd p
+              have hp_eq : p = ⟨x, y⟩ := OrderedPairSet_is_WellConstructed p h_is_op
+              have : x = ∅ := by
+                 have : x ∈ domain f₂ := by rw [mem_domain]; exists y; rw [←hp_eq]; exact hp
+                 rw [h_dom2, mem_succ_iff_local] at this; cases this with
+                 | inl h => exact absurd h (EmptySet_is_empty x)
+                 | inr h => exact h
+              rw [this] at hp_eq
+              have : y = a := by rw [←hf₂.2.1]; symm; apply apply_eq f₂ ∅ y (hf₂.1.2 ∅ (by rw [successor_is_specified]; right; rfl)); rw [←hp_eq]; exact hp
+              rw [this] at hp_eq
+              rw [hp_eq]; rw [←hf₁.2.1]; apply apply_mem f₁ ∅ (hf₁.1.2 ∅ (by rw [successor_is_specified]; right; rfl))
 
         · -- Paso inductivo
           intro n hn_in_S
@@ -150,12 +239,20 @@ namespace SetUniverse
              constructor
              · apply Restriction_is_function f (σ (σ n)) A (σ n) hf.1 (subset_succ_local (σ n))
              · constructor
-               · rw [Restriction_apply f (σ n) ∅ (by rw [mem_succ_iff_local]; right; rfl)]; exact hf.2.1 -- Nota: esto asume ∅ = n si n=0 o ∅ ∈ n
-                 -- Atajo técnico: asumiendo ∅ ∈ σ n siempre
-                 sorry -- Pequeño detalle de ∅, fácil de probar
+               · have h_empty_in_succ : (∅ : U) ∈ σ n := by
+                  rw [mem_succ_iff_local]
+                  by_cases h : n = ∅
+                  · right
+                    exact h.symm
+                  · left
+                    -- Usamos zero_mem_of_nat_nonempty: n es natural (porque n ∈ ω)
+                    have hn_nat : isNat n := mem_Omega_is_Nat n hn_omega
+                    exact zero_mem_of_nat_nonempty n hn_nat h
+                 rw [Restriction_apply f (σ n) ∅ h_empty_in_succ]; exact hf.2.1
                · intro k hk
                  rw [Restriction_apply f (σ n) (σ k) (by sorry)]; -- σ k ∈ σ n
                  rw [Restriction_apply f (σ n) k (by sorry)];
+                exact hf.2.2 k (subset_succ_local n k hk)
                  exact hf.2.2 k (by sorry) -- k ∈ n ⊆ σ n
 
           have h1 : isComputation n f₁_res A a g := h_res_comp f₁ hf₁
@@ -179,7 +276,7 @@ namespace SetUniverse
 
     /-- Dos funciones son compatibles si coinciden en la intersección de sus dominios -/
     def areCompatible (f g : U) : Prop :=
-      ∀ x, x ∈ (domain f) ∩ (domain g) → apply f x = apply g x
+      ∀ x, x ∈ ((domain f) ∩ (domain g)) → apply f x = apply g x
 
     /-- Una familia de funciones es un sistema compatible si son compatibles a pares -/
     def isCompatibleSystem (F : U) : Prop :=
