@@ -519,74 +519,6 @@ namespace SetUniverse
       rw [mem_imag_rel]
       exact ⟨x, h⟩
 
-    /-! ### Legacy Domain and Range (Structural Issues) -/
-
-    /-- Characterization of domain membership (using legacy definition from Pairing.lean):
-        x is in the domain of R if and only if there exists y such that ⟨x, y⟩ ∈ R
-
-        NOTE: This theorem has a `sorry` because the definition `domain R = SpecSet (fst R) ...`
-        in Pairing.lean uses `fst R`, which is designed for individual ordered pairs, not relations.
-        The correct definition should use `⋃(⋃ R)` instead (see `domain_rel` above).
-
-        The forward direction works because it only depends on the predicate part.
-        Use `domain_rel` and `mem_domain_rel` for fully proven theorems. -/
-    theorem mem_domain (R x : U) :
-        x ∈ domain R ↔ ∃ y, ⟨x, y⟩ ∈ R := by
-      unfold domain
-      rw [SpecSet_is_specified]
-      constructor
-      · intro h; exact h.2
-      · intro h
-        constructor
-        · -- x ∈ fst R
-          -- This requires proving that fst R (where fst is defined for pairs) works for relations
-          -- Problem: fst R = ⋂(⋂ R) doesn't represent the set of first elements for a relation
-          -- Solution: Use domain_rel instead, which correctly uses ⋃(⋃ R)
-          sorry
-        · exact h
-
-    /-- Characterization of range membership (using legacy definition from Pairing.lean):
-        y is in the range of R if and only if there exists x such that ⟨x, y⟩ ∈ R
-
-        NOTE: This theorem has a `sorry` for the same structural reason as `mem_domain`.
-        The definition `range R = SpecSet (snd R) ...` uses `snd R` which doesn't make sense
-        for relations. Use `range_rel` and `mem_range_rel` for fully proven theorems. -/
-    theorem mem_range (R y : U) :
-        y ∈ range R ↔ ∃ x, ⟨x, y⟩ ∈ R := by
-      unfold range
-      rw [SpecSet_is_specified]
-      constructor
-      · intro h; exact h.2
-      · intro h
-        constructor
-        · -- y ∈ snd R
-          -- Same structural issue as mem_domain: snd R doesn't work for relations
-          -- Use range_rel instead, which correctly uses ⋃(⋃ R)
-          sorry
-        · exact h
-
-    /-- If ⟨x, y⟩ ∈ R, then x ∈ domain R
-
-        NOTE: This works despite the structural issues in `domain` because it only uses
-        the easy direction of `mem_domain`. For a fully proven version, see
-        `pair_mem_implies_fst_in_domain_rel`. -/
-    theorem pair_mem_implies_fst_in_domain (R x y : U) :
-        ⟨x, y⟩ ∈ R → x ∈ domain R := by
-      intro h
-      rw [mem_domain]
-      exact ⟨y, h⟩
-
-    /-- If ⟨x, y⟩ ∈ R, then y ∈ range R
-
-        NOTE: This works despite the structural issues in `range` because it only uses
-        the easy direction of `mem_range`. For a fully proven version, see
-        `pair_mem_implies_snd_in_range_rel`. -/
-    theorem pair_mem_implies_snd_in_range (R x y : U) :
-        ⟨x, y⟩ ∈ R → y ∈ range R := by
-      intro h
-      rw [mem_range]
-      exact ⟨x, h⟩
-
   end Relations
 
 end SetUniverse
@@ -644,8 +576,4 @@ export SetUniverse.Relations (
     pair_mem_implies_fst_in_domain_rel
     pair_mem_implies_snd_in_range_rel
     pair_mem_implies_snd_in_imag_rel
-    mem_domain
-    mem_range
-    pair_mem_implies_fst_in_domain
-    pair_mem_implies_snd_in_range
 )

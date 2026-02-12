@@ -620,13 +620,6 @@ namespace SetUniverse
     noncomputable def isInComposition (R S w : U) : Prop :=
       ∃ (W : U), w ∈ W ↔ ∃ (r : U), r ∈ R → ∃ (s : U), s ∈ S → snd r = fst s ∧ w = ⟨ fst r , snd s ⟩
 
-
-    noncomputable def domain (R : U) : U :=
-      SpecSet (fst R) (fun x => ∃ y, ⟨ x , y ⟩ ∈ R)
-
-    noncomputable def range (R : U) : U :=
-      SpecSet (snd R) (fun y => ∃ x, ⟨ x , y ⟩ ∈ R)
-
     noncomputable def isReflexive (w : U) : Prop :=
       ∃ (x y : U), ⟨ x , y ⟩ ∈ w → ⟨ x , x ⟩ ∈ w
 
@@ -705,8 +698,6 @@ export SetUniverse.PairingAxiom (
     OrderedPairSet_is_WellConstructed
     isRelation
     isRelation_in_Sets
-    domain
-    range
     isReflexive
     isReflexive_in_Set
     isIReflexive
