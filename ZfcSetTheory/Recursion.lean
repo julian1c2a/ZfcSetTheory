@@ -76,12 +76,22 @@ namespace SetUniverse
         exists y
         exact hy.1
 
-    /-- Lema auxiliar: Si k ∈ n, entonces σ k ∈ σ n.
-        Necesario para justificar que los argumentos de la recursión caen en el dominio. -/
+    /-- Lema auxiliar local: x ∈ σ n ↔ x ∈ n ∨ x = n -/
+    theorem mem_succ_iff_local (n x : U) : x ∈ (σ n) ↔ x ∈ n ∨ x = n := by
+      rw [successor_is_specified]
+
+    /-- Lema auxiliar local: n ⊆ σ n -/
+    theorem subset_succ_local (n : U) : n ⊆ σ n := by
+      intro x hx
+      rw [mem_succ_iff_local]
+      left
+      exact hx
+
+    /-- Lema auxiliar: Si k ∈ n, entonces σ k ∈ σ n. -/
     theorem nat_succ_mem_succ_of_mem (n : U) (hn : n ∈ ω) :
       ∀ k, k ∈ n → σ k ∈ σ n := by
       -- Induction on n
-      let S := SpecSet ω (fun n => ∀ k, k ∈ n → σ k ∈ σ n)
+      let S := SpecSet (ω : U) (fun n => ∀ k, k ∈ n → σ k ∈ σ n)
       have h_ind : S = ω := by
         apply induction_principle S
         · intro x hx; rw [SpecSet_is_specified] at hx; exact hx.1
@@ -95,16 +105,14 @@ namespace SetUniverse
           obtain ⟨hm_omega, h_hyp⟩ := hm_in_S
           constructor; exact succ_in_Omega m hm_omega
           intro k hk
-          rw [successor_is_specified] at hk
+          rw [mem_succ_iff_local] at hk
           cases hk with
           | inl h_in_m =>
-            -- k ∈ m. σ k ∈ σ m by IH.
-            -- σ m ⊆ σ (σ m) (porque x ∈ y → x ∈ σ y).
+            -- k ∈ m. σ k ∈ σ m by IH. σ m ⊆ σ (σ m)
             have h_sk_sm : σ k ∈ σ m := h_hyp k h_in_m
-            exact mem_successor_of_mem (σ k) (σ m) h_sk_sm
+            exact subset_succ_local (σ m) (σ k) h_sk_sm
           | inr h_eq_m =>
-            -- k = m. σ k = σ m.
-            -- σ m ∈ σ (σ m).
+            -- k = m. σ k = σ m ∈ σ (σ m)
             rw [h_eq_m]
             exact mem_successor_self (σ m)
       have hn_S : n ∈ S := by rw [h_ind]; exact hn
@@ -115,12 +123,6 @@ namespace SetUniverse
     /-! ### 1. DEFINICIÓN DE CÓMPUTO DE LONGITUD n ### -/
     /-! ============================================================ -/
 
-    /-!
-      Un conjunto `f` es un cómputo de longitud `n` para la base `a` y el paso `g` si:
-      1. `f` es una función con dominio `σ(n)` (es decir, {0, ..., n}).
-      2. `f(0) = a`.
-      3. `∀ k ∈ n, f(σ k) = g(f(k))`.
-    -/
     def isComputation (n : U) (f : U) (A : U) (a : U) (g : U) : Prop :=
       isFunctionFromTo f (σ n) A ∧
       (apply f (∅ : U) = a) ∧
@@ -130,323 +132,279 @@ namespace SetUniverse
     /-! ### 2. UNICIDAD DEL CÓMPUTO ### -/
     /-! ============================================================ -/
 
-    /-!
-      Lema: Si f y f' son cómputos de longitud n, entonces f = f'.
-      Demostración: Usamos el Principio de Inducción sobre n.
-
-      Sea S = { n ∈ ω | los cómputos de longitud n son únicos }.
-      Probaremos que S = ω.
-    -/
-
     theorem computation_uniqueness (A : U) (a : U) (g : U)
       (ha : a ∈ A) (hg : isFunctionFromTo g A A) :
       ∀ n, n ∈ ω → ∀ f₁ f₂,
         isComputation n f₁ A a g → isComputation n f₂ A a g → f₁ = f₂ := by
 
-      -- Definimos el conjunto S para la inducción
-      let S := SpecSet ω (fun n => ∀ f₁ f₂,
+      let S := SpecSet (ω : U) (fun n => ∀ f₁ f₂,
         isComputation n f₁ A a g → isComputation n f₂ A a g → f₁ = f₂)
 
-      -- Aplicamos el principio de inducción
       have h_ind : S = ω := by
         apply induction_principle S
-        · -- S ⊆ ω
-          intro x hx
-          rw [SpecSet_is_specified] at hx
-          exact hx.1
+        · intro x hx; rw [SpecSet_is_specified] at hx; exact hx.1
 
         · -- CASO BASE: n = 0
           rw [SpecSet_is_specified]
+          constructor; exact zero_in_Omega
+          intro f₁ f₂ hf₁ hf₂
+          obtain ⟨hfunc1, hval1, _⟩ := hf₁
+          obtain ⟨hfunc2, hval2, _⟩ := hf₂
+
+          have h_dom1 : domain f₁ = σ (∅ : U) := function_domain_eq f₁ (σ (∅ : U)) A hfunc1
+          have h_dom2 : domain f₂ = σ (∅ : U) := function_domain_eq f₂ (σ (∅ : U)) A hfunc2
+
+          apply ExtSet
+          intro p
           constructor
-          · exact zero_in_Omega
-          · intro f₁ f₂ hf₁ hf₂
-            obtain ⟨hfunc1, hval1, _⟩ := hf₁
-            obtain ⟨hfunc2, hval2, _⟩ := hf₂
+          · intro hp
+            have hsub := hfunc1.1
+            have hp_cart : p ∈ (σ (∅ : U)) ×ₛ A := hsub p hp
+            rw [CartesianProduct_is_specified] at hp_cart
+            obtain ⟨h_is_pair, -⟩ := hp_cart
+            obtain ⟨x, y, hp_eq⟩ := h_is_pair
 
-            -- f₁ y f₂ son funciones {0} → A
-            have h_dom1 : domain f₁ = σ (∅ : U) := function_domain_eq f₁ (σ (∅ : U)) A hfunc1
-            have h_dom2 : domain f₂ = σ (∅ : U) := function_domain_eq f₂ (σ (∅ : U)) A hfunc2
+            have hx_dom : x ∈ domain f₁ := by
+              rw [mem_domain]; exists y; rw [←hp_eq]; exact hp
 
-            -- Probamos que f₁ = f₂ comprobando sus pares ordenados
-            apply ExtSet
-            intro p
-            constructor
-            · intro hp
-              -- Si p ∈ f₁, p = ⟨x, y⟩
-              have hsub := hfunc1.1
-              have hp_cart : p ∈ (σ (∅ : U)) ×ₛ A := hsub p hp
-              rw [CartesianProduct_is_specified] at hp_cart
-              obtain ⟨h_pair, h_fst, h_snd⟩ := hp_cart
-              obtain ⟨x, y, hp_eq⟩ := isOrderedPair_elim p h_pair
+            rw [h_dom1, mem_succ_iff_local] at hx_dom
+            have hx_eq_zero : x = ∅ := by
+              cases hx_dom with
+              | inl h => exact False.elim (EmptySet_is_empty x h)
+              | inr h => exact h
+            rw [hx_eq_zero] at hp_eq
 
-              have hx_dom : x ∈ domain f₁ := by
-                rw [mem_domain]; exists y; rw [←hp_eq]; exact hp
+            have hy_val : y = a := by
+              rw [←hval1]
+              have h_zero_mem : (∅ : U) ∈ σ (∅ : U) := by rw [mem_succ_iff_local]; right; rfl
+              symm
+              apply apply_eq f₁ (∅ : U) y (hfunc1.2 ∅ h_zero_mem)
+              rw [←hp_eq]; exact hp
 
-              -- Como dominio es σ(∅) = {∅}, tenemos x ∈ {∅}, así x = ∅
-              rw [h_dom1] at hx_dom
-              rw [successor_is_specified, BinUnion_is_specified, Singleton_is_specified] at hx_dom
-              have hx_eq_zero : x = ∅ := by
-                cases hx_dom with
-                | inl h => exact False.elim (EmptySet_is_empty x h)
-                | inr h => exact h
+            rw [hy_val] at hp_eq
+            have h_in_f2 : ⟨(∅ : U), a⟩ ∈ f₂ := by
+              rw [←hval2]
+              have h_zero_mem : (∅ : U) ∈ σ (∅ : U) := by rw [mem_succ_iff_local]; right; rfl
+              apply apply_mem f₂ (∅ : U) (hfunc2.2 ∅ h_zero_mem)
 
-              rw [hx_eq_zero] at hp_eq
+            rw [←hp_eq] at h_in_f2
+            exact h_in_f2
 
-              -- y = f₁(0) = a
-              have hy_val : y = a := by
-                rw [←hval1]
-                have h_zero_mem : (∅ : U) ∈ σ (∅ : U) := by rw [successor_is_specified]; right; rfl
-                -- symmetry fix
-                symm
-                apply apply_eq f₁ (∅ : U) y (hfunc1.2 ∅ h_zero_mem)
-                rw [←hp_eq]; exact hp
+          · -- Simétrico
+            intro hp
+            have hsub := hfunc2.1
+            have hp_cart : p ∈ (σ (∅ : U)) ×ₛ A := hsub p hp
+            rw [CartesianProduct_is_specified] at hp_cart
+            obtain ⟨h_is_pair, -⟩ := hp_cart
+            obtain ⟨x, y, hp_eq⟩ := h_is_pair
 
-              rw [hy_val] at hp_eq
-              -- p = ⟨0, a⟩. Ver si está en f₂
-              have h_in_f2 : ⟨(∅ : U), a⟩ ∈ f₂ := by
-                rw [←hval2]
-                have h_zero_mem : (∅ : U) ∈ σ (∅ : U) := by rw [successor_is_specified]; right; rfl
-                apply apply_mem f₂ (∅ : U) (hfunc2.2 ∅ h_zero_mem)
+            have hx_dom : x ∈ domain f₂ := by rw [mem_domain]; exists y; rw [←hp_eq]; exact hp
+            rw [h_dom2, mem_succ_iff_local] at hx_dom
+            have hx_eq_zero : x = ∅ := by
+              cases hx_dom with | inl h => exact False.elim (EmptySet_is_empty x h) | inr h => exact h
+            rw [hx_eq_zero] at hp_eq
 
-              rw [←hp_eq] at h_in_f2
-              exact h_in_f2
+            have hy_val : y = a := by
+              rw [←hval2]
+              have h_zero_mem : (∅ : U) ∈ σ (∅ : U) := by rw [mem_succ_iff_local]; right; rfl
+              symm; apply apply_eq f₂ (∅ : U) y (hfunc2.2 ∅ h_zero_mem); rw [←hp_eq]; exact hp
 
-            · -- Dirección simétrica f₂ ⊆ f₁
-              intro hp
-              have hsub := hfunc2.1
-              have hp_cart : p ∈ (σ (∅ : U)) ×ₛ A := hsub p hp
-              rw [CartesianProduct_is_specified] at hp_cart
-              obtain ⟨h_pair, h_fst, h_snd⟩ := hp_cart
-              obtain ⟨x, y, hp_eq⟩ := isOrderedPair_elim p h_pair
+            rw [hy_val] at hp_eq
+            have h_in_f1 : ⟨(∅ : U), a⟩ ∈ f₁ := by
+              rw [←hval1]
+              have h_zero_mem : (∅ : U) ∈ σ (∅ : U) := by rw [mem_succ_iff_local]; right; rfl
+              apply apply_mem f₁ (∅ : U) (hfunc1.2 ∅ h_zero_mem)
 
-              have hx_dom : x ∈ domain f₂ := by
-                 rw [mem_domain]; exists y; rw [←hp_eq]; exact hp
+            rw [←hp_eq] at h_in_f1
+            exact h_in_f1
 
-              rw [h_dom2] at hx_dom
-              rw [successor_is_specified, BinUnion_is_specified, Singleton_is_specified] at hx_dom
-              have hx_eq_zero : x = ∅ := by
-                cases hx_dom with
-                | inl h => exact False.elim (EmptySet_is_empty x h)
-                | inr h => exact h
-
-              rw [hx_eq_zero] at hp_eq
-
-              have hy_val : y = a := by
-                rw [←hval2]
-                have h_zero_mem : (∅ : U) ∈ σ (∅ : U) := by rw [successor_is_specified]; right; rfl
-                symm
-                apply apply_eq f₂ (∅ : U) y (hfunc2.2 ∅ h_zero_mem)
-                rw [←hp_eq]; exact hp
-
-              rw [hy_val] at hp_eq
-              have h_in_f1 : ⟨(∅ : U), a⟩ ∈ f₁ := by
-                rw [←hval1]
-                have h_zero_mem : (∅ : U) ∈ σ (∅ : U) := by rw [successor_is_specified]; right; rfl
-                apply apply_mem f₁ (∅ : U) (hfunc1.2 ∅ h_zero_mem)
-
-              rw [←hp_eq] at h_in_f1
-              exact h_in_f1
-
-        · -- PASO INDUCTIVO: n → σ n
+        · -- PASO INDUCTIVO
           intro n hn_in_S
           rw [SpecSet_is_specified] at hn_in_S
           obtain ⟨hn_omega, h_unique_n⟩ := hn_in_S
 
           rw [SpecSet_is_specified]
-          constructor
-          · exact succ_in_Omega n hn_omega
-          · intro f₁ f₂ hf₁ hf₂
-            -- f₁ y f₂ son cómputos de longitud σ(σ n).
-            let succ_n := σ n
-            let f₁_restr := Restriction f₁ succ_n
-            let f₂_restr := Restriction f₂ succ_n
+          constructor; exact succ_in_Omega n hn_omega
+          intro f₁ f₂ hf₁ hf₂
 
-            have hn_nat : isNat n := mem_Omega_is_Nat n hn_omega
-            have h_succ_n_nat : isNat succ_n := nat_successor_is_nat n hn_nat
-            have h_subset : succ_n ⊆ σ succ_n := fun x hx => mem_successor_of_mem x succ_n hx
+          let succ_n := σ n
+          let f₁_restr := Restriction f₁ succ_n
+          let f₂_restr := Restriction f₂ succ_n
 
-            -- 1. Probar que las restricciones son cómputos de longitud n
-            have h_f1_is_comp : isComputation n f₁_restr A a g := by
-              constructor
-              · -- isFunctionFromTo
-                apply Restriction_is_function f₁ (σ succ_n) A succ_n hf₁.1 h_subset
-              · constructor
-                · -- f(0) = a
-                  -- 0 ∈ σ n ? Sí, porque n ∈ ω.
-                  have h_zero_in : (∅ : U) ∈ succ_n := by
-                    rw [Nat_iff_mem_Omega] at h_succ_n_nat
-                    have h_z : (∅ : U) ∈ ω := zero_in_Omega
-                    cases nat_is_zero_or_succ n hn_nat with
-                    | inl hz => rw [hz]; rw [one_eq]; rw [Singleton_is_specified]; rfl
-                    | inr hs =>
-                      obtain ⟨k, hk⟩ := hs
-                      rw [←Nat_iff_mem_Omega] at h_z
-                      have h_trich := nat_trichotomy (∅ : U) succ_n h_z h_succ_n_nat
-                      cases h_trich with
-                      | inl hIn => exact hIn
-                      | inr hOr =>
-                        cases hOr with
-                        | inl hEq =>
-                           have hne := successor_nonempty n
-                           rw [←hEq] at hne
-                           exact False.elim (EmptySet_is_empty ∅ hne)
-                        | inr hGt =>
-                           exact False.elim (EmptySet_is_empty (σ n) hGt)
+          have hn_nat_prop : isNat n := mem_Omega_is_Nat n hn_omega
+          have h_succ_n_in_omega : succ_n ∈ ω := succ_in_Omega n hn_omega
+          have h_succ_n_nat_prop : isNat succ_n := mem_Omega_is_Nat succ_n h_succ_n_in_omega
+          have h_subset : succ_n ⊆ σ succ_n := subset_succ_local succ_n
 
-                  rw [Restriction_apply f₁ succ_n (∅ : U) h_zero_in]
-                  exact hf₁.2.1
-                · -- Recursión
-                  intro k hk
-                  -- k ∈ n. Necesitamos σ k ∈ succ_n (= σ n) para usar Restriction_apply
-                  have h_succ_k_in : σ k ∈ succ_n := nat_succ_mem_succ_of_mem n hn_omega k hk
-                  have h_k_in : k ∈ succ_n := mem_successor_of_mem k n hk
+          -- Probar que restricciones son cómputos
+          have h_f1_is_comp : isComputation n f₁_restr A a g := by
+            constructor
+            · apply Restriction_is_function f₁ (σ succ_n) A succ_n hf₁.1 h_subset
+            · constructor
+              · -- f(0) = a. Hay que probar 0 ∈ σ n
+                have h_zero_in : (∅ : U) ∈ succ_n := by
+                  have h_z : isNat (∅ : U) := mem_Omega_is_Nat ∅ zero_in_Omega
+                  cases nat_is_zero_or_succ n hn_nat_prop with
+                  | inl hz => rw [hz]; rw [one_eq, Singleton_is_specified]; rfl
+                  | inr hs =>
+                    obtain ⟨k, hk⟩ := hs
+                    have h_trich := nat_trichotomy (∅ : U) succ_n h_z h_succ_n_nat_prop
+                    cases h_trich with
+                    | inl hIn => exact hIn
+                    | inr hOr =>
+                      cases hOr with
+                      | inl hEq =>
+                         have hne := successor_nonempty n
+                         rw [←hEq] at hne
+                         exact False.elim (EmptySet_is_empty ∅ hne)
+                      | inr hGt =>
+                         exact False.elim (EmptySet_is_empty (σ n) hGt)
 
-                  rw [Restriction_apply f₁ succ_n (σ k) h_succ_k_in]
-                  rw [Restriction_apply f₁ succ_n k h_k_in]
-                  exact hf₁.2.2 k hk
+                rw [Restriction_apply f₁ succ_n (∅ : U) h_zero_in]
+                exact hf₁.2.1
+              · intro k hk
+                -- Necesitamos σ k ∈ succ_n y k ∈ succ_n
+                have h_succ_k_in : σ k ∈ succ_n := nat_succ_mem_succ_of_mem n hn_omega k hk
+                have h_k_in : k ∈ succ_n := subset_succ_local n k hk
+                rw [Restriction_apply f₁ succ_n (σ k) h_succ_k_in]
+                rw [Restriction_apply f₁ succ_n k h_k_in]
+                -- Aplicar hipótesis recursiva de f₁
+                have h_k_in_dom_orig : k ∈ σ n := h_k_in
+                exact hf₁.2.2 k h_k_in_dom_orig
 
-            -- Análogamente para f₂
-            have h_f2_is_comp : isComputation n f₂_restr A a g := by
-              constructor
-              · apply Restriction_is_function f₂ (σ succ_n) A succ_n hf₂.1 h_subset
-              · constructor
-                · have h_zero_in : (∅ : U) ∈ succ_n := by
-                     have h_z : (∅ : U) ∈ (ω : U) := zero_in_Omega
-                     rw [←Nat_iff_mem_Omega] at h_z
-                     have h_trich := nat_trichotomy (∅ : U) succ_n h_z h_succ_n_nat
+          have h_f2_is_comp : isComputation n f₂_restr A a g := by
+            constructor
+            · apply Restriction_is_function f₂ (σ succ_n) A succ_n hf₂.1 h_subset
+            · constructor
+              · have h_zero_in : (∅ : U) ∈ succ_n := by
+                   have h_z : isNat (∅ : U) := mem_Omega_is_Nat ∅ zero_in_Omega
+                   cases nat_is_zero_or_succ n hn_nat_prop with
+                   | inl hz => rw [hz]; rw [one_eq, Singleton_is_specified]; rfl
+                   | inr hs =>
+                     obtain ⟨k, hk⟩ := hs
+                     have h_trich := nat_trichotomy (∅ : U) succ_n h_z h_succ_n_nat_prop
                      cases h_trich with
                      | inl hIn => exact hIn
-                     | inr hOr => cases hOr with | inl hEq => have hne := successor_nonempty n; rw [←hEq] at hne; exact False.elim (EmptySet_is_empty ∅ hne) | inr hGt => exact False.elim (EmptySet_is_empty (σ n) hGt)
-                  rw [Restriction_apply f₂ succ_n (∅ : U) h_zero_in]
-                  exact hf₂.2.1
-                · intro k hk
-                  have h_succ_k_in : σ k ∈ succ_n := nat_succ_mem_succ_of_mem n hn_omega k hk
-                  have h_k_in : k ∈ succ_n := mem_successor_of_mem k n hk
+                     | inr hOr =>
+                        cases hOr with
+                        | inl hEq => have hne := successor_nonempty n; rw [←hEq] at hne; exact False.elim (EmptySet_is_empty ∅ hne)
+                        | inr hGt => exact False.elim (EmptySet_is_empty (σ n) hGt)
+                rw [Restriction_apply f₂ succ_n (∅ : U) h_zero_in]
+                exact hf₂.2.1
+              · intro k hk
+                have h_succ_k_in : σ k ∈ succ_n := nat_succ_mem_succ_of_mem n hn_omega k hk
+                have h_k_in : k ∈ succ_n := subset_succ_local n k hk
+                rw [Restriction_apply f₂ succ_n (σ k) h_succ_k_in]
+                rw [Restriction_apply f₂ succ_n k h_k_in]
+                have h_k_in_dom_orig : k ∈ σ n := h_k_in
+                exact hf₂.2.2 k h_k_in_dom_orig
 
-                  rw [Restriction_apply f₂ succ_n (σ k) h_succ_k_in]
-                  rw [Restriction_apply f₂ succ_n k h_k_in]
-                  exact hf₂.2.2 k hk
+          -- HI: f₁_restr = f₂_restr
+          have h_eq_restr : f₁_restr = f₂_restr := h_unique_n f₁_restr f₂_restr h_f1_is_comp h_f2_is_comp
 
-            -- 2. Por HI, las restricciones son iguales
-            have h_eq_restr : f₁_restr = f₂_restr := h_unique_n f₁_restr f₂_restr h_f1_is_comp h_f2_is_comp
+          apply ExtSet
+          intro p
+          constructor
+          · intro hp_in_f1
+            have hsub := hf₁.1.1
+            have hp_cart : p ∈ (σ succ_n) ×ₛ A := hsub p hp_in_f1
+            rw [CartesianProduct_is_specified] at hp_cart
+            obtain ⟨h_is_pair, -⟩ := hp_cart
+            obtain ⟨x, y, hp_eq⟩ := h_is_pair
 
-            -- 3. Extender la igualdad al dominio completo σ(σ n) = σ n ∪ {σ n}
-            apply ExtSet
-            intro p
-            constructor
-            · -- p ∈ f₁ → p ∈ f₂
-              intro hp_in_f1
-              have hsub := hf₁.1.1
-              have hp_cart : p ∈ (σ succ_n) ×ₛ A := hsub p hp_in_f1
-              rw [CartesianProduct_is_specified] at hp_cart
-              obtain ⟨h_pair, h_fst, h_snd⟩ := hp_cart
-              obtain ⟨x, y, hp_eq⟩ := isOrderedPair_elim p h_pair
+            have hx_dom : x ∈ σ succ_n := by
+               have hp_cart2 : ⟨x, y⟩ ∈ (σ succ_n) ×ₛ A := by rw [←hp_eq]; exact hsub ⟨x, y⟩ hp_in_f1
+               rw [CartesianProduct_is_specified] at hp_cart2
+               exact hp_cart2.1
 
-              -- x ∈ dom(f₁) = σ succ_n
-              have hx_dom : x ∈ σ succ_n := by
-                 have hp_cart2 : ⟨x, y⟩ ∈ (σ succ_n) ×ₛ A := by rw [←hp_eq]; exact hsub ⟨x, y⟩ hp_in_f1
-                 rw [CartesianProduct_is_specified] at hp_cart2
-                 exact hp_cart2.1
+            rw [mem_succ_iff_local] at hx_dom
+            cases hx_dom with
+            | inl hx_in_succ =>
+              have hp_restr : p ∈ f₁_restr := by
+                rw [Restriction_is_specified]; constructor; exact hp_in_f1; rw [hp_eq, fst_of_ordered_pair]; exact hx_in_succ
+              rw [h_eq_restr] at hp_restr
+              rw [Restriction_is_specified] at hp_restr
+              exact hp_restr.1
+            | inr hx_eq_succ =>
+              -- x = σ n
+              have h_val1 : y = apply g (apply f₁ n) := by
+                 have hx_in_domain : x ∈ σ (σ n) := by rw [hx_eq_succ]; exact mem_successor_self (σ n)
+                 have h_unique := hf₁.1.2 x hx_in_domain
+                 have h_y_val : f₁⦅x⦆ = y := apply_eq f₁ x y h_unique (by rw [←hp_eq]; exact hp_in_f1)
+                 rw [←h_y_val, hx_eq_succ]
+                 exact hf₁.2.2 n (mem_successor_self n)
 
-              rw [successor_is_specified, BinUnion_is_specified, Singleton_is_specified] at hx_dom
-              cases hx_dom with
-              | inl hx_in_succ =>
-                -- x ∈ succ_n => p ∈ restriction
-                have hp_restr : p ∈ f₁_restr := by
-                  rw [Restriction_is_specified]
-                  constructor
-                  · exact hp_in_f1
-                  · rw [fst_of_ordered_pair]; rw [hp_eq, fst_of_ordered_pair]; exact hx_in_succ
+              -- n ∈ succ_n
+              have hn_in_succ : n ∈ succ_n := mem_successor_self n
+              have h_f1_n : apply f₁ n = apply f₁_restr n := (Restriction_apply f₁ succ_n n hn_in_succ).symm
+              have h_f2_n : apply f₂ n = apply f₂_restr n := (Restriction_apply f₂ succ_n n hn_in_succ).symm
 
-                rw [h_eq_restr] at hp_restr
-                rw [Restriction_is_specified] at hp_restr
-                exact hp_restr.1
+              rw [h_eq_restr] at h_f1_n
+              have h_val2_src : apply f₂ x = apply g (apply f₂ n) := by
+                 rw [hx_eq_succ]; exact hf₂.2.2 n (mem_successor_self n)
 
-              | inr hx_eq_succ =>
-                -- x = succ_n (= σ n)
-                have h_val1 : y = apply g (apply f₁ n) := by
-                   have hx_in_domain : x ∈ σ (σ n) := by rw [hx_eq_succ]; exact mem_successor_self (σ n)
-                   have h_unique := hf₁.1.2 x hx_in_domain
-                   symm
-                   apply apply_eq f₁ x y h_unique (by rw [←hp_eq]; exact hp_in_f1)
-                   rw [hx_eq_succ]
-                   exact hf₁.2.2 n (mem_successor_self n)
+              rw [h_f1_n, ←h_f2_n] at h_val1
+              rw [←h_val2_src] at h_val1
 
-                -- n ∈ succ_n, así que f₁(n) = f₂_restr(n) = f₂(n)
-                have hn_in_succ : n ∈ succ_n := mem_successor_self n
-                have h_f1_n : apply f₁ n = apply f₁_restr n := (Restriction_apply f₁ succ_n n hn_in_succ).symm
-                have h_f2_n : apply f₂ n = apply f₂_restr n := (Restriction_apply f₂ succ_n n hn_in_succ).symm
+              have h_in_f2 : ⟨x, apply f₂ x⟩ ∈ f₂ := by
+                 have hx_in_dom : x ∈ domain f₂ := by
+                    rw [function_domain_eq f₂ (σ succ_n) A hf₂.1]
+                    rw [hx_eq_succ]; exact mem_successor_self succ_n
+                 apply apply_mem f₂ x (hf₂.1.2 x hx_in_dom)
 
-                rw [h_eq_restr] at h_f1_n
+              rw [h_val1]
+              rw [←hp_eq] at h_in_f2
+              exact h_in_f2
 
-                have h_val2_src : apply f₂ x = apply g (apply f₂ n) := by
-                   rw [hx_eq_succ]
-                   exact hf₂.2.2 n (mem_successor_self n)
+          · -- Simétrico
+            intro hp_in_f2
+            have hsub := hf₂.1.1
+            have hp_cart : p ∈ (σ succ_n) ×ₛ A := hsub p hp_in_f2
+            rw [CartesianProduct_is_specified] at hp_cart
+            obtain ⟨h_is_pair, -⟩ := hp_cart
+            obtain ⟨x, y, hp_eq⟩ := h_is_pair
 
-                rw [h_f1_n, ←h_f2_n] at h_val1 -- y = g(f2(n))
-                rw [←h_val2_src] at h_val1 -- y = f2(x)
+            have hx_dom : x ∈ σ succ_n := by
+               have hp_cart2 : ⟨x, y⟩ ∈ (σ succ_n) ×ₛ A := by rw [←hp_eq]; exact hsub ⟨x, y⟩ hp_in_f2
+               rw [CartesianProduct_is_specified] at hp_cart2
+               exact hp_cart2.1
 
-                have h_in_f2 : ⟨x, apply f₂ x⟩ ∈ f₂ := by
-                   have hx_in_dom : x ∈ domain f₂ := by
-                      rw [function_domain_eq f₂ (σ succ_n) A hf₂.1]
-                      rw [hx_eq_succ]; exact mem_successor_self succ_n
-                   apply apply_mem f₂ x (hf₂.1.2 x hx_in_dom)
+            rw [mem_succ_iff_local] at hx_dom
+            cases hx_dom with
+            | inl hx_in_succ =>
+              have hp_restr : p ∈ f₂_restr := by
+                rw [Restriction_is_specified]; constructor; exact hp_in_f2; rw [hp_eq, fst_of_ordered_pair]; exact hx_in_succ
+              rw [←h_eq_restr] at hp_restr
+              rw [Restriction_is_specified] at hp_restr
+              exact hp_restr.1
+            | inr hx_eq_succ =>
+              have h_val2 : y = apply g (apply f₂ n) := by
+                 have hx_in_domain : x ∈ σ (σ n) := by rw [hx_eq_succ]; exact mem_successor_self (σ n)
+                 have h_unique := hf₂.1.2 x hx_in_domain
+                 have h_y_val : f₂⦅x⦆ = y := apply_eq f₂ x y h_unique (by rw [←hp_eq]; exact hp_in_f2)
+                 rw [←h_y_val, hx_eq_succ]
+                 exact hf₂.2.2 n (mem_successor_self n)
 
-                rw [h_val1]
-                rw [←hp_eq] at h_in_f2
-                exact h_in_f2
+              have hn_in_succ : n ∈ succ_n := mem_successor_self n
+              have h_f1_n : apply f₁ n = apply f₁_restr n := (Restriction_apply f₁ succ_n n hn_in_succ).symm
+              have h_f2_n : apply f₂ n = apply f₂_restr n := (Restriction_apply f₂ succ_n n hn_in_succ).symm
+              rw [h_eq_restr] at h_f1_n
 
-            · -- p ∈ f₂ → p ∈ f₁ (Simétrico)
-              intro hp_in_f2
-              have hsub := hf₂.1.1
-              have hp_cart : p ∈ (σ succ_n) ×ₛ A := hsub p hp_in_f2
-              rw [CartesianProduct_is_specified] at hp_cart
-              obtain ⟨h_pair, h_fst, h_snd⟩ := hp_cart
-              obtain ⟨x, y, hp_eq⟩ := isOrderedPair_elim p h_pair
+              have h_val1_src : apply f₁ x = apply g (apply f₁ n) := by rw [hx_eq_succ]; exact hf₁.2.2 n (mem_successor_self n)
 
-              have hx_dom : x ∈ σ succ_n := by
-                 have hp_cart2 : ⟨x, y⟩ ∈ (σ succ_n) ×ₛ A := by rw [←hp_eq]; exact hsub ⟨x, y⟩ hp_in_f2
-                 rw [CartesianProduct_is_specified] at hp_cart2
-                 exact hp_cart2.1
+              rw [←h_f2_n, h_f1_n] at h_val2
+              rw [←h_val1_src] at h_val2
 
-              rw [successor_is_specified, BinUnion_is_specified, Singleton_is_specified] at hx_dom
-              cases hx_dom with
-              | inl hx_in_succ =>
-                have hp_restr : p ∈ f₂_restr := by
-                  rw [Restriction_is_specified]; constructor; exact hp_in_f2; rw [hp_eq, fst_of_ordered_pair]; exact hx_in_succ
-                rw [←h_eq_restr] at hp_restr
-                rw [Restriction_is_specified] at hp_restr
-                exact hp_restr.1
-              | inr hx_eq_succ =>
-                have h_val2 : y = apply g (apply f₂ n) := by
-                   have hx_in_domain : x ∈ σ (σ n) := by rw [hx_eq_succ]; exact mem_successor_self (σ n)
-                   have h_unique := hf₂.1.2 x hx_in_domain
-                   symm
-                   apply apply_eq f₂ x y h_unique (by rw [←hp_eq]; exact hp_in_f2)
-                   rw [hx_eq_succ]
-                   exact hf₂.2.2 n (mem_successor_self n)
+              have h_in_f1 : ⟨x, apply f₁ x⟩ ∈ f₁ := by
+                 have hx_in_dom : x ∈ domain f₁ := by
+                    rw [function_domain_eq f₁ (σ succ_n) A hf₁.1]
+                    rw [hx_eq_succ]; exact mem_successor_self succ_n
+                 apply apply_mem f₁ x (hf₁.1.2 x hx_in_dom)
 
-                have hn_in_succ : n ∈ succ_n := mem_successor_self n
-                have h_f1_n : apply f₁ n = apply f₁_restr n := (Restriction_apply f₁ succ_n n hn_in_succ).symm
-                have h_f2_n : apply f₂ n = apply f₂_restr n := (Restriction_apply f₂ succ_n n hn_in_succ).symm
-                rw [h_eq_restr] at h_f1_n
+              rw [h_val2]
+              rw [←hp_eq] at h_in_f1
+              exact h_in_f1
 
-                have h_val1_src : apply f₁ x = apply g (apply f₁ n) := by rw [hx_eq_succ]; exact hf₁.2.2 n (mem_successor_self n)
-
-                rw [←h_f2_n, h_f1_n] at h_val2
-                rw [←h_val1_src] at h_val2 -- y = f1(x)
-
-                have h_in_f1 : ⟨x, apply f₁ x⟩ ∈ f₁ := by
-                   have hx_in_dom : x ∈ domain f₁ := by
-                      rw [function_domain_eq f₁ (σ succ_n) A hf₁.1]
-                      rw [hx_eq_succ]; exact mem_successor_self succ_n
-                   apply apply_mem f₁ x (hf₁.1.2 x hx_in_dom)
-
-                rw [h_val2]
-                rw [←hp_eq] at h_in_f1
-                exact h_in_f1
-
-      -- Conclusión
       intro n hn f₁ f₂ hf₁ hf₂
       have hn_S : n ∈ S := by rw [h_ind]; exact hn
       rw [SpecSet_is_specified] at hn_S
@@ -454,10 +412,8 @@ namespace SetUniverse
 
   end Recursion
 
-  -- Export key definitions and theorems
   export Recursion (
     function_domain_eq
-    nat_succ_mem_succ_of_mem
     isComputation
     computation_uniqueness
   )
