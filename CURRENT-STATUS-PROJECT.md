@@ -1,6 +1,6 @@
 # Current Status - ZfcSetTheory Project
 
-**Date**: February 12, 2026  
+**Date**: 2026-02-12 13:52  
 **Lean Version**: 4.23.0-rc2
 
 ## Executive Summary
@@ -34,7 +34,7 @@ This project implements ZFC set theory in Lean 4, focusing on fundamental axioms
 **Documentation status**:
 
 - ✅ 18 modules fully projected in REFERENCE.md
-- ✅ All 9 AIDER_AI_GUIDE.md requirements met
+- ✅ All 13 AIDER-AI-GUIDE.md requirements met
 - ✅ Complete mathematical descriptions with Lean4 signatures
 - ✅ Dependency tracking for all definitions and theorems
 
@@ -415,11 +415,20 @@ The code is well structured, documented, and ready for continued development or 
 
 - **REFERENCE.md**: 4500+ lines of comprehensive technical reference
 - **Coverage**: 18 fully projected modules with mathematical descriptions
-- **Compliance**: 100% adherence to AIDER_AI_GUIDE.md requirements
+- **Compliance**: 100% adherence to AIDER-AI-GUIDE.md requirements
 - **Self-sufficient**: Complete context without loading source files (~200k tokens)
 
 ---
 
-**Last updated**: February 12, 2026  
-**Maintainer**: julian1c2a  
-**License**: See LICENSE
+**Last updated**: 2026-02-12 13:52  
+**Author**: Julián Calderón Almendros  
+**GitHub**: [@julian1c2a](https://github.com/julian1c2a)  
+**License**: MIT License (see [LICENSE](LICENSE))
+
+## Credits
+
+This project was developed based on:
+
+- **Educational Resources**: "Razonando con Lean" (José A. Alonso), Adrián GQ (@conjuntos_y_logica)
+- **Bibliography**: "Axiomatic Set Theory" (Patrick Suppes, 1960/1972; Paul Bernays, 1958)
+- **AI Assistance**: Claude Code AI (Anthropic), Gemini AI (Google)

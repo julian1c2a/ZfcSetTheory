@@ -7,7 +7,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ## [Unreleased]
 
-### Añadido (2026-02-11)
+### Añadido (2026-02-11 15:30)
 
 - **Infraestructura de Existencia Única**:
   - `ExistsUnique` personalizado en `Prelim.lean` (52 líneas)
@@ -71,7 +71,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ---
 
-## [0.8.0] - 2026-02-07
+## [0.8.0] - 2026-02-07 10:00
 
 ### Añadido
 
@@ -106,7 +106,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ---
 
-## [0.7.0] - 2026-02-07
+## [0.7.0] - 2026-02-07 09:00
 
 ### Añadido
 
@@ -124,7 +124,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ---
 
-## [0.6.0] - 2026-02-07
+## [0.6.0] - 2026-02-07 08:00
 
 ### Añadido
 
@@ -141,7 +141,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ---
 
-## [0.5.0] - 2026-02-06
+## [0.5.0] - 2026-02-06 16:00
 
 ### Añadido
 
@@ -165,7 +165,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ---
 
-## [0.4.0] - 2026-02-05
+## [0.4.0] - 2026-02-05 14:30
 
 ### Añadido
 
@@ -187,7 +187,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ---
 
-## [0.3.0] - 2026-02-04
+## [0.3.0] - 2026-02-04 11:00
 
 ### Añadido
 
@@ -206,7 +206,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ---
 
-## [0.2.0] - 2026-02-03
+## [0.2.0] - 2026-02-03 15:45
 
 ### Añadido
 
@@ -225,7 +225,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ---
 
-## [0.1.0] - 2026-02-02
+## [0.1.0] - 2026-02-02 10:00
 
 ### Añadido
 

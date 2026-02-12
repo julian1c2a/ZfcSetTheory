@@ -168,8 +168,36 @@ Este proyecto está bajo la licencia MIT. Ver [LICENSE](LICENSE) para más detal
 
 ## 👤 Autor
 
-**Julián Caicedo**
+**Julián Calderón Almendros**
+
+## 🙏 Créditos y Reconocimientos
+
+Este proyecto se desarrolló basándose en las siguientes fuentes:
+
+### Recursos Educativos
+
+- **"Razonando con Lean"** - José A. Alonso  
+  Canal de YouTube con tutoriales de Lean 4 (y otros asistentes de demostración automática, además de cursos de lenguajes de programación funcional como Haskell)
+
+- **Adrián GQ** ([@conjuntos_y_logica](https://www.youtube.com/@conjuntos_y_logica))  
+  Canal de YouTube sobre teoría de conjuntos y lógica (3 cursos completos de teoría de conjuntos, comenzando en ZFC, temario Conjuntos I, II y III, además de cursos de lógica)
+
+### Referencias Bibliográficas
+
+- **"Axiomatic Set Theory"** - Patrick Suppes (1960/1972)  
+  Fundamentos de teoría axiomática de conjuntos
+
+- **"Axiomatic Set Theory"** - Paul Bernays (1958)  
+  Desarrollo formal de los axiomas ZFC
+
+### Herramientas de IA
+
+- **Claude Code AI** (Anthropic)  
+  Asistencia en desarrollo y documentación
+
+- **Gemini AI** (Google)  
+  Apoyo en resolución de problemas
 
 ---
 
-*Last update: February 12, 2026*
+*Last updated: 2026-02-12 13:52*
