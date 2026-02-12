@@ -1,21 +1,20 @@
 ===== ZfcSetTheory Build Log =====
-Timestamp: 12/02/2026 16:50:12,30
+Timestamp: 12/02/2026 17:13:37,75
 
 Build completed successfully (24 jobs).
  
 ===== SORRY STATEMENTS ===== 
  
-File: E:\Dropbox\GitHub\lean4\ZfcSetTheory\ZfcSetTheory\PowerSet.lean 
-272:    --   sorry
+No sorry statements found. 
  
-File: E:\Dropbox\GitHub\lean4\ZfcSetTheory\ZfcSetTheory\Recursion.lean 
-186:            sorry -- (Aquí va la lógica detallada del paso inductivo, que es larga)
+===== BUILD WARNINGS AND ERRORS ===== 
+Warnings detected in build output. 
  
+===== LEAN TYPE/COMPILATION ERRORS ===== 
  
-===== BUILD WARNINGS ===== 
-(See full build output above for details
-No warnings detected. 
+===== LEAN TYPE/COMPILATION ERRORS ===== 
  
 ===== SUMMARY ===== 
-Sorry statements: 2 
-Completed at: 12/02/2026 16:50:13,82 
+Sorry statements: 0 
+Lean errors: 0 
+Completed at: 12/02/2026 17:13:39,38 

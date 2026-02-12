@@ -44,20 +44,38 @@ if %sorryCount% equ 0 (
 
 REM Búsqueda de warnings
 echo. >> build_log.txt
-echo ===== BUILD WARNINGS ===== >> build_log.txt
+echo ===== BUILD WARNINGS AND ERRORS ===== >> build_log.txt
+
+REM Búsqueda de warnings
 setlocal enabledelayedexpansion
 findstr /i "warning" build_log.txt > nul 2>&1
 if not errorlevel 1 (
     echo Warnings detected in build output. >> build_log.txt
-    echo (See full build output above for details) >> build_log.txt
 ) else (
     echo No warnings detected. >> build_log.txt
+)
+
+REM Búsqueda de errores de Lean (Unknown identifier, Type mismatch, etc.)
+echo. >> build_log.txt
+echo ===== LEAN TYPE/COMPILATION ERRORS ===== >> build_log.txt
+echo. >> build_log.txt
+
+set errorCount=0
+findstr /i "unknown identifier\|type mismatch\|application type mismatch\|tactic.*failed" build_log.txt > nul 2>&1
+if not errorlevel 1 (
+    echo Errors detected:
+    findstr /i "unknown identifier\|type mismatch\|application type mismatch\|tactic.*failed" build_log.txt >> build_log.txt
+    for /f %%a in ('findstr /i /c:"unknown identifier" build_log.txt ^| find /c /v ""') do set /a errorCount+=%%a
+    for /f %%a in ('findstr /i /c:"type mismatch" build_log.txt ^| find /c /v ""') do set /a errorCount+=%%a
+) else (
+    echo No Lean type/compilation errors detected. >> build_log.txt
 )
 
 REM Resumen final
 echo. >> build_log.txt
 echo ===== SUMMARY ===== >> build_log.txt
 echo Sorry statements: %sorryCount% >> build_log.txt
+echo Lean errors: %errorCount% >> build_log.txt
 echo Completed at: %date% %time% >> build_log.txt
 
 REM Mostrar resumen en consola
@@ -66,6 +84,7 @@ echo ====================================================================
 echo BUILD COMPLETE
 echo ====================================================================
 echo Sorry statements found: %sorryCount%
+echo Lean errors found: %errorCount%
 echo Full log: build_log.txt
 echo.
 
