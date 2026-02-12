@@ -42,6 +42,28 @@ if %sorryCount% equ 0 (
     echo No sorry statements found. >> build_log.txt
 )
 
+REM Ejecutar verificación detallada de archivos problemáticos con Lean
+echo. >> build_log.txt
+echo ===== LEAN DIRECT DIAGNOSTICS ===== >> build_log.txt
+echo. >> build_log.txt
+echo Checking Recursion.lean for detailed type errors... >> build_log.txt
+echo. >> build_log.txt
+
+REM Encontrar Lean en la instalación de elan
+for /f "tokens=*" %%i in ('where lean.exe 2^>nul ^| findstr /i "toolchain\|elan"') do (
+    set LEAN_PATH=%%i
+    goto found_lean
+)
+set LEAN_PATH=
+
+:found_lean
+if defined LEAN_PATH (
+    echo Using Lean from: %LEAN_PATH% >> build_log.txt
+    "%LEAN_PATH%" ZfcSetTheory\Recursion.lean 2>> build_log.txt | findstr /i "error\|unknown\|mismatch" >> build_log.txt
+) else (
+    echo Warning: Lean compiler not found for detailed diagnostics >> build_log.txt
+)
+
 REM Búsqueda de warnings
 echo. >> build_log.txt
 echo ===== BUILD WARNINGS AND ERRORS ===== >> build_log.txt
