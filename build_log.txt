@@ -1,100 +1,57 @@
-Ô£ö [0/14] Ran job computation
-Ô£ö [1/14] Ran ZfcSetTheory:extraDep
-Ôä╣ [2/14] Replayed ZfcSetTheory.Prelim
-trace: .> LEAN_PATH=E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean c:\Users\julia\.elan\toolchains\leanprover--lean4---v4.23.0-rc2\bin\lean.exe E:\Dropbox\GitHub\lean4\ZfcSetTheory\ZfcSetTheory\Prelim.lean -o E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZfcSetTheory\Prelim.olean -i E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZfcSetTheory\Prelim.ilean -c E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZfcSetTheory\Prelim.c --setup E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZfcSetTheory\Prelim.setup.json --json
-Ôä╣ [3/14] Replayed ZfcSetTheory.Extension
-trace: .> LEAN_PATH=E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean c:\Users\julia\.elan\toolchains\leanprover--lean4---v4.23.0-rc2\bin\lean.exe E:\Dropbox\GitHub\lean4\ZfcSetTheory\ZfcSetTheory\Extension.lean -o E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZfcSetTheory\Extension.olean -i E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZfcSetTheory\Extension.ilean -c E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZfcSetTheory\Extension.c --setup E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZfcSetTheory\Extension.setup.json --json
-Ôä╣ [4/14] Replayed ZfcSetTheory.Existence
-trace: .> LEAN_PATH=E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean c:\Users\julia\.elan\toolchains\leanprover--lean4---v4.23.0-rc2\bin\lean.exe E:\Dropbox\GitHub\lean4\ZfcSetTheory\ZfcSetTheory\Existence.lean -o E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZfcSetTheory\Existence.olean -i E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZfcSetTheory\Existence.ilean -c E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZfcSetTheory\Existence.c --setup E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZfcSetTheory\Existence.setup.json --json
-Ôä╣ [5/14] Replayed ZfcSetTheory.Specification
-trace: .> LEAN_PATH=E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean c:\Users\julia\.elan\toolchains\leanprover--lean4---v4.23.0-rc2\bin\lean.exe E:\Dropbox\GitHub\lean4\ZfcSetTheory\ZfcSetTheory\Specification.lean -o E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZfcSetTheory\Specification.olean -i E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZfcSetTheory\Specification.ilean -c E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZfcSetTheory\Specification.c --setup E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZfcSetTheory\Specification.setup.json --json
-Ôä╣ [6/14] Replayed ZfcSetTheory.Pairing
-trace: .> LEAN_PATH=E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean c:\Users\julia\.elan\toolchains\leanprover--lean4---v4.23.0-rc2\bin\lean.exe E:\Dropbox\GitHub\lean4\ZfcSetTheory\ZfcSetTheory\Pairing.lean -o E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZfcSetTheory\Pairing.olean -i E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZfcSetTheory\Pairing.ilean -c E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZfcSetTheory\Pairing.c --setup E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZfcSetTheory\Pairing.setup.json --json
-Ôä╣ [7/14] Replayed ZfcSetTheory.Union
-trace: .> LEAN_PATH=E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean c:\Users\julia\.elan\toolchains\leanprover--lean4---v4.23.0-rc2\bin\lean.exe E:\Dropbox\GitHub\lean4\ZfcSetTheory\ZfcSetTheory\Union.lean -o E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZfcSetTheory\Union.olean -i E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZfcSetTheory\Union.ilean -c E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZfcSetTheory\Union.c --setup E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZfcSetTheory\Union.setup.json --json
-Ôä╣ [8/14] Replayed ZfcSetTheory.Potencia
-trace: .> LEAN_PATH=E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean c:\Users\julia\.elan\toolchains\leanprover--lean4---v4.23.0-rc2\bin\lean.exe E:\Dropbox\GitHub\lean4\ZfcSetTheory\ZfcSetTheory\Potencia.lean -o E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZfcSetTheory\Potencia.olean -i E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZfcSetTheory\Potencia.ilean -c E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZfcSetTheory\Potencia.c --setup E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZfcSetTheory\Potencia.setup.json --json
-Ôä╣ [9/14] Replayed ZfcSetTheory.BooleanAlgebra
-trace: .> LEAN_PATH=E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean c:\Users\julia\.elan\toolchains\leanprover--lean4---v4.23.0-rc2\bin\lean.exe E:\Dropbox\GitHub\lean4\ZfcSetTheory\ZfcSetTheory\BooleanAlgebra.lean -o E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZfcSetTheory\BooleanAlgebra.olean -i E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZfcSetTheory\BooleanAlgebra.ilean -c E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZfcSetTheory\BooleanAlgebra.c --setup E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZfcSetTheory\BooleanAlgebra.setup.json --json
-Ôä╣ [10/14] Replayed ZfcSetTheory.SetOrder
-trace: .> LEAN_PATH=E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean c:\Users\julia\.elan\toolchains\leanprover--lean4---v4.23.0-rc2\bin\lean.exe E:\Dropbox\GitHub\lean4\ZfcSetTheory\ZfcSetTheory\SetOrder.lean -o E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZfcSetTheory\SetOrder.olean -i E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZfcSetTheory\SetOrder.ilean -c E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZfcSetTheory\SetOrder.c --setup E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZfcSetTheory\SetOrder.setup.json --json
-Ôä╣ [11/14] Replayed ZfcSetTheory.SetStrictOrder
-trace: .> LEAN_PATH=E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean c:\Users\julia\.elan\toolchains\leanprover--lean4---v4.23.0-rc2\bin\lean.exe E:\Dropbox\GitHub\lean4\ZfcSetTheory\ZfcSetTheory\SetStrictOrder.lean -o E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZfcSetTheory\SetStrictOrder.olean -i E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZfcSetTheory\SetStrictOrder.ilean -c E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZfcSetTheory\SetStrictOrder.c --setup E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZfcSetTheory\SetStrictOrder.setup.json --json
-Ô£û [12/14] Building ZfcSetTheory.ParOrdenado (1.0s)
-trace: .> LEAN_PATH=E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean c:\Users\julia\.elan\toolchains\leanprover--lean4---v4.23.0-rc2\bin\lean.exe E:\Dropbox\GitHub\lean4\ZfcSetTheory\ZfcSetTheory\ParOrdenado.lean -o E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZfcSetTheory\ParOrdenado.olean -i E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZfcSetTheory\ParOrdenado.ilean -c E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZfcSetTheory\ParOrdenado.c --setup E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZfcSetTheory\ParOrdenado.setup.json --json
-error: ZfcSetTheory/ParOrdenado.lean:97:18: Tactic `rewrite` failed: Did not find an occurrence of the pattern
-   { { c } , { c, d } }
-in the target expression
-   { c, d } Ôêê { { a } , { a, b } }
+✖ [20/24] Building ZfcSetTheory.Cardinality (1.1s)
+trace: .> LEAN_PATH=E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean c:\Users\julia\.elan\toolchains\leanprover--lean4---v4.23.0-rc2\bin\lean.exe E:\Dropbox\GitHub\lean4\ZfcSetTheory\ZfcSetTheory\Cardinality.lean -o E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZfcSetTheory\Cardinality.olean -i E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZfcSetTheory\Cardinality.ilean -c E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZfcSetTheory\Cardinality.c --setup E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZfcSetTheory\Cardinality.setup.json --json
+error: ZfcSetTheory/Cardinality.lean:192:6: No goals to be solved
+error: ZfcSetTheory/Cardinality.lean:321:39: Invalid projection: Projections cannot be used on functions
+  hf.right
+has type
+  ∀ (x : U), x ∈ A → ExistsUnique fun y =>  ⟨ x , y ⟩ ∈ f
+error: ZfcSetTheory/Cardinality.lean:325:42: Invalid projection: Projections cannot be used on functions
+  hg.right
+has type
+  ∀ (x : U), x ∈ B → ExistsUnique fun y =>  ⟨ x , y ⟩ ∈ g
+error: ZfcSetTheory/Cardinality.lean:384:8: Tactic `constructor` failed: target is not an inductive datatype
 
+case right
 U : Type u
-a b c d : U
-h :  { { a } , { a, b } } = { { c } , { c, d } }
-h_eq_singleton :  { a } = { c }
-ha_eq_c : a = c
-h_ab_eq_c :  { a, b } = { c }
-ha_in : a Ôêê { c }
-error: build failed
-ha_eq_c' : a = c
-hb_in : b Ôêê { c }
-hb_eq_c : b = c
-h_pair_cd :  { c, d } Ôêê { { c } , { c, d } }
-Ôèó  { c, d } Ôêê { { a } , { a, b } }
-error: ZfcSetTheory/ParOrdenado.lean:106:27: Tactic `rewrite` failed: Did not find an occurrence of the pattern
-  a
-in the target expression
-  c = d
-
-case inl.right.inl.inl
-U : Type u
-a b c d : U
-h :  { { a } , { a, b } } = { { c } , { c, d } }
-h_eq_singleton :  { a } = { c }
-ha_eq_c : a = c
-h_ab_eq_c :  { a, b } = { c }
-ha_in : a Ôêê { c }
-ha_eq_c' : a = c
-hb_in : b Ôêê { c }
-hb_eq_c : b = c
-h_pair_cd :  { c, d } Ôêê { { c } , { c, d } }
-h_cd_eq_a :  { c, d } = { a }
-hd_in : d Ôêê { a }
-hd_eq_a : d = a
-Ôèó c = d
-error: ZfcSetTheory/ParOrdenado.lean:140:29: Tactic `rewrite` failed: Did not find an occurrence of the pattern
-  c
-in the target expression
-  b = a
-
-case inl.right.inr.inl.inl
-U : Type u
-a b c d : U
-h :  { { a } , { a, b } } = { { c } , { c, d } }
-h_eq_singleton :  { a } = { c }
-ha_eq_c : a = c
-h_ab_eq_cd :  { a, b } = { c, d }
-hd_eq_a : d = a
-hc_eq_a : c = a
-Ôèó b = a
-error: ZfcSetTheory/ParOrdenado.lean:143:29: Tactic `rewrite` failed: Did not find an occurrence of the pattern
-  c
-in the target expression
-  b = a
-
-case inl.right.inr.inl.inr
-U : Type u
-a b c d : U
-h :  { { a } , { a, b } } = { { c } , { c, d } }
-h_eq_singleton :  { a } = { c }
-ha_eq_c : a = c
-h_ab_eq_cd :  { a, b } = { c, d }
-hd_eq_a : d = a
-hc_eq_b : c = b
-Ôèó b = a
-error: ZfcSetTheory/ParOrdenado.lean:197:12: Invalid pattern: Expected a constructor or constant marked with `[match_pattern]`
-error: ZfcSetTheory/ParOrdenado.lean:198:10: No goals to be solved
+f g A B : U
+hf : isFunctionFromTo f A B
+hg : isFunctionFromTo g B A
+x✝ : isInjective f
+hg_inj : isInjective g
+⊢ ∀ (x : U), x ∈ A → ExistsUnique fun y =>  ⟨ x , y ⟩ ∈ CSB_bijection f g A B
+error: ZfcSetTheory/Cardinality.lean:454:39: Invalid projection: Projections cannot be used on functions
+  hf.right
+has type
+  ∀ (x : U), x ∈ A → ExistsUnique fun y =>  ⟨ x , y ⟩ ∈ f
+error: ZfcSetTheory/Cardinality.lean:471:35: Invalid projection: Projections cannot be used on functions
+  hg.right
+has type
+  ∀ (x : U), x ∈ B → ExistsUnique fun y =>  ⟨ x , y ⟩ ∈ g
+error: ZfcSetTheory/Cardinality.lean:484:35: Invalid projection: Projections cannot be used on functions
+  hg.right
+has type
+  ∀ (x : U), x ∈ B → ExistsUnique fun y =>  ⟨ x , y ⟩ ∈ g
+error: ZfcSetTheory/Cardinality.lean:491:27: Invalid projection: Projections cannot be used on functions
+  hg.right
+has type
+  ∀ (x : U), x ∈ B → ExistsUnique fun y =>  ⟨ x , y ⟩ ∈ g
+error: ZfcSetTheory/Cardinality.lean:503:37: Invalid projection: Projections cannot be used on functions
+  hg.right
+has type
+  ∀ (x : U), x ∈ B → ExistsUnique fun y =>  ⟨ x , y ⟩ ∈ g
+error: ZfcSetTheory/Cardinality.lean:518:35: Invalid projection: Projections cannot be used on functions
+  hg.right
+has type
+  ∀ (x : U), x ∈ B → ExistsUnique fun y =>  ⟨ x , y ⟩ ∈ g
+error: ZfcSetTheory/Cardinality.lean:563:47: Invalid projection: Projections cannot be used on functions
+  hf.right
+has type
+  ∀ (x : U), x ∈ A → ExistsUnique fun y =>  ⟨ x , y ⟩ ∈ f
+error: ZfcSetTheory/Cardinality.lean:593:39: Invalid projection: Projections cannot be used on functions
+  hg.right
+has type
+  ∀ (x : U), x ∈ B → ExistsUnique fun y =>  ⟨ x , y ⟩ ∈ g
 error: Lean exited with code 1
-Ô£ö [13/14] Ran ZfcSetTheory
-Ô£ö [14/14] Ran ZfcSetTheory/ZfcSetTheory:default
 Some required targets logged failures:
-- ZfcSetTheory.ParOrdenado
+- ZfcSetTheory.Cardinality
+error: build failed
