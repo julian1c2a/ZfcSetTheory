@@ -1,5 +1,8 @@
 # Guía de Requisitos para REFERENCE.md y Documentación del Proyecto
 
+**Última actualización:** 2026-02-12 18:45  
+**Autor**: Julián Calderón Almendros
+
 Este documento establece los requisitos y estándares para la documentación técnica del proyecto ZfcSetTheory.
 
 ---

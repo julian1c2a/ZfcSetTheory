@@ -1,6 +1,6 @@
 # Referencia Técnica - ZfcSetTheory
 
-*Última actualización: 2026-02-12 17:35*  
+*Última actualización: 2026-02-12 18:45*  
 **Autor**: Julián Calderón Almendros
 
 ## 📋 Cumplimiento con AIDER-AI-GUIDE.md
@@ -25,6 +25,7 @@ Este documento cumple con todos los requisitos especificados en [AIDER-AI-GUIDE.
 ✅ **(9)** Suficiente como única referencia (no requiere cargar proyecto completo)
 
 **Estado de verificación**: ✅ TODOS LOS MÓDULOS 100% COMPLETOS - 0 `sorry` activos  
+✅ **NaturalNumbers.lean completado (0 sorry, 36 teoremas principales, 100% proyectado)** - Actualizado 2026-02-12 18:45  
 ✅ **Recursion.lean completado (0 sorry, 0 errores de tipo)** - Actualizado 2026-02-12 17:35  
 ✅ **Functions.lean completado (0 sorry)** - Actualizado 2026-02-12 14:52
 
@@ -1161,6 +1162,707 @@ noncomputable def three : U := σ two
 ```
 
 **Dependencias**: `EmptySet`, `successor`
+
+#### Naturales en Conjuntos Inductivos (zero/one/two/three_in_inductive)
+
+**Ubicación**: `NaturalNumbers.lean`, líneas 1372-1387  
+**Orden**: 10ª-13ª teoremas
+
+**Enunciado Matemático**: Los primeros naturales pertenecen a todo conjunto inductivo.
+
+**Firma Lean4**:
+
+```lean
+theorem zero_in_inductive (I : U) (hI : isInductive I) : (∅ : U) ∈ I := hI.1
+theorem one_in_inductive (I : U) (hI : isInductive I) : σ (∅ : U) ∈ I := by
+  have h0 := zero_in_inductive I hI
+  exact hI.2 ∅ h0
+theorem two_in_inductive (I : U) (hI : isInductive I) : σ (σ (∅ : U)) ∈ I := by
+  have h1 := one_in_inductive I hI
+  exact hI.2 (σ (∅ : U)) h1
+theorem three_in_inductive (I : U) (hI : isInductive I) : σ (σ (σ (∅ : U))) ∈ I := by
+  have h2 := two_in_inductive I hI
+  exact hI.2 (σ (σ (∅ : U))) h2
+```
+
+**Dependencias**: `isInductive`, `successor`
+
+---
+
+## 4. Teoremas Principales
+
+### 4.1 NaturalNumbers.lean - Teoremas de Propiedades Elementales
+
+#### Elemento Pertenece a su Sucesor (mem_successor_self)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 355  
+**Namespace**: `SetUniverse.NaturalNumbers`
+
+**Enunciado Matemático**: Para todo n, se tiene n ∈ σ(n). Este es el lema auxiliar fundamental del sucesor.
+
+**Firma Lean4**:
+
+```lean
+theorem mem_successor_self (n : U) : n ∈ (σ n) := by
+  rw [successor_is_specified]
+  exact Or.inr rfl
+```
+
+**Dependencias**: `successor_is_specified`
+
+#### Caracterización de Membresía en Sucesor (subset_of_mem_successor)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 361  
+**Namespace**: `SetUniverse.NaturalNumbers`
+
+**Enunciado Matemático**: x ∈ σ(n) ⟺ x ∈ n ∨ x = n
+
+**Firma Lean4**:
+
+```lean
+theorem subset_of_mem_successor (n x : U) :
+  x ∈ (σ n) → x ∈ n ∨ x = n := by
+  intro hx
+  rw [successor_is_specified] at hx
+  exact hx
+```
+
+**Dependencias**: `successor_is_specified`
+
+#### Preservación de Transitividad en Sucesores (successor_preserves_transitivity)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 373  
+**Namespace**: `SetUniverse.NaturalNumbers`
+
+**Enunciado Matemático**: Si n es transitivo, entonces σ(n) es transitivo.
+
+**Firma Lean4**:
+
+```lean
+theorem successor_preserves_transitivity (n : U) (hn : isTransitiveSet n) :
+  isTransitiveSet (σ n) := by
+  -- Demostración por análisis de casos
+  unfold isTransitiveSet at hn ⊢
+  intro x hx y hy
+  simp only [successor_is_specified] at hx ⊢
+  cases hx with
+  | inl hx_in_n =>
+    have hx_sub : x ⊆ n := hn x hx_in_n
+    left; exact hx_sub y hy
+  | inr hx_eq_n =>
+    rw [hx_eq_n] at hy
+    left; exact hy
+```
+
+**Dependencias**: `isTransitiveSet`, `successor_is_specified`
+
+#### Conjunto Vacío es Natural (zero_is_nat)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 441  
+**Namespace**: `SetUniverse.NaturalNumbers`
+
+**Enunciado Matemático**: El conjunto vacío es un número natural.
+
+**Firma Lean4**:
+
+```lean
+theorem zero_is_nat : isNat (∅ : U) := by
+  unfold isNat isTotalStrictOrderMembershipGuided isWellOrderMembershipGuided
+  refine ⟨?_, ?_, ?_⟩
+  -- Transitividad vacua
+  unfold isTransitiveSet
+  intro x hx; exfalso; exact EmptySet_is_empty x hx
+  -- Orden total estricto (vacuamente)
+  refine ⟨?_, ?_, ?_⟩
+  -- ... (prueba vacua en todos los casos)
+```
+
+**Dependencias**: `isNat`, `EmptySet_is_empty`
+
+### 4.2 NaturalNumbers.lean - Teoremas de Buena Fundación
+
+#### Irreflexividad de Membresía (nat_not_mem_self)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 674  
+**Namespace**: `SetUniverse.NaturalNumbers`
+
+**Enunciado Matemático**: Para todo número natural n, se tiene n ∉ n (sin usar Axioma de Regularidad).
+
+**Firma Lean4**:
+
+```lean
+theorem nat_not_mem_self (n : U) :
+  isNat n → n ∉ n := by
+  intro ⟨_, ⟨_, hasym, _⟩, _⟩ hn_mem
+  have : n ∉ n := hasym n n hn_mem hn_mem hn_mem
+  exact this hn_mem
+```
+
+**Dependencias**: `isNat`, `isTotalStrictOrderMembershipGuided`
+
+#### Ausencia de Ciclos de Dos Elementos (nat_no_two_cycle)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 692  
+**Namespace**: `SetUniverse.NaturalNumbers`
+
+**Enunciado Matemático**: No existen números naturales x, y con x ∈ y ∧ y ∈ x.
+
+**Firma Lean4**:
+
+```lean
+theorem nat_no_two_cycle (x y : U) :
+  isNat x → isNat y → ¬(x ∈ y ∧ y ∈ x) := by
+  intro hx hy hmem
+  obtain ⟨hxy, hyx⟩ := hmem
+  by_cases h_eq : x = y
+  · rw [h_eq] at hxy
+    exact nat_not_mem_self y hy hxy
+  · have ⟨_, ⟨_, y_asym, _⟩, _⟩ := hy
+    have y_trans : isTransitiveSet y := hy.1
+    have x_sub_y : x ⊆ y := y_trans x hxy
+    have y_in_y : y ∈ y := x_sub_y y hyx
+    exact nat_not_mem_self y hy y_in_y
+```
+
+**Dependencias**: `isNat`, `nat_not_mem_self`
+
+#### Ausencia de Ciclos de Tres Elementos (nat_no_three_cycle)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 715  
+**Namespace**: `SetUniverse.NaturalNumbers`
+
+**Enunciado Matemático**: No existen números naturales x, y, z formando un ciclo x ∈ y ∧ y ∈ z ∧ z ∈ x.
+
+**Firma Lean4**:
+
+```lean
+theorem nat_no_three_cycle (x y z : U) :
+  isNat x → isNat y → isNat z → ¬(x ∈ y ∧ y ∈ z ∧ z ∈ x) := by
+  intro hx hy hz hmem
+  obtain ⟨hxy, hyz, hzx⟩ := hmem
+  have x_trans : isTransitiveSet x := hx.1
+  have z_sub_x : z ⊆ x := x_trans z hzx
+  have hyx : y ∈ x := z_sub_x y hyz
+  exact nat_no_two_cycle x y hx hy ⟨hxy, hyx⟩
+```
+
+**Dependencias**: `isNat`, `isTransitiveSet`, `nat_no_two_cycle`
+
+### 4.3 NaturalNumbers.lean - Teoremas de Herencia Estructural
+
+#### Elementos de Naturales son Transitivos (nat_element_is_transitive)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 747  
+**Namespace**: `SetUniverse.NaturalNumbers`
+
+**Enunciado Matemático**: Si n es natural y m ∈ n, entonces m es transitivo.
+
+**Firma Lean4**:
+
+```lean
+theorem nat_element_is_transitive (n m : U)
+  (hn : isNat n) (hm_in_n : m ∈ n) :
+  isTransitiveSet m := by
+  -- Demostración por tricotomía y análisis de casos exhaustivo
+  obtain ⟨hn_trans, ⟨hn_self, hn_asym, hn_trich⟩, hn_wo⟩ := hn
+  have hn_reconstructed : isNat n := ⟨hn_trans, ⟨hn_self, hn_asym, hn_trich⟩, hn_wo⟩
+  unfold isTransitiveSet at hn_trans ⊢
+  intro k hk_in_m
+  have hm_sub_n : m ⊆ n := hn_trans m hm_in_n
+  have hk_in_n : k ∈ n := hm_sub_n k hk_in_m
+  have hk_sub_n : k ⊆ n := hn_trans k hk_in_n
+  intro l hl_in_k
+  -- ... (análisis completo de tricotomía)
+```
+
+**Dependencias**: `isNat`, `isTransitiveSet`, `isTotalStrictOrderMembershipGuided`
+
+#### Elementos de Naturales Tienen Orden Total (nat_element_has_strict_total_order)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 870  
+**Namespace**: `SetUniverse.NaturalNumbers`
+
+**Enunciado Matemático**: Si n es natural y m ∈ n, entonces m tiene orden total estricto.
+
+**Firma Lean4**:
+
+```lean
+theorem nat_element_has_strict_total_order (n m : U)
+  (hn : isNat n) (hm_in_n : m ∈ n) :
+  isTotalStrictOrderMembershipGuided m := by
+  obtain ⟨hn_trans, ⟨hn_self, hn_asym, hn_trich⟩, hn_wo⟩ := hn
+  have hn_reconstructed : isNat n := ⟨hn_trans, ⟨hn_self, hn_asym, hn_trich⟩, hn_wo⟩
+  unfold isTotalStrictOrderMembershipGuided
+  have hm_sub_n : m ⊆ n := hn_trans m hm_in_n
+  refine ⟨?_, ?_, ?_⟩
+  · exact nat_element_is_transitive n m hn_reconstructed hm_in_n
+  · intro x y hx_in_m hy_in_m hxy
+    have hx_in_n : x ∈ n := hm_sub_n x hx_in_m
+    have hy_in_n : y ∈ n := hm_sub_n y hy_in_m
+    exact hn_asym x y hx_in_n hy_in_n hxy
+  · intro x y hx_in_m hy_in_m
+    have hx_in_n : x ∈ n := hm_sub_n x hx_in_m
+    have hy_in_n : y ∈ n := hm_sub_n y hy_in_m
+    have htrich_n : x ∈ y ∨ x = y ∨ y ∈ x := hn_trich x y hx_in_n hy_in_n
+    exact htrich_n
+```
+
+**Dependencias**: `isNat`, `isTotalStrictOrderMembershipGuided`, `nat_element_is_transitive`
+
+#### Elementos de Naturales Están Bien Ordenados (nat_element_has_well_order)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 928  
+**Namespace**: `SetUniverse.NaturalNumbers`
+
+**Enunciado Matemático**: Si n es natural y m ∈ n, entonces m está bien ordenado (con mínimo y máximo).
+
+**Firma Lean4**:
+
+```lean
+theorem nat_element_has_well_order (n m : U)
+  (hn : isNat n) (hm_in_n : m ∈ n) :
+  isWellOrderMembershipGuided m := by
+  obtain ⟨hn_trans, ⟨hn_self, hn_asym, hn_trich⟩, hn_wo⟩ := hn
+  unfold isWellOrderMembershipGuided
+  have hm_sub_n : m ⊆ n := hn_trans m hm_in_n
+  intro T hT_sub_m hT_ne_empty
+  have hT_sub_n : T ⊆ n := by
+    intro x hx_in_T
+    have hx_in_m : x ∈ m := hT_sub_m x hx_in_T
+    exact hm_sub_n x hx_in_m
+  obtain ⟨min, hmin_in_T, hmin_is_min⟩ := (hn_wo T hT_sub_n hT_ne_empty).1
+  obtain ⟨max, hmax_in_T, hmax_is_max⟩ := (hn_wo T hT_sub_n hT_ne_empty).2
+  constructor
+  · exact ⟨min, hmin_in_T, hmin_is_min⟩
+  · exact ⟨max, hmax_in_T, hmax_is_max⟩
+```
+
+**Dependencias**: `isNat`, `isWellOrderMembershipGuided`
+
+#### Teorema Fundamental: Elementos de Naturales son Naturales (nat_element_is_nat)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 948  
+**Namespace**: `SetUniverse.NaturalNumbers`
+
+**Enunciado Matemático**: Si n es natural y m ∈ n, entonces m es natural. Esto es el **teorema fundamental** que establece la jerarquía de naturales.
+
+**Firma Lean4**:
+
+```lean
+theorem nat_element_is_nat (n m : U) :
+  isNat n → m ∈ n → isNat m := by
+  intro hn hm_in_n
+  unfold isNat
+  refine ⟨?_, ?_, ?_⟩
+  · exact nat_element_is_transitive n m hn hm_in_n
+  · exact nat_element_has_strict_total_order n m hn hm_in_n
+  · exact nat_element_has_well_order n m hn hm_in_n
+```
+
+**Dependencias**: `isNat`, `nat_element_is_transitive`, `nat_element_has_strict_total_order`, `nat_element_has_well_order`
+
+### 4.4 NaturalNumbers.lean - Teoremas de Clausura bajo Sucesores
+
+#### El Sucesor No es Igual al Natural Original (nat_ne_successor)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 961  
+**Namespace**: `SetUniverse.NaturalNumbers`
+
+**Enunciado Matemático**: Para todo natural n, se tiene n ≠ σ(n).
+
+**Firma Lean4**:
+
+```lean
+theorem nat_ne_successor (n : U) (hn : isNat n) : n ≠ σ n := by
+  intro h_eq
+  have : n ∈ σ n := mem_successor_self n
+  rw [←h_eq] at this
+  exact nat_not_mem_self n hn this
+```
+
+**Dependencias**: `isNat`, `mem_successor_self`, `nat_not_mem_self`
+
+#### El Sucesor del Vacío tiene Orden Total (successor_of_nat_has_strict_total_order)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 1005  
+**Namespace**: `SetUniverse.NaturalNumbers`
+
+**Enunciado Matemático**: Si n es natural, entonces σ(n) tiene orden total estricto.
+
+**Firma Lean4**:
+
+```lean
+theorem successor_of_nat_has_strict_total_order (n : U) (hn : isNat n) :
+  isTotalStrictOrderMembershipGuided (σ n) := by
+  obtain ⟨hn_trans, ⟨hn_trans_self, hn_asym, hn_trich⟩, hn_wo⟩ := hn
+  unfold isTotalStrictOrderMembershipGuided
+  -- ... (análisis de casos para elementos en σ n)
+```
+
+**Dependencias**: `isNat`, `isTotalStrictOrderMembershipGuided`, `successor_is_specified`
+
+#### Teorema Principal: El Sucesor de un Natural es Natural (nat_successor_is_nat)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 1076  
+**Namespace**: `SetUniverse.NaturalNumbers`
+
+**Enunciado Matemático**: Si n es natural, entonces σ(n) es natural. **Teorema clave de clausura inductiva.**
+
+**Firma Lean4**:
+
+```lean
+theorem nat_successor_is_nat (n : U) (hn : isNat n) : isNat (σ n) := by
+  obtain ⟨hn_trans, ⟨hn_trans_self, hn_asym, hn_trich⟩, hn_wo⟩ := hn
+  have hn_reconstructed : isNat n := ⟨hn_trans, ⟨hn_trans_self, hn_asym, hn_trich⟩, hn_wo⟩
+  refine ⟨?_, ?_, ?_⟩
+  · exact successor_of_nat_is_transitive n hn_reconstructed
+  · exact successor_of_nat_has_strict_total_order n hn_reconstructed
+  · unfold isWellOrderMembershipGuided
+    intro A hA_sub hA_nonempty
+    -- Proyecto A ∩ n para encontrar mínimo
+    let B := A ∩ n
+    have h_min : (∃ m, m ∈ A ∧ ∀ x, x ∈ A → m = x ∨ m ∈ x) := by
+      by_cases hB_empty : B = (∅ : U)
+      · -- Si B es vacío, A = {n}
+        have hA_eq_n : A = {n} := by
+          -- ... prueba de que es un singleton
+        exists n; rw [hA_eq_n]
+        constructor
+        · apply (Singleton_is_specified n n).mpr rfl
+        · intro x hx; rw [Singleton_is_specified] at hx; left; exact hx.symm
+      · -- Si B no es vacío, usa mínimo de n
+        have hB_sub_n : B ⊆ n := BinInter_subset A n |>.2
+        have hB_nonempty : B ≠ (∅ : U) := hB_empty
+        obtain ⟨m, hm_in_B, hm_min⟩ := (hn_wo B hB_sub_n hB_nonempty).1
+        exists m
+        -- ... resto de la prueba
+    have h_max : (∃ M, M ∈ A ∧ ∀ x, x ∈ A → M = x ∨ x ∈ M) := by
+      by_cases hn_in_A : n ∈ A
+      · exists n
+        constructor; exact hn_in_A
+        intro x hx_in_A
+        have hx_succ := hA_sub x hx_in_A
+        rw [successor_is_specified] at hx_succ
+        cases hx_succ with
+        | inl hx_n => right; exact hx_n
+        | inr hx_eq_n => left; exact hx_eq_n.symm
+      · -- n ∉ A, entonces A ⊆ n
+        have hA_sub_n : A ⊆ n := by
+          intro x hx
+          have hx_succ := hA_sub x hx
+          rw [successor_is_specified] at hx_succ
+          cases hx_succ with
+          | inl hx_n => exact hx_n
+          | inr hx_eq_n => rw [hx_eq_n] at hx; contradiction
+        obtain ⟨M, hM_in_A, hM_max⟩ := (hn_wo A hA_sub_n hA_nonempty).2
+        refine ⟨M, hM_in_A, hM_max⟩
+    constructor; exact h_min; exact h_max
+```
+
+**Dependencias**: `isNat`, `successor_is_specified`, `BinInter_subset`
+
+### 4.5 NaturalNumbers.lean - Teoremas de Tricotomía y Orden
+
+#### Tricotomía entre Números Naturales (nat_trichotomy)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 1245  
+**Namespace**: `SetUniverse.NaturalNumbers`
+
+**Enunciado Matemático**: Para cualesquiera dos números naturales n y m, se cumple exactamente una de: n ∈ m, n = m, ó m ∈ n.
+
+**Firma Lean4**:
+
+```lean
+theorem nat_trichotomy (n m : U) (hn : isNat n) (hm : isNat m) :
+  n ∈ m ∨ n = m ∨ m ∈ n := by
+  let k := n ∩ m
+  have hk_init := inter_nat_is_initial_segment n m hn hm
+  have hk_init_n : isInitialSegment k n := hk_init.1
+  have hk_init_m : isInitialSegment k m := hk_init.2
+  have h_n_cases := initial_segment_of_nat_is_eq_or_mem n k hn hk_init_n
+  have h_m_cases := initial_segment_of_nat_is_eq_or_mem m k hm hk_init_m
+  -- Combina casos para obtener tricotomía
+  cases h_n_cases with
+  | inl hk_eq_n =>
+    cases h_m_cases with
+    | inl hk_eq_m =>
+      right; left; rw [←hk_eq_n, hk_eq_m]
+    | inr hk_in_m =>
+      left; rw [←hk_eq_n]; exact hk_in_m
+  | inr hk_in_n =>
+    cases h_m_cases with
+    | inl hk_eq_m =>
+      right; right; rw [←hk_eq_m]; exact hk_in_n
+    | inr hk_in_m =>
+      exfalso
+      have hk_in_k : k ∈ k := (BinInter_is_specified n m k).mpr ⟨hk_in_n, hk_in_m⟩
+      have hk_nat : isNat k := nat_element_is_nat n k hn hk_in_n
+      exact nat_not_mem_self k hk_nat hk_in_k
+```
+
+**Dependencias**: `isNat`, `isInitialSegment`, `initial_segment_of_nat_is_eq_or_mem`, `inter_nat_is_initial_segment`, `nat_element_is_nat`, `nat_not_mem_self`
+
+#### Transitividad de Membresía (nat_mem_trans)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 1301  
+**Namespace**: `SetUniverse.NaturalNumbers`
+
+**Enunciado Matemático**: Si n ∈ m y m ∈ k (todos naturales), entonces n ∈ k.
+
+**Firma Lean4**:
+
+```lean
+theorem nat_mem_trans (n m k : U) (_hn : isNat n) (_hm : isNat m) (hk : isNat k)
+  (hnm : n ∈ m) (hmk : m ∈ k) : n ∈ k := by
+  have hm_sub_k : m ⊆ k := hk.1 m hmk
+  exact hm_sub_k n hnm
+```
+
+**Dependencias**: `isNat`, `isTransitiveSet`
+
+#### Asimetría de Membresía (nat_mem_asymm)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 1313  
+**Namespace**: `SetUniverse.NaturalNumbers`
+
+**Enunciado Matemático**: Si n ∈ m (ambos naturales), entonces m ∉ n.
+
+**Firma Lean4**:
+
+```lean
+theorem nat_mem_asymm (n m : U) (hn : isNat n) (hm : isNat m)
+  (hnm : n ∈ m) : m ∉ n := by
+  intro hmn
+  exact nat_no_two_cycle n m hn hm ⟨hnm, hmn⟩
+```
+
+**Dependencias**: `isNat`, `nat_no_two_cycle`
+
+#### Subconjunto Implica Membresía u Igualdad (nat_subset_mem_or_eq)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 1333  
+**Namespace**: `SetUniverse.NaturalNumbers`
+
+**Enunciado Matemático**: Si n ⊆ m (ambos naturales), entonces n ∈ m ∨ n = m.
+
+**Firma Lean4**:
+
+```lean
+theorem nat_subset_mem_or_eq
+  (n m : U) (hn : isNat n) (hm : isNat m) (h_sub : n ⊆ m) :
+  n ∈ m ∨ n = m := by
+  have h_trich := nat_trichotomy n m hn hm
+  cases h_trich with
+  | inl h => left; exact h
+  | inr h => cases h with
+    | inl h => right; exact h
+    | inr h_m_in_n =>
+      exfalso
+      have h_m_sub : m ⊆ n := hn.1 m h_m_in_n
+      have h_eq : n = m := ExtSet_wc h_sub h_m_sub
+      rw [h_eq] at h_m_in_n
+      exact nat_not_mem_self m hm h_m_in_n
+```
+
+**Dependencias**: `isNat`, `nat_trichotomy`, `ExtSet_wc`
+
+#### El Sucesor es Inyectivo (successor_injective)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 1351  
+**Namespace**: `SetUniverse.NaturalNumbers`
+
+**Enunciado Matemático**: Si σ(n) = σ(m), entonces n = m.
+
+**Firma Lean4**:
+
+```lean
+theorem successor_injective (n m : U) (hn : isNat n) (hm : isNat m)
+  (h_eq : σ n = σ m) : n = m := by
+  have hn_in_succ_n : n ∈ σ n := mem_successor_self n
+  rw [h_eq] at hn_in_succ_n
+  rw [successor_is_specified] at hn_in_succ_n
+  have hm_in_succ_m : m ∈ σ m := mem_successor_self m
+  rw [←h_eq] at hm_in_succ_m
+  rw [successor_is_specified] at hm_in_succ_m
+  cases hn_in_succ_n with
+  | inl hn_in_m =>
+    cases hm_in_succ_m with
+    | inl hm_in_n =>
+      exfalso; exact nat_no_two_cycle n m hn hm ⟨hn_in_m, hm_in_n⟩
+    | inr hm_eq_n => exact hm_eq_n.symm
+  | inr hn_eq_m => exact hn_eq_m
+```
+
+**Dependencias**: `isNat`, `mem_successor_self`, `successor_is_specified`, `nat_no_two_cycle`
+
+### 4.6 NaturalNumbers.lean - Teoremas de Finitud
+
+#### Todo Natural es Cero o Sucesor (nat_is_zero_or_succ)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 1377  
+**Namespace**: `SetUniverse.NaturalNumbers`
+
+**Enunciado Matemático**: Para todo número natural n, se tiene n = ∅ ó ∃k, n = σ(k).
+
+**Firma Lean4**:
+
+```lean
+theorem nat_is_zero_or_succ (n : U) (hn : isNat n) :
+  n = ∅ ∨ ∃ k, n = σ k := by
+  by_cases h_zero : n = ∅
+  · left; exact h_zero
+  · right
+    obtain ⟨hn_trans, hn_order, hn_wo⟩ := hn
+    have hn_reconstructed : isNat n := ⟨hn_trans, hn_order, hn_wo⟩
+    obtain ⟨M, hM_in, hM_max⟩ := (hn_wo n (subseteq_reflexive n) h_zero).2
+    exists M
+    apply ExtSet
+    intro x
+    constructor
+    · intro hx
+      cases hM_max x hx with
+      | inl h_eq => rw [successor_is_specified]; right; exact h_eq.symm
+      | inr h_mem => rw [successor_is_specified]; left; exact h_mem
+    · intro hx
+      rw [successor_is_specified] at hx
+      cases hx with
+      | inl hx_M => exact hn_trans M hM_in x hx_M
+      | inr hx_eq => rw [hx_eq]; exact hM_in
+```
+
+**Dependencias**: `isNat`, `successor_is_specified`, `ExtSet`, `subseteq_reflexive`
+
+#### Teorema Fundamental: Vacío Pertenece a Todo Natural No Vacío (zero_mem_of_nat_nonempty)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 1398  
+**Namespace**: `SetUniverse.NaturalNumbers`
+
+**Enunciado Matemático**: Si n es un número natural no vacío, entonces ∅ ∈ n.
+
+**Nota**: Este teorema se prueba **sin usar el Axioma de Regularidad**, solo mediante regresión imposible en la jerarquía de von Neumann.
+
+**Firma Lean4**:
+
+```lean
+theorem zero_mem_of_nat_nonempty (n : U) (hn : isNat n) (h_ne : n ≠ ∅) : (∅ : U) ∈ n := by
+  obtain ⟨hn_trans, hn_order, hn_wo⟩ := hn
+  have hn_reconstructed : isNat n := ⟨hn_trans, hn_order, hn_wo⟩
+  obtain ⟨m, hm_in_n, hm_min⟩ := (hn_wo n (subseteq_reflexive n) h_ne).1
+  by_cases h_m_eq : m = ∅
+  · rw [←h_m_eq]; exact hm_in_n
+  · have hm_nat : isNat m := nat_element_is_nat n m hn_reconstructed hm_in_n
+    obtain ⟨hn_trans_m, hn_order_m, hn_wo_m⟩ := hm_nat
+    obtain ⟨m', hm'_in_m, hm'_min⟩ := (hn_wo_m m (subseteq_reflexive m) h_m_eq).1
+    have hm'_in_n : m' ∈ n := hn_trans m hm_in_n m' hm'_in_m
+    have hm_nat : isNat m := ⟨hn_trans_m, hn_order_m, hn_wo_m⟩
+    match hm_min m' hm'_in_n with
+      | Or.inl h_eq =>
+        exfalso
+        rw [←h_eq] at hm'_in_m
+        exact nat_not_mem_self m hm_nat hm'_in_m
+      | Or.inr h_m_in_m' =>
+        exfalso
+        exact nat_no_two_cycle m' m
+          (nat_element_is_nat m m' hm_nat hm'_in_m)
+          hm_nat
+          ⟨hm'_in_m, h_m_in_m'⟩
+```
+
+**Dependencias**: `isNat`, `nat_element_is_nat`, `nat_not_mem_self`, `nat_no_two_cycle`
+
+#### Teorema de Finitud: Máximo en Subconjuntos (nat_has_max)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 1296  
+**Namespace**: `SetUniverse.NaturalNumbers`
+
+**Enunciado Matemático**: Todo subconjunto no vacío de un número natural tiene un elemento máximo. **Teorema que caracteriza los naturales como ordinales finitos.**
+
+**Firma Lean4**:
+
+```lean
+theorem nat_has_max (n T : U) (hn : isNat n) (hT_sub : T ⊆ n) (hT_ne : T ≠ ∅) :
+  ∃ max, max ∈ T ∧ ∀ x, x ∈ T → (x ∈ max ∨ x = max) := by
+  let Mx := SpecSet T (fun x => ¬∃ y, y ∈ T ∧ x ∈ y ∧ x ≠ y)
+  by_cases hMx : Mx ≠ ∅
+  · -- Si hay elementos maximales
+    have hMx_sub : Mx ⊆ T := by
+      intro x hx; rw [SpecSet_is_specified] at hx; exact hx.1
+    have hMx_sub_n : Mx ⊆ n := by
+      intro x hx; have : x ∈ T := hMx_sub x hx; exact hT_sub x this
+    obtain ⟨max, hmax_in_Mx, _⟩ := (hn.2.2 Mx hMx_sub_n hMx).1
+    exists max
+    have hmax_in_T : max ∈ T := hMx_sub max hmax_in_Mx
+    refine ⟨hmax_in_T, ?_⟩
+    intro x hx_in_T
+    have hx_in_n : x ∈ n := hT_sub x hx_in_T
+    have hmax_in_n : max ∈ n := hT_sub max hmax_in_T
+    have htrich := hn.2.1.2.2 x max hx_in_n hmax_in_n
+    cases htrich with
+    | inl h => left; exact h
+    | inr h => cases h with
+      | inl h => right; exact h
+      | inr h =>
+        exfalso
+        have hmax_maximal : ¬∃ y, y ∈ T ∧ max ∈ y ∧ max ≠ y := by
+          rw [SpecSet_is_specified] at hmax_in_Mx
+          exact hmax_in_Mx.2
+        apply hmax_maximal
+        exists x
+        refine ⟨hx_in_T, h, ?_⟩
+        intro h_eq
+        have h_max_in_max : max ∈ max := h_eq ▸ h
+        exact nat_not_mem_self max (nat_element_is_nat n max hn hmax_in_n) h_max_in_max
+  · -- Si no hay elementos maximales, usar máximo de T en n
+    have hMx_empty : Mx = ∅ := not_not.mp hMx
+    obtain ⟨M, hM_in_T, hM_is_max⟩ := (hn.2.2 T hT_sub hT_ne).2
+    have hM_in_Mx : M ∈ Mx := by
+      rw [SpecSet_is_specified]
+      refine ⟨hM_in_T, ?_⟩
+      intro ⟨y, hy_in_T, hM_in_y, hM_ne_y⟩
+      have h_y_vs_M := hM_is_max y hy_in_T
+      cases h_y_vs_M with
+      | inl h_y_eq_M => exact hM_ne_y h_y_eq_M
+      | inr h_y_in_M =>
+        have hM_in_n : M ∈ n := hT_sub M hM_in_T
+        have hy_in_n : y ∈ n := hT_sub y hy_in_T
+        have h_asym := hn.2.1.2.1 M y hM_in_n hy_in_n hM_in_y
+        exact h_asym h_y_in_M
+    exfalso
+    rw [hMx_empty] at hM_in_Mx
+    exact EmptySet_is_empty M hM_in_Mx
+```
+
+**Dependencias**: `isNat`, `SpecSet_is_specified`, `isTotalStrictOrderMembershipGuided`, `nat_element_is_nat`, `nat_not_mem_self`
+
+### 4.7 NaturalNumbers.lean - Teoremas sobre Conjuntos Inductivos
+
+#### Todo Natural Pertenece a Conjuntos Inductivos (nat_in_inductive_set)
+
+**Ubicación**: `NaturalNumbers.lean`, línea 1550  
+**Namespace**: `SetUniverse.NaturalNumbers`
+
+**Enunciado Matemático**: Si n es un número natural e I es un conjunto inductivo, entonces n ∈ I.
+
+**Firma Lean4**:
+
+```lean
+theorem nat_in_inductive_set (n : U) (hn : isNat n) (I : U) (hI : isInductive I) :
+  n ∈ I := by
+  cases nat_is_zero_or_succ n hn with
+  | inl h_zero =>
+    rw [h_zero]; exact hI.1
+  | inr h_succ =>
+    obtain ⟨k, hk_eq⟩ := h_succ
+    have hk_in_n : k ∈ n := by rw [hk_eq]; exact mem_successor_self k
+    have h_sub : n ⊆ I := nat_subset_inductive_set n hn I hI
+    have hk_in_I : k ∈ I := h_sub k hk_in_n
+    have h_succ_in : σ k ∈ I := hI.2 k hk_in_I
+    rw [hk_eq]; exact h_succ_in
+```
+
+**Dependencias**: `isNat`, `isInductive`, `nat_is_zero_or_succ`, `nat_subset_inductive_set`, `mem_successor_self`
+
+---
 
 ### 3.14 Infinity.lean
 
@@ -4611,7 +5313,78 @@ export SetStrictOrder (
 )
 ```
 
-### 6.11 OrderedPair.lean (Extensiones)
+### 6.11 NaturalNumbers.lean
+
+```lean
+export NaturalNumbers (
+  -- Definiciones de orden-epsilón
+  successor
+  successor_is_specified
+  isInductive
+  isTransitiveSet
+  StrictOrderMembershipGuided
+  mem_StrictOrderMembershipGuided
+  isTotalStrictOrderMembershipGuided
+  isWellOrderMembershipGuided
+  isNat
+  -- Propiedades elementales
+  zero_is_nat
+  mem_successor_self
+  subset_of_mem_successor
+  mem_successor_of_mem
+  successor_preserves_transitivity
+  transitive_element_subset
+  -- Teoremas de buena fundación
+  nat_not_mem_self
+  nat_no_two_cycle
+  nat_no_three_cycle
+  -- Propiedades estructurales (heredabilidad)
+  nat_element_is_transitive
+  nat_element_has_strict_total_order
+  nat_element_has_well_order
+  nat_element_is_nat
+  -- Clausura bajo sucesores
+  nat_ne_successor
+  successor_of_nat_is_transitive
+  successor_of_nat_has_strict_total_order
+  nat_successor_is_nat
+  successor_injective
+  successor_nonempty
+  -- Segmentos iniciales y tricotomía
+  isInitialSegment
+  initial_segment_of_nat_is_eq_or_mem
+  inter_nat_is_initial_segment
+  nat_subset_mem_or_eq
+  nat_trichotomy
+  nat_mem_trans
+  nat_mem_asymm
+  nat_is_initial_segment
+  nat_element_trichotomy
+  no_nat_between
+  -- Finitud y conjunto vacío
+  nat_has_max
+  nat_is_zero_or_succ
+  zero_mem_of_nat_nonempty
+  -- Conjuntos inductivos
+  nat_subset_inductive_set
+  nat_in_inductive_set
+  zero_in_inductive
+  one_in_inductive
+  two_in_inductive
+  three_in_inductive
+  -- Ejemplos concretos
+  zero
+  one
+  two
+  three
+  zero_eq
+  one_eq
+  two_eq
+  three_eq
+)
+```
+
+### 6.12 OrderedPair.lean (Extensiones)
 
 ```lean
 export OrderedPairExtensions (
@@ -4621,7 +5394,7 @@ export OrderedPairExtensions (
 )
 ```
 
-### 6.12 CartesianProduct.lean
+### 6.13 CartesianProduct.lean
 
 ```lean
 export CartesianProduct (
@@ -4638,7 +5411,7 @@ export CartesianProduct (
 )
 ```
 
-### 6.13 Recursion.lean
+### 6.14 Recursion.lean
 
 ```lean
 export Recursion (
@@ -4704,7 +5477,7 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 
 ---
 
-*Última actualización: 2026-02-12 17:35 - Completados Recursion.lean (0 sorry, 0 errores de tipo) y añadida sección 6.13 de exports*
+*Última actualización: 2026-02-12 18:45 - Completada proyección íntegra de NaturalNumbers.lean (13 def + 36 teoremas + exports)*
 
 *Actualización anterior: 2026-02-11 - Completado módulo Functions.lean*
 

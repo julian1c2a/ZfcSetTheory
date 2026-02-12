@@ -222,4 +222,5 @@ Este proyecto se desarrolló basándose en las siguientes fuentes:
 
 ---
 
-*Last updated: 2026-02-12 17:35*
+**Autor**: Julián Calderón Almendros  
+*Last updated: 2026-02-12 18:45*
