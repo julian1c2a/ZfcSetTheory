@@ -1,6 +1,6 @@
 # Diagrama de Dependencias - ZfcSetTheory
 
-**Última actualización:** 7 de febrero de 2026
+**Última actualización:** 12 de febrero de 2026
 
 ## Estructura General del Proyecto
 
@@ -16,7 +16,12 @@ ZfcSetTheory/
 ├── OrderedPair.lean                # Extensiones del Par Ordenado
 ├── CartesianProduct.lean           # Producto Cartesiano A ×ₛ B
 ├── Relations.lean                  # Relaciones: equivalencia, orden, clases
+├── Functions.lean                  # Funciones, aplicación, composición, inversa
+├── Infinity.lean                   # Axioma del Infinito y conjunto ω
+├── NaturalNumbers.lean             # Números naturales como ordinales de von Neumann
+├── Recursion.lean                  # Teorema de Recursión sobre ℕ
 ├── BooleanAlgebra.lean             # Álgebra Booleana de conjuntos (teoremas)
+├── BooleanRing.lean                # Anillo Booleano con SymDiff
 ├── PowerSetAlgebra.lean            # Álgebra del conjunto potencia (complemento, De Morgan)
 ├── GeneralizedDeMorgan.lean        # Leyes de De Morgan generalizadas para familias
 ├── GeneralizedDistributive.lean    # Leyes distributivas generalizadas
@@ -24,7 +29,7 @@ ZfcSetTheory/
 ├── SetOrder.lean                   # Orden parcial y retículos (completo)
 ├── SetStrictOrder.lean             # Orden estricto (completo)
 ├── Cardinality.lean                # Teoremas de Cantor y Cantor-Schröder-Bernstein
-└── ZfcSetTheory.lean               # Módulo principal
+└── ZfcSetTheory.lean               # Módulo principal (exporta todo)
 ```
 
 ## Diagrama de Dependencias
@@ -43,7 +48,7 @@ graph TD
     E --> S[Specification.lean]
     E --> Pa[Pairing.lean]
     E --> U[Union.lean]
-    E --> Pot[Potencia.lean]
+    E --> Pot[PowerSet.lean]
     
     %% Nivel 3: Axiomas que dependen de Existence
     Ex --> S
@@ -67,10 +72,16 @@ graph TD
     %% Nivel 6: Producto Cartesiano
     OP --> CP[CartesianProduct.lean]
     
-    %% Nivel 7: Relaciones
+    %% Nivel 7: Relaciones y Funciones
     CP --> Rel[Relations.lean]
+    Rel --> Func[Functions.lean]
     
-    %% Nivel 8: Álgebras y órdenes
+    %% Nivel 8: Números Naturales
+    Pot --> Inf[Infinity.lean]
+    Inf --> Nat[NaturalNumbers.lean]
+    Nat --> Rec[Recursion.lean]
+    
+    %% Nivel 9: Álgebras y órdenes
     E --> SSO[SetStrictOrder.lean]
     Ex --> SO[SetOrder.lean]
     S --> SO
@@ -80,12 +91,22 @@ graph TD
     S --> BA[BooleanAlgebra.lean]
     Pa --> BA
     U --> BA
+    Pot --> PSA[PowerSetAlgebra.lean]
+    S --> PSA
+    PSA --> BR[BooleanRing.lean]
+    U --> BR
+    BA --> ABA[AtomicBooleanAlgebra.lean]
+    Pot --> ABA
+    U --> GDM[GeneralizedDeMorgan.lean]
+    Pot --> GDM
+    U --> GDD[GeneralizedDistributive.lean]
+    Pot --> GDD
     
-    %% Nivel 9: Cardinalidad
-    Rel --> Card[Cardinality.lean]
+    %% Nivel 10: Cardinalidad
+    Func --> Card[Cardinality.lean]
     Pot --> Card
     
-    %% Nivel 10: Módulo principal
+    %% Nivel 11: Módulo principal
     E --> Z[ZfcSetTheory.lean]
     Ex --> Z
     S --> Z
@@ -95,7 +116,16 @@ graph TD
     OP --> Z
     CP --> Z
     Rel --> Z
+    Func --> Z
+    Inf --> Z
+    Nat --> Z
+    Rec --> Z
     BA --> Z
+    PSA --> Z
+    BR --> Z
+    ABA --> Z
+    GDM --> Z
+    GDD --> Z
     SO --> Z
     SSO --> Z
     Card --> Z
@@ -106,14 +136,17 @@ graph TD
     classDef order fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
     classDef extension fill:#fff9c4,stroke:#f57f17,stroke-width:2px
     classDef relation fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    classDef functions fill:#e3f2fd,stroke:#0d47a1,stroke-width:2px
+    classDef natural fill:#fff8e1,stroke:#f57c00,stroke-width:2px
     classDef main fill:#fff3e0,stroke:#e65100,stroke-width:3px
     classDef external fill:#fafafa,stroke:#424242,stroke-width:1px
     
     class E,Ex,S,Pa,U,Pot axiom
-    class BA algebra
+    class BA,PSA,BR,ABA,GDM,GDD algebra
     class SO,SSO order
     class OP,CP extension
-    class Rel relation
+    class Rel,Func relation
+    class Inf,Nat,Rec natural
     class Z main
     class IC,P external
 ```
@@ -211,7 +244,42 @@ namespace SetUniverse.Relations
   -- Teoremas: propiedades de relaciones, clases de equivalencia
 ```
 
-### 11. **SetUniverse.BooleanAlgebra**
+### 11. **SetUniverse.Functions**
+
+```lean
+namespace SetUniverse.Functions
+  -- Funciones y aplicaciones
+  -- Definiciones: isFunctionFromTo, apply (⦅⦆), composition, inverse
+  -- Teoremas: propiedades de funciones, composición, aplicación
+```
+
+### 12. **SetUniverse.InfinityAxiom**
+
+```lean
+namespace SetUniverse.InfinityAxiom
+  -- Axioma del Infinito
+  -- Definiciones: isInductive, InfSet (conjunto infinito)
+  -- Teoremas: existencia de conjunto inductivo infinito
+```
+
+### 13. **SetUniverse.NaturalNumbers**
+
+```lean
+namespace SetUniverse.NaturalNumbers
+  -- Números naturales como ordinales de von Neumann
+  -- Definiciones: isNatural, ℕ (conjunto omega), successor
+  -- Teoremas: propiedades de números naturales, inducción
+```
+
+### 14. **SetUniverse.Recursion**
+
+```lean
+namespace SetUniverse.Recursion
+  -- Teorema de Recursión sobre ℕ
+  -- Teoremas: recursión, unicidad de funciones recursivas
+```
+
+### 15. **SetUniverse.BooleanAlgebra**
 
 ```lean
 namespace SetUniverse.BooleanAlgebra
@@ -219,7 +287,7 @@ namespace SetUniverse.BooleanAlgebra
   -- Teoremas: leyes booleanas, distributividad, idempotencia
 ```
 
-### 12. **SetUniverse.PowerSetAlgebra**
+### 16. **SetUniverse.PowerSetAlgebra**
 
 ```lean
 namespace SetUniverse.PowerSetAlgebra
@@ -228,7 +296,16 @@ namespace SetUniverse.PowerSetAlgebra
   -- Teoremas: double_complement, DeMorgan_union_family, DeMorgan_inter_family
 ```
 
-### 13. **SetUniverse.GeneralizedDeMorgan**
+### 17. **SetUniverse.BooleanRing**
+
+```lean
+namespace SetUniverse.BooleanRing
+  -- Anillo Booleano con SymDiff
+  -- Teoremas: SymDiff como suma, intersección como producto
+  --           asociatividad, distributividad, conmutatividad
+```
+
+### 18. **SetUniverse.GeneralizedDeMorgan**
 
 ```lean
 namespace SetUniverse.GeneralizedDeMorgan
@@ -236,7 +313,7 @@ namespace SetUniverse.GeneralizedDeMorgan
   -- Teoremas: complement_union_eq_inter_complement, complement_inter_eq_union_complement
 ```
 
-### 14. **SetUniverse.GeneralizedDistributive**
+### 19. **SetUniverse.GeneralizedDistributive**
 
 ```lean
 namespace SetUniverse.GeneralizedDistributive
@@ -245,7 +322,7 @@ namespace SetUniverse.GeneralizedDistributive
   -- Teoremas: inter_union_distrib, union_inter_distrib
 ```
 
-### 15. **SetUniverse.AtomicBooleanAlgebra**
+### 20. **SetUniverse.AtomicBooleanAlgebra**
 
 ```lean
 namespace SetUniverse.AtomicBooleanAlgebra
@@ -255,7 +332,7 @@ namespace SetUniverse.AtomicBooleanAlgebra
   --           PowerSet_is_atomic, element_is_union_of_atoms
 ```
 
-### 16. **SetUniverse.SetOrder**
+### 21. **SetUniverse.SetOrder**
 
 ```lean
 namespace SetUniverse.SetOrder
@@ -264,7 +341,7 @@ namespace SetUniverse.SetOrder
   -- Teoremas: propiedades de orden, cotas, supremos/ínfimos
 ```
 
-### 17. **SetUniverse.SetStrictOrder**
+### 22. **SetUniverse.SetStrictOrder**
 
 ```lean
 namespace SetUniverse.SetStrictOrder
@@ -273,7 +350,7 @@ namespace SetUniverse.SetStrictOrder
   -- Relaciones entre orden parcial y estricto
 ```
 
-### 18. **SetUniverse.Cardinality**
+### 23. **SetUniverse.Cardinality**
 
 ```lean
 namespace SetUniverse.Cardinality
@@ -302,7 +379,7 @@ namespace SetUniverse.Cardinality
 
 ### **Nivel 3: Axiomas Avanzados**
 
-- `Potencia.lean` - Construcción de conjunto potencia
+- `PowerSet.lean` - Construcción de conjunto potencia
 
 ### **Nivel 4: Extensiones del Par Ordenado**
 
@@ -316,19 +393,32 @@ namespace SetUniverse.Cardinality
 
 - `Relations.lean` - Relaciones, equivalencias, órdenes, clases de equivalencia
 
-### **Nivel 7: Estructuras Algebraicas**
+### **Nivel 7: Funciones**
+
+- `Functions.lean` - Funciones, aplicación, composición, inversa
+
+### **Nivel 8: Infinito y Números Naturales**
+
+- `Infinity.lean` - Axioma del Infinito, conjunto inductivo
+- `NaturalNumbers.lean` - Números naturales como ordinales de von Neumann
+- `Recursion.lean` - Teorema de Recursión sobre ℕ
+
+### **Nivel 9: Estructuras Algebraicas**
 
 - `BooleanAlgebra.lean` - Teoremas booleanos
+- `BooleanRing.lean` - Anillo booleano con SymDiff
 - `PowerSetAlgebra.lean` - Álgebra del conjunto potencia
 - `GeneralizedDeMorgan.lean` - De Morgan generalizadas
 - `GeneralizedDistributive.lean` - Distributivas generalizadas
 - `AtomicBooleanAlgebra.lean` - Álgebra de Boole atómica
 - `SetOrder.lean` - Estructura de orden y retículo
 - `SetStrictOrder.lean` - Orden estricto
-- `Cardinality.lean` - Teoremas de Cantor y Cantor-Schröder-Bernstein
-- `SetStrictOrder.lean` - Orden estricto
 
-### **Nivel 8: Integración**
+### **Nivel 10: Cardinalidad**
+
+- `Cardinality.lean` - Teoremas de Cantor y Cantor-Schröder-Bernstein
+
+### **Nivel 11: Integración**
 
 - `ZfcSetTheory.lean` - Módulo principal que exporta todo
 
@@ -403,7 +493,7 @@ export SetUniverse.UnionAxiom (
 )
 ```
 
-### Potencia.lean
+### PowerSet.lean
 
 ```lean
 export SetUniverse.PowerSetAxiom (
@@ -461,6 +551,42 @@ export SetUniverse.Relations (
 )
 ```
 
+### Functions.lean
+
+```lean
+export SetUniverse.Functions (
+    isFunctionFromTo, apply, composition, inverse,
+    function_iff, apply_mem, apply_eq, apply_unique,
+    composition_assoc, inverse_involutive
+)
+```
+
+### Infinity.lean
+
+```lean
+export SetUniverse.InfinityAxiom (
+    InfinityAxiom, isInductive, InfSet,
+    InfSet_is_inductive, zero_in_InfSet, successor_in_InfSet
+)
+```
+
+### NaturalNumbers.lean
+
+```lean
+export SetUniverse.NaturalNumbers (
+    isNatural, ℕ, successor, zero_is_natural,
+    successor_is_natural, nat_induction
+)
+```
+
+### Recursion.lean
+
+```lean
+export SetUniverse.Recursion (
+    recursion_theorem, recursion_unique
+)
+```
+
 ### BooleanAlgebra.lean
 
 ```lean
@@ -469,6 +595,63 @@ export SetUniverse.BooleanAlgebra (
     BinUnion_idem_ba, BinInter_idem_ba, BinInter_empty,
     BinInter_comm_ba, Subseteq_trans_ba, Subseteq_reflexive_ba,
     Union_monotone, Inter_monotone, Subseteq_inter_eq, Diff_self, Diff_empty
+)
+```
+
+### BooleanRing.lean
+
+```lean
+export SetUniverse.BooleanRing (
+    SymDiff_is_comm, SymDiff_empty_identity, SymDiff_self_eq_empty,
+    SymDiff_assoc, SymDiff_inter_distrib_left, SymDiff_inter_distrib_right,
+    SymDiff_eq_union_diff, SymDiff_eq_self_iff_empty,
+    inter_SymDiff_distrib_left, inter_SymDiff_distrib_right,
+    SymDiff_involution
+)
+```
+
+### PowerSetAlgebra.lean
+
+```lean
+export SetUniverse.PowerSetAlgebra (
+    Complement, ComplementFamily,
+    PowerSet_Complement_subset, PowerSet_double_complement,
+    PowerSet_complement_union, PowerSet_complement_inter,
+    PowerSet_complement_complement, PowerSet_DeMorgan_union,
+    PowerSet_DeMorgan_inter, PowerSet_complement_monotone,
+    PowerSet_complement_distrib_union, PowerSet_complement_distrib_inter,
+    PowerSet_union_absorb_complement, PowerSet_inter_absorb_complement,
+    PowerSet_complement_empty, PowerSet_complement_full,
+    PowerSet_complement_idempotent
+)
+```
+
+### GeneralizedDeMorgan.lean
+
+```lean
+export SetUniverse.GeneralizedDeMorgan (
+    complement_union_eq_inter_complement, complement_inter_eq_union_complement,
+    inter_complement_eq_complement_union, union_complement_eq_complement_inter
+)
+```
+
+### GeneralizedDistributive.lean
+
+```lean
+export SetUniverse.GeneralizedDistributive (
+    DistribSet, DistribSet_is_specified,
+    inter_union_distrib, union_inter_distrib,
+    inter_union_distrib', union_inter_distrib'
+)
+```
+
+### AtomicBooleanAlgebra.lean
+
+```lean
+export SetUniverse.AtomicBooleanAlgebra (
+    isAtom, Atoms, isAtomic, atomBelow,
+    singleton_is_atom, atom_is_singleton, atom_iff_singleton,
+    PowerSet_is_atomic, element_is_union_of_atoms
 )
 ```
 
