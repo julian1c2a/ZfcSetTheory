@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2025. All rights reserved.
+Author: Julián Calderón Almendros
+License: MIT
+-/
+
+/-
   # Axioma de Infinito y el Conjunto Omega (ω)
 
   Este archivo introduce el Axioma de Infinito, necesario para construir el conjunto

@@ -1,5 +1,12 @@
--- This module serves as the root of the `ZfcSetTheory` library.
--- Main axioms and theorems of ZFC Set Theory
+/-
+Copyright (c) 2025. All rights reserved.
+Author: Julián Calderón Almendros
+License: MIT
+
+This module serves as the root of the `ZfcSetTheory` library.
+Main axioms and theorems of ZFC Set Theory
+-/
+
 import ZfcSetTheory.Prelim
 import ZfcSetTheory.Extension
 import ZfcSetTheory.Existence

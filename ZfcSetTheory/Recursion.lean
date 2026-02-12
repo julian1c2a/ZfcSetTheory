@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2025. All rights reserved.
+Author: Julián Calderón Almendros
+License: MIT
+-/
+
+/-
   # Teorema de Recursión
 
   Este archivo formaliza el Teorema de Recursión en la Teoría de Conjuntos ZFC.

@@ -109,8 +109,51 @@ Debe estar claramente indicada en:
 - CURRENT-STATUS-PROJECT.md (en el footer)
 - Badge en README.md: `[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)`
 
+### (14.) Cabeceras de Archivos .lean
+
+**Todos los archivos .lean DEBEN incluir una cabecera con información de copyright y licencia.**
+
+**Formato requerido**:
+
+```lean
+/-
+Copyright (c) 2025. All rights reserved.
+Author: Julián Calderón Almendros
+License: MIT
+-/
+```
+
+**Dónde aplicar**: En TODOS los archivos `.lean` del proyecto, antes de cualquier `import`.
+
+**Colocación exacta**:
+
+1. Abrir el archivo .lean
+2. Primera línea: `/-`
+3. Segunda línea: `Copyright (c) 2025. All rights reserved.`
+4. Tercera línea: `Author: Julián Calderón Almendros`
+5. Cuarta línea: `License: MIT`
+6. Quinta línea: `-/`
+7. Sexta línea: Línea en blanco
+8. Séptima línea en adelante: `import ...` y código
+
+**Excepciones**: Ninguna - todos los archivos .lean, incluyendo el módulo principal `ZfcSetTheory.lean`.
+
+**Propósito**:
+
+- Clarificar propiedad del código
+- Comunicar licencia MIT explícitamente en el código fuente
+- Cumplir con estándares de código abierto
+- Facilitar rastreo legal y atribución
+
+**Verificación**:
+
+```bash
+grep -n "Copyright (c) 2025" ZfcSetTheory/*.lean | wc -l
+# Debe devolver 24 (número total de archivos .lean)
+```
+
 ---
 
 ## Cumplimiento de Requisitos
 
-Verificar que REFERENCE.md y otros archivos de documentación cumplan con todos los puntos (1-13) antes de considerar la documentación completa y actualizada.
+Verificar que REFERENCE.md, archivos .lean y otros archivos de documentación cumplan con todos los puntos (1-14) antes de considerar la documentación completa y actualizada.

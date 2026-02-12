@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2025. All rights reserved.
+Author: Julián Calderón Almendros
+License: MIT
+-/
+
+/-
   # Natural Numbers (von Neumann ordinals)
 
   Este archivo define los números naturales como ordinales de von Neumann SIN introducir
