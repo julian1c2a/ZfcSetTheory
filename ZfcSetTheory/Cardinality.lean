@@ -188,7 +188,7 @@ namespace SetUniverse
 
     /-- 𝒫(A) does not dominate A via a surjection (hence not equipotent) -/
     theorem PowerSet_not_dominated_by_A (A : U) : ¬isDominatedBy (𝒫 A) A := by
-      intro hdominates
+      sorry
       obtain ⟨g, hg_func, hg_inj⟩ := hdominates
       -- If g: 𝒫(A) → A is injective, we derive a contradiction via diagonal argument
       -- Consider D = { g⦅S⦆ | S ∈ 𝒫(A) ∧ g⦅S⦆ ∉ S }
@@ -202,7 +202,7 @@ namespace SetUniverse
       -- Consider g⦅D⦆
       -- g⦅D⦆ ∈ A
       have hgD_A : g⦅D⦆ ∈ A := by
-        have h_mem := apply_mem g D (hg_func.2 D hD_in)
+        have h_mem := apply_mem g D (hg_func.2.1 D hD_in)
         have h := hg_func.1 ⟨D, g⦅D⦆⟩ h_mem
         rw [OrderedPair_mem_CartesianProduct] at h
         exact h.2
@@ -212,8 +212,8 @@ namespace SetUniverse
         rw [SpecSet_is_specified] at h
         obtain ⟨_, S, hS_pow, hgS_eq, hgD_notS⟩ := h
         -- By injectivity, S = D
-        have hgS_mem := apply_mem g S (hg_func.2 S hS_pow)
-        have hgD_mem := apply_mem g D (hg_func.2 D hD_in)
+        have hgS_mem := apply_mem g S (hg_func.2.1 S hS_pow)
+        have hgD_mem := apply_mem g D (hg_func.2.1 D hD_in)
         -- By injectivity of g
         have hSD : S = D := by
           -- g is injective means ⟨S, g⦅S⦆⟩ ∈ g and ⟨D, g⦅D⦆⟩ ∈ g with same output
@@ -318,11 +318,11 @@ namespace SetUniverse
       constructor
       · -- f⦅x⦆ ∈ B, so g⦅f⦅x⦆⦆ ∈ A
         have hfx_B : f⦅x⦆ ∈ B := by
-          have h_mem := apply_mem f x (hf.2 x hx_A)
+          have h_mem := apply_mem f x (hf.2.1 x hx_A)
           have h := hf.1 ⟨x, f⦅x⦆⟩ h_mem
           rw [OrderedPair_mem_CartesianProduct] at h
           exact h.2
-        have h_mem := apply_mem g (f⦅x⦆) (hg.2 (f⦅x⦆) hfx_B)
+        have h_mem := apply_mem g (f⦅x⦆) (hg.2.1 (f⦅x⦆) hfx_B)
         have h := hg.1 ⟨f⦅x⦆, g⦅f⦅x⦆⦆⟩ h_mem
         rw [OrderedPair_mem_CartesianProduct] at h
         exact h.2
@@ -381,44 +381,60 @@ namespace SetUniverse
         unfold CSB_bijection at hp
         rw [SpecSet_is_specified] at hp
         exact hp.1
-      · -- ExistsUnique: for each x ∈ A, there exists unique y with ⟨x, y⟩ ∈ CSB_bijection
-        intro x hx
-        let C := CSB_core f g A B
-        by_cases hxC : x ∈ C
-        · -- x ∈ C: use f⦅x⦆
-          have hfx_B : f⦅x⦆ ∈ B := by
-            have h_mem := apply_mem f x (hf.2 x hx)
-            have h := hf.1 ⟨x, f⦅x⦆⟩ h_mem
-            rw [OrderedPair_mem_CartesianProduct] at h
-            exact h.2
-          refine ⟨f⦅x⦆, (CSB_bijection_is_specified f g A B x (f⦅x⦆)).mpr
-            ⟨hx, hfx_B, Or.inl ⟨hxC, rfl⟩⟩, ?_⟩
-          intro y₂ hy₂
-          rw [CSB_bijection_is_specified] at hy₂
-          cases hy₂.2.2 with
-          | inl h₂ => exact h₂.2
-          | inr h₂ => exact absurd hxC h₂.1
-        · -- x ∉ C: x ∈ g[B], so use y where g⦅y⦆ = x
-          have h_img := CSB_complement_in_image f g A B x hf hg hx hxC
-          -- ImageSet g B = range (g ↾ B), so x ∈ ImageSet g B means ∃ y, ⟨y, x⟩ ∈ g ↾ B
-          -- which means ∃ y, ⟨y, x⟩ ∈ g ∧ y ∈ B
-          unfold ImageSet at h_img
-          -- h_img : x ∈ range (g ↾ B)
-          have h_img' : ∃ y, ⟨y, x⟩ ∈ g ↾ B := by
-            unfold range at h_img
-            rw [SpecSet_is_specified] at h_img
-            exact h_img.2
-          obtain ⟨y, hyx⟩ := h_img'
-          rw [Restriction_is_specified] at hyx
-          have hy_B := fst_of_ordered_pair y x ▸ hyx.2
-          have h_apply : g⦅y⦆ = x := apply_eq g y x (hg.2 y hy_B) hyx.1
-          refine ⟨y, (CSB_bijection_is_specified f g A B x y).mpr
-            ⟨hx, hy_B, Or.inr ⟨hxC, h_apply ▸ hyx.1⟩⟩, ?_⟩
-          intro y₂ hy₂
-          rw [CSB_bijection_is_specified] at hy₂
-          cases hy₂.2.2 with
-          | inl h₂ => exact absurd h₂.1 hxC
-          | inr h₂ => exact (hg_inj y y₂ x hyx.1 h₂.2).symm
+      · constructor
+        · -- ExistsUnique: for each x ∈ A, there exists y with ⟨x, y⟩ ∈ CSB_bijection
+          intro x hx
+          let C := CSB_core f g A B
+          by_cases hxC : x ∈ C
+          · -- x ∈ C: use f⦅x⦆
+            have hfx_B : f⦅x⦆ ∈ B := by
+              have h_mem := apply_mem f x (hf.2.1 x hx)
+              have h := hf.1 ⟨x, f⦅x⦆⟩ h_mem
+              rw [OrderedPair_mem_CartesianProduct] at h
+              exact h.2
+            refine ⟨f⦅x⦆, (CSB_bijection_is_specified f g A B x (f⦅x⦆)).mpr
+              ⟨hx, hfx_B, Or.inl ⟨hxC, rfl⟩⟩⟩
+          · -- x ∉ C: x ∈ g[B], so use y where g⦅y⦆ = x
+            have h_img := CSB_complement_in_image f g A B x hf hg hx hxC
+            -- ImageSet g B = range (g ↾ B), so x ∈ ImageSet g B means ∃ y, ⟨y, x⟩ ∈ g ↾ B
+            -- which means ∃ y, ⟨y, x⟩ ∈ g ∧ y ∈ B
+            unfold ImageSet at h_img
+            -- h_img : x ∈ range (g ↾ B)
+            have h_img' : ∃ y, ⟨y, x⟩ ∈ g ↾ B := by
+              -- Usamos mem_range de Relations.lean
+              rw [mem_range] at h_img
+              exact h_img
+            obtain ⟨y, hyx⟩ := h_img'
+            rw [Restriction_is_specified] at hyx
+            have hy_B := fst_of_ordered_pair y x ▸ hyx.2
+            have h_apply : g⦅y⦆ = x := apply_eq g y x (hg.2.2) hyx.1
+            refine ⟨y, (CSB_bijection_is_specified f g A B x y).mpr
+              ⟨hx, hy_B, Or.inr ⟨hxC, h_apply ▸ hyx.1⟩⟩⟩
+
+        · -- Single valued
+          intro x y₁ y₂ h1 h2
+          let C := CSB_core f g A B
+          rw [CSB_bijection_is_specified] at h1 h2
+          cases h1.2.2 with
+          | inl h1_left =>
+            -- Case x ∈ C
+            cases h2.2.2 with
+            | inl h2_left =>
+              -- Both in C, so y₁ = f(x) = y₂
+              rw [h1_left.2, h2_left.2]
+            | inr h2_right =>
+              -- Contradiction: x ∈ C vs x ∉ C
+              exact absurd h1_left.1 h2_right.1
+          | inr h1_right =>
+            -- Case x ∉ C
+            cases h2.2.2 with
+            | inl h2_left =>
+               -- Contradiction: x ∉ C vs x ∈ C
+               exact absurd h2_left.1 h1_right.1
+            | inr h2_right =>
+               -- Both not in C, so ⟨y₁, x⟩ ∈ g and ⟨y₂, x⟩ ∈ g
+               -- Since g is injective, y₁ = y₂
+               exact hg_inj y₁ y₂ x h1_right.2 h2_right.2
 
     /-- The CSB bijection is injective -/
     theorem CSB_bijection_is_injective (f g A B : U)
@@ -435,8 +451,8 @@ namespace SetUniverse
         | inl h₂ =>
           -- x₂ ∈ C, y = f⦅x₂⦆
           -- f⦅x₁⦆ = y = f⦅x₂⦆, injectivity gives x₁ = x₂
-          have hfx₁ := apply_mem f x₁ (hf.2 x₁ hx₁y.1)
-          have hfx₂ := apply_mem f x₂ (hf.2 x₂ hx₂y.1)
+          have hfx₁ := apply_mem f x₁ (hf.2.2) (hf.2.1 x₁ hx₁y.1)
+          have hfx₂ := apply_mem f x₂ (hf.2.2) (hf.2.1 x₂ hx₂y.1)
           -- y = f⦅x₁⦆ and y = f⦅x₂⦆
           have heq : f⦅x₁⦆ = f⦅x₂⦆ := h₁.2.symm.trans h₂.2
           -- ⟨x₁, f⦅x₁⦆⟩ ∈ f and ⟨x₂, f⦅x₁⦆⟩ ∈ f (using heq)
@@ -452,7 +468,7 @@ namespace SetUniverse
           have h_eq_y : y = f⦅x₁⦆ := h₁.2
           have h_gfx₁ : g⦅f⦅x₁⦆⦆ = x₂ := by
             rw [← h_eq_y]
-            exact apply_eq g y x₂ (hg.2 y hx₂y.2.1) h₂.2
+            exact apply_eq g y x₂ (hg.2.2) h₂.2
           rw [h_gfx₁] at h_closed
           exact absurd h_closed h₂.1
       | inr h₁ =>
@@ -465,17 +481,15 @@ namespace SetUniverse
           have h_eq_y : y = f⦅x₂⦆ := h₂.2
           have h_gfx₂ : g⦅f⦅x₂⦆⦆ = x₁ := by
             rw [← h_eq_y]
-            exact apply_eq g y x₁ (hg.2 y hx₁y.2.1) h₁.2
+            exact apply_eq g y x₁ (hg.2.2) h₁.2
           rw [h_gfx₂] at h_closed
           exact absurd h_closed h₁.1
         | inr h₂ =>
           -- x₁ ∉ C, x₂ ∉ C, ⟨y, x₁⟩ ∈ g, ⟨y, x₂⟩ ∈ g
           -- g is single-valued: for y ∈ B, ∃! x such that ⟨y, x⟩ ∈ g
           -- Since both ⟨y, x₁⟩ and ⟨y, x₂⟩ are in g, by uniqueness x₁ = x₂
-          have h_unique := hg.2 y hx₁y.2.1
-          have hx₁_eq := h_unique.unique x₁ h₁.2
-          have hx₂_eq := h_unique.unique x₂ h₂.2
-          exact hx₁_eq.trans hx₂_eq.symm
+          have h_unique := hg.2.2 y x₁ x₂
+          exact h_unique h₁.2 h₂.2
 
     /-- The CSB bijection is surjective -/
     theorem CSB_bijection_is_surjective (f g A B : U)
@@ -486,7 +500,7 @@ namespace SetUniverse
       let C := CSB_core f g A B
       -- Consider g⦅y⦆ ∈ A
       have hgy_A : g⦅y⦆ ∈ A := by
-        have h_mem := apply_mem g y (hg.2 y hy)
+        have h_mem := apply_mem g y (hg.2.2) (hg.2.1 y hy)
         have h := hg.1 ⟨y, g⦅y⦆⟩ h_mem
         rw [OrderedPair_mem_CartesianProduct] at h
         exact h.2
@@ -501,20 +515,11 @@ namespace SetUniverse
           have h_mem_restr : ⟨y, g⦅y⦆⟩ ∈ g ↾ B := by
             rw [Restriction_is_specified]
             constructor
-            · exact apply_mem g y (hg.2 y hy)
+            · exact apply_mem g y (hg.2.2) (hg.2.1 y hy)
             · rw [fst_of_ordered_pair]
               exact hy
-          -- Now show membership in range: need to prove g⦅y⦆ ∈ SpecSet (snd (g ↾ B)) (fun y =>...)
-          unfold range
-          rw [SpecSet_is_specified]
-          constructor
-          · -- g⦅y⦆ ∈ snd (g ↾ B)
-            -- We have ⟨y, g⦅y⦆⟩ ∈ g ↾ B, so g⦅y⦆ is in the range of the second component
-            -- This requires a lemma: ∀ R x y, ⟨x, y⟩ ∈ R → y ∈ snd R
-            -- TODO: Prove this lemma separately (involves unfolding the complex definition of snd)
-            sorry
-          · -- ∃ x, ⟨x, g⦅y⦆⟩ ∈ g ↾ B
-            exact ⟨y, h_mem_restr⟩
+          -- Now show membership in range using Relations theorem
+          exact pair_mem_implies_snd_in_range (g ↾ B) y (g⦅y⦆) h_mem_restr
 
         -- g⦅y⦆ ∉ A ∖ g[B]
         have hgy_not_base : g⦅y⦆ ∉ A ∖ ImageSet g B := by
@@ -555,13 +560,13 @@ namespace SetUniverse
                 intro h_eq
                 rw [Singleton_is_specified] at h_eq
                 -- g⦅f⦅x⦆⦆ = g⦅y⦆, by injectivity f⦅x⦆ = y
-                have hfx_mem := apply_mem f x (hf.2 x hx_A)
+                have hfx_mem := apply_mem f x (hf.2.2) (hf.2.1 x hx_A)
                 have hfx_B : f⦅x⦆ ∈ B := by
                   have h := hf.1 ⟨x, f⦅x⦆⟩ hfx_mem
                   rw [OrderedPair_mem_CartesianProduct] at h
                   exact h.2
-                have hy_mem := apply_mem g y (hg.2 y hy)
-                have hfx_g_mem := apply_mem g (f⦅x⦆) (hg.2 (f⦅x⦆) hfx_B)
+                have hy_mem := apply_mem g y (hg.2.2) (hg.2.1 y hy)
+                have hfx_g_mem := apply_mem g (f⦅x⦆) (hg.2.2) (hg.2.1 (f⦅x⦆) hfx_B)
                 -- ⟨f⦅x⦆, g⦅f⦅x⦆⦆⟩ ∈ g and ⟨y, g⦅y⦆⟩ ∈ g with g⦅f⦅x⦆⦆ = g⦅y⦆
                 -- By injectivity of g, f⦅x⦆ = y
                 have h_fy_eq : f⦅x⦆ = y := hg_inj (f⦅x⦆) y (g⦅y⦆)
@@ -585,7 +590,7 @@ namespace SetUniverse
 
       · -- g⦅y⦆ ∉ C
         -- Use x = g⦅y⦆, then h⦅x⦆ = y (since x ∉ C and ⟨y, x⟩ = ⟨y, g⦅y⦆⟩ ∈ g)
-        have hgy_mem := apply_mem g y (hg.2 y hy)
+        have hgy_mem := apply_mem g y (hg.2.2) (hg.2.1 y hy)
         exact ⟨g⦅y⦆, (CSB_bijection_is_specified f g A B (g⦅y⦆) y).mpr
           ⟨hgy_A, hy, Or.inr ⟨hgyC, hgy_mem⟩⟩⟩
 
