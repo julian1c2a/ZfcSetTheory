@@ -4,7 +4,7 @@
 ================================================================================
 
 Project Root:     E:\Dropbox\GitHub\lean4\ZfcSetTheory
-Report Generated: 2026-02-12 17:56:22
+Report Generated: 2026-02-12 18:04:04
 Report File:      LeanInfoView.txt
 
 
@@ -56,30 +56,30 @@ Files:
 === BUILD DIAGNOSTICS ===
 ================================================================================
 
-Build started: 2026-02-12 17:56:22
+Build started: 2026-02-12 18:04:04
 
 Build completed successfully (24 jobs).
 
-⏱️  Time elapsed: 1.1172865 seconds
-Build completed: 2026-02-12 17:56:23
+⏱️  Time elapsed: 1.1709325 seconds
+Build completed: 2026-02-12 18:04:05
 
 
 ================================================================================
-=== FILE-SPECIFIC DIAGNOSTICS: ZfcSetTheory\Recursion.lean ===
+=== FILE-SPECIFIC DIAGNOSTICS: Recursion.lean ===
 ================================================================================
 
 File Path:        E:\Dropbox\GitHub\lean4\ZfcSetTheory\ZfcSetTheory\Recursion.lean
-File Size:        22183 bytes
-Last Modified:    2026-02-12 17:43:31
+File Size:        21950 bytes
+Last Modified:    2026-02-12 18:02:33
 
-Total Lines:      425
+Total Lines:      422
 
 Sorry Statements: 0 ✓
 
 
 --- Lean Validation ---
 
-Could not run validation: The string ZfcSetTheory\Recursion.lean is not a valid regular expression: Invalid pattern 'ZfcSetTheory\Recursion.lean' at offset 14. Unrecognized escape sequence \R.
+✓ No errors or warnings specific to this file
 
 
 --- Imports ---
@@ -113,7 +113,7 @@ Sorry Statements: 0
 
 (Most recently modified files first)
 
-Recursion.lean - 2026-02-12 17:43:31
+Recursion.lean - 2026-02-12 18:02:33
 PowerSet.lean - 2026-02-12 17:02:51
 Cardinality.lean - 2026-02-12 16:39:02
 SetStrictOrder.lean - 2026-02-12 15:45:07
@@ -161,5 +161,5 @@ Total modules: 23
 Build artifacts: Generated
 
 ================================================================================
-End of report: 2026-02-12 17:56:24
+End of report: 2026-02-12 18:04:07
 ================================================================================
