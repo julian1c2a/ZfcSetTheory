@@ -5,11 +5,11 @@
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Coverage](https://img.shields.io/badge/proofs-95%25%20complete-brightgreen)]()
 
-> 📊 **Estado del Proyecto**: Ver [ESTADO_ACTUAL.md](ESTADO_ACTUAL.md) para detalles completos
+> 📊 **Project Status**: See [CURRENT-STATUS-PROJECT.md](CURRENT-STATUS-PROJECT.md) for complete details
 >
-> ✅ **24/24 módulos** compilando correctamente  
-> ✅ **~95% de teoremas** completamente probados  
-> ⚠️ **4 `sorry`** pendientes (bien documentados)
+> ✅ **24/24 modules** compiling successfully  
+> ✅ **~95% of theorems** completely proven  
+> ⚠️ **4 `sorry`** pending (well documented)
 
 Una implementación formal de la **Teoría de Conjuntos de Zermelo-Fraenkel (ZFC)** en Lean 4, sin dependencias de Mathlib.
 
@@ -146,17 +146,17 @@ lake build
 - **Lean 4**: v4.23.0-rc2 o superior
 - **Lake**: Incluido con Lean 4
 
-## 📚 Documentación Adicional
+## 📚 Additional Documentation
 
-### Estado y Desarrollo
+### Status and Development
 
-- **[ESTADO_ACTUAL.md](ESTADO_ACTUAL.md)** - ⭐ **Estado completo del proyecto** (actualizado 2026-02-11)
-  - Logros recientes (ExistsUnique, domain_rel/range_rel)
-  - Análisis de los 4 `sorry` pendientes con niveles de dificultad
-  - Arquitectura y jerarquías de dependencias
-  - Próximos pasos con estimaciones de tiempo
-- [CHANGELOG.md](CHANGELOG.md) - Historial de cambios detallado
-- [NEXT_STEPS.md](NEXT_STEPS.md) - Próximos pasos y tareas pendientes
+- **[CURRENT-STATUS-PROJECT.md](CURRENT-STATUS-PROJECT.md)** - ⭐ **Complete project status** (updated 2026-02-12)
+  - Recent achievements (ExistsUnique, domain_rel/range_rel, documentation projection)
+  - Analysis of 4 pending `sorry` with difficulty levels
+  - Architecture and dependency hierarchies
+  - Next steps with time estimates
+- [CHANGELOG.md](CHANGELOG.md) - Detailed change history
+- [NEXT_STEPS.md](NEXT_STEPS.md) - Next steps and pending tasks
 
 ### Informes Técnicos
 

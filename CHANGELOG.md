@@ -52,12 +52,12 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ### Documentación
 
-- **ESTADO_ACTUAL.md**: Documento completo del estado del proyecto
-  - Resumen ejecutivo con estadísticas
-  - Detalle de logros recientes
-  - Estado por archivo (19 sin `sorry`, 4 con `sorry`)
-  - Análisis de cada `sorry` pendiente con nivel de dificultad
-  - Arquitectura y jerarquía de dependencias
+- **CURRENT-STATUS-PROJECT.md**: Complete project status document
+  - Executive summary with statistics
+  - Recent achievements details
+  - Status by file (19 without `sorry`, 4 with `sorry`)
+  - Analysis of each pending `sorry` with difficulty level
+  - Architecture and dependency hierarchy
   - Decisiones de diseño importantes
   - Próximos pasos sugeridos con estimaciones de tiempo
   - Métricas de calidad y cobertura
