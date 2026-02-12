@@ -1,6 +1,6 @@
 # Referencia Técnica - ZfcSetTheory
 
-*Última actualización: 2026-02-12 14:40*  
+*Última actualización: 2026-02-12 14:52*  
 **Autor**: Julián Calderón Almendros
 
 ## 📋 Cumplimiento con AIDER-AI-GUIDE.md
@@ -24,7 +24,8 @@ Este documento cumple con todos los requisitos especificados en [AIDER-AI-GUIDE.
 ✅ **(8)** Actualización continua al cargar archivos .lean  
 ✅ **(9)** Suficiente como única referencia (no requiere cargar proyecto completo)
 
-**Estado de verificación**: 2 `sorry` activos confirmados (Functions.lean: 1, Cardinality.lean: 1) + Recursion.lean con errores de compilación
+**Estado de verificación**: 1 `sorry` activo confirmado (Cardinality.lean: 1) + Recursion.lean con errores de compilación  
+✅ **Functions.lean ahora 100% completo (0 `sorry`)** - Actualizado 2026-02-12 14:52
 
 ---
 
@@ -45,7 +46,7 @@ Este documento cumple con todos los requisitos especificados en [AIDER-AI-GUIDE.
 | `OrderedPair.lean` | `SetUniverse.OrderedPairExtensions` | Todos los anteriores + `PowerSet` | ✅ Completo |
 | `CartesianProduct.lean` | `SetUniverse.CartesianProduct` | `OrderedPair` + anteriores | ✅ Completo |
 | `Relations.lean` | `SetUniverse.Relations` | `CartesianProduct` + anteriores | ✅ Completo |
-| `Functions.lean` | `SetUniverse.Functions` | `CartesianProduct`, `Relations` + anteriores | 🔶 Parcial (1 sorry) |
+| `Functions.lean` | `SetUniverse.Functions` | `CartesianProduct`, `Relations` + anteriores | ✅ Completo |
 | `BooleanAlgebra.lean` | `SetUniverse.BooleanAlgebra` | `Union`, `Specification`, `Pairing`, `Extension`, `Existence`, `Prelim` | ✅ Completo |
 | `BooleanRing.lean` | `SetUniverse.BooleanRing` | `PowerSetAlgebra` + anteriores | ✅ Completo |
 | `PowerSetAlgebra.lean` | `SetUniverse.PowerSetAlgebra` | `PowerSet`, `BooleanAlgebra` + anteriores | ✅ Completo |
@@ -552,10 +553,28 @@ noncomputable def IdRel (A : U) : U :=
 
 **Dependencias**: `SpecSet`, `CartesianProduct`, `fst`, `snd`
 
+#### Relación Inversa (InverseRel)
+
+**Ubicación**: `Relations.lean`, línea 185  
+**Orden**: 10ª definición principal
+
+**Enunciado Matemático**: InverseRel R = {(y, x) | (x, y) ∈ R} (relación inversa)
+
+**Firma Lean4**:
+
+```lean
+noncomputable def InverseRel (R : U) : U :=
+  SpecSet (range R ×ₛ domain R) (fun p => ⟨snd p, fst p⟩ ∈ R)
+```
+
+**Dependencias**: `SpecSet`, `CartesianProduct`, `range`, `domain`, `fst`, `snd`
+
+**Nota Importante**: A partir de 2026-02-12 14:52, `InverseRel` usa el producto cartesiano correcto `range R ×ₛ domain R` en lugar de `𝒫 (𝒫 (⋃(⋃ R)))` para ser consistente con `IdRel`.
+
 #### Dominio de una Relación (domain)
 
 **Ubicación**: `Relations.lean`, línea 176  
-**Orden**: 10ª definición principal
+**Orden**: 11ª definición principal
 
 **Enunciado Matemático**: domain R = {x | ∃ y, ⟨x, y⟩ ∈ R}
 
@@ -571,7 +590,7 @@ noncomputable def domain (R : U) : U :=
 #### Rango de una Relación (range)
 
 **Ubicación**: `Relations.lean`, línea 181  
-**Orden**: 11ª definición principal
+**Orden**: 12ª definición principal
 
 **Enunciado Matemático**: range R = {y | ∃ x, ⟨x, y⟩ ∈ R}
 
@@ -587,7 +606,7 @@ noncomputable def range (R : U) : U :=
 #### Imagen de una Relación (imag)
 
 **Ubicación**: `Relations.lean`, línea 185  
-**Orden**: 12ª definición principal
+**Orden**: 13ª definición principal
 
 **Enunciado Matemático**: imag R = range R (alias para rango)
 
@@ -4671,7 +4690,7 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 
 ---
 
-*Última actualización: 2026-02-12 14:40 - Actualizado tras renombrado domain_rel→domain, Relations.lean ahora 100% completo*
+*Última actualización: 2026-02-12 14:52 - Completados Functions.lean (0 sorry) e InverseRel mejorado en Relations.lean*
 
 *Actualización anterior: 2026-02-11 - Completado módulo Functions.lean*
 

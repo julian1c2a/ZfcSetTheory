@@ -7,6 +7,20 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ## [Unreleased]
 
+### Corregido (2026-02-12 14:52)
+
+- **Functions.lean - Errores de compilación resueltos**:
+  - Agregada definición faltante de `isSingleValued` (línea 62)
+  - Corregida prueba de `injective_inverse_single_valued` con `simp only` específico
+  - Actualizado export para incluir `isSingleValued`
+  - **Functions.lean ahora compila sin errores** ✅
+
+- **Relations.lean - InverseRel mejorado**:
+  - Reordenadas definiciones: `domain`, `range`, `imag` ahora antes de `InverseRel`
+  - Cambiada definición de `InverseRel` de `𝒫 (𝒫 (⋃(⋃ R)))` a `range R ×ₛ domain R`
+  - Definición más precisa y coherente con `IdRel`
+  - Resuelve error de tipo en `inverse_is_specified`
+
 ### Añadido (2026-02-11 15:30)
 
 - **Infraestructura de Existencia Única**:

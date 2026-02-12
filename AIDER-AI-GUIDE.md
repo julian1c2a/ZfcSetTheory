@@ -58,6 +58,7 @@ Todos los archivos de documentación técnica deben incluir timestamps completos
 - **CURRENT-STATUS-PROJECT.md**: Fecha de última actualización
 - **CHANGELOG.md**: Fechas de cada entrada
 - **DEPENDENCIES.md**: Fecha de última actualización
+- **TEMPORAL.md**: Timestamp de compilación y actualización
 - **Cualquier archivo de resumen técnico**: Incluir timestamp de última modificación
 
 **Propósito**: Permite rastrear cuánto está desactualizado un archivo respecto a REFERENCE.md y viceversa, incluso dentro de la misma sesión de trabajo.
