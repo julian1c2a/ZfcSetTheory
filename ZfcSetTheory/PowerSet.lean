@@ -252,25 +252,6 @@ namespace SetUniverse
         · -- x ∈ {x}
           rw [Singleton_is_specified]
 
-    /-! ============================================================ -/
-    /-! ### PROPIEDADES DE CARDINALIDAD (informales) ### -/
-    /-! ============================================================ -/
-
-    -- /-! Si A es finito con n elementos, entonces 𝒫(A) tiene 2^n elementos.
-    --     Esto requiere desarrollar cardinalidad finita primero. -/
-
-    /-! ============================================================ -/
-    /-! ### TEOREMA DE CANTOR ### -/
-    /-! ============================================================ -/
-
-    -- /-! ### No existe función sobreyectiva de A en 𝒫(A) ### -/
-    -- /-! Este es uno de los teoremas más importantes de la teoría de conjuntos.
-    --     Requiere desarrollar el concepto de función primero. -/
-    -- theorem Cantor (A : U) :
-    --   ¬∃ (f : U), IsSurjective f A (𝒫 A)
-    --     := by
-    --   sorry
-
   end PowerSetAxiom
 end SetUniverse
 
@@ -319,7 +300,7 @@ denotado 𝒫(A) o P(A).
 
 ### Teorema de Cantor:
 No existe función sobreyectiva f : A → 𝒫(A).
-En particular, |A| < |𝒫(A)| (en el sentido de cardinalidad).
+El Teorema de Cantor formal se encuentra en el módulo `Cardinality.lean`.
 
 ### Notas de implementación:
 - Los teoremas comentados requieren desarrollos adicionales
