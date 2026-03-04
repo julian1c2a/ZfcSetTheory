@@ -1,23 +1,28 @@
 # Estado de Compilación del Proyecto ZfcSetTheory
 
-**Fecha**: 2026-02-12 18:45  
+**Fecha**: 2026-03-04 12:00
 **Autor**: Julián Calderón Almendros
 
 ## ✅ Compilación Exitosa
 
-**Build Status**: ✅ **24/24 módulos compilados correctamente**
+**Build Status**: ✅ **28/28 módulos compilados correctamente** (incluye peanolib)
 
 ### 📊 Resumen del Estado
 
-**Advertencias encontradas**: 1 `sorry` statement (🎉 Mejorado de 2 a 1)
+**Sorry activos**: 0
 
-| Archivo | Línea | Declaración | Estado |
-|---------|-------|-------------|--------|
-| Cardinality.lean | 480 | Teorema CSB | ⚠️ Pendiente |
-
-**Nota sobre Recursion.lean**: Este archivo tiene 7 errores de compilación (referencias a identificadores inexistentes) más 1 `sorry` en línea 180. No impide la compilación del resto del proyecto.
+| Archivo | Estado |
+| --- | --- |
+| Todos los módulos | ✅ 0 sorry |
 
 ### 🎉 Mejoras Recientes
+
+**✅ Nuevo módulo y correcciones - 2026-03-04 12:00**
+
+- ✅ PeanoImport.lean: isomorfismo Von Neumann ↔ Peano (0 sorry, 28/28 build)
+- ✅ Infinity.lean: nat_mem_wf completamente probado (sin sorry), exportado
+- ✅ NaturalNumbers.lean: predecessor y teoremas relacionados exportados
+- ✅ Todos los archivos markdown del proyecto actualizados con timestamps ISO 8601
 
 **✅ Documentación Completa - Actualización Integral 2026-02-12 18:45**
 

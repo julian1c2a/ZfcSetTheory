@@ -1,26 +1,69 @@
 # Current Status - ZfcSetTheory Project
 
-**Date**: 2026-02-12 18:45  
-**Lean Version**: 4.23.0-rc2  
+**Date**: 2026-03-04 12:00
+**Lean Version**: 4.23.0-rc2
 **Author**: Julián Calderón Almendros
 
 ## Executive Summary
 
-This project implements ZFC set theory in Lean 4, focusing on fundamental axioms, relations, functions, and cardinality. All proofs are complete with no `sorry` statements remaining.
+This project implements ZFC set theory in Lean 4, focusing on fundamental axioms, relations, functions, and cardinality. All proofs are complete with no `sorry` statements remaining. A new `PeanoImport.lean` module establishes the formal isomorphism between Von Neumann and Peano natural numbers via the external `peanolib` library.
 
 ### Statistics
 
-- **Total files**: 24 modules
-- **Compilation**: ✅ Successful (24/24 jobs)
+- **Total files**: 25 modules (+ 1 external: peanolib)
+- **Compilation**: ✅ Successful (28/28 jobs)
 - **Complete proofs**: 100%
 - **Remaining `sorry`**: 0
-- **Documentation**: REFERENCE.md fully updated with all 24 modules
+- **Documentation**: REFERENCE.md fully updated with all 25 modules
 
 ## Recent Achievements
 
-### Latest Updates (February 12, 2026)
+### Latest Updates (March 4, 2026)
 
-#### 1. Complete Documentation Projection (✅ Complete)
+#### 1. New Module: PeanoImport.lean — Von Neumann ↔ Peano Isomorphism (✅ Complete)
+
+**Achievement**: Formal proof that the Von Neumann naturals (defined in this project) are isomorphic to the Peano naturals from the external `peanolib` library.
+
+**Key definitions**:
+
+- `fromPeano : Peano.ℕ₀ → U` — structural recursion: `zero → ∅`, `succ n → σ(fromPeano n)`
+- `toPeano : (n : U) → isNat n → Peano.ℕ₀` — via `Classical.choose` from surjectivity
+
+**Key theorems (7 total)**:
+
+- `fromPeano_is_nat` — image is Von Neumann naturals
+- `fromPeano_injective` — injectivity (tricky: `Function.Injective` uses `⦃⦄` implicit binders)
+- `fromPeano_surjective` — surjectivity (proved by strong induction on ω via `SpecSet`)
+- `fromPeano_toPeano`, `toPeano_fromPeano` — mutual inverses
+- `toPeano_injective`, `toPeano_surjective` — full bijection
+
+**Notable technical insights**:
+
+- `Function.Injective` uses strict-implicit `⦃⦄` binders; IH must be applied as `ih proof` not `ih n' proof`
+- `successor_injective` requires explicit `isNat` arguments
+- `Classical.choose`-based `toPeano` avoids termination issues entirely
+- `peanolib` type is `Peano.ℕ₀` (not `Peano.ℕ`)
+
+#### 2. Infinity.lean — nat_mem_wf Proved Without sorry (✅ Complete)
+
+**Achievement**: `nat_mem_wf : WellFounded (fun a b : U => a ∈ ω ∧ b ∈ ω ∧ a ∈ b)` is now fully proved.
+
+**Strategy**: Elements outside ω are vacuously accessible (no predecessor in the relation). Elements in ω are proved accessible by strong induction, constructing `S = SpecSet ω (fun n => Acc R n)` and applying `strong_induction_principle`.
+
+Added to Infinity.lean exports.
+
+#### 3. NaturalNumbers.lean — Predecessor Exports (✅ Complete)
+
+**Achievement**: `predecessor`, `predecessor_of_successor`, `predecessor_is_nat`, `predecessor_mem` are now publicly exported.
+
+#### 4. Documentation Updated (✅ Complete)
+
+- REFERENCE.md: +§3.21 PeanoImport (defs), +§4.17 PeanoImport (7 theorems), updated §4.9 Infinity, updated §3.13 NaturalNumbers
+- CHANGELOG.md, TEMPORAL.md, DEPENDENCIES.md, README.md, VALIDATION-AIDER-AI-GUIDE.md: all updated
+
+### Previous Updates (February 12, 2026)
+
+#### 5. Complete Documentation Projection (✅ Complete)
 
 **Achievement**: Full projection of `BooleanRing.lean` and `PowerSetAlgebra.lean` into REFERENCE.md
 
@@ -34,17 +77,10 @@ This project implements ZFC set theory in Lean 4, focusing on fundamental axioms
 
 **Documentation status**:
 
-- ✅ 18 modules fully projected in REFERENCE.md
-- ✅ All 13 AIDER-AI-GUIDE.md requirements met
+- ✅ All 25 modules fully projected in REFERENCE.md
+- ✅ All 14 AIDER-AI-GUIDE.md requirements met
 - ✅ Complete mathematical descriptions with Lean4 signatures
 - ✅ Dependency tracking for all definitions and theorems
-
-**REFERENCE.md structure**:
-
-- Section 7.2: 18 completely documented files
-- Section 7.3: 2 partially projected files (AtomicBooleanAlgebra, Cardinality)
-- Section 7.4: 3 near-complete files with documented `sorry` (Relations, Functions, Recursion)
-- Section 7.5: No pending complete files
 
 ### 2. Unique Existence Infrastructure (✅ Complete)
 
@@ -136,8 +172,9 @@ isFunctionFromTo f A = (f ⊆ A ×ₛ B) ∧ (∀ x, x ∈ A → ∃! y, ⟨x,y�
 15. **BooleanRing.lean** - Boolean rings (SymDiff as addition, intersection as multiplication)
 16. **AtomicBooleanAlgebra.lean** - Atomic Boolean algebras
 17. **PowerSetAlgebra.lean** - Power set algebra (complement, De Morgan laws)
-18. **NaturalNumbers.lean** - Natural numbers (base construction)
-19. **Infinity.lean** - Infinity axiom and ω set
+18. **NaturalNumbers.lean** - Natural numbers (base construction, predecessor exported)
+19. **Infinity.lean** - Infinity axiom and ω set (nat_mem_wf fully proved)
+20. **PeanoImport.lean** - Isomorphism Von Neumann ↔ Peano naturals (new 2026-03-04)
 
 ### ⚠️ With Pending `sorry`
 
@@ -385,9 +422,10 @@ ZfcSetTheory/
 ├── Relations.lean          # Relations + domain/range ⭐
 ├── Functions.lean          # Functions (1 sorry)
 ├── Cardinality.lean        # Cardinality (1 sorry)
-├── NaturalNumbers.lean     # ℕ construction
-├── Infinity.lean           # Infinity axiom and ω set
+├── NaturalNumbers.lean     # ℕ construction (predecessor exported)
+├── Infinity.lean           # Infinity axiom and ω set (nat_mem_wf proved)
 ├── Recursion.lean          # Recursion (1 sorry)
+├── PeanoImport.lean        # Isomorphism Von Neumann ↔ Peano (new)
 ├── SetOrder.lean           # Orders
 ├── SetStrictOrder.lean     # Strict orders
 ├── GeneralizedDeMorgan.lean
@@ -421,17 +459,19 @@ The code is well structured, documented, and ready for continued development or 
 
 ---
 
-**Last updated**: 2026-02-12 18:45  
-**Author**: Julián Calderón Almendros  
-**GitHub**: [@julian1c2a](https://github.com/julian1c2a)  
+**Last updated**: 2026-03-04 12:00
+**Author**: Julián Calderón Almendros
+**GitHub**: [@julian1c2a](https://github.com/julian1c2a)
 **License**: MIT License (see [LICENSE](LICENSE))
 
 **Status**: ✅ **100% COMPLETE** - ZfcSetTheory project fully documented and compiled
 
-- ✅ NaturalNumbers.lean: Completamente proyectado en REFERENCE.md (2073 líneas → 13 definiciones documentadas + 36 teoremas)
+- ✅ PeanoImport.lean: nuevo módulo con isomorfismo Von Neumann ↔ Peano (2 def + 7 teoremas)
+- ✅ Infinity.lean: nat_mem_wf completamente probado (sin sorry), exportado
+- ✅ NaturalNumbers.lean: predecessor y teoremas relacionados exportados
 - ✅ Toda la documentación markdown actualizada con timestamps ISO 8601 y autoría
 - ✅ Cumplimiento total con AIDER-AI-GUIDE.md (requisitos 1-14)
-- ✅ 24/24 módulos compilándose correctamente (0 errores, 0 sorry)
+- ✅ 28/28 módulos compilándose correctamente (0 errores, 0 sorry)
 
 ## Credits
 

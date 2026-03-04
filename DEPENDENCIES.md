@@ -1,6 +1,6 @@
 # Diagrama de Dependencias - ZfcSetTheory
 
-**Última actualización:** 2026-02-12 18:45  
+**Última actualización:** 2026-03-04 12:00
 **Autor**: Julián Calderón Almendros
 
 ## Estructura General del Proyecto
@@ -20,6 +20,8 @@ ZfcSetTheory/
 ├── Functions.lean                  # Funciones, aplicación, composición, inversa
 ├── Infinity.lean                   # Axioma del Infinito y conjunto ω
 ├── NaturalNumbers.lean             # Números naturales como ordinales de von Neumann
+├── Infinity.lean                   # Axioma del Infinito y conjunto ω (nat_mem_wf)
+├── PeanoImport.lean                # Isomorfismo Von Neumann ↔ Peano (nuevo 2026-03-04)
 ├── Recursion.lean                  # Teorema de Recursión sobre ℕ
 ├── BooleanAlgebra.lean             # Álgebra Booleana de conjuntos (teoremas)
 ├── BooleanRing.lean                # Anillo Booleano con SymDiff
@@ -81,6 +83,9 @@ graph TD
     Pot --> Inf[Infinity.lean]
     Inf --> Nat[NaturalNumbers.lean]
     Nat --> Rec[Recursion.lean]
+    Nat --> PI[PeanoImport.lean]
+    Inf --> PI
+    PL[peanolib/PeanoNatAxioms] --> PI
     
     %% Nivel 9: Álgebras y órdenes
     E --> SSO[SetStrictOrder.lean]
@@ -130,7 +135,8 @@ graph TD
     SO --> Z
     SSO --> Z
     Card --> Z
-    
+    PI --> Z
+
     %% Estilos
     classDef axiom fill:#e1f5fe,stroke:#01579b,stroke-width:2px
     classDef algebra fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
@@ -147,9 +153,9 @@ graph TD
     class SO,SSO order
     class OP,CP extension
     class Rel,Func relation
-    class Inf,Nat,Rec natural
+    class Inf,Nat,Rec,PI natural
     class Z main
-    class IC,P external
+    class IC,P,PL external
 ```
 
 ## Jerarquía de Espacios de Nombres
@@ -401,8 +407,9 @@ namespace SetUniverse.Cardinality
 
 ### **Nivel 8: Infinito y Números Naturales**
 
-- `Infinity.lean` - Axioma del Infinito, conjunto inductivo
-- `NaturalNumbers.lean` - Números naturales como ordinales de von Neumann
+- `Infinity.lean` - Axioma del Infinito, conjunto inductivo, `nat_mem_wf`
+- `NaturalNumbers.lean` - Números naturales como ordinales de von Neumann, `predecessor`
+- `PeanoImport.lean` - Isomorfismo Von Neumann ↔ Peano (depende de `peanolib`) *(nuevo 2026-03-04)*
 - `Recursion.lean` - Teorema de Recursión sobre ℕ
 
 ### **Nivel 9: Estructuras Algebraicas**
@@ -572,7 +579,8 @@ export SetUniverse.Functions (
 ```lean
 export SetUniverse.InfinityAxiom (
     InfinityAxiom, isInductive, InfSet,
-    InfSet_is_inductive, zero_in_InfSet, successor_in_InfSet
+    InfSet_is_inductive, zero_in_InfSet, successor_in_InfSet,
+    nat_mem_wf  -- añadido 2026-03-04
 )
 ```
 
@@ -581,8 +589,22 @@ export SetUniverse.InfinityAxiom (
 ```lean
 export SetUniverse.NaturalNumbers (
     isNatural, ℕ, successor, zero_is_natural,
-    successor_is_natural, nat_induction
+    successor_is_natural, nat_induction,
+    -- Añadidos 2026-03-04:
+    predecessor, predecessor_of_successor, predecessor_is_nat, predecessor_mem
 )
+```
+
+### PeanoImport.lean
+
+```lean
+-- Namespace: SetUniverse (no sub-namespace propio)
+-- Depende de: NaturalNumbers, Infinity, PeanoNatLib.PeanoNatAxioms
+-- Definiciones:
+noncomputable def fromPeano : Peano.ℕ₀ → U
+noncomputable def toPeano (n : U) (hn : isNat n) : Peano.ℕ₀
+-- Teoremas: fromPeano_is_nat, fromPeano_injective, fromPeano_surjective,
+--           fromPeano_toPeano, toPeano_fromPeano, toPeano_injective, toPeano_surjective
 ```
 
 ### Recursion.lean

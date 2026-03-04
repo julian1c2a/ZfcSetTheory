@@ -1,6 +1,6 @@
 # Changelog
 
-**Última actualización:** 2026-02-12 18:45  
+**Última actualización:** 2026-03-04 12:00
 **Autor**: Julián Calderón Almendros
 
 Todos los cambios notables de este proyecto serán documentados en este archivo.
@@ -9,6 +9,34 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Añadido (2026-03-04 12:00)
+
+- **Nuevo módulo PeanoImport.lean — Isomorfismo Von Neumann ↔ Peano**:
+  - ✅ `fromPeano : Peano.ℕ₀ → U` — conversión estructural por recursión sobre `Peano.ℕ₀`
+  - ✅ `toPeano : (n : U) → isNat n → Peano.ℕ₀` — inversión via `Classical.choose`
+  - ✅ `fromPeano_is_nat` — `fromPeano` mapea a naturales de Von Neumann
+  - ✅ `fromPeano_injective` — inyectividad de `fromPeano`
+  - ✅ `fromPeano_surjective` — sobreyectividad (demostrada por inducción fuerte sobre ω)
+  - ✅ `fromPeano_toPeano`, `toPeano_fromPeano` — inversas mutuas
+  - ✅ `toPeano_injective`, `toPeano_surjective` — biyección completa
+  - ✅ Dependencia externa `peanolib` añadida en `lakefile.lean`
+  - ✅ Build: 28/28 módulos compilados correctamente (incluye peanolib)
+
+- **Infinity.lean — `nat_mem_wf` demostrado sin sorry**:
+  - ✅ `nat_mem_wf : WellFounded (fun a b : U => a ∈ ω ∧ b ∈ ω ∧ a ∈ b)` completamente probado
+  - Estrategia: elementos fuera de ω son vacuosamente accesibles; elementos en ω por inducción fuerte usando `S = SpecSet ω (Acc R)`
+  - ✅ Añadido a la lista de exports de `Infinity.lean`
+
+- **NaturalNumbers.lean — exports de predecessor ampliados**:
+  - ✅ `predecessor`, `predecessor_of_successor`, `predecessor_is_nat`, `predecessor_mem` ahora en la lista de exports pública
+
+- **Documentación actualizada (REFERENCE.md)**:
+  - ✅ §1.1: PeanoImport.lean añadido a la tabla de módulos
+  - ✅ §3.13: definición `predecessor` documentada
+  - ✅ §3.21: nueva sección PeanoImport.lean (2 definiciones)
+  - ✅ §4.9: `nat_mem_wf` documentado con nota de implementación
+  - ✅ §4.17: nueva sección PeanoImport.lean (7 teoremas)
 
 ### Actualizado (2026-02-12 18:45)
 
