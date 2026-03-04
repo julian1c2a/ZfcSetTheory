@@ -4,7 +4,7 @@
 ================================================================================
 
 Project Root:     E:\Dropbox\GitHub\lean4\ZfcSetTheory
-Report Generated: 2026-02-12 18:25:40
+Report Generated: 2026-02-12 20:37:59
 Report File:      LeanInfoView.txt
 
 
@@ -56,30 +56,43 @@ Files:
 === BUILD DIAGNOSTICS ===
 ================================================================================
 
-Build started: 2026-02-12 18:25:40
+Build started: 2026-02-12 20:37:59
 
 Build completed successfully (24 jobs).
 
-⏱️  Time elapsed: 1.139788 seconds
-Build completed: 2026-02-12 18:25:41
+⏱️  Time elapsed: 1.2050955 seconds
+Build completed: 2026-02-12 20:38:00
 
 
 ================================================================================
-=== FILE-SPECIFIC DIAGNOSTICS: Recursion.lean ===
+=== FILE-SPECIFIC DIAGNOSTICS: ZfcSetTheory\Recursion.lean ===
 ================================================================================
 
 File Path:        E:\Dropbox\GitHub\lean4\ZfcSetTheory\ZfcSetTheory\Recursion.lean
-File Size:        17728 bytes
-Last Modified:    2026-02-12 18:21:49
+File Size:        16527 bytes
+Last Modified:    2026-02-12 20:02:08
 
-Total Lines:      353
+Total Lines:      331
 
-Sorry Statements: 0 ✓
+Sorry Statements: 12
+
+  Line 115: rw [hk']; exact Or.inl (by sorry)
+  Line 151: sorry
+  Line 253: rw [Restriction_apply f (σ n) (σ k) (by sorry)]; -- σ k ∈ σ n
+  Line 254: rw [Restriction_apply f (σ n) k (by sorry)];
+  Line 256: exact hf.2.2 k (by sorry) -- k ∈ n ⊆ σ n
+  Line 269: sorry -- Ya probado en la versión anterior, lo marco sorry para enfocar en la estructura nueva
+  Line 297: sorry -- (Fácil de completar)
+  Line 318: sorry
+  Line 321: sorry
+  Line 341: sorry -- (Lógica de extensión estándar)
+  Line 367: · sorry -- Existencia
+  Line 368: · sorry -- Unicidad (usando inducción sobre n para ver que cualquier G coincide con F)
 
 
 --- Lean Validation ---
 
-✓ No errors or warnings specific to this file
+Could not run validation: The string ZfcSetTheory\Recursion.lean is not a valid regular expression: Invalid pattern 'ZfcSetTheory\Recursion.lean' at offset 14. Unrecognized escape sequence \R.
 
 
 --- Imports ---
@@ -113,12 +126,12 @@ Sorry Statements: 0
 
 (Most recently modified files first)
 
-Recursion.lean - 2026-02-12 18:21:49
+NaturalNumbers.lean - 2026-02-12 20:24:54
+Recursion.lean - 2026-02-12 20:02:08
 PowerSet.lean - 2026-02-12 17:02:51
 Cardinality.lean - 2026-02-12 16:39:02
 SetStrictOrder.lean - 2026-02-12 15:45:07
 BooleanAlgebra.lean - 2026-02-12 15:45:07
-NaturalNumbers.lean - 2026-02-12 15:45:07
 SetOrder.lean - 2026-02-12 15:45:07
 Infinity.lean - 2026-02-12 15:45:07
 GeneralizedDistributive.lean - 2026-02-12 15:44:31
@@ -139,7 +152,7 @@ Scanning import statements...
 ================================================================================
 
 Lake build directory exists: Yes
-Build artifacts count: 11214
+Build artifacts count: 184
 
 
 ================================================================================
@@ -161,5 +174,5 @@ Total modules: 23
 Build artifacts: Generated
 
 ================================================================================
-End of report: 2026-02-12 18:25:42
+End of report: 2026-02-12 20:38:00
 ================================================================================
