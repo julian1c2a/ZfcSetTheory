@@ -2,9 +2,7 @@
 Copyright (c) 2025. All rights reserved.
 Author: Julián Calderón Almendros
 License: MIT
--/
 
-/-
   # Natural Numbers (von Neumann ordinals)
 
   Este archivo define los números naturales como ordinales de von Neumann SIN introducir
@@ -1697,43 +1695,34 @@ namespace SetUniverse
       · -- predecessor (σ k) ⊆ k
         intro x hx
         unfold predecessor at hx
-        rw [UnionSet_is_specified] at hx
-        unfold successor at hx
-        rw [BinUnion_is_specified] at hx
-        obtain ⟨y, hy_succ, hx_y⟩ := hx
-        cases hy_succ
-        case inl hy_k => -- y ∈ k
-          exact hk.1 y hy_k x hx_y
-        case inr hy_k_eq => -- y = k
-          rw [hy_k_eq] at hx_y
-          exact hx_y
+        simp only [UnionSet_is_specified, successor_is_specified] at hx
+        obtain ⟨y, hy | hy, hx_y⟩ := hx
+        · exact hk.1 y hy x hx_y
+        · subst hy; exact hx_y
       · -- k ⊆ predecessor (σ k)
         intro x hx
         unfold predecessor
-        rw [UnionSet_is_specified]
-        exists k
-        constructor
-        · unfold successor
-          rw [BinUnion_is_specified]
-          exact Or.inr rfl
-        · exact hx
+        simp only [UnionSet_is_specified, successor_is_specified]
+        exact ⟨k, Or.inr rfl, hx⟩
 
     /-- If n is a non-zero natural, its predecessor is also a natural. -/
     theorem predecessor_is_nat (n : U) (hn : isNat n) (h_ne_zero : n ≠ ∅) :
       isNat (predecessor n) := by
       obtain ⟨k, hk⟩ := (nat_is_zero_or_succ n hn).resolve_left h_ne_zero
-      rw [hk]
-      have k_is_nat : isNat k := nat_element_is_nat n k hn (by { rw [hk], exact mem_successor_self k })
-      rw [predecessor_of_successor k_is_nat]
+      have k_is_nat : isNat k := nat_element_is_nat n k hn (by rw [hk]; exact mem_successor_self k)
+      have h_pred_eq : predecessor n = k := by
+        rw [hk]; exact predecessor_of_successor k_is_nat
+      rw [h_pred_eq]
       exact k_is_nat
 
     /-- The predecessor of a non-zero natural n is an element of n. -/
     theorem predecessor_mem (n : U) (hn : isNat n) (h_ne_zero : n ≠ ∅) :
       predecessor n ∈ n := by
       obtain ⟨k, hk⟩ := (nat_is_zero_or_succ n hn).resolve_left h_ne_zero
-      rw [hk]
-      have k_is_nat : isNat k := nat_element_is_nat n k hn (by { rw [hk], exact mem_successor_self k })
-      rw [predecessor_of_successor k_is_nat]
+      have k_is_nat : isNat k := nat_element_is_nat n k hn (by rw [hk]; exact mem_successor_self k)
+      have h_pred_eq : predecessor n = k := by
+        rw [hk]; exact predecessor_of_successor k_is_nat
+      rw [h_pred_eq, hk]
       exact mem_successor_self k
 
     /-! ============================================================ -/
@@ -2102,6 +2091,11 @@ namespace SetUniverse
     two_in_inductive
     three_in_inductive
     nat_has_max
+    -- Predecessor
+    predecessor
+    predecessor_of_successor
+    predecessor_is_nat
+    predecessor_mem
     -- Examples
     zero
     one

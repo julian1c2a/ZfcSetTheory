@@ -1,4 +1,4 @@
-/-
+/-!
 Copyright (c) 2025. All rights reserved.
 Author: Julián Calderón Almendros
 License: MIT

@@ -62,7 +62,7 @@ namespace SetUniverse
     noncomputable def UnionSet (C : U) : U :=
       (UnionExistsUnique C).choose
 
-    
+    notation " ⋃ " C:100 => UnionSet C
 
     @[simp]
     theorem UnionSet_is_specified (C x : U) :
@@ -362,10 +362,12 @@ namespace SetUniverse
     noncomputable def BinUnion (A B : U) : U :=
       UnionSet (PairSet A B)
 
-    
+    notation:50 lhs:51 " ∪ " rhs:51 => BinUnion lhs rhs
+
+
 
     theorem BinUnion_is_specified (A B x : U) :
-      x ∈ (A BinUnion B) ↔ x ∈ A ∨ x ∈ B := by
+      x ∈ (A ∪ B) ↔ x ∈ A ∨ x ∈ B := by
       unfold BinUnion
       simp only [UnionSet_is_specified, PairSet_is_specified]
       constructor
@@ -381,24 +383,24 @@ namespace SetUniverse
     /-! ### Propiedades Algebraicas de la Unión Binaria ### -/
 
     theorem BinUnion_comm (A B : U) :
-      (A BinUnion B) = (B BinUnion A) := by
+      (A ∪ B) = (B ∪ A) := by
       apply ExtSet
       intro x
       simp only [BinUnion_is_specified, or_comm]
 
     theorem BinUnion_empty_left (A : U) :
-      (∅ BinUnion A) = A := by
+      (∅ ∪ A) = A := by
       apply ExtSet
       intro x
       simp only [BinUnion_is_specified]
       exact ⟨fun h => h.resolve_left (EmptySet_is_empty x), Or.inr⟩
 
     theorem BinUnion_empty_right (A : U) :
-      (A BinUnion ∅) = A := by
+      (A ∪ ∅) = A := by
       rw [BinUnion_comm, BinUnion_empty_left]
 
     theorem BinUnion_idem (A : U) :
-      (A BinUnion A) = A := by
+      (A ∪ A) = A := by
       apply ExtSet
       intro x
       simp only [BinUnion_is_specified]
@@ -411,7 +413,7 @@ namespace SetUniverse
         exact Or.inl hx
 
     theorem BinUnion_assoc (A B C : U) :
-      ((A BinUnion B) BinUnion C) = (A BinUnion (B BinUnion C)) := by
+      ((A ∪ B) ∪ C) = (A ∪ (B ∪ C)) := by
       apply ExtSet
       intro x
       simp only [BinUnion_is_specified]
@@ -447,43 +449,20 @@ namespace SetUniverse
         · rw [Singleton_is_specified]
         · exact h
 
-    theorem Union_of_union (A B : U) : UnionSet (A BinUnion B) = (UnionSet A) BinUnion (UnionSet B) := by
+    theorem Union_of_union (A B : U) : UnionSet (A ∪ B) = ((UnionSet A) ∪ (UnionSet B)) := by
       apply ExtSet
       intro x
+      simp only [UnionSet_is_specified, BinUnion_is_specified]
       constructor
-      · intro h
-        have h1 : ∃ S, S ∈ A BinUnion B ∧ x ∈ S := (UnionSet_is_specified (A BinUnion B) x).mp h
-        obtain ⟨S, hS, hxS⟩ := h1
-        have h2 : S ∈ A ∨ S ∈ B := (BinUnion_is_specified A B S).mp hS
-        cases h2
-        case inl hSA =>
-          have h3 : ∃ S, S ∈ A ∧ x ∈ S := ⟨S, hSA, hxS⟩
-          have h4 : x ∈ UnionSet A := (UnionSet_is_specified A x).mpr h3
-          have h5 : x ∈ (UnionSet A) BinUnion (UnionSet B) := (BinUnion_is_specified (UnionSet A) (UnionSet B) x).mpr (Or.inl h4)
-          exact h5
-        case inr hSB =>
-          have h3 : ∃ S, S ∈ B ∧ x ∈ S := ⟨S, hSB, hxS⟩
-          have h4 : x ∈ UnionSet B := (UnionSet_is_specified B x).mpr h3
-          have h5 : x ∈ (UnionSet A) BinUnion (UnionSet B) := (BinUnion_is_specified (UnionSet A) (UnionSet B) x).mpr (Or.inr h4)
-          exact h5
-      · intro h
-        have h1 : x ∈ UnionSet A ∨ x ∈ UnionSet B := (BinUnion_is_specified (UnionSet A) (UnionSet B) x).mp h
-        cases h1
-        case inl hxA =>
-          have h2 : ∃ S, S ∈ A ∧ x ∈ S := (UnionSet_is_specified A x).mp hxA
-          obtain ⟨S, hSA, hxS⟩ := h2
-          have h3 : S ∈ A BinUnion B := (BinUnion_is_specified A B S).mpr (Or.inl hSA)
-          have h4 : ∃ S, S ∈ A BinUnion B ∧ x ∈ S := ⟨S, h3, hxS⟩
-          exact (UnionSet_is_specified (A BinUnion B) x).mpr h4
-        case inr hxB =>
-          have h2 : ∃ S, S ∈ B ∧ x ∈ S := (UnionSet_is_specified B x).mp hxB
-          obtain ⟨S, hSB, hxS⟩ := h2
-          have h3 : S ∈ A BinUnion B := (BinUnion_is_specified A B S).mpr (Or.inr hSB)
-          have h4 : ∃ S, S ∈ A BinUnion B ∧ x ∈ S := ⟨S, h3, hxS⟩
-          exact (UnionSet_is_specified (A BinUnion B) x).mpr h4
+      · rintro ⟨S, hS | hS, hxS⟩
+        · exact Or.inl ⟨S, hS, hxS⟩
+        · exact Or.inr ⟨S, hS, hxS⟩
+      · rintro (⟨S, hSA, hxS⟩ | ⟨S, hSB, hxS⟩)
+        · exact ⟨S, Or.inl hSA, hxS⟩
+        · exact ⟨S, Or.inr hSB, hxS⟩
 
 theorem BinUnion_absorb_inter (A B : U) :
-      ( A BinUnion (A ∩ B) ) = A := by
+      ( BinUnion A (BinInter A B) ) = A := by
       apply ExtSet
       intro x
       simp only [BinUnion_is_specified, BinInter_is_specified]
@@ -497,7 +476,7 @@ theorem BinUnion_absorb_inter (A B : U) :
 
     /-! ### Diferencia Simétrica ### -/
     noncomputable def SymDiff (A B : U) : U :=
-      (A \ B) BinUnion (B \ A)
+      BinUnion (Difference A B) (Difference B A)
 
     notation:50 lhs:51 " △ " rhs:51 => SymDiff lhs rhs
 
@@ -605,7 +584,7 @@ export SetUniverse.UnionAxiom (
 # Example of Union Set
     A = { 1, 2 }
     B = { a, b }
-    A BinUnion B = { 1, 2, a, b }
+    BinUnion A B = { 1, 2, a, b }
 
 
 -/

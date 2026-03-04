@@ -356,27 +356,27 @@ namespace SetUniverse
       · exact mem_successor_self n
 
     /-- The membership relation is well-founded on ω. -/
-    theorem nat_mem_wf : WellFounded (λ a b : U, a ∈ ω ∧ b ∈ ω ∧ a ∈ b) := by
-      apply WellFounded.intro
+    theorem nat_mem_wf : WellFounded (fun a b : U => a ∈ ω ∧ b ∈ ω ∧ a ∈ b) := by
+      constructor
       intro a
-      -- We need to show Acc (λ a b, a ∈ ω ∧ b ∈ ω ∧ a ∈ b) a
-      -- We use strong induction on ω
-      let S := {n : U | n ∈ ω ∧ Acc (λ a b : U, a ∈ ω ∧ b ∈ ω ∧ a ∈ b) n}
-      have h_strong_induction : ∀ n ∈ ω, (∀ m ∈ n, m ∈ S) → n ∈ S := by
-        intro n hn_omega H_inductive
-        constructor
-        · exact hn_omega
-        · constructor
-          intro y hy_accessible
-          -- hy_accessible is y ∈ ω ∧ n ∈ ω ∧ y ∈ n
-          have hy_in_n := hy_accessible.2.2
-          have hy_in_S := H_inductive y hy_in_n
-          exact hy_in_S.2
-      have S_eq_omega : ∀ n ∈ ω, n ∈ S := by
-        intro n hn_omega
-        apply (strong_induction_principle (SpecSet ω (fun n => (∀ m ∈ n, m ∈ S))) sorry sorry).2
-        sorry -- This is getting complicated
-      sorry
+      by_cases ha : a ∈ ω
+      · -- Every element of ω is accessible, proved by strong induction.
+        -- S = { n ∈ ω | Acc R n } where R is the membership relation.
+        let S := SpecSet ω (fun n => Acc (fun a b : U => a ∈ ω ∧ b ∈ ω ∧ a ∈ b) n)
+        have hS_sub : S ⊆ ω := fun z hz => by
+          rw [SpecSet_is_specified] at hz; exact hz.1
+        have hS_eq : S = ω := strong_induction_principle S hS_sub (fun n hn ih => by
+          rw [SpecSet_is_specified]
+          refine ⟨hn, Acc.intro n (fun y hy => ?_)⟩
+          -- hy : y ∈ ω ∧ n ∈ ω ∧ y ∈ n; ih says every m ∈ n is in S
+          have hy_in_S : y ∈ S := ih y hy.2.2
+          rw [SpecSet_is_specified] at hy_in_S
+          exact hy_in_S.2)
+        have ha_in_S : a ∈ S := by rw [hS_eq]; exact ha
+        rw [SpecSet_is_specified] at ha_in_S
+        exact ha_in_S.2
+      · -- Elements outside ω are vacuously accessible: R y a requires a ∈ ω.
+        exact Acc.intro a (fun y hy => absurd hy.2.1 ha)
 
   end InfinityAxiom
 
@@ -396,6 +396,7 @@ namespace SetUniverse
     Omega_element_is_transitive
     Omega_has_total_order
     Omega_no_maximum
+    nat_mem_wf
   )
 
 end SetUniverse
