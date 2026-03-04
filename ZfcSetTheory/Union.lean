@@ -32,7 +32,7 @@ namespace SetUniverse
     theorem UnionExistsUnique (C : U) :
       ∃! UC, ∀ x : U, x ∈ UC ↔ ∃ y : U, y ∈ C ∧ x ∈ y
         := by
-      obtain ⟨UC, hUC⟩ := Union C
+      obtain ⟨UC, hUC⟩ := UnionAxiom C
       apply ExistsUnique.intro UC
       · exact hUC
       · -- proof of uniqueness
@@ -49,9 +49,9 @@ namespace SetUniverse
 
     @[simp]
     theorem Union_is_specified (C x : U) :
-      x ∈ (choose (Union C)) ↔ ∃ (S : U), S ∈ C ∧ x ∈ S
+      x ∈ (choose (UnionAxiom C)) ↔ ∃ (S : U), S ∈ C ∧ x ∈ S
         := by
-      have hUC := choose_spec (Union C)
+      have hUC := choose_spec (UnionAxiom C)
       constructor
       . intro h
         exact (hUC x).mp h
@@ -62,11 +62,11 @@ namespace SetUniverse
     noncomputable def UnionSet (C : U) : U :=
       (UnionExistsUnique C).choose
 
-    notation " ⋃ " C: 100 => UnionSet C
+    
 
     @[simp]
     theorem UnionSet_is_specified (C x : U) :
-      x ∈ (⋃ C) ↔ ∃ (S : U), S ∈ C ∧ x ∈ S
+      x ∈ (UnionSet C) ↔ ∃ (S : U), S ∈ C ∧ x ∈ S
         := by
       unfold UnionSet
       constructor
@@ -78,7 +78,7 @@ namespace SetUniverse
     @[simp]
     theorem UnionSet_is_unique (C UC : U) :
       ( ∀ (y : U), y ∈ UC ↔ ∃ (S : U), S ∈ C ∧ y ∈ S )
-      ↔ ( UC = (⋃ C) )
+      ↔ ( UC = (UnionSet C) )
         := by
       constructor
       -- (→) direction
@@ -93,7 +93,7 @@ namespace SetUniverse
         rw [UnionSet_is_specified]
 
     theorem Set_is_empty_1 (C : U) (hC_empty : C = (∅ : U)) :
-      (⋃ C) = (∅ : U)
+      (UnionSet C) = (∅ : U)
         := by
       rw [hC_empty]
       apply ExtSet
@@ -112,7 +112,7 @@ namespace SetUniverse
 
     @[simp]
     theorem Set_is_empty_2 (C : U) (hC_empty : C = ({∅} : U)) :
-      (⋃ C) = (∅ : U)
+      (UnionSet C) = (∅ : U)
         := by
       rw [hC_empty]
       apply ExtSet
@@ -138,10 +138,10 @@ namespace SetUniverse
     theorem Set_is_empty_3 (C : U)
       (hC_not_empty : C ≠ (∅ : U))
       (hC_not_singleton_empty : C ≠ ({∅} : U)) :
-        (⋃ C) ≠ (∅ : U)
+        (UnionSet C) ≠ (∅ : U)
           := by
         -- Empezamos la prueba por reducción al absurdo asumiendo lo contrario.
-        -- h_union_empty : (⋃ C) = ∅
+        -- h_union_empty : (UnionSet C) = ∅
         intro h_union_empty
         -- Nuestro objetivo es contradecir una de las hipótesis. Elegimos hC_not_singleton_empty.
         -- Para ello, demostraremos que nuestra suposición implica C = {∅}.
@@ -163,9 +163,9 @@ namespace SetUniverse
 
           -- Probamos que si y ∈ x, entonces y ∈ ∅ (lo cual es falso).
           · intro hy_in_x
-            -- Por definición de la unión, si x ∈ C y y ∈ x, entonces y ∈ (⋃ C).
-            have hy_in_union : y ∈ (⋃ C) := (UnionSet_is_specified C y).mpr ⟨x, hx_in_C, hy_in_x⟩
-            -- Usamos nuestra suposición inicial de que (⋃ C) = ∅.
+            -- Por definición de la unión, si x ∈ C y y ∈ x, entonces y ∈ (UnionSet C).
+            have hy_in_union : y ∈ (UnionSet C) := (UnionSet_is_specified C y).mpr ⟨x, hx_in_C, hy_in_x⟩
+            -- Usamos nuestra suposición inicial de que (UnionSet C) = ∅.
             rw [h_union_empty] at hy_in_union
             -- Ahora tenemos y ∈ ∅, que es lo que queríamos probar.
             exact hy_in_union
@@ -204,7 +204,7 @@ namespace SetUniverse
             intro z
             constructor
             · intro hz_in_y
-              have hz_in_union : z ∈ (⋃ C) := (UnionSet_is_specified C z).mpr ⟨y, hy_in_C, hz_in_y⟩
+              have hz_in_union : z ∈ (UnionSet C) := (UnionSet_is_specified C z).mpr ⟨y, hy_in_C, hz_in_y⟩
               rw [h_union_empty] at hz_in_union
               exact hz_in_union
             · intro hz_in_empty
@@ -215,7 +215,7 @@ namespace SetUniverse
           exact hy_in_C
 
     theorem UnionSet_is_empty' (C : U) :
-      (⋃ C) = (∅ : U) ↔ (C = (∅ : U)) ∨ (∀ (S : U), S ∈ C → S = (∅ : U))
+      (UnionSet C) = (∅ : U) ↔ (C = (∅ : U)) ∨ (∀ (S : U), S ∈ C → S = (∅ : U))
         := by
       constructor
       . intro h_union_empty
@@ -255,7 +255,7 @@ namespace SetUniverse
 
     @[simp]
     theorem UnionSet_is_empty (C : U) :
-      (⋃ C) = (∅ : U) ↔ (∀ (S : U), S ∈ C → S = (∅ : U))
+      (UnionSet C) = (∅ : U) ↔ (∀ (S : U), S ∈ C → S = (∅ : U))
         := by
       constructor
       . intro h_union_empty
@@ -288,10 +288,10 @@ namespace SetUniverse
     theorem UnionSetIsEmpty_SetNonEmpty_SingletonEmptySet
       (C : U)
       (hC_non_empty : C ≠ (∅ : U)) :
-        (⋃ C) = ∅ ↔ C = ({ ∅ }: U)
+        (UnionSet C) = ∅ ↔ C = ({ ∅ }: U)
           := by
       constructor
-      · -- Forward direction: (⋃ C) = ∅ → C = {∅}
+      · -- Forward direction: (UnionSet C) = ∅ → C = {∅}
         intro h_union_empty
         apply ExtSet
         intro x
@@ -303,7 +303,7 @@ namespace SetUniverse
           intro z
           constructor
           · intro hz_in_x
-            have hz_in_union : z ∈ (⋃ C) := (UnionSet_is_specified C z).mpr ⟨x, hx_in_C, hz_in_x⟩
+            have hz_in_union : z ∈ (UnionSet C) := (UnionSet_is_specified C z).mpr ⟨x, hx_in_C, hz_in_x⟩
             rw [h_union_empty] at hz_in_union
             exact False.elim (EmptySet_is_empty z hz_in_union)
           · intro hz_in_empty
@@ -330,20 +330,20 @@ namespace SetUniverse
               · intro hz_in_empty
                 exact False.elim (EmptySet_is_empty z hz_in_empty)
           obtain ⟨y, hy_in_C⟩ := h_nonempty_C
-          -- Every element of C must be ∅ (since ⋃ C = ∅)
+          -- Every element of C must be ∅ (since UnionSet C = ∅)
           have y_eq_empty : y = ∅ := by
             apply ExtSet
             intro z
             constructor
             · intro hz_in_y
-              have hz_in_union : z ∈ (⋃ C) := (UnionSet_is_specified C z).mpr ⟨y, hy_in_C, hz_in_y⟩
+              have hz_in_union : z ∈ (UnionSet C) := (UnionSet_is_specified C z).mpr ⟨y, hy_in_C, hz_in_y⟩
               rw [h_union_empty] at hz_in_union
               exact hz_in_union
             · intro hz_in_empty
               exact False.elim (EmptySet_is_empty z hz_in_empty)
           rw [←y_eq_empty]
           exact hy_in_C
-      · -- Backward direction: C = {∅} → (⋃ C) = ∅
+      · -- Backward direction: C = {∅} → (UnionSet C) = ∅
         intro hC_is_singleton
         rw [hC_is_singleton]
         apply ExtSet
@@ -362,10 +362,10 @@ namespace SetUniverse
     noncomputable def BinUnion (A B : U) : U :=
       UnionSet (PairSet A B)
 
-    notation:50 lhs:51 " ∪ " rhs:51 => BinUnion lhs rhs
+    
 
     theorem BinUnion_is_specified (A B x : U) :
-      x ∈ (A ∪ B) ↔ x ∈ A ∨ x ∈ B := by
+      x ∈ (A BinUnion B) ↔ x ∈ A ∨ x ∈ B := by
       unfold BinUnion
       simp only [UnionSet_is_specified, PairSet_is_specified]
       constructor
@@ -381,24 +381,24 @@ namespace SetUniverse
     /-! ### Propiedades Algebraicas de la Unión Binaria ### -/
 
     theorem BinUnion_comm (A B : U) :
-      (A ∪ B) = (B ∪ A) := by
+      (A BinUnion B) = (B BinUnion A) := by
       apply ExtSet
       intro x
       simp only [BinUnion_is_specified, or_comm]
 
     theorem BinUnion_empty_left (A : U) :
-      (∅ ∪ A) = A := by
+      (∅ BinUnion A) = A := by
       apply ExtSet
       intro x
       simp only [BinUnion_is_specified]
       exact ⟨fun h => h.resolve_left (EmptySet_is_empty x), Or.inr⟩
 
     theorem BinUnion_empty_right (A : U) :
-      (A ∪ ∅) = A := by
+      (A BinUnion ∅) = A := by
       rw [BinUnion_comm, BinUnion_empty_left]
 
     theorem BinUnion_idem (A : U) :
-      (A ∪ A) = A := by
+      (A BinUnion A) = A := by
       apply ExtSet
       intro x
       simp only [BinUnion_is_specified]
@@ -411,7 +411,7 @@ namespace SetUniverse
         exact Or.inl hx
 
     theorem BinUnion_assoc (A B C : U) :
-      ((A ∪ B) ∪ C) = (A ∪ (B ∪ C)) := by
+      ((A BinUnion B) BinUnion C) = (A BinUnion (B BinUnion C)) := by
       apply ExtSet
       intro x
       simp only [BinUnion_is_specified]
@@ -431,7 +431,7 @@ namespace SetUniverse
           | inl hB => exact Or.inl (Or.inr hB)
           | inr hC => exact Or.inr hC
 
-    theorem Union_of_singleton (A : U) : ⋃{A} = A := by
+    theorem Union_of_singleton (A : U) : UnionSet {A} = A := by
       apply ExtSet
       intro x
       rw [UnionSet_is_specified]
@@ -447,43 +447,43 @@ namespace SetUniverse
         · rw [Singleton_is_specified]
         · exact h
 
-    theorem Union_of_union (A B : U) : ⋃(A ∪ B) = (⋃A) ∪ (⋃B) := by
+    theorem Union_of_union (A B : U) : UnionSet (A BinUnion B) = (UnionSet A) BinUnion (UnionSet B) := by
       apply ExtSet
       intro x
       constructor
       · intro h
-        have h1 : ∃ S, S ∈ A ∪ B ∧ x ∈ S := (UnionSet_is_specified (A ∪ B) x).mp h
+        have h1 : ∃ S, S ∈ A BinUnion B ∧ x ∈ S := (UnionSet_is_specified (A BinUnion B) x).mp h
         obtain ⟨S, hS, hxS⟩ := h1
         have h2 : S ∈ A ∨ S ∈ B := (BinUnion_is_specified A B S).mp hS
         cases h2
         case inl hSA =>
           have h3 : ∃ S, S ∈ A ∧ x ∈ S := ⟨S, hSA, hxS⟩
-          have h4 : x ∈ ⋃A := (UnionSet_is_specified A x).mpr h3
-          have h5 : x ∈ (⋃A) ∪ (⋃B) := (BinUnion_is_specified (⋃A) (⋃B) x).mpr (Or.inl h4)
+          have h4 : x ∈ UnionSet A := (UnionSet_is_specified A x).mpr h3
+          have h5 : x ∈ (UnionSet A) BinUnion (UnionSet B) := (BinUnion_is_specified (UnionSet A) (UnionSet B) x).mpr (Or.inl h4)
           exact h5
         case inr hSB =>
           have h3 : ∃ S, S ∈ B ∧ x ∈ S := ⟨S, hSB, hxS⟩
-          have h4 : x ∈ ⋃B := (UnionSet_is_specified B x).mpr h3
-          have h5 : x ∈ (⋃A) ∪ (⋃B) := (BinUnion_is_specified (⋃A) (⋃B) x).mpr (Or.inr h4)
+          have h4 : x ∈ UnionSet B := (UnionSet_is_specified B x).mpr h3
+          have h5 : x ∈ (UnionSet A) BinUnion (UnionSet B) := (BinUnion_is_specified (UnionSet A) (UnionSet B) x).mpr (Or.inr h4)
           exact h5
       · intro h
-        have h1 : x ∈ ⋃A ∨ x ∈ ⋃B := (BinUnion_is_specified (⋃A) (⋃B) x).mp h
+        have h1 : x ∈ UnionSet A ∨ x ∈ UnionSet B := (BinUnion_is_specified (UnionSet A) (UnionSet B) x).mp h
         cases h1
         case inl hxA =>
           have h2 : ∃ S, S ∈ A ∧ x ∈ S := (UnionSet_is_specified A x).mp hxA
           obtain ⟨S, hSA, hxS⟩ := h2
-          have h3 : S ∈ A ∪ B := (BinUnion_is_specified A B S).mpr (Or.inl hSA)
-          have h4 : ∃ S, S ∈ A ∪ B ∧ x ∈ S := ⟨S, h3, hxS⟩
-          exact (UnionSet_is_specified (A ∪ B) x).mpr h4
+          have h3 : S ∈ A BinUnion B := (BinUnion_is_specified A B S).mpr (Or.inl hSA)
+          have h4 : ∃ S, S ∈ A BinUnion B ∧ x ∈ S := ⟨S, h3, hxS⟩
+          exact (UnionSet_is_specified (A BinUnion B) x).mpr h4
         case inr hxB =>
           have h2 : ∃ S, S ∈ B ∧ x ∈ S := (UnionSet_is_specified B x).mp hxB
           obtain ⟨S, hSB, hxS⟩ := h2
-          have h3 : S ∈ A ∪ B := (BinUnion_is_specified A B S).mpr (Or.inr hSB)
-          have h4 : ∃ S, S ∈ A ∪ B ∧ x ∈ S := ⟨S, h3, hxS⟩
-          exact (UnionSet_is_specified (A ∪ B) x).mpr h4
+          have h3 : S ∈ A BinUnion B := (BinUnion_is_specified A B S).mpr (Or.inr hSB)
+          have h4 : ∃ S, S ∈ A BinUnion B ∧ x ∈ S := ⟨S, h3, hxS⟩
+          exact (UnionSet_is_specified (A BinUnion B) x).mpr h4
 
 theorem BinUnion_absorb_inter (A B : U) :
-      ( A ∪ (A ∩ B) ) = A := by
+      ( A BinUnion (A ∩ B) ) = A := by
       apply ExtSet
       intro x
       simp only [BinUnion_is_specified, BinInter_is_specified]
@@ -497,7 +497,7 @@ theorem BinUnion_absorb_inter (A B : U) :
 
     /-! ### Diferencia Simétrica ### -/
     noncomputable def SymDiff (A B : U) : U :=
-      (A \ B) ∪ (B \ A)
+      (A \ B) BinUnion (B \ A)
 
     notation:50 lhs:51 " △ " rhs:51 => SymDiff lhs rhs
 
@@ -560,7 +560,7 @@ theorem BinUnion_absorb_inter (A B : U) :
 end SetUniverse
 
 export SetUniverse.UnionAxiom (
-  Union
+  UnionAxiom
   UnionExistsUnique
   Union_is_specified
   UnionSet
@@ -593,7 +593,7 @@ export SetUniverse.UnionAxiom (
 ## UNION Axiom
 # Example of Union Axiom
     C = { {x}, {y} , {z} }
-    U = ⋃ C
+    U = UnionSet C
     U = { x, y, z }
 
 # This means that the union set of C is the set of all elements of every element of C.
@@ -601,11 +601,11 @@ export SetUniverse.UnionAxiom (
 ## Define the Union Set of Two Sets
 
 # The union set of two sets A and B is the set of all elements that are in A, in B, or in both.
-# This is often denoted as A ∪ B.
+# This is often denoted as A BinUnion B.
 # Example of Union Set
     A = { 1, 2 }
     B = { a, b }
-    A ∪ B = { 1, 2, a, b }
+    A BinUnion B = { 1, 2, a, b }
 
 
 -/

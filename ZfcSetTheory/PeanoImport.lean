@@ -1,6 +1,6 @@
 import ZfcSetTheory.NaturalNumbers
 import ZfcSetTheory.Infinity
-import Peano
+import PeanoNatLib.PeanoNatAxioms
 
 /--
 Copyright (c) 2026. All rights reserved.
