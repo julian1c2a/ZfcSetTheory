@@ -17,3 +17,7 @@ ZfcSetTheory/SetOrder.lean
 ZfcSetTheory/SetStrictOrder.lean
 ZfcSetTheory/GeneralizedDeMorgan.lean
 ZfcSetTheory/GeneralizedDistributive.lean
+ZfcSetTheory/Union.lean
+ZfcSetTheory/Infinity.lean
+ZfcSetTheory/NaturalNumbers.lean
+ZfcSetTheory/PeanoImport.lean
