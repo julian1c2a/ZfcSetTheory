@@ -24,7 +24,7 @@ namespace SetUniverse
 
     /-! ### Axioma de Unión ### -/
     @[simp]
-    axiom Union :
+    axiom UnionAxiom :
       ∀ (C : U), ∃ (UC : U), ∀ (x : U), x ∈ UC ↔ ∃ (y : U), y ∈ C ∧ x ∈ y
 
     /-! ### Teorema de Existencia Única para el Axioma de Unión ### -/
@@ -431,6 +431,57 @@ namespace SetUniverse
           | inl hB => exact Or.inl (Or.inr hB)
           | inr hC => exact Or.inr hC
 
+    theorem Union_of_singleton (A : U) : ⋃{A} = A := by
+      apply ExtSet
+      intro x
+      rw [UnionSet_is_specified]
+      constructor
+      · intro h
+        obtain ⟨y, hy, hx_in_y⟩ := h
+        rw [Singleton_is_specified] at hy
+        rw [hy] at hx_in_y
+        exact hx_in_y
+      · intro h
+        exists A
+        constructor
+        · rw [Singleton_is_specified]
+        · exact h
+
+    theorem Union_of_union (A B : U) : ⋃(A ∪ B) = (⋃A) ∪ (⋃B) := by
+      apply ExtSet
+      intro x
+      constructor
+      · intro h
+        have h1 : ∃ S, S ∈ A ∪ B ∧ x ∈ S := (UnionSet_is_specified (A ∪ B) x).mp h
+        obtain ⟨S, hS, hxS⟩ := h1
+        have h2 : S ∈ A ∨ S ∈ B := (BinUnion_is_specified A B S).mp hS
+        cases h2
+        case inl hSA =>
+          have h3 : ∃ S, S ∈ A ∧ x ∈ S := ⟨S, hSA, hxS⟩
+          have h4 : x ∈ ⋃A := (UnionSet_is_specified A x).mpr h3
+          have h5 : x ∈ (⋃A) ∪ (⋃B) := (BinUnion_is_specified (⋃A) (⋃B) x).mpr (Or.inl h4)
+          exact h5
+        case inr hSB =>
+          have h3 : ∃ S, S ∈ B ∧ x ∈ S := ⟨S, hSB, hxS⟩
+          have h4 : x ∈ ⋃B := (UnionSet_is_specified B x).mpr h3
+          have h5 : x ∈ (⋃A) ∪ (⋃B) := (BinUnion_is_specified (⋃A) (⋃B) x).mpr (Or.inr h4)
+          exact h5
+      · intro h
+        have h1 : x ∈ ⋃A ∨ x ∈ ⋃B := (BinUnion_is_specified (⋃A) (⋃B) x).mp h
+        cases h1
+        case inl hxA =>
+          have h2 : ∃ S, S ∈ A ∧ x ∈ S := (UnionSet_is_specified A x).mp hxA
+          obtain ⟨S, hSA, hxS⟩ := h2
+          have h3 : S ∈ A ∪ B := (BinUnion_is_specified A B S).mpr (Or.inl hSA)
+          have h4 : ∃ S, S ∈ A ∪ B ∧ x ∈ S := ⟨S, h3, hxS⟩
+          exact (UnionSet_is_specified (A ∪ B) x).mpr h4
+        case inr hxB =>
+          have h2 : ∃ S, S ∈ B ∧ x ∈ S := (UnionSet_is_specified B x).mp hxB
+          obtain ⟨S, hSB, hxS⟩ := h2
+          have h3 : S ∈ A ∪ B := (BinUnion_is_specified A B S).mpr (Or.inr hSB)
+          have h4 : ∃ S, S ∈ A ∪ B ∧ x ∈ S := ⟨S, h3, hxS⟩
+          exact (UnionSet_is_specified (A ∪ B) x).mpr h4
+
 theorem BinUnion_absorb_inter (A B : U) :
       ( A ∪ (A ∩ B) ) = A := by
       apply ExtSet
@@ -528,6 +579,8 @@ export SetUniverse.UnionAxiom (
   BinUnion_empty_right
   BinUnion_idem
   BinUnion_assoc
+  Union_of_singleton
+  Union_of_union
   BinUnion_absorb_inter
   SymDiff
   SymDiff_is_specified

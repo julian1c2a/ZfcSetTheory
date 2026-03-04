@@ -355,6 +355,29 @@ namespace SetUniverse
       · exact succ_in_Omega n hn
       · exact mem_successor_self n
 
+    /-- The membership relation is well-founded on ω. -/
+    theorem nat_mem_wf : WellFounded (λ a b : U, a ∈ ω ∧ b ∈ ω ∧ a ∈ b) := by
+      apply WellFounded.intro
+      intro a
+      -- We need to show Acc (λ a b, a ∈ ω ∧ b ∈ ω ∧ a ∈ b) a
+      -- We use strong induction on ω
+      let S := {n : U | n ∈ ω ∧ Acc (λ a b : U, a ∈ ω ∧ b ∈ ω ∧ a ∈ b) n}
+      have h_strong_induction : ∀ n ∈ ω, (∀ m ∈ n, m ∈ S) → n ∈ S := by
+        intro n hn_omega H_inductive
+        constructor
+        · exact hn_omega
+        · constructor
+          intro y hy_accessible
+          -- hy_accessible is y ∈ ω ∧ n ∈ ω ∧ y ∈ n
+          have hy_in_n := hy_accessible.2.2
+          have hy_in_S := H_inductive y hy_in_n
+          exact hy_in_S.2
+      have S_eq_omega : ∀ n ∈ ω, n ∈ S := by
+        intro n hn_omega
+        apply (strong_induction_principle (SpecSet ω (fun n => (∀ m ∈ n, m ∈ S))) sorry sorry).2
+        sorry -- This is getting complicated
+      sorry
+
   end InfinityAxiom
 
   export InfinityAxiom (

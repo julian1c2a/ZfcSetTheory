@@ -1686,6 +1686,56 @@ namespace SetUniverse
       have h2 := two_in_inductive I hI
       exact hI.2 (σ (σ (∅ : U))) h2
 
+    /-- Predecessor of a non-zero natural number.
+        If n is a successor, n = σ(k), then k is the predecessor.
+        In von Neumann ordinals, the predecessor of n is simply ⋃n. -/
+    noncomputable def predecessor (n : U) : U := ⋃n
+
+    /-- For a natural number k, the predecessor of its successor is k itself. -/
+    theorem predecessor_of_successor {k : U} (hk : isNat k) : predecessor (σ k) = k := by
+      apply ExtSet_wc
+      · -- predecessor (σ k) ⊆ k
+        intro x hx
+        unfold predecessor at hx
+        rw [UnionSet_is_specified] at hx
+        unfold successor at hx
+        rw [BinUnion_is_specified] at hx
+        obtain ⟨y, hy_succ, hx_y⟩ := hx
+        cases hy_succ
+        case inl hy_k => -- y ∈ k
+          exact hk.1 y hy_k x hx_y
+        case inr hy_k_eq => -- y = k
+          rw [hy_k_eq] at hx_y
+          exact hx_y
+      · -- k ⊆ predecessor (σ k)
+        intro x hx
+        unfold predecessor
+        rw [UnionSet_is_specified]
+        exists k
+        constructor
+        · unfold successor
+          rw [BinUnion_is_specified]
+          exact Or.inr rfl
+        · exact hx
+
+    /-- If n is a non-zero natural, its predecessor is also a natural. -/
+    theorem predecessor_is_nat (n : U) (hn : isNat n) (h_ne_zero : n ≠ ∅) :
+      isNat (predecessor n) := by
+      obtain ⟨k, hk⟩ := (nat_is_zero_or_succ n hn).resolve_left h_ne_zero
+      rw [hk]
+      have k_is_nat : isNat k := nat_element_is_nat n k hn (by { rw [hk], exact mem_successor_self k })
+      rw [predecessor_of_successor k_is_nat]
+      exact k_is_nat
+
+    /-- The predecessor of a non-zero natural n is an element of n. -/
+    theorem predecessor_mem (n : U) (hn : isNat n) (h_ne_zero : n ≠ ∅) :
+      predecessor n ∈ n := by
+      obtain ⟨k, hk⟩ := (nat_is_zero_or_succ n hn).resolve_left h_ne_zero
+      rw [hk]
+      have k_is_nat : isNat k := nat_element_is_nat n k hn (by { rw [hk], exact mem_successor_self k })
+      rw [predecessor_of_successor k_is_nat]
+      exact mem_successor_self k
+
     /-! ============================================================ -/
     /-! ### ESTADO DEL DESARROLLO: NÚMEROS NATURALES ### -/
     /-! ============================================================ -/

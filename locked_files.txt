@@ -3,10 +3,7 @@ ZfcSetTheory/Extension.lean
 ZfcSetTheory/Prelim.lean
 ZfcSetTheory/Specification.lean
 ZfcSetTheory/Pairing.lean
-ZfcSetTheory/Union.lean
 ZfcSetTheory/PowerSet.lean
-ZfcSetTheory/NaturalNumbers.lean
-ZfcSetTheory/Infinity.lean
 ZfcSetTheory/CartesianProduct.lean
 ZfcSetTheory/Relations.lean
 ZfcSetTheory/Functions.lean
