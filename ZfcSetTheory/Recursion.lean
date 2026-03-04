@@ -94,26 +94,16 @@ namespace SetUniverse
     theorem zero_in_succ_nat (n : U) (hn : n ∈ ω) : (∅ : U) ∈ σ n := by
       rw [mem_succ_iff_local]
       have hn_nat : isNat n := mem_Omega_is_Nat n hn
-      cases nat_is_zero_or_succ n hn_nat with
-      | inl hz =>
-        -- Caso n = 0: 0 ∈ {0} ↔ 0 = 0
-        right; rw [hz]
-      | inr hs =>
-        -- Caso n = σ k: 0 ∈ n (pues n = {0, ..., k})
-        obtain ⟨k, hk⟩ := hs
-        left
-        rw [hk, successor_is_specified]
-        left
-        -- 0 is an element of every natural number k for k ≠ 0
-        -- This follows from the von Neumann construction
-        have hk_nat : isNat k := mem_Omega_is_Nat k (Omega_closed_under_pred n hn hk.symm)
-        have : (∅ : U) ∈ k := by
-          cases nat_is_zero_or_succ k hk_nat with
-          | inl hz => rw [hz]; exact absurd hz (not_succ_eq_zero n (hk.symm))
-          | inr hsk =>
-            obtain ⟨k', hk'⟩ := hsk
-            rw [hk']; exact Or.inl (by sorry)
-        exact this
+      by_cases h : n = ∅
+      · right; rw [h]
+      · left; exact zero_mem_of_nat_nonempty n hn_nat h
+
+    /-- Si k ∈ n (ambos naturales), entonces σ k ∈ σ n -/
+    theorem succ_mem_succ_of_mem (k n : U) (hk_nat : isNat k) (hn_nat : isNat n)
+        (hk : k ∈ n) : σ k ∈ σ n := by
+      rw [mem_succ_iff_local]
+      exact nat_subset_mem_or_eq (σ k) n (nat_successor_is_nat k hk_nat) hn_nat
+        (no_nat_between k n hk_nat hn_nat hk)
 
     /-! ============================================================ -/
     /-! ### 1. DEFINICIÓN DE CÓMPUTO LOCAL ### -/
@@ -135,28 +125,16 @@ namespace SetUniverse
         apply Restriction_is_function f (σ (σ n)) A (σ n) hf.1 (subset_succ_local (σ n))
       · constructor
         · -- f(0) = a.
-          -- Probamos 0 ∈ σ n para usar Restriction_apply
-          have h_zero_in : (∅ : U) ∈ σ n := by
-            rw [mem_succ_iff_local]
-            have h_z : isNat (∅ : U) := mem_Omega_is_Nat ∅ zero_in_Omega
-            have hn_nat : isNat n := mem_Omega_is_Nat n hn
-            cases nat_is_zero_or_succ n hn_nat with
-            | inl hz => right; rw [hz]
-            | inr hs =>
-              obtain ⟨k, hk⟩ := hs
-              -- n = σ k, so 0 ∈ σ k since 0 ∈ k or 0 = k
-              left
-              rw [hk]
-              -- 0 ∈ σ k, and since 0 ∈ k for any k ∈ ω with k ≠ 0
-              sorry
-
+          have h_zero_in : (∅ : U) ∈ σ n := zero_in_succ_nat n hn
           rw [Restriction_apply f (σ n) (∅ : U) h_zero_in]
           exact hf.2.1
         · -- Paso recursivo
           intro k hk
           -- Necesitamos k ∈ σ n y σ k ∈ σ n para usar Restriction_apply
+          have hn_nat : isNat n := mem_Omega_is_Nat n hn
+          have hk_nat : isNat k := nat_element_is_nat n k hn_nat hk
           have h_k_in : k ∈ σ n := subset_succ_local n k hk
-          have h_sk_in : σ k ∈ σ n := nat_succ_mem_succ_of_mem n hn k hk
+          have h_sk_in : σ k ∈ σ n := succ_mem_succ_of_mem k n hk_nat hn_nat hk
 
           rw [Restriction_apply f (σ n) (σ k) h_sk_in]
           rw [Restriction_apply f (σ n) k h_k_in]
@@ -250,10 +228,12 @@ namespace SetUniverse
                     exact zero_mem_of_nat_nonempty n hn_nat h
                  rw [Restriction_apply f (σ n) ∅ h_empty_in_succ]; exact hf.2.1
                · intro k hk
-                 rw [Restriction_apply f (σ n) (σ k) (by sorry)]; -- σ k ∈ σ n
-                 rw [Restriction_apply f (σ n) k (by sorry)];
-                exact hf.2.2 k (subset_succ_local n k hk)
-                 exact hf.2.2 k (by sorry) -- k ∈ n ⊆ σ n
+                 have hn_nat : isNat n := mem_Omega_is_Nat n hn_omega
+                 have hk_nat : isNat k := nat_element_is_nat n k hn_nat hk
+                 have h_sk_in : σ k ∈ σ n := succ_mem_succ_of_mem k n hk_nat hn_nat hk
+                 rw [Restriction_apply f (σ n) (σ k) h_sk_in]
+                 rw [Restriction_apply f (σ n) k (subset_succ_local n k hk)]
+                 exact hf.2.2 k (subset_succ_local n k hk)
 
           have h1 : isComputation n f₁_res A a g := h_res_comp f₁ hf₁
           have h2 : isComputation n f₂_res A a g := h_res_comp f₂ hf₂

@@ -130,8 +130,8 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 - **CURRENT-STATUS-PROJECT.md**: Complete project status document
   - Executive summary with statistics
   - Recent achievements details
-  - Status by file (19 without `sorry`, 4 with `sorry`)
-  - Analysis of each pending `sorry` with difficulty level
+  - Status by file (24/25 without `sorry`, 1 with `sorry`)
+  - Analysis of pending `sorry` in Recursion.lean
   - Architecture and dependency hierarchy
   - Decisiones de diseño importantes
   - Próximos pasos sugeridos con estimaciones de tiempo

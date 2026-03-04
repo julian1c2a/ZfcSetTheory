@@ -59,75 +59,42 @@
 | Archivo | Líneas | Requisitos AIDER-AI-GUIDE |
 |---------|--------|---------------------------|
 | AIDER-AI-GUIDE.md | 116 | ✅ 13 requisitos definidos |
-| REFERENCE.md | 4,521 | ✅ Todos cumplidos |
+| REFERENCE.md | 5,600+ | ✅ Todos cumplidos |
 | README.md | 204 | ✅ Actualizado |
-| CURRENT-STATUS-PROJECT.md | 435 | ✅ Actualizado |
-| DEPENDENCIES.md | 716 | ✅ 24 módulos |
-| CHANGELOG.md | 263 | ✅ Timestamps completos |
+| CURRENT-STATUS-PROJECT.md | 450+ | ✅ Actualizado |
+| DEPENDENCIES.md | 730+ | ✅ 25 módulos |
+| CHANGELOG.md | 300+ | ✅ Timestamps completos |
 
 ### 🎯 Estado por Categoría
 
-**Axiomas ZFC** (6/9):
+**Axiomas ZFC** (7/9):
 
-- ✅ Extensionalidad, Existencia, Especificación, Par, Unión, Potencia
-- ⏳ Infinito (implementado), Reemplazo, Fundación (pendientes)
+- ✅ Extensionalidad, Existencia, Especificación, Par, Unión, Potencia, Infinito
+- ⏳ Reemplazo, Fundación (pendientes)
 
 **Estructuras Algebraicas**:
 
 - ✅ Boolean Algebra completa
 - ✅ Boolean Ring completo
 - ✅ PowerSetAlgebra completo
-- ✅ Relations.lean 100% completo
-- ✅ Functions.lean 100% completo (¡recién completado!)
+
 **Relaciones y Funciones**:
 
 - ✅ Producto Cartesiano completo
 - ✅ Relations.lean 100% completo (0 `sorry`)
-- ✅ Functions.lean 100% completo (0 `sorry`) - ¡Recién completado!
+- ✅ Functions.lean 100% completo (0 `sorry`)
 - ✅ `domain`/`range`/`imag` completamente probados
 
 **Teoría de Números**:
 
-- ✅ NaturalNumbers.lean completo
-- ⚠️ Recursion.lean (7 errores de compilación + 1 `sorry` - necesita revisión de dependencias)
+- ✅ NaturalNumbers.lean completo (predecessor exportado)
+- ✅ Infinity.lean completo (nat_mem_wf probado, exportado)
+- ✅ PeanoImport.lean completo (isomorfismo Von Neumann ↔ Peano)
+- ⚠️ Recursion.lean (12 `sorry` activos — teorema de recursión pendiente)
 
 **Cardinalidad**:
 
-- 🔶 Cardinality.lean (1 `sorry` en teorema CSB)
-
-### ⚠️ Notas sobre Warnings Markdown
-
-Los errores mostrados son advertencias de linting de Markdown (formatos de tabla, enlaces vacíos, etc.). **No afectan la funcionalidad del proyecto** y son cuestiones estéticas menores.
-
-#### Detalles de Warnings de Markdown
-
-**README.md**:
-
-- MD042: Enlaces vacíos en badges de Build Status y Coverage
-- MD060: Espacios en pipes de tablas
-- MD040: Bloques de código sin lenguaje especificado
-- MD036: Énfasis usado en lugar de encabezado para autor
-
-**REFERENCE.md**:
-
-- MD060: Espacios en pipes de tablas
-- MD036: Énfasis en actualización anterior
-
-**CURRENT-STATUS-PROJECT.md**:
-
-- MD040: Bloques de código sin lenguaje especificado (3 casos)
-
-**DEPENDENCIES.md**:
-
-- MD040: Bloque de código sin lenguaje especificado
-
-**CHANGELOG.md**:
-
-- MD024: Encabezados duplicados (múltiples secciones "Añadido", "Cambiado", "Mejorado")
-
-**LICENSE**:
-
-- MD041: Primera línea no es un encabezado H1
+- ✅ Cardinality.lean 100% completo (Cantor + CSB demostrados, 0 sorry)
 
 ---
 
@@ -135,25 +102,14 @@ Los errores mostrados son advertencias de linting de Markdown (formatos de tabla
 
 El proyecto está en **excelente estado**:
 
-- ✅ Compilación exitosa sin errores
-- ✅ ~98% de pruebas completas (mejorado)
-- ✅ Solo 2 `sorry` pendientes (reducido de 4)
-- ✅ Relations.lean ahora 100% completo
+- ✅ Compilación exitosa sin errores (28/28 jobs)
+- ✅ 24/25 módulos 100% completos (0 sorry)
 - ✅ Documentación completa y actualizada según AIDER-AI-GUIDE.md
-- ✅ 24 módulos funcionando correctamente
-- ⚠️ Warnings de Markdown son solo cuestiones estéticas menores
+- ⚠️ Solo Recursion.lean pendiente (12 sorry en el teorema principal)
 
-**Próximos pasos sugeridos**:
+**Próximo paso principal**:
 
-1. Resolver `inverse_is_specified` en Functions.lean
-2. Completar teorema CSB en Cardinality.lean
-3. **Arreglar Recursion.lean**: Resolver errores de referencias a identificadores no definidos
-   - `domain_is_specified` (líneas 104, 105)
-   - `isOrderedPair_iff` (líneas 114, 141)
-   - `OrderedPair_in_CartesianProduct` (línea 176)
-   - Verificar imports y dependencias del módulo
-4. Completar paso inductivo en Recursion.lean
-5. Los 2 `sorry` legacy en Relations.lean son opcionales (hay alternativas funcionales)
+1. Completar `Recursion.lean` — resolver los 12 `sorry` en el teorema de recursión sobre ℕ
 
 ---
 

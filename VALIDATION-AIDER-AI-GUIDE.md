@@ -1,7 +1,7 @@
 # Validación de Requisitos AIDER-AI-GUIDE.md
 
-**Estado de validación**: 2026-02-12 18:45  
-**Autor**: Julián Calderón Almendros  
+**Estado de validación**: 2026-03-04 12:00
+**Autor**: Julián Calderón Almendros
 **Proyecto**: ZfcSetTheory
 
 ---
@@ -41,9 +41,9 @@
 
 **Ejemplo**:
 
-```
+```text
 **Subconjunto (⊆)**
-- Matemático: A ⊆ B  
+- Matemático: A ⊆ B
 - Lean4: `A ⊆ B` o `isSubset A B`
 - Dependencias: Extension.lean, Pairing.lean
 ```
@@ -160,7 +160,7 @@
 
 | Requisito | Status | Archivo | Descripción |
 |-----------|--------|---------|-------------|
-| (1) Módulos | ✅ | REFERENCE.md 1.1 | 24 módulos documentados |
+| (1) Módulos | ✅ | REFERENCE.md 1.1 | 25 módulos documentados |
 | (2) Dependencias | ✅ | Múltiples | Tabla y gráfico mermaid |
 | (3) Namespaces | ✅ | REFERENCE.md 1.1 | Columna dedicada |
 | (4) Axiomas ref. | ✅ | REFERENCE.md 2 | Ubicación y orden |
@@ -171,48 +171,51 @@
 | (6.3) Teoremas deps. | ✅ | REFERENCE.md | Dependencias explícitas |
 | (7) Solo probado | ✅ | REFERENCE.md | Sin TODOs |
 | (8) Actualización cont. | ✅ | REFERENCE.md | Timestamp presente |
-| (9) Referencia única | ✅ | REFERENCE.md | 4698 líneas suficientes |
-| (10) Timestamps | ✅ | 5 archivos | Formato ISO 8601 |
+| (9) Referencia única | ✅ | REFERENCE.md | 5600+ líneas suficientes |
+| (10) Timestamps | ✅ | 7 archivos | Formato ISO 8601 |
 | (11) Autoría | ✅ | 3 archivos | "Julián Calderón Almendros" |
 | (12) Créditos | ✅ | README.md | Fuentes y herramientas |
 | (13) Licencia | ✅ | 4 archivos | MIT indicada |
-| (14) Cabeceras .lean | ✅ | 23/23 | 100% con Copyright (c) 2025 |
+| (14) Cabeceras .lean | ✅ | 25/25 | 100% con Copyright (c) 2025/2026 |
 
 ---
 
 ## 🎯 Estado Final
 
-**✅ TODOS LOS REQUISITOS DE AIDER-AI-GUIDE.md CUMPLIDOS**
+### ✅ TODOS LOS REQUISITOS DE AIDER-AI-GUIDE.md CUMPLIDOS
 
 ### Archivos Actualizados
 
-1. ✅ REFERENCE.md (timestamp: 2026-02-12 18:45)
-2. ✅ CURRENT-STATUS-PROJECT.md (timestamp: 2026-02-12 18:45)
-3. ✅ CHANGELOG.md (entry: 2026-02-12 18:45)
-4. ✅ TEMPORAL.md (timestamp: 2026-02-12 18:45)
-5. ✅ DEPENDENCIES.md (timestamp: 2026-02-12 18:45)
-6. ✅ README.md (timestamp: 2026-02-12 18:45)
-7. ✅ AIDER-AI-GUIDE.md (timestamp: 2026-02-12 18:45)
-8. ✅ README.md (créditos completos)
-9. ✅ Todos los archivos .lean (cabeceras verificadas)
+1. ✅ REFERENCE.md (timestamp: 2026-03-04 12:00)
+2. ✅ CURRENT-STATUS-PROJECT.md (timestamp: 2026-03-04 12:00)
+3. ✅ CHANGELOG.md (entry: 2026-03-04 12:00)
+4. ✅ TEMPORAL.md (timestamp: 2026-03-04 12:00)
+5. ✅ DEPENDENCIES.md (timestamp: 2026-03-04 12:00)
+6. ✅ README.md (timestamp: 2026-03-04 12:00)
+7. ✅ Todos los archivos .lean (cabeceras verificadas)
 
 ### Compilación del Proyecto
 
-```
-✅ Build completed successfully (24 jobs)
-- 23 archivos .lean compilados
+```text
+✅ Build completed successfully (28 jobs — incluye peanolib)
+- 24 archivos .lean del proyecto compilados
 - 1 módulo principal compilado
 - 0 errores de compilación
-- 1 sorry documentado (Cardinality.lean: teorema teórico avanzado)
+- 0 sorry en 24/25 módulos
+- 12 sorry en Recursion.lean (teorema de recursión pendiente)
 ```
 
-### Próximos Pasos Opcionales
+### Nuevo módulo (2026-03-04)
 
-- [ ] Ampliar documentación de pruebas existentes
-- [ ] Agregar ejemplos de uso en README.md
+- ✅ PeanoImport.lean: isomorfismo Von Neumann ↔ Peano (2 def + 7 teoremas)
+- ✅ Infinity.lean: nat_mem_wf completamente probado y exportado
+- ✅ NaturalNumbers.lean: predecessor y teoremas relacionados exportados
+- ✅ Cardinality.lean: confirmado 0 sorry (Cantor + CSB completos)
+- ✅ Relations.lean: confirmado 0 sorry
+- ✅ Functions.lean: confirmado 0 sorry
 
 ---
 
-**Documento generado**: 2026-02-12 18:45  
-**Validador**: Verificación automática de conformidad  
+**Documento generado**: 2026-03-04 12:00
+**Validador**: Verificación automática de conformidad
 **Proyecto**: ZfcSetTheory - Formal Axiomatic Set Theory in Lean 4
