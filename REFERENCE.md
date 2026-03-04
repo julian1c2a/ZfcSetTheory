@@ -1,6 +1,6 @@
 # Referencia Técnica - ZfcSetTheory
 
-*Última actualización: 2026-02-12 18:45*  
+*Última actualización: 2026-03-04 12:00*
 **Autor**: Julián Calderón Almendros
 
 ## 📋 Cumplimiento con AIDER-AI-GUIDE.md
@@ -24,9 +24,12 @@ Este documento cumple con todos los requisitos especificados en [AIDER-AI-GUIDE.
 ✅ **(8)** Actualización continua al cargar archivos .lean  
 ✅ **(9)** Suficiente como única referencia (no requiere cargar proyecto completo)
 
-**Estado de verificación**: ✅ TODOS LOS MÓDULOS 100% COMPLETOS - 0 `sorry` activos  
-✅ **NaturalNumbers.lean completado (0 sorry, 36 teoremas principales, 100% proyectado)** - Actualizado 2026-02-12 18:45  
-✅ **Recursion.lean completado (0 sorry, 0 errores de tipo)** - Actualizado 2026-02-12 17:35  
+**Estado de verificación**: ✅ TODOS LOS MÓDULOS 100% COMPLETOS - 0 `sorry` activos
+✅ **PeanoImport.lean completado (0 sorry, isomorfismo Von Neumann ↔ Peano, 100% proyectado)** - Actualizado 2026-03-04 12:00
+✅ **Infinity.lean: nat_mem_wf demostrado (sin sorry, añadido a exports)** - Actualizado 2026-03-04 12:00
+✅ **NaturalNumbers.lean: predecessor y teoremas exportados** - Actualizado 2026-03-04 12:00
+✅ **NaturalNumbers.lean completado (0 sorry, 36 teoremas principales, 100% proyectado)** - Actualizado 2026-02-12 18:45
+✅ **Recursion.lean completado (0 sorry, 0 errores de tipo)** - Actualizado 2026-02-12 17:35
 ✅ **Functions.lean completado (0 sorry)** - Actualizado 2026-02-12 14:52
 
 ---
@@ -56,6 +59,7 @@ Este documento cumple con todos los requisitos especificados en [AIDER-AI-GUIDE.
 | `Cardinality.lean` | `SetUniverse.Cardinality` | `Functions` + todos los anteriores | 🔶 Parcial |
 | `NaturalNumbers.lean` | `SetUniverse.NaturalNumbers` | `Cardinality` + todos los anteriores | ✅ Completo |
 | `Infinity.lean` | `SetUniverse.InfinityAxiom` | `NaturalNumbers` + todos los anteriores | ✅ Completo |
+| `PeanoImport.lean` | `SetUniverse` | `NaturalNumbers`, `Infinity`, `PeanoNatLib.PeanoNatAxioms` | ✅ Completo |
 | `GeneralizedDeMorgan.lean` | `SetUniverse.GeneralizedDeMorgan` | `PowerSetAlgebra` + anteriores | ✅ Completo |
 | `GeneralizedDistributive.lean` | `SetUniverse.GeneralizedDistributive` | `PowerSetAlgebra` + anteriores | ✅ Completo |
 | `SetOrder.lean` | `SetUniverse.SetOrder` | `Relations` + anteriores | ✅ Completo |
@@ -1187,6 +1191,23 @@ theorem three_in_inductive (I : U) (hI : isInductive I) : σ (σ (σ (∅ : U)))
 
 **Dependencias**: `isInductive`, `successor`
 
+#### Predecesor (predecessor)
+
+**Ubicación**: `NaturalNumbers.lean`
+**Orden**: 14ª definición principal
+**Namespace**: `SetUniverse.NaturalNumbers`
+
+**Enunciado Matemático**: El predecesor de un número natural n > 0 es el único k tal que σ k = n. Para n = ∅ (cero) devuelve ∅ por convención clásica.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def predecessor (n : U) : U :=
+  if h : ∃ k : U, σ k = n then Classical.choose h else ∅
+```
+
+**Dependencias**: `successor`, `Classical.choose`
+
 ---
 
 ## 4. Teoremas Principales
@@ -2227,6 +2248,48 @@ notation:max X:max " ^∁[ " A:max " ]" => Complement A X
 ```
 
 **Dependencias**: `Difference`
+
+### 3.21 PeanoImport.lean
+
+**Módulo**: `ZfcSetTheory.PeanoImport`
+**Namespace**: `SetUniverse`
+**Dependencias**: `ZfcSetTheory.NaturalNumbers`, `ZfcSetTheory.Infinity`, `PeanoNatLib.PeanoNatAxioms`
+**Descripción**: Establece el isomorfismo entre los números naturales de Von Neumann (definidos en este proyecto) y los naturales de Peano de la librería externa `peanolib`. Proporciona las funciones de conversión `fromPeano` y `toPeano`, y demuestra que son inversas mutuas (biyección).
+
+**Abre los namespaces**: `Classical`, `SetUniverse.ExtensionAxiom`, `SetUniverse.ExistenceAxiom`, `SetUniverse.SpecificationAxiom`, `SetUniverse.PairingAxiom`, `SetUniverse.UnionAxiom`, `SetUniverse.PowerSetAxiom`, `SetUniverse.OrderedPairExtensions`, `SetUniverse.CartesianProduct`, `SetUniverse.Relations`, `SetUniverse.Functions`, `SetUniverse.Cardinality`, `SetUniverse.NaturalNumbers`
+
+#### Conversión Peano → Von Neumann (fromPeano)
+
+**Ubicación**: `PeanoImport.lean`, línea 35
+**Orden**: 1ª definición principal
+
+**Enunciado Matemático**: Convierte un número natural de Peano `p : Peano.ℕ₀` en su representación de Von Neumann: `fromPeano(0) = ∅`, `fromPeano(succ p) = σ(fromPeano(p))`.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def fromPeano : Peano.ℕ₀ → U
+  | Peano.ℕ₀.zero    => (∅ : U)
+  | Peano.ℕ₀.succ n' => successor (fromPeano n')
+```
+
+**Dependencias**: `EmptySet`, `successor`, `Peano.ℕ₀`
+
+#### Conversión Von Neumann → Peano (toPeano)
+
+**Ubicación**: `PeanoImport.lean`, línea 96
+**Orden**: 2ª definición principal
+
+**Enunciado Matemático**: Convierte un número natural de Von Neumann `n : U` (con prueba `hn : isNat n`) en su representante de Peano, usando elección clásica sobre `fromPeano_surjective`.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def toPeano (n : U) (hn : isNat n) : Peano.ℕ₀ :=
+  Classical.choose (fromPeano_surjective n hn)
+```
+
+**Dependencias**: `fromPeano_surjective`, `Classical.choose`, `isNat`
 
 ## 4. Teoremas Principales por Módulo
 
@@ -3873,6 +3936,24 @@ theorem Omega_no_maximum : ∀ n : U, n ∈ ω → ∃ m : U, m ∈ ω ∧ n ∈
 
 **Dependencias**: `Omega`, `successor`, `succ_in_Omega`, `mem_successor_self`
 
+#### Buena Fundación de la Membresía en ω (nat_mem_wf)
+
+**Ubicación**: `Infinity.lean`
+**Orden**: 11º teorema principal (TEOREMA DE BUENA FUNDACIÓN)
+**Namespace**: `SetUniverse.InfinityAxiom`
+
+**Enunciado Matemático**: La relación de membresía restringida a ω es bien fundada: la relación R(a, b) ⟺ a ∈ ω ∧ b ∈ ω ∧ a ∈ b es bien fundada (toda cadena descendente termina).
+
+**Firma Lean4**:
+
+```lean
+theorem nat_mem_wf : WellFounded (fun a b : U => a ∈ ω ∧ b ∈ ω ∧ a ∈ b)
+```
+
+**Dependencias**: `Omega`, `strong_induction_principle`, `SpecSet`, `Acc`
+
+**Nota de implementación**: Los elementos fuera de ω son vacuosamente accesibles (ningún `y` satisface `R y a` si `a ∉ ω`). Los elementos de ω se prueban accesibles por inducción fuerte sobre ω, construyendo `S = SpecSet ω (Acc R)` y aplicando `strong_induction_principle`.
+
 ### 4.10 GeneralizedDeMorgan.lean
 
 #### Primera Ley de De Morgan Generalizada
@@ -4960,6 +5041,126 @@ theorem PowerSet_complement_universe (A : U) : (A ^∁[ A ]) = ∅
 
 **Dependencias**: `Complement`, `EmptySet`, `Difference_self_empty`
 
+### 4.17 PeanoImport.lean
+
+**Módulo**: `ZfcSetTheory.PeanoImport`
+**Namespace**: `SetUniverse`
+**Actualizado**: 2026-03-04 12:00
+
+#### fromPeano mapea Peano en Von Neumann (fromPeano_is_nat)
+
+**Ubicación**: `PeanoImport.lean`, línea 40
+**Orden**: 1º teorema principal
+
+**Enunciado Matemático**: Para todo `p : Peano.ℕ₀`, `fromPeano(p)` es un número natural de Von Neumann: `isNat(fromPeano(p))`.
+
+**Firma Lean4**:
+
+```lean
+theorem fromPeano_is_nat (n : Peano.ℕ₀) : isNat (fromPeano (U := U) n)
+```
+
+**Dependencias**: `fromPeano`, `isNat`, `zero_is_nat`, `nat_successor_is_nat`
+
+#### fromPeano es Inyectiva (fromPeano_injective)
+
+**Ubicación**: `PeanoImport.lean`, línea 46
+**Orden**: 2º teorema principal
+
+**Enunciado Matemático**: `fromPeano` es inyectiva: si `fromPeano(m) = fromPeano(n)` entonces `m = n`.
+
+**Firma Lean4**:
+
+```lean
+theorem fromPeano_injective : Function.Injective (fromPeano (U := U))
+```
+
+**Dependencias**: `fromPeano`, `successor_nonempty`, `successor_injective`, `fromPeano_is_nat`
+
+**Nota de implementación**: `Function.Injective` usa ligadores estrictos-implícitos `⦃⦄`; en la hipótesis de inducción `ih : ∀ ⦃b⦄, fromPeano m' = fromPeano b → m' = b`, Lean infiere `b` del tipo de la prueba, por lo que se usa `ih proof` (no `ih n' proof`). `successor_injective` requiere argumentos `isNat` explícitos.
+
+#### fromPeano es Sobreyectiva (fromPeano_surjective)
+
+**Ubicación**: `PeanoImport.lean`, línea 71
+**Orden**: 3º teorema principal
+
+**Enunciado Matemático**: Todo número natural de Von Neumann está en la imagen de `fromPeano`: si `isNat(n)` entonces existe `p : Peano.ℕ₀` tal que `fromPeano(p) = n`.
+
+**Firma Lean4**:
+
+```lean
+theorem fromPeano_surjective (n : U) (hn : isNat n) :
+    ∃ p : Peano.ℕ₀, fromPeano (U := U) p = n
+```
+
+**Dependencias**: `fromPeano`, `isNat`, `strong_induction_principle`, `SpecSet`, `Nat_in_Omega`, `mem_Omega_is_Nat`, `nat_is_zero_or_succ`, `mem_successor_self`
+
+**Nota de implementación**: Demostrado por inducción fuerte sobre `S = SpecSet ω (fun m => ∃ p, fromPeano p = m)`, aplicando `strong_induction_principle`.
+
+#### fromPeano(toPeano(n)) = n (fromPeano_toPeano)
+
+**Ubicación**: `PeanoImport.lean`, línea 100
+**Orden**: 4º teorema principal
+
+**Enunciado Matemático**: `toPeano` es sección derecha de `fromPeano`: para todo Von Neumann natural `n`, `fromPeano(toPeano(n, hn)) = n`.
+
+**Firma Lean4**:
+
+```lean
+theorem fromPeano_toPeano (n : U) (hn : isNat n) :
+    fromPeano (U := U) (toPeano n hn) = n
+```
+
+**Dependencias**: `fromPeano`, `toPeano`, `fromPeano_surjective`, `Classical.choose_spec`
+
+#### toPeano(fromPeano(p)) = p (toPeano_fromPeano)
+
+**Ubicación**: `PeanoImport.lean`, línea 105
+**Orden**: 5º teorema principal
+
+**Enunciado Matemático**: `toPeano` es sección izquierda de `fromPeano`: para todo Peano natural `p`, `toPeano(fromPeano(p), _) = p`.
+
+**Firma Lean4**:
+
+```lean
+theorem toPeano_fromPeano (p : Peano.ℕ₀) :
+    toPeano (fromPeano (U := U) p) (fromPeano_is_nat p) = p
+```
+
+**Dependencias**: `toPeano`, `fromPeano`, `fromPeano_injective`, `fromPeano_toPeano`, `fromPeano_is_nat`
+
+#### toPeano es Inyectiva (toPeano_injective)
+
+**Ubicación**: `PeanoImport.lean`, línea 110
+**Orden**: 6º teorema principal
+
+**Enunciado Matemático**: `toPeano` es inyectiva en los naturales de Von Neumann: si `toPeano(m, hm) = toPeano(n, hn)` entonces `m = n`.
+
+**Firma Lean4**:
+
+```lean
+theorem toPeano_injective {m n : U} (hm : isNat m) (hn : isNat n)
+    (h : toPeano m hm = toPeano n hn) : m = n
+```
+
+**Dependencias**: `toPeano`, `fromPeano_toPeano`
+
+#### toPeano es Sobreyectiva (toPeano_surjective)
+
+**Ubicación**: `PeanoImport.lean`, línea 115
+**Orden**: 7º teorema principal
+
+**Enunciado Matemático**: `toPeano` es sobreyectiva: para todo Peano natural `p` existe un Von Neumann natural `n` tal que `toPeano(n, _) = p`.
+
+**Firma Lean4**:
+
+```lean
+theorem toPeano_surjective (p : Peano.ℕ₀) :
+    ∃ (n : U) (hn : isNat n), toPeano n hn = p
+```
+
+**Dependencias**: `toPeano`, `fromPeano`, `fromPeano_is_nat`, `toPeano_fromPeano`
+
 ## 5. Notación y Sintaxis
 
 ### 5.1 Operadores Básicos
@@ -5477,8 +5678,8 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 
 ---
 
-*Última actualización: 2026-02-12 18:45 - Completada proyección íntegra de NaturalNumbers.lean (13 def + 36 teoremas + exports)*
+*Última actualización: 2026-03-04 12:00 - Proyección de PeanoImport.lean (2 def + 7 teoremas), nat_mem_wf en Infinity.lean, predecessor en NaturalNumbers.lean*
 
-*Actualización anterior: 2026-02-11 - Completado módulo Functions.lean*
+*Actualización anterior: 2026-02-12 18:45 - Completada proyección íntegra de NaturalNumbers.lean (13 def + 36 teoremas + exports)*
 
 *Este documento contiene únicamente construcciones y teoremas que están completamente implementados y demostrados en el código Lean 4. La proyección se actualiza conforme se agregan archivos al contexto de trabajo.*
