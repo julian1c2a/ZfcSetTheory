@@ -1658,11 +1658,15 @@ namespace SetUniverse
         (G : U) (hG_func : isFunctionFromTo G ω A) (hG_zero : apply G (∅ : U) = a)
         (hG_succ : ∀ n, n ∈ ω → apply G (σ n) = apply g (apply G n)) :
         G = RecursiveFn A a g ha hg := by
-      have hG : isFunctionFromTo G ω A ∧ apply G (∅ : U) = a ∧
-                ∀ n, n ∈ ω → apply G (σ n) = apply g (apply G n) :=
+      have hG_prop : isFunctionFromTo G ω A ∧ apply G (∅ : U) = a ∧
+                     ∀ n, n ∈ ω → apply G (σ n) = apply g (apply G n) :=
         ⟨hG_func, hG_zero, hG_succ⟩
-      exact (RecursionTheorem A a g ha hg).unique hG
-        (Classical.choose_spec (ExistsUnique.exists (RecursionTheorem A a g ha hg)))
+      have hRF_prop := Classical.choose_spec (ExistsUnique.exists (RecursionTheorem A a g ha hg))
+      obtain ⟨F, _, hF_unique⟩ := RecursionTheorem A a g ha hg
+      have hRF_eq_F : RecursiveFn A a g ha hg = F := by
+        unfold RecursiveFn; exact hF_unique _ hRF_prop
+      rw [hRF_eq_F]
+      exact hF_unique G hG_prop
 
   end Recursion
 
