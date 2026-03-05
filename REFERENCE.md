@@ -1,6 +1,6 @@
 # Referencia Técnica - ZfcSetTheory
 
-*Última actualización: 2026-03-04 12:00*
+*Última actualización: 2026-03-05 10:00*
 **Autor**: Julián Calderón Almendros
 
 ## 📋 Cumplimiento con AIDER-AI-GUIDE.md
@@ -29,7 +29,7 @@ Este documento cumple con todos los requisitos especificados en [AIDER-AI-GUIDE.
 ✅ **Infinity.lean: nat_mem_wf demostrado (sin sorry, añadido a exports)** - Actualizado 2026-03-04 12:00
 ✅ **NaturalNumbers.lean: predecessor y teoremas exportados** - Actualizado 2026-03-04 12:00
 ✅ **NaturalNumbers.lean completado (0 sorry, 36 teoremas principales, 100% proyectado)** - Actualizado 2026-02-12 18:45
-✅ **Recursion.lean completado (0 sorry, 0 errores de tipo)** - Actualizado 2026-02-12 17:35
+✅ **Recursion.lean completado (0 sorry, 0 errores de tipo)** - Actualizado 2026-03-05 10:00 (RecursionTheorem 100% demostrado sin sorry; añadidos 5 lemas auxiliares globales + RecursionComputations + computations_are_compatible)
 ✅ **Functions.lean completado (0 sorry)** - Actualizado 2026-02-12 14:52
 
 ---
@@ -5614,11 +5614,130 @@ export CartesianProduct (
 
 ### 6.14 Recursion.lean
 
+**Namespace**: `SetUniverse.Recursion`
+**Última modificación**: 2026-03-05
+**Dependencias**: `NaturalNumbers`, `Functions`, `Relations`, `CartesianProduct`, `OrderedPair`, `Union`, `PowerSet` + anteriores
+
+#### Sección 0: Lemas Auxiliares Locales
+
+| Nombre | Descripción matemática | Firma Lean 4 |
+|--------|----------------------|--------------|
+| `function_domain_eq` | Si f : A → B entonces dom(f) = A | `function_domain_eq (f A B : U) (h : isFunctionFromTo f A B) : domain f = A` |
+| `mem_succ_iff_local` | x ∈ σ n ↔ x ∈ n ∨ x = n | `mem_succ_iff_local (n x : U) : x ∈ σ n ↔ x ∈ n ∨ x = n` |
+| `subset_succ_local` | n ⊆ σ n | `subset_succ_local (n : U) : n ⊆ σ n` |
+| `zero_in_succ_nat` | ∅ ∈ σ n para todo n ∈ ω | `zero_in_succ_nat (n : U) (hn : n ∈ ω) : (∅ : U) ∈ σ n` |
+| `succ_mem_succ_of_mem` | Si k ∈ n (ambos naturales) entonces σ k ∈ σ n | `succ_mem_succ_of_mem (k n : U) (hk_nat : isNat k) (hn_nat : isNat n) (hk : k ∈ n) : σ k ∈ σ n` |
+
+#### Sección 1: Definición de Cómputo Local
+
+**Definición** (`isComputation`): Un conjunto f es un *cómputo de longitud n* para la función recursiva con base a ∈ A y paso g : A → A si f : σ n → A, f(∅) = a, y ∀ k ∈ n, f(σ k) = g(f(k)).
+
+```lean
+def isComputation (n : U) (f : U) (A : U) (a : U) (g : U) : Prop :=
+  isFunctionFromTo f (σ n) A ∧
+  (apply f (∅ : U) = a) ∧
+  (∀ k, k ∈ n → apply f (σ k) = apply g (apply f k))
+```
+
+**Dependencias de construcción**: `isFunctionFromTo`, `apply`, `successor` (σ)
+
+| Nombre | Descripción matemática | Firma Lean 4 |
+|--------|----------------------|--------------|
+| `restriction_is_computation` | La restricción de un cómputo de longitud σ n a σ n es un cómputo de longitud n | `restriction_is_computation (A a g n : U) (hn : n ∈ ω) : ∀ f, isComputation (σ n) f A a g → isComputation n (Restriction f (σ n)) A a g` |
+
+#### Sección 2: Unicidad Local
+
+| Nombre | Descripción matemática | Firma Lean 4 |
+|--------|----------------------|--------------|
+| `computation_uniqueness` | Para cada n ∈ ω, el cómputo de longitud n es único: si f₁ y f₂ son cómputos de longitud n para (A, a, g), entonces f₁ = f₂ | `computation_uniqueness (A a g : U) : ∀ n, n ∈ ω → ∀ f₁ f₂, isComputation n f₁ A a g → isComputation n f₂ A a g → f₁ = f₂` |
+
+**Dependencias**: `induction_principle`, `ExtSet`, `apply_eq`, `apply_mem`, `OrderedPairSet_is_WellConstructed`, `Restriction_is_specified`, `Restriction_subset`, `restriction_is_computation`
+
+#### Sección 3: Compatibilidad y Uniones
+
+**Definiciones**:
+
+```lean
+-- Dos funciones son compatibles si coinciden en la intersección de sus dominios
+def areCompatible (f g : U) : Prop :=
+  ∀ x, x ∈ ((domain f) ∩ (domain g)) → apply f x = apply g x
+
+-- Una familia de funciones es un sistema compatible si son compatibles a pares
+def isCompatibleSystem (F : U) : Prop :=
+  ∀ f g, f ∈ F → g ∈ F → areCompatible f g
+```
+
+| Nombre | Descripción matemática | Firma Lean 4 |
+|--------|----------------------|--------------|
+| `union_compatible_is_function` | La unión de un sistema compatible de funciones es monovaluada | `union_compatible_is_function (F : U) (h_funcs : ∀ f, f ∈ F → ∃ A B, isFunctionFromTo f A B) (h_compat : isCompatibleSystem F) : isSingleValued (⋃ F)` |
+
+**Dependencias**: `UnionSet_is_specified`, `BinInter_is_specified`, `apply_eq`, `mem_domain`
+
+#### Sección 4: Existencia Local (Inducción)
+
+| Nombre | Descripción matemática | Firma Lean 4 |
+|--------|----------------------|--------------|
+| `computation_existence` | Para todo n ∈ ω, existe un cómputo de longitud n | `computation_existence (A a g : U) (ha : a ∈ A) (hg : isFunctionFromTo g A A) : ∀ n, n ∈ ω → ∃ f, isComputation n f A a g` |
+
+**Dependencias**: `induction_principle`, `Singleton`, `BinUnion_is_specified`, `Singleton_is_specified`, `apply_eq`, `apply_mem`, `Eq_of_OrderedPairs_given_projections`
+
+#### Sección 5: Lemas de Compatibilidad Global
+
+| Nombre | Descripción matemática | Firma Lean 4 |
+|--------|----------------------|--------------|
+| `succ_subset_omega` | Para todo n ∈ ω, σ n ⊆ ω | `succ_subset_omega (n : U) (hn : n ∈ ω) : (σ n) ⊆ ω` |
+| `computation_subset_omega_times_A` | Todo cómputo de longitud n ∈ ω es subconjunto de ω ×ₛ A | `computation_subset_omega_times_A (A a g n : U) (hn : n ∈ ω) (f : U) (hf : isComputation n f A a g) : f ⊆ ω ×ₛ A` |
+| `succ_subset_succ_of_mem` | Si n₁ ∈ n₂ (con n₂ natural), entonces σ n₁ ⊆ σ n₂ | `succ_subset_succ_of_mem (n₁ n₂ : U) (hn₂_nat : isNat n₂) (h : n₁ ∈ n₂) : σ n₁ ⊆ σ n₂` |
+| `restriction_computation_general` | Si n₁ ∈ n₂ y f es cómputo de longitud n₂, entonces f restringido a σ n₁ es cómputo de longitud n₁ | `restriction_computation_general (A a g n₁ n₂ : U) (hn₁ : n₁ ∈ ω) (hn₂_nat : isNat n₂) (hlt : n₁ ∈ n₂) (f : U) (hf : isComputation n₂ f A a g) : isComputation n₁ (Restriction f (σ n₁)) A a g` |
+
+**Definición** (`RecursionComputations`): El conjunto de todos los cómputos válidos para (A, a, g): el conjunto de funciones f ∈ 𝒫(ω ×ₛ A) tales que existe n ∈ ω con f un cómputo de longitud n.
+
+```lean
+noncomputable def RecursionComputations (A a g : U) : U :=
+  SpecSet (𝒫 (ω ×ₛ A)) (fun f => ∃ n, (n ∈ ω) ∧ (isComputation n f A a g))
+```
+
+**Dependencias de construcción**: `SpecSet`, `PowerSet` (𝒫), `CartesianProduct` (×ₛ), `isComputation`, `ω`
+
+| Nombre | Descripción matemática | Firma Lean 4 |
+|--------|----------------------|--------------|
+| `computations_are_compatible` | Los cómputos en RecursionComputations A a g son compatibles a pares (isCompatibleSystem) | `computations_are_compatible (A a g : U) : isCompatibleSystem (RecursionComputations A a g)` |
+
+**Dependencias de `computations_are_compatible`**: `SpecSet_is_specified`, `BinInter_is_specified`, `nat_trichotomy`, `restriction_computation_general`, `computation_uniqueness`, `Restriction_apply`, `function_domain_eq`
+
+#### Sección 6: Teorema de Recursión (Global)
+
+| Nombre | Descripción matemática | Firma Lean 4 |
+|--------|----------------------|--------------|
+| `RecursionTheorem` | **Teorema de Recursión**: Para todo conjunto A, a ∈ A y g : A → A, existe una única función F : ω → A tal que F(∅) = a y F(σ n) = g(F(n)) para todo n ∈ ω | `RecursionTheorem (A a g : U) (ha : a ∈ A) (hg : isFunctionFromTo g A A) : ∃! F, isFunctionFromTo F ω A ∧ (apply F (∅ : U) = a) ∧ (∀ n, n ∈ ω → apply F (σ n) = apply g (apply F n))` |
+
+**Descripción de la construcción**: F = ⋃(RecursionComputations A a g). La función F es la unión de todos los cómputos locales. La monovaluación sigue de `computations_are_compatible` + `union_compatible_is_function`. La unicidad se demuestra por inducción sobre ω usando `induction_principle`.
+
+**Dependencias**: `RecursionComputations`, `computations_are_compatible`, `union_compatible_is_function`, `computation_existence`, `computation_subset_omega_times_A`, `induction_principle`, `ExtSet`, `apply_eq`, `apply_mem`, `OrderedPairSet_is_WellConstructed`, `SpecSet_is_specified`, `PowerSet_is_specified`, `UnionSet_is_specified`
+
+#### Exports de Recursion.lean
+
 ```lean
 export Recursion (
   function_domain_eq
+  mem_succ_iff_local
+  subset_succ_local
+  zero_in_succ_nat
+  succ_mem_succ_of_mem
   isComputation
+  restriction_is_computation
   computation_uniqueness
+  areCompatible
+  isCompatibleSystem
+  union_compatible_is_function
+  computation_existence
+  succ_subset_omega
+  computation_subset_omega_times_A
+  succ_subset_succ_of_mem
+  restriction_computation_general
+  RecursionComputations
+  computations_are_compatible
+  RecursionTheorem
 )
 ```
 
@@ -5678,7 +5797,9 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 
 ---
 
-*Última actualización: 2026-03-04 12:00 - Proyección de PeanoImport.lean (2 def + 7 teoremas), nat_mem_wf en Infinity.lean, predecessor en NaturalNumbers.lean*
+*Última actualización: 2026-03-05 10:00 - Proyección completa de Recursion.lean: 5 lemas auxiliares globales (succ_subset_omega, computation_subset_omega_times_A, succ_subset_succ_of_mem, restriction_computation_general, computations_are_compatible), def RecursionComputations, y RecursionTheorem 100% demostrado sin sorry*
+
+*Actualización anterior: 2026-03-04 12:00 - Proyección de PeanoImport.lean (2 def + 7 teoremas), nat_mem_wf en Infinity.lean, predecessor en NaturalNumbers.lean*
 
 *Actualización anterior: 2026-02-12 18:45 - Completada proyección íntegra de NaturalNumbers.lean (13 def + 36 teoremas + exports)*
 
