@@ -3,7 +3,8 @@
     "allow": [
       "Bash(lake build ZfcSetTheory.PeanoImport)",
       "Bash(lake build)",
-      "Bash(lake env:*)"
+      "Bash(lake env:*)",
+      "Bash(lake build ZfcSetTheory.Recursion)"
     ]
   }
 }
