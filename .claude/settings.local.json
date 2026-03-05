@@ -4,7 +4,9 @@
       "Bash(lake build ZfcSetTheory.PeanoImport)",
       "Bash(lake build)",
       "Bash(lake env:*)",
-      "Bash(lake build ZfcSetTheory.Recursion)"
+      "Bash(lake build ZfcSetTheory.Recursion)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:github.com)"
     ]
   }
 }

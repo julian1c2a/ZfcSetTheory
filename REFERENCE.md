@@ -2254,7 +2254,8 @@ notation:max X:max " ^∁[ " A:max " ]" => Complement A X
 **Módulo**: `ZfcSetTheory.PeanoImport`
 **Namespace**: `SetUniverse`
 **Dependencias**: `ZfcSetTheory.NaturalNumbers`, `ZfcSetTheory.Infinity`, `PeanoNatLib.PeanoNatAxioms`
-**Descripción**: Establece el isomorfismo entre los números naturales de Von Neumann (definidos en este proyecto) y los naturales de Peano de la librería externa `peanolib`. Proporciona las funciones de conversión `fromPeano` y `toPeano`, y demuestra que son inversas mutuas (biyección).
+**Librería externa**: `peanolib` — ver [REFERENCE-PEANO.md](REFERENCE-PEANO.md) para la referencia técnica completa del proyecto Peano.
+**Descripción**: Establece la biyección entre los números naturales de Von Neumann (definidos en este proyecto) y los naturales de Peano de la librería externa `peanolib`. Proporciona las funciones de conversión `fromPeano` y `toPeano`, y demuestra que son inversas mutuas. **Nota**: Solo se prueba la biyección pura (injectividad + sobreyectividad + inversas). No se demuestra que sea un isomorfismo de semianillos (preservación de la suma) ni de orden (preservación de ≤). Esas extensiones quedan pendientes para `PeanoImport.lean`.
 
 **Abre los namespaces**: `Classical`, `SetUniverse.ExtensionAxiom`, `SetUniverse.ExistenceAxiom`, `SetUniverse.SpecificationAxiom`, `SetUniverse.PairingAxiom`, `SetUniverse.UnionAxiom`, `SetUniverse.PowerSetAxiom`, `SetUniverse.OrderedPairExtensions`, `SetUniverse.CartesianProduct`, `SetUniverse.Relations`, `SetUniverse.Functions`, `SetUniverse.Cardinality`, `SetUniverse.NaturalNumbers`
 
