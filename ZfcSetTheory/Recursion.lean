@@ -496,7 +496,7 @@ namespace SetUniverse
             (∀ n, n ∈ ω → apply F (σ n) = apply g (apply F n)) := by
 
       let Comps := RecursionComputations A a g
-      let F := ⋃ Comps
+      let F := (⋃ Comps)
 
       -- Paso 1: F es función (usando lemas de compatibilidad)
       -- Paso 2: Dominio de F es ω (porque ∀ n, n ∈ dom(f_n) ⊆ dom(F))
