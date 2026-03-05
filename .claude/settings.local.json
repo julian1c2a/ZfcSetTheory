@@ -6,7 +6,11 @@
       "Bash(lake env:*)",
       "Bash(lake build ZfcSetTheory.Recursion)",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(bash git-lock.bash lock ZfcSetTheory/Recursion.lean)",
+      "Bash(bash git-lock.bash unlock ZfcSetTheory/PeanoImport.lean)",
+      "Bash(bash git-lock.bash list)",
+      "Bash(bash git-lock.bash lock ZfcSetTheory/PeanoImport.lean)"
     ]
   }
 }

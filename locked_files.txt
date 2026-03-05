@@ -20,4 +20,4 @@ ZfcSetTheory/GeneralizedDistributive.lean
 ZfcSetTheory/Union.lean
 ZfcSetTheory/Infinity.lean
 ZfcSetTheory/NaturalNumbers.lean
-ZfcSetTheory/PeanoImport.lean
+ZfcSetTheory/Recursion.lean

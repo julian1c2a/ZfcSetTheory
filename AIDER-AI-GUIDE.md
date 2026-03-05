@@ -157,6 +157,31 @@ grep -n "Copyright (c) 2025" ZfcSetTheory/*.lean | wc -l
 
 ---
 
+## Sistema de Bloqueo de Archivos .lean
+
+### (15.) Política de archivos desbloqueados
+
+**Regla principal**: En todo momento, como máximo **un único archivo `.lean`** puede estar desbloqueado para edición.
+
+**Herramienta**: `git-lock.bash` en la raíz del proyecto.
+
+```bash
+bash git-lock.bash lock   ZfcSetTheory/Archivo.lean   # bloquea
+bash git-lock.bash unlock ZfcSetTheory/Archivo.lean   # desbloquea
+bash git-lock.bash list                                # muestra estado
+```
+
+**Protocolo de trabajo**:
+
+1. **Al inicio de sesión**: Verificar con `bash git-lock.bash list` qué archivos están desbloqueados. Si hay más de uno, bloquear todos excepto el que se va a editar.
+2. **Al cambiar de archivo**: Bloquear el archivo actual **antes** de desbloquear el siguiente.
+3. **Al final de la sesión**: Bloquear **todos** los archivos `.lean` modificados en esa sesión. No dejar ningún `.lean` desbloqueado entre sesiones.
+4. **Verificación al hacer commit**: El hook `pre-commit` rechaza commits que toquen archivos en `locked_files.txt`. Esto es una red de seguridad, no un sustituto del protocolo.
+
+**Consecuencia de violar la regla**: Si se detecta más de un archivo desbloqueado, bloquear todos y empezar de nuevo con el archivo correcto.
+
+---
+
 ## Cumplimiento de Requisitos
 
-Verificar que REFERENCE.md, archivos .lean y otros archivos de documentación cumplan con todos los puntos (1-14) antes de considerar la documentación completa y actualizada.
+Verificar que REFERENCE.md, archivos .lean y otros archivos de documentación cumplan con todos los puntos (1-15) antes de considerar la documentación completa y actualizada.

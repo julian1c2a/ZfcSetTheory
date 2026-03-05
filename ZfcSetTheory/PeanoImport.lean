@@ -116,4 +116,67 @@ namespace SetUniverse
       ∃ (n : U) (hn : isNat n), toPeano n hn = p :=
     ⟨fromPeano (U := U) p, fromPeano_is_nat p, toPeano_fromPeano p⟩
 
+  -- =========================================================================
+  -- Section 2: The bijection is an isomorphism of Peano algebras
+  -- =========================================================================
+
+  /-- `toPeano` maps ∅ to `Peano.ℕ₀.zero`.
+      Together with `toPeano_successor`, this shows the bijection is a
+      homomorphism of Peano algebras in both directions. -/
+  theorem toPeano_zero :
+      toPeano (∅ : U) zero_is_nat = Peano.ℕ₀.zero :=
+    -- fromPeano Peano.ℕ₀.zero = ∅ by definition, so fromPeano_toPeano gives
+    -- fromPeano (toPeano ∅ _) = ∅ = fromPeano ℕ₀.zero; injectivity concludes.
+    fromPeano_injective (fromPeano_toPeano (∅ : U) zero_is_nat)
+
+  /-- `toPeano` commutes with successor: the bijection is a homomorphism of
+      the successor structure in both directions. -/
+  theorem toPeano_successor (n : U) (hn : isNat n) :
+      toPeano (successor n) (nat_successor_is_nat n hn) =
+      Peano.ℕ₀.succ (toPeano n hn) := by
+    apply fromPeano_injective
+    -- Goal: fromPeano (toPeano (σ n) _) = fromPeano (ℕ₀.succ (toPeano n hn))
+    rw [fromPeano_toPeano]
+    -- Goal: σ n = fromPeano (ℕ₀.succ (toPeano n hn))
+    -- fromPeano (ℕ₀.succ p) = successor (fromPeano p) by definition
+    show successor n = successor (fromPeano (U := U) (toPeano n hn))
+    rw [fromPeano_toPeano]
+
+  -- =========================================================================
+  -- Section 3: Recursion transport theorems
+  -- =========================================================================
+
+  /-- **Recursion transport (VN → Peano)**: any Von Neumann recursive function
+      `F : ω → U` induces a Peano recursive function via `fromPeano`.
+
+      If `apply F ∅ = a` and `apply F (σ n) = apply g (apply F n)` for all `n ∈ ω`,
+      then `f p := apply F (fromPeano p)` satisfies `f 𝟘 = a` and
+      `f (σ p) = apply g (f p)` for all `p : ℕ₀`. -/
+  theorem recursion_transport (F a g : U)
+      (hF_zero : apply F (∅ : U) = a)
+      (hF_succ : ∀ n, n ∈ ω → apply F (successor n) = apply g (apply F n)) :
+      let f : Peano.ℕ₀ → U := fun p => apply F (fromPeano (U := U) p)
+      f Peano.ℕ₀.zero = a ∧ ∀ p, f (Peano.ℕ₀.succ p) = apply g (f p) :=
+    ⟨hF_zero, fun p =>
+      -- fromPeano (ℕ₀.succ p) = σ (fromPeano p) by definition
+      -- fromPeano p ∈ ω by fromPeano_is_nat + Nat_in_Omega
+      hF_succ (fromPeano (U := U) p) (Nat_in_Omega _ (fromPeano_is_nat p))⟩
+
+  /-- **Recursion transport (Peano → VN)**: any Lean function `f : ℕ₀ → U`
+      satisfying Peano recursion also satisfies Von Neumann recursion via `toPeano`.
+
+      If `f 𝟘 = a` and `f (σ p) = apply g (f p)`, then
+      `f (toPeano ∅ _) = a` and
+      `f (toPeano (σ n) _) = apply g (f (toPeano n _))` for all `n ∈ ω`. -/
+  theorem recursion_transport_inv (a g : U) (f : Peano.ℕ₀ → U)
+      (hf_zero : f Peano.ℕ₀.zero = a)
+      (hf_succ : ∀ p, f (Peano.ℕ₀.succ p) = apply g (f p)) :
+      f (toPeano (∅ : U) zero_is_nat) = a ∧
+      ∀ (n : U) (hn : n ∈ ω),
+        f (toPeano (successor n) (nat_successor_is_nat n (mem_Omega_is_Nat n hn))) =
+        apply g (f (toPeano n (mem_Omega_is_Nat n hn))) := by
+    refine ⟨?_, fun n hn => ?_⟩
+    · rw [toPeano_zero]; exact hf_zero
+    · rw [toPeano_successor]; exact hf_succ _
+
 end SetUniverse
