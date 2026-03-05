@@ -27,9 +27,14 @@ touch "$LOCK_LIST"
 
 case $COMMAND in
     lock)
-        if [ -z "$FILE" ]; then echo "Error: Debes especificar un archivo."; exit 1; fi
+        if [ -z "$FILE" ]; then
+            # Sin archivo: proteger el propio locked_files.txt
+            chmod a-w "$LOCK_LIST"
+            echo "🔒 Permisos de escritura eliminados para '$LOCK_LIST'."
+            exit 0
+        fi
         if [ ! -f "$FILE" ]; then echo "Error: El archivo '$FILE' no existe."; exit 1; fi
-        
+
         # 1. Añadir a la lista si no está ya
         if ! grep -Fxq "$FILE" "$LOCK_LIST"; then
             echo "$FILE" >> "$LOCK_LIST"
@@ -37,14 +42,19 @@ case $COMMAND in
         else
             echo "'$FILE' ya estaba en la lista."
         fi
-        
+
         # 2. Quitar permisos de escritura (Protección local)
         chmod a-w "$FILE"
         echo "🔒 Permisos de escritura eliminados para '$FILE'."
         ;;
 
     unlock)
-        if [ -z "$FILE" ]; then echo "Error: Debes especificar un archivo."; exit 1; fi
+        if [ -z "$FILE" ]; then
+            # Sin archivo: restaurar escritura en el propio locked_files.txt
+            chmod u+w "$LOCK_LIST"
+            echo "🔓 Permisos de escritura restaurados para '$LOCK_LIST'."
+            exit 0
+        fi
         
         # 1. Eliminar de la lista (crea un temporal y lo renombra)
         if grep -Fxq "$FILE" "$LOCK_LIST"; then
