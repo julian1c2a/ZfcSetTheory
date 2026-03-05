@@ -357,8 +357,11 @@ namespace SetUniverse
     | zero =>
       -- Lt p 0 = False definitionally; ΠZ 0 = ∅ so ΠZ p ∉ ∅
       constructor
-      · intro h; simp [Peano.StrictOrder.Lt] at h
-      · intro h; exact absurd h (EmptySet_is_empty _)
+      · intro h
+        unfold Peano.StrictOrder.Lt at h
+        exact False.elim h
+      · intro h
+        exact (EmptySet_is_empty _ h).elim
     | succ q' ihq =>
       cases p with
       | zero =>
