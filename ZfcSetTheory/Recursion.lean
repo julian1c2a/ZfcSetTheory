@@ -1657,9 +1657,11 @@ namespace SetUniverse
     theorem RecursiveFn_unique (A a g : U) (ha : a ∈ A) (hg : isFunctionFromTo g A A)
         (G : U) (hG_func : isFunctionFromTo G ω A) (hG_zero : apply G (∅ : U) = a)
         (hG_succ : ∀ n, n ∈ ω → apply G (σ n) = apply g (apply G n)) :
-        G = RecursiveFn A a g ha hg :=
-      (RecursionTheorem A a g ha hg).unique
+        G = RecursiveFn A a g ha hg := by
+      have hG : isFunctionFromTo G ω A ∧ apply G (∅ : U) = a ∧
+                ∀ n, n ∈ ω → apply G (σ n) = apply g (apply G n) :=
         ⟨hG_func, hG_zero, hG_succ⟩
+      exact (RecursionTheorem A a g ha hg).unique hG
         (Classical.choose_spec (ExistsUnique.exists (RecursionTheorem A a g ha hg)))
 
   end Recursion
