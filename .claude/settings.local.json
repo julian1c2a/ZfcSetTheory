@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(lake build ZfcSetTheory.PeanoImport)",
-      "Bash(lake build)"
+      "Bash(lake build)",
+      "Bash(lake env:*)"
     ]
   }
 }

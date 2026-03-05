@@ -148,10 +148,10 @@ namespace SetUniverse
     /-! ============================================================ -/
 
     /-- Si existen dos cómputos de longitud n, son iguales (esencial para compatibilidad) -/
-    theorem computation_uniqueness (A : U) (a : U) (g : U)
-      (ha : a ∈ A) (hg : isFunctionFromTo g A A) :
+    theorem computation_uniqueness (A : U) (a : U) (g : U) :
       ∀ n, n ∈ ω → ∀ f₁ f₂,
-        isComputation n f₁ A a g → isComputation n f₂ A a g → f₁ = f₂ := by
+        isComputation n f₁ A a g → isComputation n f₂ A a g → f₁ = f₂
+        := by
 
       let S := SpecSet (ω : U) (fun n => ∀ f₁ f₂,
         isComputation n f₁ A a g → isComputation n f₂ A a g → f₁ = f₂)
@@ -211,29 +211,8 @@ namespace SetUniverse
           let f₁_res := Restriction f₁ (σ n)
           let f₂_res := Restriction f₂ (σ n)
 
-          -- Lema auxiliar rápido: restricción es cómputo
-          have h_res_comp : ∀ f, isComputation (σ n) f A a g → isComputation n (Restriction f (σ n)) A a g := by
-             intro f hf
-             constructor
-             · apply Restriction_is_function f (σ (σ n)) A (σ n) hf.1 (subset_succ_local (σ n))
-             · constructor
-               · have h_empty_in_succ : (∅ : U) ∈ σ n := by
-                  rw [mem_succ_iff_local]
-                  by_cases h : n = ∅
-                  · right
-                    exact h.symm
-                  · left
-                    -- Usamos zero_mem_of_nat_nonempty: n es natural (porque n ∈ ω)
-                    have hn_nat : isNat n := mem_Omega_is_Nat n hn_omega
-                    exact zero_mem_of_nat_nonempty n hn_nat h
-                 rw [Restriction_apply f (σ n) ∅ h_empty_in_succ]; exact hf.2.1
-               · intro k hk
-                 have hn_nat : isNat n := mem_Omega_is_Nat n hn_omega
-                 have hk_nat : isNat k := nat_element_is_nat n k hn_nat hk
-                 have h_sk_in : σ k ∈ σ n := succ_mem_succ_of_mem k n hk_nat hn_nat hk
-                 rw [Restriction_apply f (σ n) (σ k) h_sk_in]
-                 rw [Restriction_apply f (σ n) k (subset_succ_local n k hk)]
-                 exact hf.2.2 k (subset_succ_local n k hk)
+          -- Restricción es cómputo (ya demostrado)
+          have h_res_comp := restriction_is_computation A a g n hn_omega
 
           have h1 : isComputation n f₁_res A a g := h_res_comp f₁ hf₁
           have h2 : isComputation n f₂_res A a g := h_res_comp f₂ hf₂
@@ -242,11 +221,53 @@ namespace SetUniverse
 
           -- Extender igualdad al último punto
           apply ExtSet; intro p
-          -- (Omitimos detalles repetitivos del paso anterior, la lógica es la misma:
-          -- p ∈ f₁ ↔ p ∈ f₁_res ∨ p = ⟨σ n, f₁(σ n)⟩
-          -- f₁(σ n) = g(f₁(n)) = g(f₁_res(n)) = g(f₂_res(n)) = g(f₂(n)) = f₂(σ n)
-          -- )
-          sorry -- Ya probado en la versión anterior, lo marco sorry para enfocar en la estructura nueva
+          -- Clave: f₁(σ n) = g(f₁(n)) = g(f₁_res(n)) = g(f₂_res(n)) = g(f₂(n)) = f₂(σ n)
+          have h_apply_eq : apply f₁ (σ n) = apply f₂ (σ n) :=
+            calc apply f₁ (σ n)
+                = apply g (apply f₁ n)       := hf₁.2.2 n (mem_successor_self n)
+              _ = apply g (apply f₁_res n)   := by rw [← Restriction_apply f₁ (σ n) n (mem_successor_self n)]
+              _ = apply g (apply f₂_res n)   := by rw [h_eq_res]
+              _ = apply g (apply f₂ n)       := by rw [Restriction_apply f₂ (σ n) n (mem_successor_self n)]
+              _ = apply f₂ (σ n)             := (hf₂.2.2 n (mem_successor_self n)).symm
+          constructor
+          · intro hp
+            have h_in_prod : p ∈ σ (σ n) ×ₛ A := hf₁.1.1 p hp
+            rw [CartesianProduct_is_specified] at h_in_prod
+            obtain ⟨h_is_op, h_fst, _⟩ := h_in_prod
+            rw [mem_succ_iff_local] at h_fst
+            cases h_fst with
+            | inl h_in_sn =>
+              have hp_in_f1res : p ∈ f₁_res :=
+                (Restriction_is_specified f₁ (σ n) p).mpr ⟨hp, h_in_sn⟩
+              have hp_in_f2res : p ∈ f₂_res := h_eq_res ▸ hp_in_f1res
+              exact Restriction_subset f₂ (σ n) p hp_in_f2res
+            | inr h_eq_sn =>
+              have hp_eq : p = ⟨fst p, snd p⟩ := OrderedPairSet_is_WellConstructed p h_is_op
+              have h_uniq1 : ∃! y, ⟨fst p, y⟩ ∈ f₁ :=
+                hf₁.1.2 (fst p) (by rw [mem_succ_iff_local]; right; exact h_eq_sn)
+              have h_snd_eq : snd p = apply f₁ (fst p) :=
+                (apply_eq f₁ (fst p) (snd p) h_uniq1 (by rw [← hp_eq]; exact hp)).symm
+              rw [hp_eq, h_snd_eq, h_eq_sn, h_apply_eq]
+              exact apply_mem f₂ (σ n) (hf₂.1.2 (σ n) (mem_successor_self (σ n)))
+          · intro hp
+            have h_in_prod : p ∈ σ (σ n) ×ₛ A := hf₂.1.1 p hp
+            rw [CartesianProduct_is_specified] at h_in_prod
+            obtain ⟨h_is_op, h_fst, _⟩ := h_in_prod
+            rw [mem_succ_iff_local] at h_fst
+            cases h_fst with
+            | inl h_in_sn =>
+              have hp_in_f2res : p ∈ f₂_res :=
+                (Restriction_is_specified f₂ (σ n) p).mpr ⟨hp, h_in_sn⟩
+              have hp_in_f1res : p ∈ f₁_res := h_eq_res.symm ▸ hp_in_f2res
+              exact Restriction_subset f₁ (σ n) p hp_in_f1res
+            | inr h_eq_sn =>
+              have hp_eq : p = ⟨fst p, snd p⟩ := OrderedPairSet_is_WellConstructed p h_is_op
+              have h_uniq2 : ∃! y, ⟨fst p, y⟩ ∈ f₂ :=
+                hf₂.1.2 (fst p) (by rw [mem_succ_iff_local]; right; exact h_eq_sn)
+              have h_snd_eq : snd p = apply f₂ (fst p) :=
+                (apply_eq f₂ (fst p) (snd p) h_uniq2 (by rw [← hp_eq]; exact hp)).symm
+              rw [hp_eq, h_snd_eq, h_eq_sn, ← h_apply_eq]
+              exact apply_mem f₁ (σ n) (hf₁.1.2 (σ n) (mem_successor_self (σ n)))
 
       intro n hn; rw [←h_ind] at hn; rw [SpecSet_is_specified] at hn; exact hn.2
 
@@ -262,19 +283,38 @@ namespace SetUniverse
     def isCompatibleSystem (F : U) : Prop :=
       ∀ f g, f ∈ F → g ∈ F → areCompatible f g
 
-    /-- La unión de un sistema compatible de funciones es una función -/
+    /-- La unión de un sistema compatible de funciones es monovaluada -/
     theorem union_compatible_is_function (F : U)
       (h_funcs : ∀ f, f ∈ F → ∃ A B, isFunctionFromTo f A B)
       (h_compat : isCompatibleSystem F) :
-      isFunction (⋃ F) := by
-      -- Prueba estándar: unicidad de imagen
-      -- Si ⟨x, y⟩ ∈ ⋃ F y ⟨x, z⟩ ∈ ⋃ F
-      -- ∃ f ∈ F, ⟨x, y⟩ ∈ f. ∃ g ∈ F, ⟨x, z⟩ ∈ g.
-      -- x ∈ dom f ∩ dom g.
-      -- Como f, g son compatibles, f(x) = g(x).
-      -- Como son funciones, y = f(x) y z = g(x).
-      -- Por tanto y = z.
-      sorry -- (Fácil de completar)
+      isSingleValued (⋃ F) := by
+      intro x y₁ y₂ hy₁ hy₂
+      rw [UnionSet_is_specified] at hy₁ hy₂
+      obtain ⟨f, hf_in_F, hpair1⟩ := hy₁
+      obtain ⟨g, hg_in_F, hpair2⟩ := hy₂
+      obtain ⟨A_f, B_f, hf_func⟩ := h_funcs f hf_in_F
+      obtain ⟨A_g, B_g, hg_func⟩ := h_funcs g hg_in_F
+      -- x ∈ A_f (de ⟨x, y₁⟩ ∈ f ⊆ A_f ×ₛ B_f)
+      have hx_in_Af : x ∈ A_f := by
+        have h := hf_func.1 ⟨x, y₁⟩ hpair1
+        rw [CartesianProduct_is_specified] at h
+        have := h.2.1; rwa [fst_of_ordered_pair] at this
+      have hx_in_Ag : x ∈ A_g := by
+        have h := hg_func.1 ⟨x, y₂⟩ hpair2
+        rw [CartesianProduct_is_specified] at h
+        have := h.2.1; rwa [fst_of_ordered_pair] at this
+      have h_uniq_f := hf_func.2 x hx_in_Af
+      have h_uniq_g := hg_func.2 x hx_in_Ag
+      -- x ∈ domain f ∩ domain g → apply f x = apply g x
+      have hx_dom_f : x ∈ domain f := (mem_domain f x).mpr ⟨y₁, hpair1⟩
+      have hx_dom_g : x ∈ domain g := (mem_domain g x).mpr ⟨y₂, hpair2⟩
+      have hx_inter : x ∈ ((domain f) ∩ (domain g)) :=
+        (BinInter_is_specified (domain f) (domain g) x).mpr ⟨hx_dom_f, hx_dom_g⟩
+      have h_apply_eq := h_compat f g hf_in_F hg_in_F x hx_inter
+      -- y₁ = apply f x = apply g x = y₂
+      calc y₁ = apply f x := (apply_eq f x y₁ h_uniq_f hpair1).symm
+        _ = apply g x    := h_apply_eq
+        _ = y₂           := apply_eq g x y₂ h_uniq_g hpair2
 
     /-! ============================================================ -/
     /-! ### 4. EXISTENCIA LOCAL (Inducción) ### -/
@@ -295,10 +335,30 @@ namespace SetUniverse
           exists f0
           constructor
           · -- Es función {0} -> A
-            sorry
+            constructor
+            · -- f0 ⊆ σ∅ ×ₛ A
+              intro p hp
+              rw [Singleton_is_specified] at hp
+              rw [hp, OrderedPair_mem_CartesianProduct]
+              exact ⟨(mem_succ_iff_local ∅ ∅).mpr (Or.inr rfl), ha⟩
+            · -- ∀ x ∈ σ∅, ∃! y, ⟨x,y⟩ ∈ f0
+              intro x hx
+              rw [mem_succ_iff_local] at hx
+              have hx_eq : x = ∅ := by
+                cases hx with
+                | inl h => exact absurd h (EmptySet_is_empty x)
+                | inr h => exact h
+              rw [hx_eq]
+              exact ⟨a, (Singleton_is_specified _ _).mpr rfl, fun y hy =>
+                (Eq_of_OrderedPairs_given_projections ∅ y ∅ a
+                  ((Singleton_is_specified _ _).mp hy)).2⟩
           · constructor
             · -- f(0) = a
-              sorry
+              have h_uniq : ∃! y, ⟨(∅ : U), y⟩ ∈ f0 :=
+                ⟨a, (Singleton_is_specified _ _).mpr rfl, fun y hy =>
+                  (Eq_of_OrderedPairs_given_projections ∅ y ∅ a
+                    ((Singleton_is_specified _ _).mp hy)).2⟩
+              exact apply_eq f0 ∅ a h_uniq ((Singleton_is_specified _ _).mpr rfl)
             · -- ∀ k ∈ 0 (vacuamente cierto)
               intro k hk; exact False.elim (EmptySet_is_empty k hk)
 
@@ -318,7 +378,106 @@ namespace SetUniverse
           -- 1. Dominio es σ(σ n) = σ n ∪ {σ n} (Correcto: dom(fn) ∪ {σ n})
           -- 2. Base se mantiene (0 ∈ dom(fn))
           -- 3. Recursión se mantiene para k ∈ n y se cumple para k = n
-          sorry -- (Lógica de extensión estándar)
+          have hn_nat : isNat n := mem_Omega_is_Nat n hn_omega
+          have hσn_nat : isNat (σ n) := nat_successor_is_nat n hn_nat
+          have h_dom_fn : domain fn = σ n := function_domain_eq fn (σ n) A hfn.1
+          have h_sn_notin : σ n ∉ σ n := nat_not_mem_self (σ n) hσn_nat
+          have hn_in_sn : n ∈ σ n := mem_successor_self n
+          -- apply fn n ∈ A
+          have h_fn_n_in_A : apply fn n ∈ A := by
+            have h := hfn.1.1 ⟨n, apply fn n⟩ (apply_mem fn n (hfn.1.2 n hn_in_sn))
+            rw [OrderedPair_mem_CartesianProduct] at h
+            exact h.2
+          -- val_next ∈ A
+          have h_val_in : val_next ∈ A := by
+            have h_uniq_g := hg.2 (apply fn n) h_fn_n_in_A
+            have h := hg.1 ⟨apply fn n, val_next⟩ (apply_mem g (apply fn n) h_uniq_g)
+            rw [OrderedPair_mem_CartesianProduct] at h
+            exact h.2
+          -- Para x ∈ σ n: ∃! y, ⟨x,y⟩ ∈ f_next (coincide con fn)
+          have h_restrict : ∀ x, x ∈ σ n → ∃! y, ⟨x, y⟩ ∈ f_next := by
+            intro x hx
+            obtain ⟨y, hy, huniq⟩ := hfn.1.2 x hx
+            apply ExistsUnique.intro y
+            · rw [BinUnion_is_specified]; left; exact hy
+            · intro y' hy'
+              rw [BinUnion_is_specified] at hy'
+              cases hy' with
+              | inl h => exact huniq y' h
+              | inr h =>
+                rw [Singleton_is_specified] at h
+                have heq := Eq_of_OrderedPairs_given_projections x y' (σ n) val_next h
+                rw [heq.1] at hx
+                exact absurd hx h_sn_notin
+          -- apply f_next x = apply fn x para x ∈ σ n
+          have h_apply_fn : ∀ x, x ∈ σ n → apply f_next x = apply fn x := by
+            intro x hx
+            apply apply_eq f_next x (apply fn x) (h_restrict x hx)
+            rw [BinUnion_is_specified]; left
+            exact apply_mem fn x (hfn.1.2 x hx)
+          -- ∃! y, ⟨σ n, y⟩ ∈ f_next
+          have h_sn_uniq : ∃! y, ⟨σ n, y⟩ ∈ f_next := by
+            apply ExistsUnique.intro val_next
+            · rw [BinUnion_is_specified]; right
+              exact (Singleton_is_specified _ _).mpr rfl
+            · intro y' hy'
+              rw [BinUnion_is_specified] at hy'
+              cases hy' with
+              | inl h =>
+                have hx_in_dom : σ n ∈ domain fn := (mem_domain fn (σ n)).mpr ⟨y', h⟩
+                rw [h_dom_fn] at hx_in_dom
+                exact absurd hx_in_dom h_sn_notin
+              | inr h =>
+                rw [Singleton_is_specified] at h
+                exact (Eq_of_OrderedPairs_given_projections (σ n) y' (σ n) val_next h).2
+          constructor
+          · -- 1. isFunctionFromTo f_next (σ (σ n)) A
+            constructor
+            · -- f_next ⊆ σ(σ n) ×ₛ A
+              intro p hp
+              rw [BinUnion_is_specified] at hp
+              cases hp with
+              | inl h_fn =>
+                have hp_prod := hfn.1.1 p h_fn
+                rw [CartesianProduct_is_specified] at hp_prod ⊢
+                exact ⟨hp_prod.1,
+                  (mem_succ_iff_local (σ n) (fst p)).mpr (Or.inl hp_prod.2.1),
+                  hp_prod.2.2⟩
+              | inr h_sing =>
+                rw [Singleton_is_specified] at h_sing
+                rw [h_sing]
+                exact (OrderedPair_mem_CartesianProduct (σ n) val_next (σ (σ n)) A).mpr
+                  ⟨(mem_succ_iff_local (σ n) (σ n)).mpr (Or.inr rfl), h_val_in⟩
+            · -- ∀ x ∈ σ(σ n), ∃! y, ⟨x,y⟩ ∈ f_next
+              intro x hx
+              rw [mem_succ_iff_local] at hx
+              cases hx with
+              | inl h_in_sn => exact h_restrict x h_in_sn
+              | inr h_eq_sn => rw [h_eq_sn]; exact h_sn_uniq
+          · constructor
+            · -- 2. apply f_next ∅ = a
+              have h_zero_in : (∅ : U) ∈ σ n := zero_in_succ_nat n hn_omega
+              apply apply_eq f_next ∅ a (h_restrict ∅ h_zero_in)
+              rw [BinUnion_is_specified]; left
+              have := apply_mem fn ∅ (hfn.1.2 ∅ h_zero_in)
+              rwa [hfn.2.1] at this
+            · -- 3. ∀ k ∈ σ n, apply f_next (σ k) = apply g (apply f_next k)
+              intro k hk
+              rw [mem_succ_iff_local] at hk
+              cases hk with
+              | inl hk_in_n =>
+                have hk_nat : isNat k := nat_element_is_nat n k hn_nat hk_in_n
+                have hk_in_sn : k ∈ σ n := subset_succ_local n k hk_in_n
+                have hsk_in_sn : σ k ∈ σ n := succ_mem_succ_of_mem k n hk_nat hn_nat hk_in_n
+                rw [h_apply_fn (σ k) hsk_in_sn, h_apply_fn k hk_in_sn]
+                exact hfn.2.2 k hk_in_n
+              | inr hk_eq_n =>
+                rw [hk_eq_n]
+                have h_apply_sn : apply f_next (σ n) = val_next :=
+                  apply_eq f_next (σ n) val_next h_sn_uniq
+                    ((BinUnion_is_specified fn (Singleton pair_next) ⟨σ n, val_next⟩).mpr
+                      (Or.inr ((Singleton_is_specified _ _).mpr rfl)))
+                rw [h_apply_sn, h_apply_fn n hn_in_sn]
 
       intro n hn; rw [←h_ind] at hn; rw [SpecSet_is_specified] at hn; exact hn.2
 
@@ -327,8 +486,8 @@ namespace SetUniverse
     /-! ============================================================ -/
 
     /-- El conjunto de todos los cómputos válidos -/
-    def RecursionComputations (A a g : U) : U :=
-      SpecSet (𝒫 (ω ×ₛ A)) (fun f => ∃ n, n ∈ ω ∧ isComputation n f A a g)
+    noncomputable def RecursionComputations (A a g : U) : U :=
+      SpecSet (𝒫 (ω ×ₛ A)) (fun f => ∃ n, (n ∈ ω) ∧ (isComputation n f A a g))
 
     theorem RecursionTheorem (A : U) (a : U) (g : U)
       (ha : a ∈ A) (hg : isFunctionFromTo g A A) :
