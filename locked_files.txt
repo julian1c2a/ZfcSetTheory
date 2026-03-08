@@ -24,3 +24,4 @@ ZfcSetTheory.lean
 ZfcSetTheory/Infinity.lean
 ZfcSetTheory/NaturalNumbers.lean
 ZfcSetTheory/Recursion.lean
+ZfcSetTheory/Prelim.lean
