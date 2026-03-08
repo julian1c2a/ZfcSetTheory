@@ -18,3 +18,10 @@ ZfcSetTheory/SetStrictOrder.lean
 ZfcSetTheory/GeneralizedDeMorgan.lean
 ZfcSetTheory/GeneralizedDistributive.lean
 ZfcSetTheory/Union.lean
+ZfcSetTheory/NaturalNumbersAdd.lean
+ZfcSetTheory/NaturalNumbersMul.lean
+ZfcSetTheory/PeanoImport.lean
+ZfcSetTheory.lean
+ZfcSetTheory/Infinity.lean
+ZfcSetTheory/NaturalNumbers.lean
+ZfcSetTheory/Recursion.lean
