@@ -59,3 +59,21 @@ theorem ExistsUnique.unique {α : Sort u} {p : α → Prop} (h : ExistsUnique p)
   have h_choose_eq_x : Classical.choose h_exists = x := hunique _ h_spec
   rw [h_choose_eq_x]
   exact hunique y hy
+
+/-! ### Peano-compatible aliases ###
+    These allow code from both projects to use either naming convention.
+    `choose_unique` and `choose_uniq` mirror the Peano.PeanoNatLib API. -/
+
+/-! Alias: noncomputable witness (= ExistsUnique.choose) -/
+noncomputable def choose_unique {α : Sort u} {p : α → Prop} (h : ExistsUnique p) : α :=
+  h.choose
+
+/-! Alias: witness satisfies the property (= ExistsUnique.choose_spec) -/
+theorem choose_spec_unique {α : Sort u} {p : α → Prop} (h : ExistsUnique p) :
+    p (choose_unique h) :=
+  h.choose_spec
+
+/-! Alias: uniqueness (= ExistsUnique.unique), Peano argument style -/
+theorem choose_uniq {α : Sort u} {p : α → Prop} (h : ExistsUnique p) {y : α} (hy : p y) :
+    y = choose_unique h :=
+  h.unique y hy

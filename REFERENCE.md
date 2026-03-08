@@ -178,7 +178,7 @@ axiom ExistsInductiveSet : ∃ (I : U), isInductive I
 
 #### ExistsUnique
 
-**Ubicación**: `Prelim.lean`, línea 12  
+**Ubicación**: `Prelim.lean`, línea 12
 **Orden**: 1ª definición
 
 **Enunciado Matemático**: Existe un único elemento que satisface la propiedad P.
@@ -191,6 +191,20 @@ def ExistsUnique {α : Sort u} (p : α → Prop) : Prop :=
 ```
 
 **Dependencias**: Ninguna
+
+**API completa**:
+
+| Nombre ZFC (dot notation) | Alias Peano-compatible | Tipo |
+|--------------------------|----------------------|------|
+| `ExistsUnique.intro w hw h` | — | constructor |
+| `ExistsUnique.exists h` | `ExistsUnique.exists h` | extrae `∃ x, p x` |
+| `ExistsUnique.choose h` | `choose_unique h` | testigo `noncomputable` |
+| `ExistsUnique.choose_spec h` | `choose_spec_unique h` | testigo satisface P |
+| `ExistsUnique.unique h y hy` | `choose_uniq h hy` | unicidad: `y = choose` |
+
+**Notas**:
+- `choose_unique`, `choose_spec_unique`, `choose_uniq` son aliases top-level que replican la API de `Peano.PeanoNatLib` para unificación entre proyectos.
+- La diferencia de estilo: ZFC usa dot-notation `h.choose`; Peano pasa `h` como argumento a `choose_unique h`.
 
 ### 3.2 Extension.lean
 

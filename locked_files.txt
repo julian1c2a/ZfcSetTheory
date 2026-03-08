@@ -1,6 +1,5 @@
 ZfcSetTheory/Existence.lean
 ZfcSetTheory/Extension.lean
-ZfcSetTheory/Prelim.lean
 ZfcSetTheory/Specification.lean
 ZfcSetTheory/Pairing.lean
 ZfcSetTheory/PowerSet.lean
