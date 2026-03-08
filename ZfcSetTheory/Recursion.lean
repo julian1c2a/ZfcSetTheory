@@ -1670,6 +1670,54 @@ namespace SetUniverse
 
   end Recursion
 
+  export Recursion (
+    -- Auxiliary lemmas
+    function_domain_eq
+    mem_succ_iff_local
+    subset_succ_local
+    zero_in_succ_nat
+    succ_mem_succ_of_mem
+    -- Computation (standard recursion)
+    isComputation
+    restriction_is_computation
+    computation_uniqueness
+    areCompatible
+    isCompatibleSystem
+    union_compatible_is_function
+    computation_existence
+    succ_subset_omega
+    computation_subset_omega_times_A
+    succ_subset_succ_of_mem
+    restriction_computation_general
+    RecursionComputations
+    computations_are_compatible
+    RecursionTheorem
+    -- Computation (step-indexed variant)
+    isComputationStep
+    restriction_is_computation_step
+    restriction_computation_general_step
+    computation_uniqueness_step
+    computation_existence_step
+    RecursionComputationsStep
+    computations_are_compatible_step
+    RecursionTheoremWithStep
+    -- Computation (course-of-values variant)
+    isComputationCoV
+    restriction_is_computation_cov
+    restriction_computation_general_cov
+    computation_uniqueness_cov
+    computation_existence_cov
+    RecursionComputationsCoV
+    computations_are_compatible_cov
+    RecursionCourseOfValues
+    -- Canonical recursive function
+    RecursiveFn
+    RecursiveFn_is_function
+    RecursiveFn_zero
+    RecursiveFn_succ
+    RecursiveFn_unique
+  )
+
 end SetUniverse
 
 export SetUniverse.Recursion (

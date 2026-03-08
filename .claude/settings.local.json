@@ -10,7 +10,19 @@
       "Bash(bash git-lock.bash lock ZfcSetTheory/Recursion.lean)",
       "Bash(bash git-lock.bash unlock ZfcSetTheory/PeanoImport.lean)",
       "Bash(bash git-lock.bash list)",
-      "Bash(bash git-lock.bash lock ZfcSetTheory/PeanoImport.lean)"
+      "Bash(bash git-lock.bash lock ZfcSetTheory/PeanoImport.lean)",
+      "Bash(bash git-lock.bash unlock ZfcSetTheory/Recursion.lean)",
+      "Bash(bash git-lock.bash unlock ZfcSetTheory/NaturalNumbers.lean)",
+      "Bash(bash git-lock.bash lock ZfcSetTheory/NaturalNumbers.lean)",
+      "Bash(bash git-lock.bash unlock ZfcSetTheory/Infinity.lean)",
+      "Bash(bash git-lock.bash lock ZfcSetTheory/Infinity.lean)",
+      "Bash(grep -n \"def.*succ\\\\|def.*Succ\\\\|def.*successor\" /e/Dropbox/GitHub/lean4/ZfcSetTheory/ZfcSetTheory/*.lean)",
+      "Bash(grep -rn \"def.*add\\\\|def.*mul\\\\|def.*times\" /e/Dropbox/GitHub/lean4/ZfcSetTheory/ZfcSetTheory/*.lean)",
+      "Bash(ls -la /e/Dropbox/GitHub/lean4/ZfcSetTheory/ZfcSetTheory/*.lean)",
+      "Bash(bash git-lock.bash unlock ZfcSetTheory/NaturalNumbersAdd.lean)",
+      "Bash(lake build ZfcSetTheory.NaturalNumbersAdd)",
+      "Bash(bash git-lock.bash lock ZfcSetTheory/NaturalNumbersAdd.lean)",
+      "Bash(lake build ZfcSetTheory.NaturalNumbersMul)"
     ]
   }
 }

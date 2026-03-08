@@ -1,30 +1,33 @@
 # Referencia Técnica - ZfcSetTheory
 
-*Última actualización: 2026-03-05 10:00*
+*Última actualización: 2026-03-08 12:00*
 **Autor**: Julián Calderón Almendros
 
 ## 📋 Cumplimiento con AIDER-AI-GUIDE.md
 
 Este documento cumple con todos los requisitos especificados en [AIDER-AI-GUIDE.md](AIDER-AI-GUIDE.md):
 
-✅ **(1)** Todos los módulos .lean documentados en sección 1.1  
-✅ **(2)** Dependencias entre módulos (tabla con columna de dependencias)  
-✅ **(3)** Espacios de nombres y relaciones (tabla con columna de namespace)  
-✅ **(4)** Axiomas con ubicación, namespace y orden de declaración (sección 2)  
+✅ **(1)** Todos los módulos .lean documentados en sección 1.1
+✅ **(2)** Dependencias entre módulos (tabla con columna de dependencias)
+✅ **(3)** Espacios de nombres y relaciones (tabla con columna de namespace)
+✅ **(4)** Axiomas con ubicación, namespace y orden de declaración (sección 2)
 ✅ **(5)** Axiomas y definiciones con:
 
 - Nomenclatura matemática humana legible
 - Firma Lean4 para uso en código
-- Dependencias explícitas  
+- Dependencias explícitas
 ✅ **(6)** Teoremas principales sin demostración con:
 - Nomenclatura matemática humana legible
 - Firma Lean4 para uso en código
-- Dependencias explícitas  
-✅ **(7)** Solo contenido demostrado/construido (verificado 12-feb-2026)  
-✅ **(8)** Actualización continua al cargar archivos .lean  
+- Dependencias explícitas
+✅ **(7)** Solo contenido demostrado/construido (verificado 08-mar-2026)
+✅ **(8)** Actualización continua al cargar archivos .lean
 ✅ **(9)** Suficiente como única referencia (no requiere cargar proyecto completo)
 
 **Estado de verificación**: ✅ TODOS LOS MÓDULOS 100% COMPLETOS - 0 `sorry` activos
+✅ **NaturalNumbersMul.lean creado (0 sorry, multiplicación ZFC + puente fromPeano_mul + 8 propiedades algebraicas)** - Actualizado 2026-03-08 12:00
+✅ **NaturalNumbersAdd.lean ampliado (Sección 6: 6 nuevos teoremas de cancelación, positividad y orden)** - Actualizado 2026-03-08 12:00
+✅ **PeanoImport.lean ampliado (Section 2: toPeano_zero/successor; Section 3: recursion_transport_step/inv; Section 4: orden ↔ membresía)** - Actualizado 2026-03-08 12:00
 ✅ **PeanoImport.lean completado (0 sorry, isomorfismo Von Neumann ↔ Peano, 100% proyectado)** - Actualizado 2026-03-04 12:00
 ✅ **Infinity.lean: nat_mem_wf demostrado (sin sorry, añadido a exports)** - Actualizado 2026-03-04 12:00
 ✅ **NaturalNumbers.lean: predecessor y teoremas exportados** - Actualizado 2026-03-04 12:00
@@ -56,7 +59,7 @@ Este documento cumple con todos los requisitos especificados en [AIDER-AI-GUIDE.
 | `BooleanRing.lean` | `SetUniverse.BooleanRing` | `PowerSetAlgebra` + anteriores | ✅ Completo |
 | `PowerSetAlgebra.lean` | `SetUniverse.PowerSetAlgebra` | `PowerSet`, `BooleanAlgebra` + anteriores | ✅ Completo |
 | `AtomicBooleanAlgebra.lean` | `SetUniverse.AtomicBooleanAlgebra` | `PowerSetAlgebra`, `SetOrder`, `SetStrictOrder` + anteriores | 🔶 Parcial |
-| `Cardinality.lean` | `SetUniverse.Cardinality` | `Functions` + todos los anteriores | 🔶 Parcial |
+| `Cardinality.lean` | `SetUniverse.Cardinality` | `Functions` + todos los anteriores | ✅ Completo |
 | `NaturalNumbers.lean` | `SetUniverse.NaturalNumbers` | `Cardinality` + todos los anteriores | ✅ Completo |
 | `Infinity.lean` | `SetUniverse.InfinityAxiom` | `NaturalNumbers` + todos los anteriores | ✅ Completo |
 | `PeanoImport.lean` | `SetUniverse` | `NaturalNumbers`, `Infinity`, `PeanoNatLib.PeanoNatAxioms` | ✅ Completo |
@@ -65,6 +68,8 @@ Este documento cumple con todos los requisitos especificados en [AIDER-AI-GUIDE.
 | `SetOrder.lean` | `SetUniverse.SetOrder` | `Relations` + anteriores | ✅ Completo |
 | `SetStrictOrder.lean` | `SetUniverse.SetStrictOrder` | `SetOrder` + anteriores | ✅ Completo |
 | `Recursion.lean` | `SetUniverse.Recursion` | `NaturalNumbers`, `Functions`, `Relations` + anteriores | ✅ Completo |
+| `NaturalNumbersAdd.lean` | `SetUniverse.NaturalNumbersAdd` | `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `PeanoNatLib.PeanoNatAdd` | ✅ Completo |
+| `NaturalNumbersMul.lean` | `SetUniverse.NaturalNumbersMul` | `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersAdd`, `PeanoNatLib.PeanoNatMul` | ✅ Completo |
 
 ## 2. Axiomas ZFC Implementados
 
@@ -2252,10 +2257,10 @@ notation:max X:max " ^∁[ " A:max " ]" => Complement A X
 ### 3.21 PeanoImport.lean
 
 **Módulo**: `ZfcSetTheory.PeanoImport`
-**Namespace**: `SetUniverse`
-**Dependencias**: `ZfcSetTheory.NaturalNumbers`, `ZfcSetTheory.Infinity`, `PeanoNatLib.PeanoNatAxioms`
+**Namespace**: `SetUniverse` (sub-namespace `SetUniverse.PeanoIsomorphism`)
+**Dependencias**: `ZfcSetTheory.NaturalNumbers`, `ZfcSetTheory.Infinity`, `PeanoNatLib.PeanoNatAxioms`, `PeanoNatLib.PeanoNatStrictOrder`, `PeanoNatLib.PeanoNatOrder`
 **Librería externa**: `peanolib` — ver [REFERENCE-PEANO.md](REFERENCE-PEANO.md) para la referencia técnica completa del proyecto Peano.
-**Descripción**: Establece la biyección entre los números naturales de Von Neumann (definidos en este proyecto) y los naturales de Peano de la librería externa `peanolib`. Proporciona las funciones de conversión `fromPeano` y `toPeano`, y demuestra que son inversas mutuas. **Nota**: Solo se prueba la biyección pura (injectividad + sobreyectividad + inversas). No se demuestra que sea un isomorfismo de semianillos (preservación de la suma) ni de orden (preservación de ≤). Esas extensiones quedan pendientes para `PeanoImport.lean`.
+**Descripción**: Establece el isomorfismo completo entre los números naturales de Von Neumann y los de Peano. Contiene cuatro secciones: (1) la biyección `fromPeano`/`toPeano` con inyectividad, sobreyectividad e inversas; (2) compatibilidad con la estructura algebraica básica (`toPeano_zero`, `toPeano_successor`); (3) transporte de los teoremas de recursión (simple y con paso) entre los dos mundos; (4) puentes de orden: `fromPeano_lt_iff` y `fromPeano_le_iff` que identifican el orden estricto de Peano con la membresía en ω. **Notación**: `ΠZ p` para `fromPeano p`, `ZΠ n hn` para `toPeano n hn`.
 
 **Abre los namespaces**: `Classical`, `SetUniverse.ExtensionAxiom`, `SetUniverse.ExistenceAxiom`, `SetUniverse.SpecificationAxiom`, `SetUniverse.PairingAxiom`, `SetUniverse.UnionAxiom`, `SetUniverse.PowerSetAxiom`, `SetUniverse.OrderedPairExtensions`, `SetUniverse.CartesianProduct`, `SetUniverse.Relations`, `SetUniverse.Functions`, `SetUniverse.Cardinality`, `SetUniverse.NaturalNumbers`
 
@@ -2291,6 +2296,108 @@ noncomputable def toPeano (n : U) (hn : isNat n) : Peano.ℕ₀ :=
 ```
 
 **Dependencias**: `fromPeano_surjective`, `Classical.choose`, `isNat`
+
+### 3.22 NaturalNumbersAdd.lean
+
+**Módulo**: `ZfcSetTheory.NaturalNumbersAdd`
+**Namespace**: `SetUniverse.NaturalNumbersAdd`
+**Dependencias**: `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `PeanoNatLib.PeanoNatAdd`
+**Actualizado**: 2026-03-08 12:00
+**Descripción**: Define la suma en ω mediante el Teorema de Recursión. Fijado m ∈ ω, `addFn m hm` es la función recursiva con base m y paso `successorFn`. La suma se extiende sin argumento de prueba (`add m n` con valor por defecto ∅ si m ∉ ω). El teorema puente `fromPeano_add` conecta con `Peano.Add.add`, permitiendo transportar todos los teoremas algebraicos de Peano.
+
+**Abre los namespaces**: `Classical`, todos los de ZFC hasta `InfinityAxiom`. **No abre** `PeanoIsomorphism` para evitar ambigüedad de la notación `ΠZ`.
+
+#### Función sucesor como conjunto ZFC (successorFn)
+
+**Ubicación**: `NaturalNumbersAdd.lean`, línea 66
+**Orden**: 1ª definición
+
+**Enunciado Matemático**: `successorFn = {⟨n, σ n⟩ | n ∈ ω} ⊆ ω ×ₛ ω`. Es la función ZFC que representa el sucesor.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def successorFn : U :=
+  SpecSet (ω ×ₛ ω) (fun p => ∃ n, n ∈ (ω : U) ∧ p = ⟨n, σ n⟩)
+```
+
+**Dependencias**: `SpecSet`, `ω`, `CartesianProduct`, `OrderedPair`, `successor`
+
+#### Función de adición fijado m (addFn)
+
+**Ubicación**: `NaturalNumbersAdd.lean`, línea 109
+**Orden**: 2ª definición
+
+**Enunciado Matemático**: `addFn m hm` es la única función ZFC `F : ω → ω` con `F(∅) = m` y `F(σ n) = σ(F(n))`, construida vía `RecursiveFn`.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def addFn (m : U) (hm : m ∈ (ω : U)) : U :=
+  RecursiveFn ω m successorFn hm successorFn_is_function
+```
+
+**Dependencias**: `RecursiveFn`, `successorFn`, `successorFn_is_function`
+
+#### Suma en ω (add)
+
+**Ubicación**: `NaturalNumbersAdd.lean`, línea 120
+**Orden**: 3ª definición
+
+**Enunciado Matemático**: `add m n = (addFn m hm)(n)` si `m ∈ ω`, y `∅` en otro caso. No lleva argumento de prueba para evitar dependencias en reescrituras algebraicas.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def add (m n : U) : U :=
+  if h : m ∈ (ω : U) then apply (addFn m h) n else ∅
+```
+
+**Dependencias**: `addFn`, `apply`
+
+---
+
+### 3.23 NaturalNumbersMul.lean
+
+**Módulo**: `ZfcSetTheory.NaturalNumbersMul`
+**Namespace**: `SetUniverse.NaturalNumbersMul`
+**Dependencias**: `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersAdd`, `PeanoNatLib.PeanoNatMul`
+**Actualizado**: 2026-03-08 12:00
+**Descripción**: Define la multiplicación en ω mediante el Teorema de Recursión. Fijado m ∈ ω, `mulFn m hm` es la función recursiva con base ∅ y paso `addFn m hm` (cada paso de sucesor añade m). Así `mul m ∅ = ∅` y `mul m (σ n) = add m (mul m n)`. El teorema puente `fromPeano_mul` usa commutativity de la suma para adaptarse al orden de `Peano.Mul.mul_succ`.
+
+#### Función de multiplicación fijado m (mulFn)
+
+**Ubicación**: `NaturalNumbersMul.lean`, línea 69
+**Orden**: 1ª definición
+
+**Enunciado Matemático**: `mulFn m hm` es la única función ZFC `F : ω → ω` con `F(∅) = ∅` y `F(σ n) = m + F(n)`, construida vía `RecursiveFn`.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def mulFn (m : U) (hm : m ∈ (ω : U)) : U :=
+  RecursiveFn ω ∅ (addFn m hm) zero_in_Omega (addFn_is_function m hm)
+```
+
+**Dependencias**: `RecursiveFn`, `addFn`, `addFn_is_function`, `zero_in_Omega`
+
+#### Multiplicación en ω (mul)
+
+**Ubicación**: `NaturalNumbersMul.lean`, línea 80
+**Orden**: 2ª definición
+
+**Enunciado Matemático**: `mul m n = (mulFn m hm)(n)` si `m ∈ ω`, y `∅` en otro caso. No lleva argumento de prueba.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def mul (m n : U) : U :=
+  if h : m ∈ (ω : U) then apply (mulFn m h) n else ∅
+```
+
+**Dependencias**: `mulFn`, `apply`
+
+---
 
 ## 4. Teoremas Principales por Módulo
 
@@ -5162,6 +5269,283 @@ theorem toPeano_surjective (p : Peano.ℕ₀) :
 
 **Dependencias**: `toPeano`, `fromPeano`, `fromPeano_is_nat`, `toPeano_fromPeano`
 
+#### toPeano lleva ∅ a zero (toPeano_zero)
+
+**Ubicación**: `PeanoImport.lean`, línea 147
+**Orden**: 8º teorema principal
+
+**Enunciado Matemático**: `toPeano(∅, zero_is_nat) = Peano.ℕ₀.zero`.
+
+**Firma Lean4**:
+
+```lean
+theorem toPeano_zero : toPeano (∅ : U) zero_is_nat = Peano.ℕ₀.zero
+```
+
+**Dependencias**: `toPeano`, `fromPeano_injective`, `fromPeano_toPeano`, `zero_is_nat`
+
+#### toPeano preserva sucesor (toPeano_successor)
+
+**Ubicación**: `PeanoImport.lean`, línea 155
+**Orden**: 9º teorema principal
+
+**Enunciado Matemático**: `toPeano(σ n, _) = Peano.ℕ₀.succ(toPeano(n, hn))` para todo Von Neumann natural n.
+
+**Firma Lean4**:
+
+```lean
+theorem toPeano_successor (n : U) (hn : isNat n) :
+    toPeano (σ n) (nat_successor_is_nat n hn) = Peano.ℕ₀.succ (toPeano n hn)
+```
+
+**Dependencias**: `toPeano`, `fromPeano_injective`, `fromPeano_toPeano`, `nat_successor_is_nat`
+
+#### Transporte de recursión VN → Peano, simple (recursion_transport)
+
+**Ubicación**: `PeanoImport.lean`, línea 176
+**Orden**: 10º teorema principal
+
+**Enunciado Matemático**: Si `F : ω → U` satisface `F(∅) = a` y `F(σ n) = g(F(n))` para todo `n ∈ ω`, entonces `f := F ∘ ΠZ` satisface `f(𝟘) = a` y `f(σ p) = g(f(p))` para todo `p : Peano.ℕ₀`.
+
+**Firma Lean4**:
+
+```lean
+theorem recursion_transport (F a g : U)
+    (hF_zero : apply F (∅ : U) = a)
+    (hF_succ : ∀ n, n ∈ ω → apply F (σ n) = apply g (apply F n)) :
+    let f : Peano.ℕ₀ → U := fun p => apply F (ΠZ p : U)
+    f Peano.ℕ₀.zero = a ∧ ∀ p, f (Peano.ℕ₀.succ p) = apply g (f p)
+```
+
+**Dependencias**: `fromPeano`, `Nat_in_Omega`, `fromPeano_is_nat`
+
+#### Transporte de recursión Peano → VN, simple (recursion_transport_inv)
+
+**Ubicación**: `PeanoImport.lean`, línea 192
+**Orden**: 11º teorema principal
+
+**Enunciado Matemático**: Si `f : Peano.ℕ₀ → U` satisface `f(𝟘) = a` y `f(σ p) = g(f(p))`, entonces `f ∘ ZΠ` satisface la recursión en ω: `f(ZΠ(∅)) = a` y `f(ZΠ(σ n)) = g(f(ZΠ(n)))`.
+
+**Firma Lean4**:
+
+```lean
+theorem recursion_transport_inv (a g : U) (f : Peano.ℕ₀ → U)
+    (hf_zero : f Peano.ℕ₀.zero = a)
+    (hf_succ : ∀ p, f (Peano.ℕ₀.succ p) = apply g (f p)) :
+    f (ZΠ (∅ : U) zero_is_nat) = a ∧
+    ∀ (n : U) (hn : n ∈ ω),
+      f (ZΠ (σ n) (nat_successor_is_nat n (mem_Omega_is_Nat n hn))) =
+      apply g (f (ZΠ n (mem_Omega_is_Nat n hn)))
+```
+
+**Dependencias**: `toPeano`, `toPeano_zero`, `toPeano_successor`
+
+#### Transporte de recursión VN → Peano, con paso (recursion_transport_step)
+
+**Ubicación**: `PeanoImport.lean`, línea 209
+**Orden**: 12º teorema principal
+
+**Enunciado Matemático**: Variante de `recursion_transport` para `RecursionTheoremWithStep`. Si `F(∅) = a` y `F(σ n) = g(⟨n, F(n)⟩)` (la función de paso recibe el índice actual), entonces `f := F ∘ ΠZ` satisface `f(𝟘) = a` y `f(σ p) = g(⟨ΠZ p, f(p)⟩)`.
+
+**Firma Lean4**:
+
+```lean
+theorem recursion_transport_step (F a g : U)
+    (hF_zero : apply F (∅ : U) = a)
+    (hF_succ : ∀ n, n ∈ ω → apply F (σ n) = apply g ⟨n, apply F n⟩) :
+    let f : Peano.ℕ₀ → U := fun p => apply F (ΠZ p : U)
+    f Peano.ℕ₀.zero = a ∧ ∀ p, f (Peano.ℕ₀.succ p) = apply g ⟨(ΠZ p : U), f p⟩
+```
+
+**Dependencias**: `fromPeano`, `Nat_in_Omega`, `fromPeano_is_nat`
+
+#### Transporte de recursión Peano → VN, con paso (recursion_transport_step_inv)
+
+**Ubicación**: `PeanoImport.lean`, línea 222
+**Orden**: 13º teorema principal
+
+**Enunciado Matemático**: Variante de `recursion_transport_inv` para `RecursionTheoremWithStep`. Si `f(σ p) = g(⟨ΠZ p, f(p)⟩)`, entonces `f(ZΠ(σ n)) = g(⟨n, f(ZΠ(n))⟩)` para todo `n ∈ ω`.
+
+**Firma Lean4**:
+
+```lean
+theorem recursion_transport_step_inv (a g : U) (f : Peano.ℕ₀ → U)
+    (hf_zero : f Peano.ℕ₀.zero = a)
+    (hf_succ : ∀ p, f (Peano.ℕ₀.succ p) = apply g ⟨(ΠZ p : U), f p⟩) :
+    f (ZΠ (∅ : U) zero_is_nat) = a ∧
+    ∀ (n : U) (hn : n ∈ ω),
+      f (ZΠ (σ n) (nat_successor_is_nat n (mem_Omega_is_Nat n hn))) =
+      apply g ⟨n, f (ZΠ n (mem_Omega_is_Nat n hn))⟩
+```
+
+**Dependencias**: `toPeano_zero`, `toPeano_successor`, `fromPeano_toPeano`
+
+#### El sucesor preserva y refleja la membresía (succ_mem_succ_iff)
+
+**Ubicación**: `PeanoImport.lean`, línea 242
+**Orden**: 14º teorema principal
+
+**Enunciado Matemático**: Para números naturales de Von Neumann, `n ∈ m ↔ σ n ∈ σ m`.
+
+**Firma Lean4**:
+
+```lean
+theorem succ_mem_succ_iff (n m : U) (hn : isNat n) (hm : isNat m) :
+    n ∈ m ↔ σ n ∈ σ m
+```
+
+**Dependencias**: `nat_trichotomy`, `nat_subset_mem_or_eq`, `nat_successor_is_nat`, `successor_injective`, `nat_not_mem_self`, `successor_is_specified`, `mem_successor_of_mem`
+
+#### fromPeano preserva el orden estricto ↔ membresía (fromPeano_lt_iff)
+
+**Ubicación**: `PeanoImport.lean`, línea 279
+**Orden**: 15º teorema principal
+
+**Enunciado Matemático**: `Peano.StrictOrder.Lt p q ↔ (ΠZ p : U) ∈ (ΠZ q : U)`. El orden estricto de Peano corresponde exactamente a la membresía entre Von Neumann naturales.
+
+**Firma Lean4**:
+
+```lean
+theorem fromPeano_lt_iff (p q : Peano.ℕ₀) :
+    Peano.StrictOrder.Lt p q ↔ (fromPeano p : U) ∈ (fromPeano q : U)
+```
+
+**Dependencias**: `succ_mem_succ_iff`, `fromPeano_is_nat`, `Peano.StrictOrder.lt_def`
+
+#### fromPeano preserva el orden débil ↔ membresía o igualdad (fromPeano_le_iff)
+
+**Ubicación**: `PeanoImport.lean`, línea 307
+**Orden**: 16º teorema principal
+
+**Enunciado Matemático**: `Peano.Order.Le p q ↔ (ΠZ p : U) ∈ (ΠZ q : U) ∨ (ΠZ p : U) = (ΠZ q : U)`. El orden débil de Peano corresponde a la membresía o igualdad en Von Neumann.
+
+**Firma Lean4**:
+
+```lean
+theorem fromPeano_le_iff (p q : Peano.ℕ₀) :
+    Peano.Order.Le p q ↔ (fromPeano p : U) ∈ (fromPeano q : U) ∨ (fromPeano p : U) = (fromPeano q : U)
+```
+
+**Dependencias**: `fromPeano_lt_iff`, `fromPeano_injective`, `fromPeano_toPeano`, `Peano.Order.le_def`
+
+---
+
+### 4.18 NaturalNumbersAdd.lean
+
+**Módulo**: `ZfcSetTheory.NaturalNumbersAdd`
+**Namespace**: `SetUniverse.NaturalNumbersAdd`
+**Actualizado**: 2026-03-08 12:00
+
+#### Sección 1: successorFn
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `mem_successorFn` | `⟨n, σ n⟩ ∈ successorFn` para todo n ∈ ω | `theorem mem_successorFn (n : U) (hn : n ∈ (ω : U)) : (⟨n, σ n⟩ : U) ∈ (successorFn : U)` |
+| `successorFn_is_function` | `successorFn` es función de ω en ω | `theorem successorFn_is_function : isFunctionFromTo (successorFn : U) ω ω` |
+| `successorFn_apply` | Aplicar `successorFn` a n ∈ ω da σ n | `theorem successorFn_apply (n : U) (hn : n ∈ (ω : U)) : apply (successorFn : U) n = σ n` |
+
+#### Sección 2: addFn y add
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `addFn_is_function` | `addFn m hm` es función de ω en ω | `theorem addFn_is_function (m : U) (hm : m ∈ (ω : U)) : isFunctionFromTo (addFn m hm) ω ω` |
+| `add_eq` | Si m ∈ ω, `add m n = apply (addFn m hm) n` | `theorem add_eq (m n : U) (hm : m ∈ (ω : U)) : add m n = apply (addFn m hm) n` |
+| `add_in_Omega` | `add m n ∈ ω` para m, n ∈ ω | `theorem add_in_Omega (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) : add m n ∈ ω` |
+
+#### Sección 3: Ecuaciones de recursión
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `add_zero` | m + ∅ = m (identidad derecha del cero) | `theorem add_zero (m : U) (hm : m ∈ (ω : U)) : add m ∅ = m` |
+| `add_succ` | m + σ n = σ(m + n) | `theorem add_succ (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) : add m (σ n) = σ (add m n)` |
+
+#### Sección 4: Teorema puente
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `fromPeano_add` | `fromPeano(p + q) = add(fromPeano p)(fromPeano q)` | `theorem fromPeano_add (p q : Peano.ℕ₀) : (fromPeano (Peano.Add.add p q) : U) = add (fromPeano p) (fromPeano q)` |
+
+**Descripción**: Demostrado por inducción sobre q. Caso base usa `add_zero`; paso inductivo usa `add_succ` y `successorFn_apply`. Permite transportar automáticamente todos los teoremas de `PeanoNatAdd`.
+
+**Dependencias**: `add_zero`, `add_succ`, `fromPeano`, `Nat_in_Omega`, `fromPeano_is_nat`, `successor`
+
+#### Sección 5: Propiedades algebraicas
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `zero_add` | ∅ + n = n (identidad izquierda) | `theorem zero_add (n : U) (hn : n ∈ (ω : U)) : add ∅ n = n` |
+| `add_comm_Omega` | m + n = n + m (conmutatividad) | `theorem add_comm_Omega (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) : add m n = add n m` |
+| `add_assoc_Omega` | (m + n) + k = m + (n + k) (asociatividad) | `theorem add_assoc_Omega (m n k : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) (hk : k ∈ (ω : U)) : add (add m n) k = add m (add n k)` |
+
+#### Sección 6: Propiedades adicionales
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `succ_add_Omega` | σ m + n = σ(m + n) | `theorem succ_add_Omega (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) : add (σ m) n = σ (add m n)` |
+| `add_left_cancel_Omega` | m + n = m + k → n = k (cancelación izquierda) | `theorem add_left_cancel_Omega (m n k : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) (hk : k ∈ (ω : U)) (h : add m n = add m k) : n = k` |
+| `add_right_cancel_Omega` | n + m = k + m → n = k (cancelación derecha) | `theorem add_right_cancel_Omega (m n k : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) (hk : k ∈ (ω : U)) (h : add n m = add k m) : n = k` |
+| `add_pos_left_Omega` | m ≠ ∅ → n ∈ add n m (n < n + m cuando m > 0) | `theorem add_pos_left_Omega (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) (hm_ne : m ≠ ∅) : n ∈ add n m` |
+| `le_then_exists_add_Omega` | m ≤ n → ∃ k ∈ ω, n = m + k | `theorem le_then_exists_add_Omega (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) (h : m ∈ n ∨ m = n) : ∃ k, k ∈ (ω : U) ∧ n = add m k` |
+| `add_lt_of_lt_Omega` | n ∈ k → m + n ∈ m + k (monotonía estricta) | `theorem add_lt_of_lt_Omega (m n k : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) (hk : k ∈ (ω : U)) (h : n ∈ k) : add m n ∈ add m k` |
+
+**Patrón de demostración**: Para todos los teoremas de secciones 5 y 6: `fromPeano_surjective` + `subst` normaliza a `fromPeano p/q/r`, luego `fromPeano_add` convierte entre ZFC y Peano, luego `congrArg fromPeano (Peano.Add.teorema ...)` cierra el objetivo.
+
+**Dependencias para Sección 6**: `fromPeano_surjective`, `fromPeano_add`, `fromPeano_lt_iff`, `fromPeano_le_iff`, `fromPeano_injective`, `Peano.Add.add_cancelation`, `Peano.Add.lt_self_add_r`, `Peano.Add.le_then_exists_add`, `Peano.Add.add_lt_add_left_iff`, `Nat_in_Omega`, `fromPeano_is_nat`
+
+---
+
+### 4.19 NaturalNumbersMul.lean
+
+**Módulo**: `ZfcSetTheory.NaturalNumbersMul`
+**Namespace**: `SetUniverse.NaturalNumbersMul`
+**Actualizado**: 2026-03-08 12:00
+
+#### Sección 1: mulFn y mul
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `mulFn_is_function` | `mulFn m hm` es función de ω en ω | `theorem mulFn_is_function (m : U) (hm : m ∈ (ω : U)) : isFunctionFromTo (mulFn m hm) ω ω` |
+| `mul_eq` | Si m ∈ ω, `mul m n = apply (mulFn m hm) n` | `theorem mul_eq (m n : U) (hm : m ∈ (ω : U)) : mul m n = apply (mulFn m hm) n` |
+| `mul_in_Omega` | `mul m n ∈ ω` para m, n ∈ ω | `theorem mul_in_Omega (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) : mul m n ∈ ω` |
+
+#### Sección 2: Ecuaciones de recursión
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `mul_zero` | m · ∅ = ∅ (aniquilador derecho) | `theorem mul_zero (m : U) (hm : m ∈ (ω : U)) : mul m ∅ = ∅` |
+| `mul_succ` | m · σ n = m + m · n | `theorem mul_succ (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) : mul m (σ n) = add m (mul m n)` |
+
+**Nota sobre `mul_succ`**: El orden es `m + m·n` (no `m·n + m` como en Peano). La diferencia se resuelve con `add_comm_Omega` en el teorema puente.
+
+#### Sección 3: Teorema puente
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `fromPeano_mul` | `fromPeano(p · q) = mul(fromPeano p)(fromPeano q)` | `theorem fromPeano_mul (p q : Peano.ℕ₀) : (fromPeano (Peano.Mul.mul p q) : U) = mul (fromPeano p) (fromPeano q)` |
+
+**Descripción**: Demostrado por inducción sobre q. Caso base usa `mul_zero`; paso inductivo usa `mul_succ`, `fromPeano_add`, y `add_comm_Omega` (necesaria porque Peano da `(p·q') + p` mientras ZFC da `p + (p·q')`).
+
+**Dependencias**: `mul_zero`, `mul_succ`, `fromPeano_add`, `add_comm_Omega`, `mul_in_Omega`, `fromPeano`, `Nat_in_Omega`, `fromPeano_is_nat`, `Peano.Mul.mul_zero`, `Peano.Mul.mul_succ`
+
+#### Sección 4: Propiedades algebraicas
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `zero_mul_Omega` | ∅ · n = ∅ (aniquilador izquierdo) | `theorem zero_mul_Omega (n : U) (hn : n ∈ (ω : U)) : mul ∅ n = ∅` |
+| `mul_comm_Omega` | m · n = n · m (conmutatividad) | `theorem mul_comm_Omega (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) : mul m n = mul n m` |
+| `succ_mul_Omega` | σ m · n = m · n + n | `theorem succ_mul_Omega (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) : mul (σ m) n = add (mul m n) n` |
+| `mul_one_Omega` | m · σ ∅ = m (identidad derecha) | `theorem mul_one_Omega (m : U) (hm : m ∈ (ω : U)) : mul m (σ (∅ : U)) = m` |
+| `one_mul_Omega` | σ ∅ · m = m (identidad izquierda) | `theorem one_mul_Omega (m : U) (hm : m ∈ (ω : U)) : mul (σ (∅ : U)) m = m` |
+| `mul_assoc_Omega` | (m · n) · k = m · (n · k) (asociatividad) | `theorem mul_assoc_Omega (m n k : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) (hk : k ∈ (ω : U)) : mul (mul m n) k = mul m (mul n k)` |
+| `mul_ldistr_Omega` | m · (n + k) = m · n + m · k (distributividad izquierda) | `theorem mul_ldistr_Omega (m n k : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) (hk : k ∈ (ω : U)) : mul m (add n k) = add (mul m n) (mul m k)` |
+| `mul_rdistr_Omega` | (m + n) · k = m · k + n · k (distributividad derecha) | `theorem mul_rdistr_Omega (m n k : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) (hk : k ∈ (ω : U)) : mul (add m n) k = add (mul m k) (mul n k)` |
+
+**Patrón de demostración**: Igual que en NaturalNumbersAdd: `fromPeano_surjective` + `subst` + `fromPeano_mul`/`fromPeano_add` + `congrArg fromPeano (Peano.Mul.teorema ...)`.
+
+**Dependencias para Sección 4**: `fromPeano_surjective`, `fromPeano_mul`, `fromPeano_add`, `Peano.Mul.zero_mul`, `Peano.Mul.mul_comm`, `Peano.Mul.succ_mul`, `Peano.Mul.mul_one`, `Peano.Mul.one_mul`, `Peano.Mul.mul_assoc`, `Peano.Mul.mul_ldistr`, `Peano.Mul.mul_rdistr`, `Nat_in_Omega`, `fromPeano_is_nat`
+
+---
+
 ## 5. Notación y Sintaxis
 
 ### 5.1 Operadores Básicos
@@ -5203,6 +5587,18 @@ theorem toPeano_surjective (p : Peano.ℕ₀) :
 ### 5.6 Infinito
 
 - `ω` - Conjunto de todos los números naturales (`Omega`)
+
+### 5.11 Isomorfismo Peano ↔ Von Neumann
+
+- `ΠZ p` - Conversión Peano → Von Neumann: `fromPeano p` (`scoped notation "ΠZ"`)
+- `ZΠ n hn` - Conversión Von Neumann → Peano: `toPeano n hn` (`scoped notation "ZΠ"`)
+
+**Uso**: Ambas notaciones están disponibles con `open SetUniverse` (son `scoped`). No se abren en `NaturalNumbersAdd`/`NaturalNumbersMul` para evitar ambigüedad.
+
+### 5.12 Aritmética en ω
+
+- `add m n` - Suma en ω (`NaturalNumbersAdd.add`); requiere `open SetUniverse.NaturalNumbersAdd` o export
+- `mul m n` - Producto en ω (`NaturalNumbersMul.mul`); requiere `open SetUniverse.NaturalNumbersMul` o export
 
 ### 5.7 De Morgan Generalizado
 
@@ -5739,6 +6135,117 @@ export Recursion (
   RecursionComputations
   computations_are_compatible
   RecursionTheorem
+  RecursionTheoremWithStep
+  RecursiveFn
+  RecursiveFn_is_function
+  RecursiveFn_zero
+  RecursiveFn_succ
+  RecursiveFn_unique
+)
+```
+
+### 6.15 PeanoImport.lean
+
+**Namespace**: `SetUniverse.PeanoIsomorphism` (exportado a `SetUniverse`)
+**Última modificación**: 2026-03-08
+
+```lean
+export PeanoIsomorphism (
+  -- Definiciones
+  fromPeano
+  toPeano
+  -- Sección 1: Biyección
+  fromPeano_is_nat
+  fromPeano_injective
+  fromPeano_surjective
+  fromPeano_toPeano
+  toPeano_fromPeano
+  toPeano_injective
+  toPeano_surjective
+  -- Sección 2: Compatibilidad algebraica básica
+  toPeano_zero
+  toPeano_successor
+  -- Sección 3: Transporte de recursión
+  recursion_transport
+  recursion_transport_inv
+  recursion_transport_step
+  recursion_transport_step_inv
+  -- Sección 4: Puentes de orden
+  succ_mem_succ_iff
+  fromPeano_lt_iff
+  fromPeano_le_iff
+)
+-- Notaciones scoped en SetUniverse:
+-- scoped notation "ΠZ" => PeanoIsomorphism.fromPeano
+-- scoped notation "ZΠ" => PeanoIsomorphism.toPeano
+```
+
+### 6.16 NaturalNumbersAdd.lean
+
+**Namespace**: `SetUniverse.NaturalNumbersAdd` (exportado a `SetUniverse`)
+**Última modificación**: 2026-03-08
+**Dependencias**: `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `PeanoNatLib.PeanoNatAdd`
+
+```lean
+export NaturalNumbersAdd (
+  -- Sección 1: successorFn
+  successorFn
+  mem_successorFn
+  successorFn_is_function
+  successorFn_apply
+  -- Sección 2: addFn y add
+  addFn
+  addFn_is_function
+  add
+  add_eq
+  add_in_Omega
+  -- Sección 3: ecuaciones de recursión
+  add_zero
+  add_succ
+  -- Sección 4: puente
+  fromPeano_add
+  -- Sección 5: propiedades algebraicas
+  zero_add
+  add_comm_Omega
+  add_assoc_Omega
+  -- Sección 6: propiedades adicionales
+  succ_add_Omega
+  add_left_cancel_Omega
+  add_right_cancel_Omega
+  add_pos_left_Omega
+  le_then_exists_add_Omega
+  add_lt_of_lt_Omega
+)
+```
+
+### 6.17 NaturalNumbersMul.lean
+
+**Namespace**: `SetUniverse.NaturalNumbersMul` (exportado a `SetUniverse`)
+**Última modificación**: 2026-03-08
+**Dependencias**: `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersAdd`, `PeanoNatLib.PeanoNatMul`
+
+```lean
+export NaturalNumbersMul (
+  -- Sección 1: mulFn y mul
+  mulFn
+  mulFn_is_function
+  mul
+  mul_eq
+  mul_in_Omega
+  -- Sección 2: ecuaciones de recursión
+  mul_zero
+  mul_succ
+  -- Sección 3: puente
+  fromPeano_mul
+  -- Sección 4: propiedades algebraicas
+  zero_mul_Omega
+  mul_comm_Omega
+  succ_mul_Omega
+  mul_one_Omega
+  one_mul_Omega
+  mul_assoc_Omega
+  mul_ldistr_Omega
+  mul_rdistr_Omega
 )
 ```
 
@@ -5775,13 +6282,15 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `Functions.lean` - Funciones inyectivas, suryectivas, biyectivas, composición, restricción
 - `Relations.lean` - Relaciones, equivalencia, orden, imagen de relaciones
 - `Recursion.lean` - Teorema de recursión para números naturales, cómputos de longitud n
+- `PeanoImport.lean` - Isomorfismo Von Neumann ↔ Peano completo: biyección, compatibilidad algebraica, transporte de recursión (simple y con paso), puentes de orden
+- `NaturalNumbersAdd.lean` - Suma en ω: definición vía Recursión, teorema puente `fromPeano_add`, propiedades de semianillo (conmutatividad, asociatividad, cancelación, monotonía)
+- `NaturalNumbersMul.lean` - Multiplicación en ω: definición vía Recursión, teorema puente `fromPeano_mul`, propiedades de anillo conmutativo (distributividad, asociatividad, identidades)
 
 ### 7.3 Archivos Parcialmente Proyectados
 
 Los siguientes archivos tienen **documentación parcial** (solo definiciones/teoremas principales):
 
 - `AtomicBooleanAlgebra.lean` - Solo definición de átomo y teoremas principales
-- `Cardinality.lean` - Solo conjunto diagonal y teorema de Cantor; 1 `sorry` en CSB theorem (línea 514)
 
 ### 7.4 Archivos Casi Completos (con `sorry` documentados)
 
@@ -5789,8 +6298,9 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 
 - (Ninguno actualmente - todos los módulos de Core Theory están 100% completos)
 
-**Nota**: `Functions.lean` está ahora ✅ **100% completo** (0 sorry).  
+**Nota**: `Functions.lean` está ahora ✅ **100% completo** (0 sorry).
 **Nota**: `Recursion.lean` está ahora ✅ **100% completo** (0 sorry, 0 errores de compilación).
+**Nota**: `Cardinality.lean` está ahora ✅ **100% completo** (0 sorry, CSB theorem completamente demostrado).
 
 ### 7.5 Archivos Completos Pendientes de Proyectar
 
@@ -5798,10 +6308,12 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 
 ---
 
-*Última actualización: 2026-03-05 10:00 - Proyección completa de Recursion.lean: 5 lemas auxiliares globales (succ_subset_omega, computation_subset_omega_times_A, succ_subset_succ_of_mem, restriction_computation_general, computations_are_compatible), def RecursionComputations, y RecursionTheorem 100% demostrado sin sorry*
+*Última actualización: 2026-03-08 12:00 — Proyección de NaturalNumbersAdd.lean (3 def + 16 teoremas), NaturalNumbersMul.lean (2 def + 13 teoremas), y ampliación de PeanoImport.lean (9 nuevos teoremas: toPeano_zero, toPeano_successor, recursion_transport x4, succ_mem_succ_iff, fromPeano_lt_iff, fromPeano_le_iff). Secciones 3.22, 3.23, 4.18, 4.19 añadidas. Sección 6 actualizada con exports 6.15–6.17.*
 
-*Actualización anterior: 2026-03-04 12:00 - Proyección de PeanoImport.lean (2 def + 7 teoremas), nat_mem_wf en Infinity.lean, predecessor en NaturalNumbers.lean*
+*Actualización anterior: 2026-03-05 10:00 — Proyección completa de Recursion.lean: 5 lemas auxiliares globales, def RecursionComputations, RecursionTheorem 100% demostrado sin sorry.*
 
-*Actualización anterior: 2026-02-12 18:45 - Completada proyección íntegra de NaturalNumbers.lean (13 def + 36 teoremas + exports)*
+*Actualización anterior: 2026-03-04 12:00 — Proyección de PeanoImport.lean (2 def + 7 teoremas), nat_mem_wf en Infinity.lean, predecessor en NaturalNumbers.lean.*
+
+*Actualización anterior: 2026-02-12 18:45 — Completada proyección íntegra de NaturalNumbers.lean (13 def + 36 teoremas + exports).*
 
 *Este documento contiene únicamente construcciones y teoremas que están completamente implementados y demostrados en el código Lean 4. La proyección se actualiza conforme se agregan archivos al contexto de trabajo.*

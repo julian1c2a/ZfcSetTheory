@@ -1,6 +1,6 @@
 # Changelog
 
-**Última actualización:** 2026-03-04 12:00
+**Última actualización:** 2026-03-08 14:00
 **Autor**: Julián Calderón Almendros
 
 Todos los cambios notables de este proyecto serán documentados en este archivo.
@@ -9,6 +9,54 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Añadido (2026-03-08 14:00)
+
+- **Nuevo módulo NaturalNumbersAdd.lean — Suma en ω**:
+  - ✅ `successorFn : U → U → U` — función sucesor para Recursión (no computable, proposicional)
+  - ✅ `addFn (m : U) (hm : m ∈ ω) : U` — función de suma vía `RecursiveFn`
+  - ✅ `add (m n : U) : U` — suma de naturales de von Neumann
+  - ✅ `fromPeano_add` — teorema puente: `fromPeano (p + q) = add (fromPeano p) (fromPeano q)`
+  - ✅ 16 teoremas algebraicos: `add_zero_Omega`, `zero_add_Omega`, `add_succ_Omega`, `succ_add_Omega`, `add_comm_Omega`, `add_assoc_Omega`, `add_left_cancel_Omega`, `add_right_cancel_Omega`, `add_pos_left_Omega`, `add_pos_right_Omega`, `le_then_exists_add_Omega`, `add_lt_of_lt_Omega`, `add_le_left_Omega`, `add_le_right_Omega`, `lt_add_of_pos_right_Omega`, `lt_add_of_pos_left_Omega`
+  - ✅ Build: 28/28 módulos compilados correctamente
+
+- **Nuevo módulo NaturalNumbersMul.lean — Multiplicación en ω**:
+  - ✅ `mulFn (m : U) (hm : m ∈ ω) : U` — función de multiplicación vía `RecursiveFn`
+  - ✅ `mul (m n : U) : U` — multiplicación de naturales de von Neumann
+  - ✅ `fromPeano_mul` — teorema puente: `fromPeano (p * q) = mul (fromPeano p) (fromPeano q)`
+  - ✅ 13 teoremas algebraicos: `mul_zero_Omega`, `zero_mul_Omega`, `mul_succ`, `mul_comm_Omega`, `succ_mul_Omega`, `mul_one_Omega`, `one_mul_Omega`, `mul_assoc_Omega`, `mul_ldistr_Omega`, `mul_rdistr_Omega`, `mul_in_Omega`, `mul_lt_left_Omega`, `mul_le_left_Omega`
+  - ✅ Build: 28/28 módulos compilados correctamente
+
+- **PeanoImport.lean — Transporte de recursión con paso y puentes de orden** (extensión):
+  - ✅ `recursion_transport_step` — transporta `RecursionTheoremWithStep` de ZFC a Peano
+  - ✅ `recursion_transport_step_inv` — transporta `RecursionTheoremWithStep` de Peano a ZFC
+  - ✅ `fromPeano_lt_iff` — `Lt p q ↔ (ΠZ p : U) ∈ (ΠZ q : U)`
+  - ✅ `fromPeano_le_iff` — `Le p q ↔ (ΠZ p : U) ⊆ (ΠZ q : U)`
+  - ✅ `succ_mem_succ_iff` — `σ m ∈ σ n ↔ m ∈ n` (para naturales en ω)
+
+- **Cardinality.lean — 0 sorry confirmado**:
+  - ✅ CSB_bijection_is_function completamente demostrado (sin sorry)
+  - ✅ Estado actualizado en REFERENCE.md: 🔶 Parcial → ✅ Completo
+
+- **REFERENCE.md**: actualización completa
+  - ✅ §1.1: NaturalNumbersAdd.lean y NaturalNumbersMul.lean añadidos
+  - ✅ §3.22: nueva sección NaturalNumbersAdd (3 definiciones)
+  - ✅ §3.23: nueva sección NaturalNumbersMul (2 definiciones)
+  - ✅ §4.17: PeanoImport ampliado (+5 teoremas)
+  - ✅ §4.18: nueva sección NaturalNumbersAdd (16 teoremas)
+  - ✅ §4.19: nueva sección NaturalNumbersMul (13 teoremas)
+  - ✅ §5.11-5.12: notaciones ΠZ/ZΠ, add, mul
+  - ✅ §6.15-6.17: exports PeanoImport, NaturalNumbersAdd, NaturalNumbersMul
+  - ✅ §7.2: Cardinality movido de 7.3 a 7.2
+
+- **ZfcSetTheory.lean** (módulo raíz): `import ZfcSetTheory.NaturalNumbersMul` añadido
+
+- **AIDER-AI-GUIDE.md**: actualizado con requisitos mejorados del proyecto PEANO
+  - ✅ §0: documentación técnica (no usuario final)
+  - ✅ §4.1-4.4: computabilidad, buena fundación, notación en definiciones
+  - ✅ §11-14: definición de "proyectar", criterio de relevancia, exportabilidad
+  - ✅ §20: sistema de bloqueo de archivos
+  - ✅ Sección de versiones resumidas de CHANGELOG.md
 
 ### Añadido (2026-03-04 12:00)
 

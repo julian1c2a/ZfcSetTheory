@@ -1,6 +1,6 @@
 # Diagrama de Dependencias - ZfcSetTheory
 
-**Última actualización:** 2026-03-04 12:00
+**Última actualización:** 2026-03-08 14:00
 **Autor**: Julián Calderón Almendros
 
 ## Estructura General del Proyecto
@@ -18,11 +18,12 @@ ZfcSetTheory/
 ├── CartesianProduct.lean           # Producto Cartesiano A ×ₛ B
 ├── Relations.lean                  # Relaciones: equivalencia, orden, clases, dominio, rango
 ├── Functions.lean                  # Funciones, aplicación, composición, inversa
-├── Infinity.lean                   # Axioma del Infinito y conjunto ω
-├── NaturalNumbers.lean             # Números naturales como ordinales de von Neumann
 ├── Infinity.lean                   # Axioma del Infinito y conjunto ω (nat_mem_wf)
-├── PeanoImport.lean                # Isomorfismo Von Neumann ↔ Peano (nuevo 2026-03-04)
+├── NaturalNumbers.lean             # Números naturales como ordinales de von Neumann
 ├── Recursion.lean                  # Teorema de Recursión sobre ℕ
+├── PeanoImport.lean                # Isomorfismo Von Neumann ↔ Peano (2026-03-04)
+├── NaturalNumbersAdd.lean          # Suma en ω vía Recursión + puentes Peano (nuevo 2026-03-08)
+├── NaturalNumbersMul.lean          # Multiplicación en ω vía Recursión + puentes Peano (nuevo 2026-03-08)
 ├── BooleanAlgebra.lean             # Álgebra Booleana de conjuntos (teoremas)
 ├── BooleanRing.lean                # Anillo Booleano con SymDiff
 ├── PowerSetAlgebra.lean            # Álgebra del conjunto potencia (complemento, De Morgan)
@@ -86,6 +87,9 @@ graph TD
     Nat --> PI[PeanoImport.lean]
     Inf --> PI
     PL[peanolib/PeanoNatAxioms] --> PI
+    PI --> NA[NaturalNumbersAdd.lean]
+    Rec --> NA
+    NA --> NM[NaturalNumbersMul.lean]
     
     %% Nivel 9: Álgebras y órdenes
     E --> SSO[SetStrictOrder.lean]
@@ -136,6 +140,8 @@ graph TD
     SSO --> Z
     Card --> Z
     PI --> Z
+    NA --> Z
+    NM --> Z
 
     %% Estilos
     classDef axiom fill:#e1f5fe,stroke:#01579b,stroke-width:2px
@@ -153,7 +159,7 @@ graph TD
     class SO,SSO order
     class OP,CP extension
     class Rel,Func relation
-    class Inf,Nat,Rec,PI natural
+    class Inf,Nat,Rec,PI,NA,NM natural
     class Z main
     class IC,P,PL external
 ```
@@ -279,7 +285,30 @@ namespace SetUniverse.NaturalNumbers
   -- Teoremas: propiedades de números naturales, inducción
 ```
 
-### 14. **SetUniverse.Recursion**
+### 14. **SetUniverse.NaturalNumbersAdd**
+
+```lean
+namespace SetUniverse.NaturalNumbersAdd
+  -- Suma de naturales de von Neumann vía Recursión
+  -- Definiciones: successorFn, addFn, add
+  -- Teoremas: semianillo conmutativo (add_zero, zero_add, add_succ, add_comm, add_assoc,
+  --           add_left_cancel, add_right_cancel, add_pos_left, add_pos_right,
+  --           add_lt_of_lt, add_le_left, add_le_right, fromPeano_add)
+  -- Depende de: PeanoImport, Recursion
+```
+
+### 14b. **SetUniverse.NaturalNumbersMul**
+
+```lean
+namespace SetUniverse.NaturalNumbersMul
+  -- Multiplicación de naturales de von Neumann vía Recursión
+  -- Definiciones: mulFn, mul
+  -- Teoremas: anillo conmutativo (mul_zero, zero_mul, mul_succ, mul_comm,
+  --           mul_assoc, mul_one, one_mul, mul_ldistr, mul_rdistr, fromPeano_mul)
+  -- Depende de: NaturalNumbersAdd, PeanoImport, Recursion
+```
+
+### 15. **SetUniverse.Recursion**
 
 ```lean
 namespace SetUniverse.Recursion
@@ -409,8 +438,10 @@ namespace SetUniverse.Cardinality
 
 - `Infinity.lean` - Axioma del Infinito, conjunto inductivo, `nat_mem_wf`
 - `NaturalNumbers.lean` - Números naturales como ordinales de von Neumann, `predecessor`
-- `PeanoImport.lean` - Isomorfismo Von Neumann ↔ Peano (depende de `peanolib`) *(nuevo 2026-03-04)*
-- `Recursion.lean` - Teorema de Recursión sobre ℕ
+- `Recursion.lean` - Teorema de Recursión sobre ℕ (`RecursiveFn`, `RecursionTheoremWithStep`)
+- `PeanoImport.lean` - Isomorfismo Von Neumann ↔ Peano (depende de `peanolib`) *(2026-03-04)*
+- `NaturalNumbersAdd.lean` - Suma en ω vía Recursión, puente `fromPeano_add` *(nuevo 2026-03-08)*
+- `NaturalNumbersMul.lean` - Multiplicación en ω vía Recursión, puente `fromPeano_mul` *(nuevo 2026-03-08)*
 
 ### **Nivel 9: Estructuras Algebraicas**
 
@@ -605,6 +636,36 @@ noncomputable def fromPeano : Peano.ℕ₀ → U
 noncomputable def toPeano (n : U) (hn : isNat n) : Peano.ℕ₀
 -- Teoremas: fromPeano_is_nat, fromPeano_injective, fromPeano_surjective,
 --           fromPeano_toPeano, toPeano_fromPeano, toPeano_injective, toPeano_surjective
+```
+
+### NaturalNumbersAdd.lean
+
+```lean
+export SetUniverse.NaturalNumbersAdd (
+    successorFn, addFn, add,
+    add_zero_Omega, zero_add_Omega, add_succ_Omega, succ_add_Omega,
+    add_comm_Omega, add_assoc_Omega,
+    add_left_cancel_Omega, add_right_cancel_Omega,
+    add_pos_left_Omega, add_pos_right_Omega,
+    le_then_exists_add_Omega, add_lt_of_lt_Omega,
+    add_le_left_Omega, add_le_right_Omega,
+    lt_add_of_pos_right_Omega, lt_add_of_pos_left_Omega,
+    fromPeano_add, add_in_Omega
+)
+```
+
+### NaturalNumbersMul.lean
+
+```lean
+export SetUniverse.NaturalNumbersMul (
+    mulFn, mul,
+    mul_zero_Omega, zero_mul_Omega, mul_succ,
+    mul_comm_Omega, succ_mul_Omega,
+    mul_one_Omega, one_mul_Omega,
+    mul_assoc_Omega, mul_ldistr_Omega, mul_rdistr_Omega,
+    mul_in_Omega, mul_lt_left_Omega, mul_le_left_Omega,
+    fromPeano_mul
+)
 ```
 
 ### Recursion.lean

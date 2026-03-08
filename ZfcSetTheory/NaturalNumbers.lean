@@ -2035,6 +2035,45 @@ namespace SetUniverse
 
     -/
 
+    -- =========================================================================
+    -- Predecessor: saturated (τ-like) and strict (ρ-like) variants
+    -- =========================================================================
+
+    /-- The predecessor of ∅ is ∅ in ZFC: `predecessor ∅ = ⋃∅ = ∅`.
+        Analogous to `τ 𝟘 = 𝟘` in the Peano setting. -/
+    theorem predecessor_zero : predecessor (∅ : U) = ∅ :=
+      Set_is_empty_1 (∅ : U) rfl
+
+    /-- Strict predecessor of a non-zero Von Neumann natural.
+        Requires an explicit proof that `n ≠ ∅`. Analogous to `ρ` in Peano. -/
+    noncomputable def predecessorPos (n : U) (_ : n ≠ ∅) : U := predecessor n
+
+    /-- `predecessorPos n h = predecessor n` (definitional). -/
+    theorem predecessorPos_eq_predecessor (n : U) (h : n ≠ ∅) :
+        predecessorPos n h = predecessor n := rfl
+
+    /-- `predecessorPos (σ k) h = k`. -/
+    theorem predecessorPos_of_successor (k : U) (hk : isNat k) (h : σ k ≠ ∅) :
+        predecessorPos (σ k) h = k :=
+      predecessor_of_successor hk
+
+    /-- `predecessorPos n h` is a Von Neumann natural. -/
+    theorem predecessorPos_is_nat (n : U) (hn : isNat n) (h : n ≠ ∅) :
+        isNat (predecessorPos n h) :=
+      predecessor_is_nat n hn h
+
+    /-- `σ (predecessorPos n h) = n` for any non-zero Von Neumann natural. -/
+    theorem successor_predecessorPos (n : U) (hn : isNat n) (h : n ≠ ∅) :
+        σ (predecessorPos n h) = n := by
+      obtain ⟨k, hk⟩ := (nat_is_zero_or_succ n hn).resolve_left h
+      have hk_nat : isNat k :=
+        nat_element_is_nat n k hn (hk ▸ mem_successor_self k)
+      calc σ (predecessorPos n h)
+          = σ (predecessor n)      := by rw [predecessorPos_eq_predecessor]
+        _ = σ (predecessor (σ k))  := by rw [hk]
+        _ = σ k                    := by rw [predecessor_of_successor hk_nat]
+        _ = n                      := hk.symm
+
   end NaturalNumbers
 
   export NaturalNumbers (
@@ -2091,11 +2130,18 @@ namespace SetUniverse
     two_in_inductive
     three_in_inductive
     nat_has_max
-    -- Predecessor
+    -- Predecessor (saturated)
     predecessor
     predecessor_of_successor
     predecessor_is_nat
     predecessor_mem
+    predecessor_zero
+    -- Predecessor (strict / ρ-like)
+    predecessorPos
+    predecessorPos_eq_predecessor
+    predecessorPos_of_successor
+    predecessorPos_is_nat
+    successor_predecessorPos
     -- Examples
     zero
     one

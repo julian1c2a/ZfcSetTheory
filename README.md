@@ -7,9 +7,9 @@
 
 > 📊 **Project Status**: See [CURRENT-STATUS-PROJECT.md](CURRENT-STATUS-PROJECT.md) for complete details
 >
-> ✅ **25/25 modules** compiling successfully (28/28 jobs with peanolib)
-> ✅ **100% of theorems** completely proven (except Recursion.lean)
-> ✅ **0 `sorry`** in 24/25 modules — only Recursion.lean pending
+> ✅ **27/27 modules** compiling successfully (28/28 jobs with peanolib)
+> ✅ **100% of theorems** completely proven
+> ✅ **0 `sorry`** in all 27 modules
 
 Una implementación formal de la **Teoría de Conjuntos de Zermelo-Fraenkel (ZFC)** en Lean 4, sin dependencias de Mathlib.
 
@@ -40,8 +40,10 @@ Este proyecto desarrolla los axiomas fundamentales de ZFC de manera progresiva, 
 | **Relaciones** | `Relations.lean` | Equivalencia, orden parcial/lineal, clases | ✅ Completo |
 | **Funciones** | `Functions.lean` | Inyectivas, suryectivas, biyectivas, composición | ✅ Completo |
 | **Números Naturales** | `NaturalNumbers.lean` | ℕ como ordinales de von Neumann | ✅ Completo |
-| **Recursión en ℕ** | `Recursion.lean` | Teorema de recursión sobre naturales | ⚠️ Parcial |
+| **Recursión en ℕ** | `Recursion.lean` | Teorema de recursión sobre naturales | ✅ Completo |
 | **Isomorfismo Von Neumann ↔ Peano** | `PeanoImport.lean` | Biyección ℕ_VN ↔ Peano.ℕ₀ (peanolib) | ✅ Completo |
+| **Suma en ℕ (ZFC)** | `NaturalNumbersAdd.lean` | Suma via Recursión, puente `fromPeano_add`, semianillo | ✅ Completo |
+| **Multiplicación en ℕ (ZFC)** | `NaturalNumbersMul.lean` | Mul via Recursión, puente `fromPeano_mul`, anillo conmutativo | ✅ Completo |
 | **Álgebra Booleana** | `BooleanAlgebra.lean` | Leyes fundamentales, idempotencia, absorción | ✅ Completo |
 | **Anillo Booleano** | `BooleanRing.lean` | Diferencia simétrica, propiedades de anillo | ✅ Completo |
 | **Álgebra de 𝒫(A)** | `PowerSetAlgebra.lean` | Complemento, De Morgan, distributividad | ✅ Completo |
@@ -52,7 +54,7 @@ Este proyecto desarrolla los axiomas fundamentales de ZFC de manera progresiva, 
 | **Orden Estricto** | `SetStrictOrder.lean` | Propiedades de orden estricto | ✅ Completo |
 | **Cardinalidad** | `Cardinality.lean` | Teorema de Cantor, CSB | ✅ Completo |
 
-### Total: 25 módulos — 24/25 con 0 sorry (solo Recursion.lean pendiente)
+### Total: 27 módulos — 27/27 con 0 sorry
 
 ## ✨ Características Destacadas
 
@@ -107,8 +109,10 @@ ZfcSetTheory/
 ├── Cardinality.lean             # Teoremas de Cantor y Cantor-Schröder-Bernstein
 ├── NaturalNumbers.lean          # ℕ como ordinales de von Neumann (predecessor exportado)
 ├── Infinity.lean                # Axioma del Infinito y ω (nat_mem_wf probado)
+├── Recursion.lean               # Teorema de recursión sobre ℕ (completo)
 ├── PeanoImport.lean             # Isomorfismo Von Neumann ↔ Peano (peanolib)
-├── Recursion.lean               # Teorema de recursión sobre ℕ (pendiente)
+├── NaturalNumbersAdd.lean       # Suma en ω vía Recursión + puente fromPeano_add
+├── NaturalNumbersMul.lean       # Multiplicación en ω vía Recursión + puente fromPeano_mul
 └── ZfcSetTheory.lean            # Módulo raíz
 ```
 
@@ -182,8 +186,8 @@ lake build
   - Analysis of 4 pending `sorry` with difficulty levels
   - Architecture and dependency hierarchies
   - Next steps with time estimates
-- **[REFERENCE.md](REFERENCE.md)** - 📖 **Complete technical reference** (4500+ lines)
-  - 18 fully documented modules with mathematical descriptions
+- **[REFERENCE.md](REFERENCE.md)** - 📖 **Complete technical reference** (6000+ lines)
+  - 20 fully documented modules with mathematical descriptions
   - All definitions, theorems, and exports with Lean4 signatures
   - Dependency tracking and namespace organization
 - [CHANGELOG.md](CHANGELOG.md) - Detailed change history
@@ -227,5 +231,5 @@ Este proyecto se desarrolló basándose en las siguientes fuentes:
 
 ---
 
-**Autor**: Julián Calderón Almendros  
-*Last updated: 2026-02-12 18:45*
+**Autor**: Julián Calderón Almendros
+*Last updated: 2026-03-08 14:00*

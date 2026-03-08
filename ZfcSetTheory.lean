@@ -29,3 +29,5 @@ import ZfcSetTheory.Cardinality
 import ZfcSetTheory.NaturalNumbers
 import ZfcSetTheory.Infinity
 import ZfcSetTheory.PeanoImport
+import ZfcSetTheory.NaturalNumbersAdd
+import ZfcSetTheory.NaturalNumbersMul

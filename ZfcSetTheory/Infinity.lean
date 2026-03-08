@@ -378,6 +378,72 @@ namespace SetUniverse
       · -- Elements outside ω are vacuously accessible: R y a requires a ∈ ω.
         exact Acc.intro a (fun y hy => absurd hy.2.1 ha)
 
+    -- =========================================================================
+    -- Order on ω: strict (≺) and non-strict (≼)
+    -- =========================================================================
+
+    /-- Strict order on Von Neumann naturals: `n ≺ m` iff `n ∈ m`. -/
+    scoped notation:50 n:51 " ≺ " m:51 => (n ∈ m)
+
+    /-- Non-strict order on Von Neumann naturals: `n ≼ m` iff `n ∈ m ∨ n = m`. -/
+    scoped notation:50 n:51 " ≼ " m:51 => (n ∈ m ∨ n = m)
+
+    /-- The strict order on ω is transitive. -/
+    theorem natLt_trans {n m k : U} (hn : isNat n) (hm : isNat m) (hk : isNat k)
+        (h₁ : n ≺ m) (h₂ : m ≺ k) : n ≺ k :=
+      nat_mem_trans n m k hn hm hk h₁ h₂
+
+    /-- The strict order on ω is asymmetric. -/
+    theorem natLt_asymm {n m : U} (hn : isNat n) (hm : isNat m)
+        (h : n ≺ m) : ¬(m ≺ n) :=
+      nat_mem_asymm n m hn hm h
+
+    /-- Trichotomy: for any two naturals, exactly one of `n ≺ m`, `n = m`, `m ≺ n`. -/
+    theorem natLt_trichotomy (n m : U) (hn : isNat n) (hm : isNat m) :
+        n ≺ m ∨ n = m ∨ m ≺ n :=
+      nat_trichotomy n m hn hm
+
+    /-- The non-strict order is reflexive. -/
+    theorem natLe_refl (n : U) : n ≼ n := Or.inr rfl
+
+    /-- The non-strict order is transitive. -/
+    theorem natLe_trans {n m k : U} (hn : isNat n) (hm : isNat m) (hk : isNat k)
+        (h₁ : n ≼ m) (h₂ : m ≼ k) : n ≼ k := by
+      cases h₁ with
+      | inl h => cases h₂ with
+        | inl h' => exact Or.inl (nat_mem_trans n m k hn hm hk h h')
+        | inr h' => exact Or.inl (h' ▸ h)
+      | inr h => exact h ▸ h₂
+
+    /-- Every non-empty subset of ω has a `≺`-minimum element. -/
+    theorem Omega_has_min (T : U) (hT_sub : T ⊆ (ω : U)) (hT_ne : T ≠ ∅) :
+        ∃ n, n ∈ T ∧ ∀ m, m ∈ T → n ≼ m := by
+      let S := SpecSet (ω : U) (fun n =>
+        n ∈ T → ∃ p, p ∈ T ∧ ∀ k, k ∈ T → p ≼ k)
+      have hS_eq : S = (ω : U) :=
+        strong_induction_principle S
+          (fun z hz => by rw [SpecSet_is_specified] at hz; exact hz.1)
+          (fun n hn ih => by
+            rw [SpecSet_is_specified]
+            refine ⟨hn, fun hnT => ?_⟩
+            by_cases h : ∃ l, l ∈ T ∧ l ∈ n
+            · obtain ⟨l, hlT, hln⟩ := h
+              have hl_in_S : l ∈ S := ih l hln
+              rw [SpecSet_is_specified] at hl_in_S
+              exact hl_in_S.2 hlT
+            · have h' : ∀ l, l ∈ T → l ∉ n := fun l hl hln => h ⟨l, hl, hln⟩
+              exact ⟨n, hnT, fun k hkT => by
+                rcases nat_trichotomy n k
+                    (mem_Omega_is_Nat n hn) (mem_Omega_is_Nat k (hT_sub k hkT))
+                  with hk | hk | hk
+                · exact Or.inl hk
+                · exact Or.inr hk
+                · exact absurd hk (h' k hkT)⟩)
+      obtain ⟨x, hxT⟩ := (nonempty_iff_exists_mem T).mp hT_ne
+      have hx_in_S : x ∈ S := by rw [hS_eq]; exact hT_sub x hxT
+      rw [SpecSet_is_specified] at hx_in_S
+      exact hx_in_S.2 hxT
+
   end InfinityAxiom
 
   export InfinityAxiom (
@@ -397,6 +463,13 @@ namespace SetUniverse
     Omega_has_total_order
     Omega_no_maximum
     nat_mem_wf
+    -- Order on ω
+    natLt_trans
+    natLt_asymm
+    natLt_trichotomy
+    natLe_refl
+    natLe_trans
+    Omega_has_min
   )
 
 end SetUniverse
