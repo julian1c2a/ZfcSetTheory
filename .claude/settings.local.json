@@ -22,7 +22,11 @@
       "Bash(bash git-lock.bash unlock ZfcSetTheory/NaturalNumbersAdd.lean)",
       "Bash(lake build ZfcSetTheory.NaturalNumbersAdd)",
       "Bash(bash git-lock.bash lock ZfcSetTheory/NaturalNumbersAdd.lean)",
-      "Bash(lake build ZfcSetTheory.NaturalNumbersMul)"
+      "Bash(lake build ZfcSetTheory.NaturalNumbersMul)",
+      "Bash(bash git-lock.bash init)",
+      "Bash(gh repo create lean4-project-template --public --source=. --remote=origin --push)",
+      "Bash(bash git-lock.bash unlock ZfcSetTheory/Prelim.lean)",
+      "Bash(lake build ZfcSetTheory.Prelim)"
     ]
   }
 }
