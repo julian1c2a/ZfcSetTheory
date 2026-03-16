@@ -58,12 +58,67 @@
   3. Actualizar exports en sección 6.11
 - **Fecha de revisión:** 2026-03-16
 
+### ⚠️ Pairing.lean
+- **Estado en REFERENCE.md:** 🔶 Parcial (marcado como completo pero falta contenido)
+- **Verificación:** Parcialmente proyectado
+- **Acciones necesarias:**
+  1. Añadir a REFERENCE.md sección 3.5:
+     - `interSet` (definición de intersección de familia)
+     - Notación `⋂` para `interSet`
+     - `member_inter` (predicado de pertenencia a intersección)
+     - `nonempty_iff_exists_mem` (teorema)
+  2. Añadir nueva sección 3.5.1 "Predicados de Relaciones":
+     - `isRelation`
+     - `isRelation_in_Set`
+     - `isRelation_in_Sets`
+     - `ReverseOrderedPair`
+     - `isReverseRelation`
+     - `isIdRelation`
+     - `isInComposition`
+     - `isReflexive`
+     - `isReflexive_in_Set`
+     - `isIReflexive`
+     - `isSymmetric`
+     - `isAsymmetric`
+     - `isAntiSymmetric`
+     - `isTransitive`
+     - `isEquivalenceRelation`
+     - `isEquivalenceRelation_in_Set`
+     - `isPartialOrder`
+     - `isStrictOrder`
+     - `isWellDefined`
+     - `isTotalOrder`
+     - `isWellFounded`
+     - `isFunction`
+     - `isInyective`
+     - `isSurjectiveFunction`
+     - `isBijectiveFunction`
+  3. Añadir a REFERENCE.md sección 4.2 (nuevos teoremas auxiliares):
+     - `is_singleton_unique_elem`
+     - `pair_set_eq_singleton`
+     - `ordered_pair_self_eq_singleton_singleton`
+     - `diff_ordered_pair_neq`
+     - `diff_pair_singleton`
+     - `auxiliary_idempotence_of_or_in`
+     - `auxiliary_idempotence_of_or_eq`
+     - `ordered_pair_eq_mem`
+     - `diff_pair_sing_inter`
+     - `ordered_pair_neq_mem`
+     - `inter_of_ordered_pair`
+     - `inter_of_ordered_pair_neq_mem`
+     - `snd_of_ordered_pair_eq`
+     - `Eq_OrderedPairs`
+     - `isOrderedPair_equiv_isOrderedPair_concept`
+     - `isOrderedPair_by_construction`
+  4. Actualizar exports en sección 6 (ya están en el export pero no documentados)
+  5. Cambiar estado de "✅ Completo" a "🔶 Parcial" hasta completar proyección
+- **Fecha de revisión:** 2026-03-16
+
 ---
 
 ## Módulos Pendientes de Revisión
 
 - [ ] Specification.lean
-- [ ] Pairing.lean
 - [ ] Union.lean
 - [ ] PowerSet.lean
 - [ ] PowerSetAlgebra.lean
