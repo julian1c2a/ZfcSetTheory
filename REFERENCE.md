@@ -1,6 +1,6 @@
 # Referencia Técnica - ZfcSetTheory
 
-*Última actualización: 2026-03-16 16:00*
+*Última actualización: 2026-03-16 16:30*
 **Autor**: Julián Calderón Almendros
 
 ## 📋 Cumplimiento con AIDER-AI-GUIDE.md
@@ -503,10 +503,40 @@ def isRelationOn (R A : U) : Prop := R ⊆ (A ×ₛ A)
 
 **Dependencias**: `subseteq`, `CartesianProduct`
 
+#### Relación de A a B (isRelationFrom)
+
+**Ubicación**: `Relations.lean`, línea 47  
+**Orden**: 2ª definición principal
+
+**Enunciado Matemático**: R es una relación de A a B si R ⊆ A × B.
+
+**Firma Lean4**:
+
+```lean
+def isRelationFrom (R A B : U) : Prop := R ⊆ (A ×ₛ B)
+```
+
+**Dependencias**: `subseteq`, `CartesianProduct`
+
+#### R Relaciona x con y (Related)
+
+**Ubicación**: `Relations.lean`, línea 50  
+**Orden**: 3ª definición principal
+
+**Enunciado Matemático**: R relaciona x con y si ⟨x, y⟩ ∈ R.
+
+**Firma Lean4**:
+
+```lean
+def Related (R x y : U) : Prop := ⟨x, y⟩ ∈ R
+```
+
+**Dependencias**: `OrderedPair`, `mem`
+
 #### Reflexividad (isReflexiveOn)
 
-**Ubicación**: `Relations.lean`, línea 53  
-**Orden**: 2ª definición principal
+**Ubicación**: `Relations.lean`, línea 54  
+**Orden**: 4ª definición principal
 
 **Enunciado Matemático**: R es reflexiva en A si ∀x ∈ A, (x,x) ∈ R.
 
@@ -519,10 +549,26 @@ def isReflexiveOn (R A : U) : Prop :=
 
 **Dependencias**: `OrderedPair`
 
+#### Irreflexividad (isIrreflexiveOn)
+
+**Ubicación**: `Relations.lean`, línea 58  
+**Orden**: 5ª definición principal
+
+**Enunciado Matemático**: R es irreflexiva en A si ∀x ∈ A, (x,x) ∉ R.
+
+**Firma Lean4**:
+
+```lean
+def isIrreflexiveOn (R A : U) : Prop :=
+  ∀ x : U, x ∈ A → ⟨x, x⟩ ∉ R
+```
+
+**Dependencias**: `OrderedPair`
+
 #### Simetría (isSymmetricOn)
 
-**Ubicación**: `Relations.lean`, línea 61  
-**Orden**: 3ª definición principal
+**Ubicación**: `Relations.lean`, línea 62  
+**Orden**: 6ª definición principal
 
 **Enunciado Matemático**: R es simétrica en A si ∀x,y ∈ A, (x,y) ∈ R → (y,x) ∈ R.
 
@@ -537,8 +583,8 @@ def isSymmetricOn (R A : U) : Prop :=
 
 #### Antisimetría (isAntiSymmetricOn)
 
-**Ubicación**: `Relations.lean`, línea 65  
-**Orden**: 4ª definición principal
+**Ubicación**: `Relations.lean`, línea 66  
+**Orden**: 7ª definición principal
 
 **Enunciado Matemático**: R es antisimétrica en A si ∀x,y ∈ A, (x,y) ∈ R ∧ (y,x) ∈ R → x = y.
 
@@ -551,10 +597,26 @@ def isAntiSymmetricOn (R A : U) : Prop :=
 
 **Dependencias**: `OrderedPair`
 
+#### Asimetría (isAsymmetricOn)
+
+**Ubicación**: `Relations.lean`, línea 70  
+**Orden**: 8ª definición principal
+
+**Enunciado Matemático**: R es asimétrica en A si ∀x,y ∈ A, (x,y) ∈ R → (y,x) ∉ R.
+
+**Firma Lean4**:
+
+```lean
+def isAsymmetricOn (R A : U) : Prop :=
+  ∀ x y : U, x ∈ A → y ∈ A → ⟨x, y⟩ ∈ R → ⟨y, x⟩ ∉ R
+```
+
+**Dependencias**: `OrderedPair`
+
 #### Transitividad (isTransitiveOn)
 
-**Ubicación**: `Relations.lean`, línea 73  
-**Orden**: 5ª definición principal
+**Ubicación**: `Relations.lean`, línea 74  
+**Orden**: 9ª definición principal
 
 **Enunciado Matemático**: R es transitiva en A si ∀x,y,z ∈ A, (x,y) ∈ R ∧ (y,z) ∈ R → (x,z) ∈ R.
 
@@ -567,10 +629,61 @@ def isTransitiveOn (R A : U) : Prop :=
 
 **Dependencias**: `OrderedPair`
 
+#### Conexidad (isConnectedOn)
+
+**Ubicación**: `Relations.lean`, línea 78  
+**Orden**: 10ª definición principal
+
+**Enunciado Matemático**: R es conexa (total) en A si ∀x≠y ∈ A, (x,y) ∈ R ∨ (y,x) ∈ R.
+
+**Firma Lean4**:
+
+```lean
+def isConnectedOn (R A : U) : Prop :=
+  ∀ x y : U, x ∈ A → y ∈ A → x ≠ y → ⟨x, y⟩ ∈ R ∨ ⟨y, x⟩ ∈ R
+```
+
+**Dependencias**: `OrderedPair`
+
+#### Conexidad Fuerte (isStronglyConnectedOn)
+
+**Ubicación**: `Relations.lean`, línea 82  
+**Orden**: 11ª definición principal
+
+**Enunciado Matemático**: R es fuertemente conexa en A si ∀x,y ∈ A, (x,y) ∈ R ∨ (y,x) ∈ R.
+
+**Firma Lean4**:
+
+```lean
+def isStronglyConnectedOn (R A : U) : Prop :=
+  ∀ x y : U, x ∈ A → y ∈ A → ⟨x, y⟩ ∈ R ∨ ⟨y, x⟩ ∈ R
+```
+
+**Dependencias**: `OrderedPair`
+
+#### Tricotomía (isTrichotomousOn)
+
+**Ubicación**: `Relations.lean`, línea 86  
+**Orden**: 12ª definición principal
+
+**Enunciado Matemático**: R es tricotómica en A si ∀x,y ∈ A, exactamente una de: x < y, x = y, y < x.
+
+**Firma Lean4**:
+
+```lean
+def isTrichotomousOn (R A : U) : Prop :=
+  ∀ x y : U, x ∈ A → y ∈ A →
+    (⟨x, y⟩ ∈ R ∧ x ≠ y ∧ ⟨y, x⟩ ∉ R) ∨
+    (⟨x, y⟩ ∉ R ∧ x = y ∧ ⟨y, x⟩ ∉ R) ∨
+    (⟨x, y⟩ ∉ R ∧ x ≠ y ∧ ⟨y, x⟩ ∈ R)
+```
+
+**Dependencias**: `OrderedPair`
+
 #### Relación de Equivalencia (isEquivalenceOn)
 
-**Ubicación**: `Relations.lean`, línea 89  
-**Orden**: 6ª definición principal
+**Ubicación**: `Relations.lean`, línea 94  
+**Orden**: 13ª definición principal
 
 **Enunciado Matemático**: R es relación de equivalencia en A si es reflexiva, simétrica y transitiva.
 
@@ -583,10 +696,26 @@ def isEquivalenceOn (R A : U) : Prop :=
 
 **Dependencias**: `isRelationOn`, `isReflexiveOn`, `isSymmetricOn`, `isTransitiveOn`
 
+#### Preorden (isPreorderOn)
+
+**Ubicación**: `Relations.lean`, línea 98  
+**Orden**: 14ª definición principal
+
+**Enunciado Matemático**: R es un preorden en A si es reflexiva y transitiva.
+
+**Firma Lean4**:
+
+```lean
+def isPreorderOn (R A : U) : Prop :=
+  isRelationOn R A ∧ isReflexiveOn R A ∧ isTransitiveOn R A
+```
+
+**Dependencias**: `isRelationOn`, `isReflexiveOn`, `isTransitiveOn`
+
 #### Orden Parcial (isPartialOrderOn)
 
-**Ubicación**: `Relations.lean`, línea 97  
-**Orden**: 7ª definición principal
+**Ubicación**: `Relations.lean`, línea 102  
+**Orden**: 15ª definición principal
 
 **Enunciado Matemático**: R es orden parcial en A si es reflexiva, antisimétrica y transitiva.
 
@@ -599,10 +728,106 @@ def isPartialOrderOn (R A : U) : Prop :=
 
 **Dependencias**: `isRelationOn`, `isReflexiveOn`, `isAntiSymmetricOn`, `isTransitiveOn`
 
+#### Orden Lineal (isLinearOrderOn)
+
+**Ubicación**: `Relations.lean`, línea 106  
+**Orden**: 16ª definición principal
+
+**Enunciado Matemático**: R es orden lineal (total) en A si es orden parcial y conexa.
+
+**Firma Lean4**:
+
+```lean
+def isLinearOrderOn (R A : U) : Prop :=
+  isPartialOrderOn R A ∧ isConnectedOn R A
+```
+
+**Dependencias**: `isPartialOrderOn`, `isConnectedOn`
+
+#### Orden Estricto (isStrictOrderOn)
+
+**Ubicación**: `Relations.lean`, línea 110  
+**Orden**: 17ª definición principal
+
+**Enunciado Matemático**: R es orden estricto en A si es irreflexiva y transitiva.
+
+**Firma Lean4**:
+
+```lean
+def isStrictOrderOn (R A : U) : Prop :=
+  isRelationOn R A ∧ isIrreflexiveOn R A ∧ isTransitiveOn R A
+```
+
+**Dependencias**: `isRelationOn`, `isIrreflexiveOn`, `isTransitiveOn`
+
+#### Orden Parcial Estricto (isStrictPartialOrderOn)
+
+**Ubicación**: `Relations.lean`, línea 114  
+**Orden**: 18ª definición principal
+
+**Enunciado Matemático**: R es orden parcial estricto en A si es asimétrica y transitiva.
+
+**Firma Lean4**:
+
+```lean
+def isStrictPartialOrderOn (R A : U) : Prop :=
+  isRelationOn R A ∧ isAsymmetricOn R A ∧ isTransitiveOn R A
+```
+
+**Dependencias**: `isRelationOn`, `isAsymmetricOn`, `isTransitiveOn`
+
+#### Orden Lineal Estricto (isStrictLinearOrderOn)
+
+**Ubicación**: `Relations.lean`, línea 118  
+**Orden**: 19ª definición principal
+
+**Enunciado Matemático**: R es orden lineal estricto en A si es orden estricto y tricotómica.
+
+**Firma Lean4**:
+
+```lean
+def isStrictLinearOrderOn (R A : U) : Prop :=
+  isStrictOrderOn R A ∧ isTrichotomousOn R A
+```
+
+**Dependencias**: `isStrictOrderOn`, `isTrichotomousOn`
+
+#### Bien Fundada (isWellFoundedOn)
+
+**Ubicación**: `Relations.lean`, línea 124  
+**Orden**: 20ª definición principal
+
+**Enunciado Matemático**: R es bien fundada en A si todo subconjunto no vacío tiene un elemento minimal.
+
+**Firma Lean4**:
+
+```lean
+def isWellFoundedOn (R A : U) : Prop :=
+  ∀ S : U, S ⊆ A → S ≠ ∅ → ∃ m : U, m ∈ S ∧ ∀ x : U, x ∈ S → ⟨x, m⟩ ∉ R
+```
+
+**Dependencias**: `subseteq`, `EmptySet`, `OrderedPair`
+
+#### Buen Orden (isWellOrderOn)
+
+**Ubicación**: `Relations.lean`, línea 128  
+**Orden**: 21ª definición principal
+
+**Enunciado Matemático**: R es un buen orden en A si es orden lineal y bien fundada.
+
+**Firma Lean4**:
+
+```lean
+def isWellOrderOn (R A : U) : Prop :=
+  isLinearOrderOn R A ∧ isWellFoundedOn R A
+```
+
+**Dependencias**: `isLinearOrderOn`, `isWellFoundedOn`
+
 #### Clase de Equivalencia (EqClass)
 
-**Ubicación**: `Relations.lean`, línea 125  
-**Orden**: 8ª definición principal
+**Ubicación**: `Relations.lean`, línea 134  
+**Orden**: 22ª definición principal
 
 **Enunciado Matemático**: La clase de equivalencia de a bajo R en A: {x ∈ A | (a,x) ∈ R}.
 
@@ -615,10 +840,26 @@ noncomputable def EqClass (a R A : U) : U :=
 
 **Dependencias**: `SpecSet`, `OrderedPair`
 
+#### Conjunto Cociente (QuotientSet)
+
+**Ubicación**: `Relations.lean`, línea 138  
+**Orden**: 23ª definición principal
+
+**Enunciado Matemático**: El conjunto cociente A/R: el conjunto de todas las clases de equivalencia.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def QuotientSet (A R : U) : U :=
+  SpecSet (𝒫 A) (fun C => ∃ a : U, a ∈ A ∧ C = EqClass a R A)
+```
+
+**Dependencias**: `SpecSet`, `PowerSet`, `EqClass`
+
 #### Relación Identidad (IdRel)
 
-**Ubicación**: `Relations.lean`, línea 133  
-**Orden**: 9ª definición principal
+**Ubicación**: `Relations.lean`, línea 144  
+**Orden**: 24ª definición principal
 
 **Enunciado Matemático**: La relación identidad en A: {(x,x) | x ∈ A}.
 
@@ -631,10 +872,57 @@ noncomputable def IdRel (A : U) : U :=
 
 **Dependencias**: `SpecSet`, `CartesianProduct`, `fst`, `snd`
 
+#### Dominio de una Relación (domain)
+
+**Ubicación**: `Relations.lean`, línea 150  
+**Orden**: 25ª definición principal
+
+**Enunciado Matemático**: domain R = {x | ∃ y, ⟨x, y⟩ ∈ R}
+
+**Firma Lean4**:
+
+```lean
+noncomputable def domain (R : U) : U :=
+  SpecSet (⋃(⋃ R)) (fun x => ∃ y, ⟨x, y⟩ ∈ R)
+```
+
+**Dependencias**: `SpecSet`, `UnionSet`, `OrderedPair`
+
+#### Rango de una Relación (range)
+
+**Ubicación**: `Relations.lean`, línea 155  
+**Orden**: 26ª definición principal
+
+**Enunciado Matemático**: range R = {y | ∃ x, ⟨x, y⟩ ∈ R}
+
+**Firma Lean4**:
+
+```lean
+noncomputable def range (R : U) : U :=
+  SpecSet (⋃(⋃ R)) (fun y => ∃ x, ⟨x, y⟩ ∈ R)
+```
+
+**Dependencias**: `SpecSet`, `UnionSet`, `OrderedPair`
+
+#### Imagen de una Relación (imag)
+
+**Ubicación**: `Relations.lean`, línea 159  
+**Orden**: 27ª definición principal
+
+**Enunciado Matemático**: imag R = range R (alias para rango)
+
+**Firma Lean4**:
+
+```lean
+noncomputable def imag (R : U) : U := range R
+```
+
+**Dependencias**: `range`
+
 #### Relación Inversa (InverseRel)
 
-**Ubicación**: `Relations.lean`, línea 185  
-**Orden**: 10ª definición principal
+**Ubicación**: `Relations.lean`, línea 162  
+**Orden**: 28ª definición principal
 
 **Enunciado Matemático**: InverseRel R = {(y, x) | (x, y) ∈ R} (relación inversa)
 
@@ -2852,7 +3140,7 @@ theorem CartesianProduct_distrib_inter_right (A B C : U) :
 
 #### La Asimetría Implica Irreflexividad
 
-**Ubicación**: `Relations.lean`, línea 142  
+**Ubicación**: `Relations.lean`, línea 168  
 **Orden**: 1º teorema principal
 
 **Enunciado Matemático**: Si R es asimétrica en A, entonces R es irreflexiva en A.
@@ -2866,10 +3154,158 @@ theorem Asymmetric_implies_Irreflexive (R A : U) :
 
 **Dependencias**: `isAsymmetricOn`, `isIrreflexiveOn`
 
-#### La Relación Identidad es de Equivalencia
+#### Un Orden Estricto es Irreflexivo
+
+**Ubicación**: `Relations.lean`, línea 173  
+**Orden**: 2º teorema principal
+
+**Enunciado Matemático**: Si R es un orden estricto en A, entonces R es irreflexiva en A.
+
+**Firma Lean4**:
+
+```lean
+theorem StrictOrder_is_Irreflexive (R A : U) :
+    isStrictOrderOn R A → isIrreflexiveOn R A
+```
+
+**Dependencias**: `isStrictOrderOn`, `isIrreflexiveOn`
+
+#### Un Orden Parcial Estricto es Irreflexivo
+
+**Ubicación**: `Relations.lean`, línea 178  
+**Orden**: 3º teorema principal
+
+**Enunciado Matemático**: Si R es un orden parcial estricto en A, entonces R es irreflexiva en A.
+
+**Firma Lean4**:
+
+```lean
+theorem StrictPartialOrder_is_Irreflexive (R A : U) :
+    isStrictPartialOrderOn R A → isIrreflexiveOn R A
+```
+
+**Dependencias**: `isStrictPartialOrderOn`, `isIrreflexiveOn`, `Asymmetric_implies_Irreflexive`
+
+#### Irreflexiva y Transitiva Implica Asimétrica
+
+**Ubicación**: `Relations.lean`, línea 183  
+**Orden**: 4º teorema principal
+
+**Enunciado Matemático**: Si R es irreflexiva y transitiva en A, entonces R es asimétrica en A.
+
+**Firma Lean4**:
+
+```lean
+theorem Irreflexive_Transitive_implies_Asymmetric (R A : U) :
+    isIrreflexiveOn R A → isTransitiveOn R A →
+    isAsymmetricOn R A
+```
+
+**Dependencias**: `isIrreflexiveOn`, `isTransitiveOn`, `isAsymmetricOn`
+
+#### Asimetría Equivale a Irreflexividad más Antisimetría
+
+**Ubicación**: `Relations.lean`, línea 189  
+**Orden**: 5º teorema principal
+
+**Enunciado Matemático**: Para relaciones transitivas, asimetría es equivalente a irreflexividad más antisimetría.
+
+**Firma Lean4**:
+
+```lean
+theorem Asymmetric_iff_Irreflexive_and_AntiSymmetric (R A : U)
+    (hTrans : isTransitiveOn R A) :
+    isAsymmetricOn R A ↔ isIrreflexiveOn R A ∧ isAntiSymmetricOn R A
+```
+
+**Dependencias**: `isAsymmetricOn`, `isIrreflexiveOn`, `isAntiSymmetricOn`, `isTransitiveOn`
+
+#### Orden Parcial con Conexidad es Orden Lineal
 
 **Ubicación**: `Relations.lean`, línea 200  
-**Orden**: 2º teorema principal
+**Orden**: 6º teorema principal
+
+**Enunciado Matemático**: Un orden parcial con conexidad es un orden lineal.
+
+**Firma Lean4**:
+
+```lean
+theorem PartialOrder_Connected_is_LinearOrder (R A : U) :
+    isPartialOrderOn R A → isConnectedOn R A → isLinearOrderOn R A
+```
+
+**Dependencias**: `isPartialOrderOn`, `isConnectedOn`, `isLinearOrderOn`
+
+#### Orden Lineal: Elementos Comparables
+
+**Ubicación**: `Relations.lean`, línea 204  
+**Orden**: 7º teorema principal
+
+**Enunciado Matemático**: En un orden lineal, cualesquiera dos elementos son comparables.
+
+**Firma Lean4**:
+
+```lean
+theorem LinearOrder_comparable (R A : U) (hLO : isLinearOrderOn R A)
+    (x y : U) (hxA : x ∈ A) (hyA : y ∈ A) :
+    ⟨x, y⟩ ∈ R ∨ ⟨y, x⟩ ∈ R
+```
+
+**Dependencias**: `isLinearOrderOn`, `OrderedPair`
+
+#### Orden Estricto con Conexidad es Tricotómico
+
+**Ubicación**: `Relations.lean`, línea 215  
+**Orden**: 8º teorema principal
+
+**Enunciado Matemático**: Un orden estricto con conexidad es tricotómico.
+
+**Firma Lean4**:
+
+```lean
+theorem StrictOrder_Connected_is_Trichotomous (R A : U)
+    (hStrict : isStrictOrderOn R A) (hConn : isConnectedOn R A) :
+    isTrichotomousOn R A
+```
+
+**Dependencias**: `isStrictOrderOn`, `isConnectedOn`, `isTrichotomousOn`, `Irreflexive_Transitive_implies_Asymmetric`
+
+#### Orden Lineal Estricto Equivale a Orden Estricto Conexo
+
+**Ubicación**: `Relations.lean`, línea 242  
+**Orden**: 9º teorema principal
+
+**Enunciado Matemático**: Un orden lineal estricto es equivalente a un orden estricto que es conexo.
+
+**Firma Lean4**:
+
+```lean
+theorem StrictLinearOrder_iff_StrictOrder_Connected (R A : U) :
+    isStrictLinearOrderOn R A ↔ isStrictOrderOn R A ∧ isConnectedOn R A
+```
+
+**Dependencias**: `isStrictLinearOrderOn`, `isStrictOrderOn`, `isConnectedOn`, `StrictOrder_Connected_is_Trichotomous`
+
+#### Pertenencia en Relación Identidad
+
+**Ubicación**: `Relations.lean`, línea 258  
+**Orden**: 10º teorema principal
+
+**Enunciado Matemático**: ⟨x, y⟩ ∈ IdRel A ↔ x ∈ A ∧ x = y.
+
+**Firma Lean4**:
+
+```lean
+theorem mem_IdRel (A x y : U) :
+    ⟨x, y⟩ ∈ IdRel A ↔ x ∈ A ∧ x = y
+```
+
+**Dependencias**: `IdRel`, `SpecSet_is_specified`, `OrderedPair_mem_CartesianProduct`, `fst_of_ordered_pair`, `snd_of_ordered_pair`
+
+#### La Relación Identidad es de Equivalencia
+
+**Ubicación**: `Relations.lean`, línea 271  
+**Orden**: 11º teorema principal
 
 **Enunciado Matemático**: La relación identidad IdRel A es una relación de equivalencia en A.
 
@@ -2884,8 +3320,8 @@ theorem IdRel_is_Equivalence (A : U) :
 
 #### Pertenencia en Clase de Equivalencia
 
-**Ubicación**: `Relations.lean`, línea 225  
-**Orden**: 3º teorema principal
+**Ubicación**: `Relations.lean`, línea 289  
+**Orden**: 12º teorema principal
 
 **Enunciado Matemático**: x ∈ EqClass a R A ↔ x ∈ A ∧ ⟨a,x⟩ ∈ R.
 
@@ -2898,10 +3334,78 @@ theorem mem_EqClass (a R A x : U) :
 
 **Dependencias**: `EqClass`, `SpecSet_is_specified`
 
+#### Elemento en su Propia Clase de Equivalencia
+
+**Ubicación**: `Relations.lean`, línea 294  
+**Orden**: 13º teorema principal
+
+**Enunciado Matemático**: Para una relación de equivalencia, a está en su propia clase de equivalencia.
+
+**Firma Lean4**:
+
+```lean
+theorem EqClass_mem_self (R A a : U)
+    (hEq : isEquivalenceOn R A) (haA : a ∈ A) :
+    a ∈ EqClass a R A
+```
+
+**Dependencias**: `EqClass`, `isEquivalenceOn`, `mem_EqClass`
+
+#### Relacionados Pertenecen a la Misma Clase
+
+**Ubicación**: `Relations.lean`, línea 301  
+**Orden**: 14º teorema principal
+
+**Enunciado Matemático**: Si (a, b) ∈ R y b ∈ A, entonces b ∈ EqClass a R A.
+
+**Firma Lean4**:
+
+```lean
+theorem mem_EqClass_of_Related (R A a b : U)
+    (_ : isEquivalenceOn R A) (hbA : b ∈ A) (hab : ⟨a, b⟩ ∈ R) :
+    b ∈ EqClass a R A
+```
+
+**Dependencias**: `EqClass`, `isEquivalenceOn`, `mem_EqClass`
+
+#### Pertenencia Implica Relación
+
+**Ubicación**: `Relations.lean`, línea 308  
+**Orden**: 15º teorema principal
+
+**Enunciado Matemático**: Si b ∈ EqClass a R A, entonces (a, b) ∈ R.
+
+**Firma Lean4**:
+
+```lean
+theorem Related_of_mem_EqClass (R A a b : U)
+    (_ : isEquivalenceOn R A) (hb : b ∈ EqClass a R A) :
+    ⟨a, b⟩ ∈ R
+```
+
+**Dependencias**: `EqClass`, `isEquivalenceOn`, `mem_EqClass`
+
+#### Caracterización de Pertenencia a Clase
+
+**Ubicación**: `Relations.lean`, línea 314  
+**Orden**: 16º teorema principal
+
+**Enunciado Matemático**: Para relaciones de equivalencia, b ∈ EqClass a R A ↔ (a, b) ∈ R.
+
+**Firma Lean4**:
+
+```lean
+theorem mem_EqClass_iff (R A a b : U)
+    (hEq : isEquivalenceOn R A) (hbA : b ∈ A) :
+    b ∈ EqClass a R A ↔ ⟨a, b⟩ ∈ R
+```
+
+**Dependencias**: `EqClass`, `isEquivalenceOn`, `mem_EqClass`, `Related_of_mem_EqClass`, `mem_EqClass_of_Related`
+
 #### Igualdad de Clases de Equivalencia
 
-**Ubicación**: `Relations.lean`, línea 270  
-**Orden**: 4º teorema principal
+**Ubicación**: `Relations.lean`, línea 321  
+**Orden**: 17º teorema principal
 
 **Enunciado Matemático**: Para relaciones de equivalencia, EqClass a R A = EqClass b R A ↔ ⟨a,b⟩ ∈ R.
 
@@ -2917,8 +3421,8 @@ theorem EqClass_eq_iff (R A a b : U)
 
 #### Las Clases de Equivalencia Particionan el Conjunto
 
-**Ubicación**: `Relations.lean`, línea 300  
-**Orden**: 5º teorema principal
+**Ubicación**: `Relations.lean`, línea 352  
+**Orden**: 18º teorema principal
 
 **Enunciado Matemático**: Las clases de equivalencia son iguales o disjuntas.
 
@@ -2934,8 +3438,8 @@ theorem EqClass_eq_or_disjoint (R A a b : U)
 
 #### Caracterización de Pertenencia al Dominio
 
-**Ubicación**: `Relations.lean`, línea 452  
-**Orden**: 6º teorema principal
+**Ubicación**: `Relations.lean`, línea 386  
+**Orden**: 19º teorema principal
 
 **Enunciado Matemático**: x es miembro del dominio de R si y solo si existe y tal que ⟨x, y⟩ ∈ R.
 
@@ -2950,8 +3454,8 @@ theorem mem_domain (R x : U) :
 
 #### Caracterización de Pertenencia al Rango
 
-**Ubicación**: `Relations.lean`, línea 471  
-**Orden**: 7º teorema principal
+**Ubicación**: `Relations.lean`, línea 403  
+**Orden**: 20º teorema principal
 
 **Enunciado Matemático**: y es miembro del rango de R si y solo si existe x tal que ⟨x, y⟩ ∈ R.
 
@@ -2966,8 +3470,8 @@ theorem mem_range (R y : U) :
 
 #### Caracterización de Pertenencia a la Imagen
 
-**Ubicación**: `Relations.lean`, línea 495  
-**Orden**: 8º teorema principal
+**Ubicación**: `Relations.lean`, línea 420  
+**Orden**: 21º teorema principal
 
 **Enunciado Matemático**: y es miembro de la imagen de R si y solo si existe x tal que ⟨x, y⟩ ∈ R.
 
@@ -2982,8 +3486,8 @@ theorem mem_imag (R y : U) :
 
 #### Par en Relación Implica Primera Componente en Dominio
 
-**Ubicación**: `Relations.lean`, línea 501  
-**Orden**: 9º teorema principal
+**Ubicación**: `Relations.lean`, línea 424  
+**Orden**: 22º teorema principal
 
 **Enunciado Matemático**: Si ⟨x, y⟩ ∈ R, entonces x ∈ domain R.
 
@@ -2998,8 +3502,8 @@ theorem pair_mem_implies_fst_in_domain (R x y : U) :
 
 #### Par en Relación Implica Segunda Componente en Rango
 
-**Ubicación**: `Relations.lean`, línea 507  
-**Orden**: 10º teorema principal
+**Ubicación**: `Relations.lean`, línea 429  
+**Orden**: 23º teorema principal
 
 **Enunciado Matemático**: Si ⟨x, y⟩ ∈ R, entonces y ∈ range R.
 
@@ -6739,7 +7243,9 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 
 ---
 
-*Última actualización: 2026-03-16 16:00 — Proyección completa de PowerSetAlgebra.lean: añadidos 15 teoremas faltantes en §4.17 (complement_mem_PowerSet, empty_in_PowerSet, universe_in_PowerSet, PowerSet_absorb_inter_union, PowerSet_union_idempotent, PowerSet_inter_idempotent, PowerSet_union_comm, PowerSet_inter_comm, PowerSet_union_assoc, PowerSet_inter_assoc, PowerSet_inter_empty, PowerSet_empty_inter, PowerSet_complement_empty, PowerSet_complement_universe). Total: 22 teoremas en §4.17.*
+*Última actualización: 2026-03-16 16:30 — Proyección completa de Relations.lean: añadidas 19 definiciones faltantes en §3.9 (isRelationFrom, Related, isIrreflexiveOn, isAsymmetricOn, isConnectedOn, isStronglyConnectedOn, isTrichotomousOn, isPreorderOn, isLinearOrderOn, isStrictOrderOn, isStrictPartialOrderOn, isStrictLinearOrderOn, isWellFoundedOn, isWellOrderOn, QuotientSet, domain, range, imag, InverseRel) y 13 teoremas faltantes en §4.5 (StrictOrder_is_Irreflexive, StrictPartialOrder_is_Irreflexive, Irreflexive_Transitive_implies_Asymmetric, Asymmetric_iff_Irreflexive_and_AntiSymmetric, PartialOrder_Connected_is_LinearOrder, LinearOrder_comparable, StrictOrder_Connected_is_Trichotomous, StrictLinearOrder_iff_StrictOrder_Connected, mem_IdRel, EqClass_mem_self, mem_EqClass_of_Related, Related_of_mem_EqClass, mem_EqClass_iff). Total: 28 definiciones y 24 teoremas en Relations.lean.*
+
+*Actualización anterior: 2026-03-16 16:00 — Proyección completa de PowerSetAlgebra.lean: añadidos 15 teoremas faltantes en §4.17 (complement_mem_PowerSet, empty_in_PowerSet, universe_in_PowerSet, PowerSet_absorb_inter_union, PowerSet_union_idempotent, PowerSet_inter_idempotent, PowerSet_union_comm, PowerSet_inter_comm, PowerSet_union_assoc, PowerSet_inter_assoc, PowerSet_inter_empty, PowerSet_empty_inter, PowerSet_complement_empty, PowerSet_complement_universe). Total: 22 teoremas en §4.17.*
 
 *Actualización anterior: 2026-03-16 15:30 — Proyección completa de PowerSet.lean: axioma PowerSet (§2.6), 2 definiciones (§3.7), 12 teoremas principales (§4.3), notación 𝒫 (§5.6), 14 exports (§6.3). Renumeración de secciones 3.7→3.24, 4.3→4.20, 5.6→5.13, 6.3→6.20.*
 
