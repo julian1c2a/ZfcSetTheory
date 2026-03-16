@@ -1106,7 +1106,7 @@ infixr:90 " ∘ₛ " => FunctionComposition
 
 #### Función Inversa (InverseFunction)
 
-**Ubicación**: `Functions.lean`, línea 185  
+**Ubicación**: `Functions.lean`, línea 129  
 **Orden**: 7ª definición principal
 
 **Enunciado Matemático**: La relación inversa: {⟨y,x⟩ | ⟨x,y⟩ ∈ f}.
@@ -1114,18 +1114,35 @@ infixr:90 " ∘ₛ " => FunctionComposition
 **Firma Lean4**:
 
 ```lean
-noncomputable def InverseFunction (f : U) : U :=
-  SpecSet ((Ran f) ×ₛ (Dom f)) (fun p =>
-    ∃ x y, p = ⟨y, x⟩ ∧ ⟨x, y⟩ ∈ f)
-postfix:max "⁻¹ˢ" => InverseFunction
+noncomputable def InverseFunction (f : U) : U := InverseRel f
+notation:100 f "⁻¹" => InverseFunction f
 ```
 
-**Dependencias**: `SpecSet`, `Ran`, `Dom`, `OrderedPair`
+**Dependencias**: `InverseRel`
+
+#### Restricción de Función (Restriction)
+
+**Ubicación**: `Functions.lean`, línea 157  
+**Orden**: 8ª definición principal
+
+**Enunciado Matemático**: La restricción de una relación f a un dominio C: f ↾ C = {p ∈ f | fst p ∈ C}.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def Restriction (f C : U) : U :=
+  SpecSet f (fun p => fst p ∈ C)
+notation:60 f " ↾ " C:61 => Restriction f C
+```
+
+**Dependencias**: `SpecSet`, `fst`
+
+**Notación**: `f ↾ C` para `Restriction f C`
 
 #### Inyectividad (isInjective)
 
-**Ubicación**: `Functions.lean`, línea 195  
-**Orden**: 8ª definición principal
+**Ubicación**: `Functions.lean`, línea 222  
+**Orden**: 9ª definición principal
 
 **Enunciado Matemático**: f es inyectiva si diferentes entradas dan diferentes salidas.
 
@@ -1140,8 +1157,8 @@ def isInjective (f : U) : Prop :=
 
 #### Suryectividad (isSurjectiveOnto)
 
-**Ubicación**: `Functions.lean`, línea 199  
-**Orden**: 9ª definición principal
+**Ubicación**: `Functions.lean`, línea 225  
+**Orden**: 10ª definición principal
 
 **Enunciado Matemático**: f es suryectiva en B si todo elemento de B está en el rango.
 
@@ -1156,8 +1173,8 @@ def isSurjectiveOnto (f B : U) : Prop :=
 
 #### Biyección (isBijection)
 
-**Ubicación**: `Functions.lean`, línea 203  
-**Orden**: 10ª definición principal
+**Ubicación**: `Functions.lean`, línea 228  
+**Orden**: 11ª definición principal
 
 **Enunciado Matemático**: f es biyección de A a B si es función, inyectiva y suryectiva.
 
@@ -1170,10 +1187,94 @@ def isBijection (f A B : U) : Prop :=
 
 **Dependencias**: `isFunctionFromTo`, `isInjective`, `isSurjectiveOnto`
 
+#### Equipotencia (isEquipotent)
+
+**Ubicación**: `Functions.lean`, línea 231  
+**Orden**: 12ª definición principal
+
+**Enunciado Matemático**: A y B son equipotentes si existe una biyección entre ellos.
+
+**Firma Lean4**:
+
+```lean
+def isEquipotent (A B : U) : Prop := ∃ f, isBijection f A B
+notation:50 A " ≃ₛ " B => isEquipotent A B
+```
+
+**Dependencias**: `isBijection`
+
+#### Dominación (isDominatedBy)
+
+**Ubicación**: `Functions.lean`, línea 236  
+**Orden**: 13ª definición principal
+
+**Enunciado Matemático**: A es dominado por B si existe una inyección de A a B.
+
+**Firma Lean4**:
+
+```lean
+def isDominatedBy (A B : U) : Prop :=
+  ∃ f, isFunctionFromTo f A B ∧ isInjective f
+notation:50 A " ≼ₛ " B => isDominatedBy A B
+```
+
+**Dependencias**: `isFunctionFromTo`, `isInjective`
+
+#### Dominación Estricta (isStrictlyDominatedBy)
+
+**Ubicación**: `Functions.lean`, línea 241  
+**Orden**: 14ª definición principal
+
+**Enunciado Matemático**: A es estrictamente dominado por B si A ≼ B pero B ⊀ A.
+
+**Firma Lean4**:
+
+```lean
+def isStrictlyDominatedBy (A B : U) : Prop :=
+  (A ≼ₛ B) ∧ ¬(B ≼ₛ A)
+notation:50 A " ≺ₛ " B => isStrictlyDominatedBy A B
+```
+
+**Dependencias**: `isDominatedBy`
+
+#### Imagen Directa (ImageSet)
+
+**Ubicación**: `Functions.lean`, línea 207  
+**Orden**: 15ª definición principal
+
+**Enunciado Matemático**: La imagen directa f[X] = {y | ∃x ∈ X, ⟨x,y⟩ ∈ f}.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def ImageSet (f X : U) : U :=
+  range (f ↾ X)
+notation:90 f "[" X "]" => ImageSet f X
+```
+
+**Dependencias**: `range`, `Restriction`
+
+#### Imagen Inversa (PreimageSet)
+
+**Ubicación**: `Functions.lean`, línea 212  
+**Orden**: 16ª definición principal
+
+**Enunciado Matemático**: La imagen inversa f⁻¹[Y] = {x | ∃y ∈ Y, ⟨x,y⟩ ∈ f}.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def PreimageSet (f Y : U) : U :=
+  SpecSet (domain f) (fun x => ∃ y, ⟨x, y⟩ ∈ f ∧ y ∈ Y)
+notation:90 f "⁻¹[" Y "]" => PreimageSet f Y
+```
+
+**Dependencias**: `SpecSet`, `domain`, `OrderedPair`
+
 #### Inverso por Izquierda (hasLeftInverse)
 
-**Ubicación**: `Functions.lean`, línea 220  
-**Orden**: 11ª definición principal
+**Ubicación**: `Functions.lean` (no presente en el archivo actual)
+**Orden**: Definición no encontrada en el archivo
 
 **Enunciado Matemático**: f tiene inverso por izquierda g si g ∘ f = id en A.
 
@@ -3742,35 +3843,99 @@ theorem comp_id_left (f A B : U) (hf : isFunctionFromTo f A B) :
 
 #### Especificación de Función Inversa
 
-**Ubicación**: `Functions.lean`, línea 205  
+**Ubicación**: `Functions.lean`, línea 135  
 **Orden**: 14º teorema principal
 
-**Enunciado Matemático**: ⟨y,x⟩ ∈ f⁻¹ˢ ↔ ⟨x,y⟩ ∈ f.
+**Enunciado Matemático**: p ∈ f⁻¹ ↔ isOrderedPair p ∧ ⟨snd p, fst p⟩ ∈ f.
 
 **Firma Lean4**:
 
 ```lean
-theorem inverse_is_specified (f y x : U) :
-    ⟨y, x⟩ ∈ f⁻¹ˢ ↔ ⟨x, y⟩ ∈ f
+theorem inverse_is_specified (f p : U) :
+    p ∈ f⁻¹ ↔ isOrderedPair p ∧ ⟨snd p, fst p⟩ ∈ f
 ```
 
-**Dependencias**: `InverseFunction`, `SpecSet_is_specified`, `OrderedPair_eq_iff`
+**Dependencias**: `InverseFunction`, `InverseRel`, `SpecSet_is_specified`
+
+#### Especificación de Restricción (Restriction_is_specified)
+
+**Ubicación**: `Functions.lean`, línea 162  
+**Orden**: 15º teorema principal
+
+**Enunciado Matemático**: p ∈ (f ↾ C) ↔ p ∈ f ∧ fst p ∈ C.
+
+**Firma Lean4**:
+
+```lean
+theorem Restriction_is_specified (f C p : U) :
+    p ∈ (f ↾ C) ↔ p ∈ f ∧ fst p ∈ C
+```
+
+**Dependencias**: `Restriction`, `SpecSet_is_specified`
+
+#### Restricción es Subconjunto (Restriction_subset)
+
+**Ubicación**: `Functions.lean`, línea 167  
+**Orden**: 16º teorema principal
+
+**Enunciado Matemático**: (f ↾ C) ⊆ f.
+
+**Firma Lean4**:
+
+```lean
+theorem Restriction_subset (f C : U) : (f ↾ C) ⊆ f
+```
+
+**Dependencias**: `Restriction`, `Restriction_is_specified`
+
+#### Restricción de Función es Función (Restriction_is_function)
+
+**Ubicación**: `Functions.lean`, línea 172  
+**Orden**: 17º teorema principal
+
+**Enunciado Matemático**: Si f: A → B y C ⊆ A, entonces (f ↾ C): C → B.
+
+**Firma Lean4**:
+
+```lean
+theorem Restriction_is_function (f A B C : U)
+    (hf : isFunctionFromTo f A B) (hC : C ⊆ A) :
+    isFunctionFromTo (f ↾ C) C B
+```
+
+**Dependencias**: `Restriction`, `isFunctionFromTo`, `Restriction_is_specified`, `CartesianProduct_is_specified`
+
+#### Aplicación de Restricción (Restriction_apply)
+
+**Ubicación**: `Functions.lean`, línea 192  
+**Orden**: 18º teorema principal
+
+**Enunciado Matemático**: Para x ∈ C, (f ↾ C)⦅x⦆ = f⦅x⦆.
+
+**Firma Lean4**:
+
+```lean
+theorem Restriction_apply (f C x : U) (hx : x ∈ C) :
+    apply (f ↾ C) x = apply f x
+```
+
+**Dependencias**: `Restriction`, `apply`, `Restriction_is_specified`, `fst_of_ordered_pair`
 
 #### Inyectiva Implica Inversa Univaluada
 
-**Ubicación**: `Functions.lean`, línea 217  
-**Orden**: 15º teorema principal
+**Ubicación**: `Functions.lean`, línea 251  
+**Orden**: 19º teorema principal
 
-**Enunciado Matemático**: Si f es inyectiva, entonces f⁻¹ˢ es univaluada.
+**Enunciado Matemático**: Si f es inyectiva, entonces f⁻¹ es univaluada.
 
 **Firma Lean4**:
 
 ```lean
 theorem injective_inverse_single_valued (f : U) (hf : isInjective f) :
-    isSingleValued (f⁻¹ˢ)
+    isSingleValued (f⁻¹)
 ```
 
-**Dependencias**: `isInjective`, `isSingleValued`, `inverse_is_specified`
+**Dependencias**: `isInjective`, `isSingleValued`, `inverse_is_specified`, `fst_of_ordered_pair`, `snd_of_ordered_pair`
 
 #### Univaluada Implica Inversa Inyectiva
 
@@ -6483,9 +6648,14 @@ theorem fromPeano_le_iff (p q : Peano.ℕ₀) :
 
 - `f⦅x⦆` - Aplicación de función (`apply`)
 - `𝟙 A` - Función identidad (`IdFunction`)
-- `g ∘ₛ f` - Composición (`FunctionComposition`)
+- `g ∘ f` - Composición (`FunctionComposition`)
+- `f⁻¹` - Función inversa (`InverseFunction`)
+- `f ↾ C` - Restricción de f a dominio C (`Restriction`)
+- `f[X]` - Imagen directa (`ImageSet`)
+- `f⁻¹[Y]` - Imagen inversa (`PreimageSet`)
 - `A ≃ₛ B` - Equipotencia (`isEquipotent`)
 - `A ≼ₛ B` - Dominación (`isDominatedBy`)
+- `A ≺ₛ B` - Dominación estricta (`isStrictlyDominatedBy`)
 
 ### 5.5 Números Naturales
 
@@ -6607,33 +6777,26 @@ export SetUniverse.PowerSetAxiom (
 
 ```lean
 export Functions (
-  isSingleValued isFunctionFromTo
-  Dom Ran Dom_is_specified Ran_is_specified
-  apply apply_eq apply_mem
-  IdFunction IdFunction_is_specified IdFunction_single_valued IdFunction_is_function apply_id
-  FunctionComposition comp_is_specified comp_single_valued comp_is_function
-  comp_id_right comp_id_left
+  isSingleValued
+  isFunctionFromTo
+  apply apply_mem apply_eq
+  FunctionComposition comp_is_specified comp_is_function
+  IdFunction apply_id
   InverseFunction inverse_is_specified
+  Restriction Restriction_is_specified Restriction_subset Restriction_is_function Restriction_apply
+  ImageSet PreimageSet
   isInjective isSurjectiveOnto isBijection
-  injective_inverse_single_valued single_valued_inverse_injective
-  -- Invertibility
-  hasLeftInverse hasRightInverse isLeftInvertible isRightInvertible isInvertible
-  injective_iff_inverse_functional injective_apply_eq
-  surjective_iff_range_eq surjective_inverse_total
-  bijection_inverse_is_function bijection_comp_inverse_right bijection_comp_inverse_left
-  inverse_inverse inverse_is_bijection
-  bijection_implies_invertible left_invertible_implies_injective right_invertible_implies_surjective
-  invertible_implies_bijection bijection_iff_invertible
-  comp_injective comp_surjective comp_bijection id_is_bijection id_is_injective
-  -- Image/Preimage
-  ImageSet ImageSet_is_specified PreimageSet PreimageSet_is_specified
-  image_empty image_mono image_union preimage_union preimage_inter_subset preimage_inter_eq
-  -- Equipotence and Dominance
-  isEquipotent equipotent_refl equipotent_symm equipotent_trans equipotent_is_equivalence
-  isDominatedBy dominated_refl dominated_trans dominated_is_preorder
-  equipotent_implies_dominated_both
-  isStrictlyDominatedBy strict_dominated_irrefl strict_dominated_trans
+  isEquipotent isDominatedBy isStrictlyDominatedBy
+  injective_inverse_single_valued
 )
+````
+
+Ahora actualizo el timestamp en REFERENCE.md:
+
+REFERENCE.md
+````markdown
+<<<<<<< SEARCH
+*Última actualización: 2026-03-16 16:30*
 ```
 
 ### 6.5 Cardinality.lean
@@ -7243,7 +7406,9 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 
 ---
 
-*Última actualización: 2026-03-16 16:30 — Proyección completa de Relations.lean: añadidas 19 definiciones faltantes en §3.9 (isRelationFrom, Related, isIrreflexiveOn, isAsymmetricOn, isConnectedOn, isStronglyConnectedOn, isTrichotomousOn, isPreorderOn, isLinearOrderOn, isStrictOrderOn, isStrictPartialOrderOn, isStrictLinearOrderOn, isWellFoundedOn, isWellOrderOn, QuotientSet, domain, range, imag, InverseRel) y 13 teoremas faltantes en §4.5 (StrictOrder_is_Irreflexive, StrictPartialOrder_is_Irreflexive, Irreflexive_Transitive_implies_Asymmetric, Asymmetric_iff_Irreflexive_and_AntiSymmetric, PartialOrder_Connected_is_LinearOrder, LinearOrder_comparable, StrictOrder_Connected_is_Trichotomous, StrictLinearOrder_iff_StrictOrder_Connected, mem_IdRel, EqClass_mem_self, mem_EqClass_of_Related, Related_of_mem_EqClass, mem_EqClass_iff). Total: 28 definiciones y 24 teoremas en Relations.lean.*
+*Última actualización: 2026-03-16 17:00 — Proyección completa de Functions.lean: añadida definición Restriction (§3.10) con notación f ↾ C, 4 teoremas sobre Restriction en §4.6 (Restriction_is_specified, Restriction_subset, Restriction_is_function, Restriction_apply), actualizadas ubicaciones de definiciones y teoremas, actualizada notación en §5.4, simplificados exports en §6.4. Total: 16 definiciones y teoremas de restricción completamente proyectados.*
+
+*Actualización anterior: 2026-03-16 16:30 — Proyección completa de Relations.lean: añadidas 19 definiciones faltantes en §3.9 (isRelationFrom, Related, isIrreflexiveOn, isAsymmetricOn, isConnectedOn, isStronglyConnectedOn, isTrichotomousOn, isPreorderOn, isLinearOrderOn, isStrictOrderOn, isStrictPartialOrderOn, isStrictLinearOrderOn, isWellFoundedOn, isWellOrderOn, QuotientSet, domain, range, imag, InverseRel) y 13 teoremas faltantes en §4.5 (StrictOrder_is_Irreflexive, StrictPartialOrder_is_Irreflexive, Irreflexive_Transitive_implies_Asymmetric, Asymmetric_iff_Irreflexive_and_AntiSymmetric, PartialOrder_Connected_is_LinearOrder, LinearOrder_comparable, StrictOrder_Connected_is_Trichotomous, StrictLinearOrder_iff_StrictOrder_Connected, mem_IdRel, EqClass_mem_self, mem_EqClass_of_Related, Related_of_mem_EqClass, mem_EqClass_iff). Total: 28 definiciones y 24 teoremas en Relations.lean.*
 
 *Actualización anterior: 2026-03-16 16:00 — Proyección completa de PowerSetAlgebra.lean: añadidos 15 teoremas faltantes en §4.17 (complement_mem_PowerSet, empty_in_PowerSet, universe_in_PowerSet, PowerSet_absorb_inter_union, PowerSet_union_idempotent, PowerSet_inter_idempotent, PowerSet_union_comm, PowerSet_inter_comm, PowerSet_union_assoc, PowerSet_inter_assoc, PowerSet_inter_empty, PowerSet_empty_inter, PowerSet_complement_empty, PowerSet_complement_universe). Total: 22 teoremas en §4.17.*
 

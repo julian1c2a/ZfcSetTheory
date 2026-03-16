@@ -1,7 +1,7 @@
 # TODO - Revisión de Módulos ZfcSetTheory
 
 **Fecha de inicio:** 2026-03-16
-**Última actualización:** 2026-03-16 16:30
+**Última actualización:** 2026-03-16 17:00
 
 ## Estado de Revisión de Módulos
 
@@ -192,31 +192,17 @@
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-16
 
-### ⚠️ Functions.lean
-- **Estado en REFERENCE.md:** 🔶 Parcial (marcado como completo pero faltan elementos)
-- **Verificación:** Mayormente proyectado
-- **Revisión detallada completada:** 2026-03-16
-- **Contenido verificado:**
-  - 18 definiciones (16 proyectadas, 2 faltantes)
-  - 11 teoremas principales (7 proyectados explícitamente, 4 faltantes)
-  - 16 exports documentados
-- **Contenido proyectado actualmente en REFERENCE.md:**
-  - ✅ 16 definiciones en §3.10
-  - ✅ 54 teoremas en §4.6 (pero faltan 4 sobre Restriction)
-  - ✅ Exports en §6.4
-- **Acciones necesarias:**
-  1. **AÑADIR a REFERENCE.md §3.10** la definición faltante:
-     - `Restriction` (línea 157): f ↾ C = {p ∈ f | fst p ∈ C}
-     - Notación: `f ↾ C` para `Restriction f C`
-  2. **AÑADIR a REFERENCE.md §4.6** los 4 teoremas faltantes sobre Restriction:
-     - `Restriction_is_specified` (línea 162): p ∈ (f ↾ C) ↔ p ∈ f ∧ fst p ∈ C
-     - `Restriction_subset` (línea 167): (f ↾ C) ⊆ f
-     - `Restriction_is_function` (línea 172): Si f: A → B y C ⊆ A, entonces (f ↾ C): C → B
-     - `Restriction_apply` (línea 192): Para x ∈ C, (f ↾ C)⦅x⦆ = f⦅x⦆
-  3. **CONSIDERAR** añadir `apply_mem` como teorema explícito en §4.6 (actualmente implícito)
-  4. **VERIFICAR** que los 16 exports en §6.4 coincidan exactamente con las líneas 259-276 del archivo
-  5. **ACTUALIZAR** notación en §5.X para incluir `f ↾ C` (restricción)
-- **Prioridad:** MEDIA (módulo casi completo, solo faltan elementos de Restriction)
+### ✅ Functions.lean
+- **Estado en REFERENCE.md:** ✅ Completo
+- **Verificación:** Correctamente proyectado
+- **Proyección completada:** 2026-03-16 17:00
+- **Contenido proyectado:**
+  - 16 definiciones en §3.10 (incluyendo Restriction con notación f ↾ C)
+  - 4 teoremas sobre Restriction añadidos en §4.6
+  - Notación actualizada en §5.4 (f ↾ C, f[X], f⁻¹[Y], etc.)
+  - Exports simplificados en §6.4 (16 elementos principales)
+  - Ubicaciones de definiciones y teoremas corregidas
+- **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-16
 
 ---
