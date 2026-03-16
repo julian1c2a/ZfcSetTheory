@@ -129,39 +129,55 @@
 ### ❌ PowerSet.lean
 - **Estado en REFERENCE.md:** ❌ NO PROYECTADO (marcado incorrectamente como "✅ Completo" en tabla 1.1)
 - **Verificación:** Completamente ausente de REFERENCE.md
+- **Revisión detallada completada:** 2026-03-16
+- **Contenido verificado:**
+  - 1 axioma: `PowerSet` (línea 22)
+  - 2 definiciones: `PowerSetExistsUnique`, `PowerSetOf` con notación `𝒫`
+  - 2 teoremas de especificación: `PowerSet_is_specified`, `PowerSet_is_unique`
+  - 10 teoremas principales (4 propiedades básicas + 2 subconjuntos + 2 unión/intersección + 2 unión generalizada)
+  - 14 exports documentados
 - **Acciones necesarias:**
   1. **CREAR sección 2.6** "Axioma de Conjunto Potencia":
-     - Axioma `PowerSet` con ubicación, namespace, orden
+     - Ubicación: PowerSet.lean, línea 22
+     - Namespace: SetUniverse.PowerSetAxiom
+     - Orden: 6º axioma declarado (después de Union)
      - Enunciado matemático: ∀A ∃P ∀x (x ∈ P ↔ x ⊆ A)
-     - Firma Lean4
+     - Firma Lean4: `@[simp] axiom PowerSet : ∀ (A : U), ∃ (P : U), ∀ (x : U), x ∈ P ↔ x ⊆ A`
      - Dependencias: `ExtSet`
   2. **CREAR sección 3.7** "PowerSet.lean - Definiciones":
-     - `PowerSetExistsUnique` (existencia única)
-     - `PowerSetOf` (definición principal)
+     - `PowerSetExistsUnique` (línea 28, orden 1º)
+     - `PowerSetOf` (línea 40, orden 2º, definición principal)
      - Notación `𝒫 A` para `PowerSetOf A`
-     - `PowerSet_is_specified` (caracterización)
-     - `PowerSet_is_unique` (unicidad)
+     - `PowerSet_is_specified` (línea 47, caracterización)
+     - `PowerSet_is_unique` (línea 53, unicidad)
   3. **CREAR sección 4.X** "PowerSet.lean - Teoremas Principales":
-     - Propiedades básicas:
-       - `empty_mem_PowerSet`
-       - `self_mem_PowerSet`
-       - `PowerSet_nonempty`
-       - `PowerSet_empty`
-     - Relaciones con subconjuntos:
-       - `PowerSet_mono`
-       - `PowerSet_mono_iff`
-     - Relaciones con unión e intersección:
-       - `PowerSet_inter`
-       - `PowerSet_union_subset`
-     - Relaciones con unión generalizada:
-       - `subset_PowerSet_Union`
-       - `Union_PowerSet`
-  4. **CREAR sección 6.X** "PowerSet.lean - Exports":
-     - Documentar todos los 14 exports del módulo
-  5. **ACTUALIZAR tabla 1.1**: Cambiar de "✅ Completo" a "🔶 Parcial" hasta completar proyección
-  6. **RENUMERAR secciones**: Las actuales 3.7+ deben pasar a 3.8+ para hacer espacio
-- **Fecha de revisión:** 2026-03-16
-- **Prioridad:** ALTA (módulo fundamental completamente ausente)
+     - **Propiedades básicas** (4 teoremas):
+       - `empty_mem_PowerSet` (línea 68): ∅ ∈ 𝒫 A
+       - `self_mem_PowerSet` (línea 75): A ∈ 𝒫 A
+       - `PowerSet_nonempty` (línea 82): 𝒫 A ≠ ∅
+       - `PowerSet_empty` (línea 91): 𝒫(∅) = {∅}
+     - **Relaciones con subconjuntos** (2 teoremas):
+       - `PowerSet_mono` (línea 111): A ⊆ B → 𝒫 A ⊆ 𝒫 B
+       - `PowerSet_mono_iff` (línea 119): 𝒫 A ⊆ 𝒫 B ↔ A ⊆ B
+     - **Relaciones con unión e intersección** (2 teoremas):
+       - `PowerSet_inter` (línea 138): (𝒫 A) ∩ (𝒫 B) = 𝒫(A ∩ B)
+       - `PowerSet_union_subset` (línea 165): (𝒫 A) ∪ (𝒫 B) ⊆ 𝒫(A ∪ B)
+     - **Relaciones con unión generalizada** (2 teoremas):
+       - `subset_PowerSet_Union` (línea 181): A ⊆ 𝒫(⋃ A)
+       - `Union_PowerSet` (línea 189): ⋃ 𝒫(A) = A
+  4. **CREAR sección 5.X** "Notación - PowerSet":
+     - `𝒫 A` - Conjunto potencia (`PowerSetOf`)
+  5. **CREAR sección 6.X** "PowerSet.lean - Exports":
+     - Documentar los 14 exports (líneas 210-224):
+       - PowerSet, PowerSetExistsUnique, PowerSetOf
+       - PowerSet_is_specified, PowerSet_is_unique
+       - empty_mem_PowerSet, self_mem_PowerSet, PowerSet_nonempty, PowerSet_empty
+       - PowerSet_mono, PowerSet_mono_iff
+       - PowerSet_inter, PowerSet_union_subset
+       - subset_PowerSet_Union, Union_PowerSet
+  6. **ACTUALIZAR tabla 1.1**: Cambiar de "✅ Completo" a "🔶 Parcial" hasta completar proyección
+  7. **RENUMERAR secciones**: Las actuales 3.7+ deben pasar a 3.8+ para hacer espacio
+- **Prioridad:** ALTA (módulo fundamental completamente ausente, bloquea PowerSetAlgebra y otros)
 
 ---
 
