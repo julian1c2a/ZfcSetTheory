@@ -1,6 +1,6 @@
 # Referencia Técnica - ZfcSetTheory
 
-*Última actualización: 2026-03-16 15:30*
+*Última actualización: 2026-03-16 16:00*
 **Autor**: Julián Calderón Almendros
 
 ## 📋 Cumplimiento con AIDER-AI-GUIDE.md
@@ -5308,6 +5308,56 @@ theorem PowerSet_DeMorgan_inter (A X Y : U) :
 
 **Dependencias**: `Complement`, `BinInter`, `BinUnion`, `ExtSet`
 
+#### Complemento de Subconjunto es Subconjunto (complement_mem_PowerSet)
+
+**Ubicación**: `PowerSetAlgebra.lean`, línea 97  
+**Orden**: 3º teorema de clausura
+
+**Enunciado Matemático**: Si X ∈ 𝒫(A), entonces X^∁[A] ∈ 𝒫(A).
+
+**Firma Lean4**:
+
+```lean
+theorem complement_mem_PowerSet (A X : U) (_hX : X ∈ 𝒫 A) :
+    (X ^∁[ A ]) ∈ 𝒫 A
+```
+
+**Dependencias**: `PowerSet_is_specified`, `Complement_is_specified`
+
+#### El Vacío está en Todo Conjunto Potencia (empty_in_PowerSet)
+
+**Ubicación**: `PowerSetAlgebra.lean`, línea 103  
+**Orden**: 4º teorema de clausura (alias)
+
+**Enunciado Matemático**: ∅ ∈ 𝒫(A) para todo A.
+
+**Firma Lean4**:
+
+```lean
+theorem empty_in_PowerSet (A : U) : ∅ ∈ 𝒫 A
+```
+
+**Dependencias**: `empty_mem_PowerSet`
+
+**Nota**: Alias de `empty_mem_PowerSet` de PowerSet.lean.
+
+#### El Universo está en su Conjunto Potencia (universe_in_PowerSet)
+
+**Ubicación**: `PowerSetAlgebra.lean`, línea 106  
+**Orden**: 5º teorema de clausura (alias)
+
+**Enunciado Matemático**: A ∈ 𝒫(A) para todo A.
+
+**Firma Lean4**:
+
+```lean
+theorem universe_in_PowerSet (A : U) : A ∈ 𝒫 A
+```
+
+**Dependencias**: `self_mem_PowerSet`
+
+**Nota**: Alias de `self_mem_PowerSet` de PowerSet.lean.
+
 #### Doble Complemento
 
 **Ubicación**: `PowerSetAlgebra.lean`, línea 283  
@@ -5339,10 +5389,25 @@ theorem PowerSet_absorb_union_inter (X Y : U) : BinUnion X (BinInter X Y) = X
 
 **Dependencias**: `BinUnion`, `BinInter`, `ExtSet`
 
+#### Absorción: Intersección y Unión (PowerSet_absorb_inter_union)
+
+**Ubicación**: `PowerSetAlgebra.lean`, línea 316  
+**Orden**: 12º teorema principal
+
+**Enunciado Matemático**: X ∩ (X ∪ Y) = X.
+
+**Firma Lean4**:
+
+```lean
+theorem PowerSet_absorb_inter_union (X Y : U) : BinInter X (BinUnion X Y) = X
+```
+
+**Dependencias**: `BinInter`, `BinUnion`, `ExtSet`
+
 #### Idempotencia de Unión
 
 **Ubicación**: `PowerSetAlgebra.lean`, línea 322  
-**Orden**: 12º teorema principal
+**Orden**: 13º teorema principal
 
 **Enunciado Matemático**: X ∪ X = X.
 
@@ -5357,7 +5422,7 @@ theorem PowerSet_union_idempotent (X : U) : BinUnion X X = X
 #### Idempotencia de Intersección
 
 **Ubicación**: `PowerSetAlgebra.lean`, línea 326  
-**Orden**: 13º teorema principal
+**Orden**: 14º teorema principal
 
 **Enunciado Matemático**: X ∩ X = X.
 
@@ -5369,10 +5434,100 @@ theorem PowerSet_inter_idempotent (X : U) : BinInter X X = X
 
 **Dependencias**: `BinInter`, `BinInter_idempotence`
 
-#### Complemento del Vacío
+#### Conmutatividad de Unión (PowerSet_union_comm)
+
+**Ubicación**: `PowerSetAlgebra.lean`, línea 331  
+**Orden**: 15º teorema principal
+
+**Enunciado Matemático**: X ∪ Y = Y ∪ X.
+
+**Firma Lean4**:
+
+```lean
+theorem PowerSet_union_comm (X Y : U) : BinUnion X Y = BinUnion Y X
+```
+
+**Dependencias**: `BinUnion_comm`
+
+#### Conmutatividad de Intersección (PowerSet_inter_comm)
+
+**Ubicación**: `PowerSetAlgebra.lean`, línea 334  
+**Orden**: 16º teorema principal
+
+**Enunciado Matemático**: X ∩ Y = Y ∩ X.
+
+**Firma Lean4**:
+
+```lean
+theorem PowerSet_inter_comm (X Y : U) : BinInter X Y = BinInter Y X
+```
+
+**Dependencias**: `BinInter_commutative`
+
+#### Asociatividad de Unión (PowerSet_union_assoc)
+
+**Ubicación**: `PowerSetAlgebra.lean`, línea 339  
+**Orden**: 17º teorema principal
+
+**Enunciado Matemático**: X ∪ (Y ∪ Z) = (X ∪ Y) ∪ Z.
+
+**Firma Lean4**:
+
+```lean
+theorem PowerSet_union_assoc (X Y Z : U) : BinUnion X (BinUnion Y Z) = BinUnion (BinUnion X Y) Z
+```
+
+**Dependencias**: `BinUnion_assoc`
+
+#### Asociatividad de Intersección (PowerSet_inter_assoc)
+
+**Ubicación**: `PowerSetAlgebra.lean`, línea 343  
+**Orden**: 18º teorema principal
+
+**Enunciado Matemático**: X ∩ (Y ∩ Z) = (X ∩ Y) ∩ Z.
+
+**Firma Lean4**:
+
+```lean
+theorem PowerSet_inter_assoc (X Y Z : U) : BinInter X (BinInter Y Z) = BinInter (BinInter X Y) Z
+```
+
+**Dependencias**: `BinInter_associative`
+
+#### Aniquilación: Intersección con Vacío (PowerSet_inter_empty)
+
+**Ubicación**: `PowerSetAlgebra.lean`, línea 348  
+**Orden**: 19º teorema principal
+
+**Enunciado Matemático**: X ∩ ∅ = ∅.
+
+**Firma Lean4**:
+
+```lean
+theorem PowerSet_inter_empty (X : U) : BinInter X ∅ = ∅
+```
+
+**Dependencias**: `BinInter_absorbent_elem`
+
+#### Aniquilación: Vacío e Intersección (PowerSet_empty_inter)
 
 **Ubicación**: `PowerSetAlgebra.lean`, línea 351  
-**Orden**: 14º teorema principal
+**Orden**: 20º teorema principal
+
+**Enunciado Matemático**: ∅ ∩ X = ∅.
+
+**Firma Lean4**:
+
+```lean
+theorem PowerSet_empty_inter (X : U) : BinInter ∅ X = ∅
+```
+
+**Dependencias**: `BinInter_commutative`, `BinInter_absorbent_elem`
+
+#### Complemento del Vacío
+
+**Ubicación**: `PowerSetAlgebra.lean`, línea 356  
+**Orden**: 21º teorema principal
 
 **Enunciado Matemático**: ∅^∁[A] = A.
 
@@ -5386,8 +5541,8 @@ theorem PowerSet_complement_empty (A : U) : (∅ ^∁[ A ]) = A
 
 #### Complemento del Universo
 
-**Ubicación**: `PowerSetAlgebra.lean`, línea 356  
-**Orden**: 15º teorema principal
+**Ubicación**: `PowerSetAlgebra.lean`, línea 361  
+**Orden**: 22º teorema principal
 
 **Enunciado Matemático**: A^∁[A] = ∅.
 
@@ -6584,7 +6739,9 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 
 ---
 
-*Última actualización: 2026-03-16 15:30 — Proyección completa de PowerSet.lean: axioma PowerSet (§2.6), 2 definiciones (§3.7), 12 teoremas principales (§4.3), notación 𝒫 (§5.6), 14 exports (§6.3). Renumeración de secciones 3.7→3.24, 4.3→4.20, 5.6→5.13, 6.3→6.20.*
+*Última actualización: 2026-03-16 16:00 — Proyección completa de PowerSetAlgebra.lean: añadidos 15 teoremas faltantes en §4.17 (complement_mem_PowerSet, empty_in_PowerSet, universe_in_PowerSet, PowerSet_absorb_inter_union, PowerSet_union_idempotent, PowerSet_inter_idempotent, PowerSet_union_comm, PowerSet_inter_comm, PowerSet_union_assoc, PowerSet_inter_assoc, PowerSet_inter_empty, PowerSet_empty_inter, PowerSet_complement_empty, PowerSet_complement_universe). Total: 22 teoremas en §4.17.*
+
+*Actualización anterior: 2026-03-16 15:30 — Proyección completa de PowerSet.lean: axioma PowerSet (§2.6), 2 definiciones (§3.7), 12 teoremas principales (§4.3), notación 𝒫 (§5.6), 14 exports (§6.3). Renumeración de secciones 3.7→3.24, 4.3→4.20, 5.6→5.13, 6.3→6.20.*
 
 *Actualización anterior: 2026-03-08 12:00 — Proyección de NaturalNumbersAdd.lean (3 def + 16 teoremas), NaturalNumbersMul.lean (2 def + 13 teoremas), y ampliación de PeanoImport.lean (9 nuevos teoremas: toPeano_zero, toPeano_successor, recursion_transport x4, succ_mem_succ_iff, fromPeano_lt_iff, fromPeano_le_iff). Secciones 3.22, 3.23, 4.18, 4.19 añadidas. Sección 6 actualizada con exports 6.15–6.17.*
 
