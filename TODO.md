@@ -151,10 +151,24 @@
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-16
 
+### ✅ OrderedPair.lean
+- **Estado en REFERENCE.md:** ✅ Completo
+- **Verificación:** Correctamente proyectado
+- **Revisión detallada completada:** 2026-03-16
+- **Contenido verificado:**
+  - Módulo de extensiones (definiciones principales en Pairing.lean)
+  - 3 teoremas adicionales en §4.15
+  - 3 exports en §6.15
+- **Contenido proyectado en REFERENCE.md:**
+  - ✅ Sección 3.20 correctamente indica que es módulo de extensiones
+  - ✅ 3 teoremas en §4.15: `OrderedPair_eq_of`, `OrderedPair_eq_iff`, `OrderedPair_in_PowerSet`
+  - ✅ 3 exports en §6.15
+- **Acciones necesarias:** Ninguna
+- **Fecha de revisión:** 2026-03-16
+
 ---
 
 ## Módulos Pendientes de Revisión
-- [ ] OrderedPair.lean
 - [ ] CartesianProduct.lean
 - [ ] Relations.lean
 - [ ] Functions.lean
