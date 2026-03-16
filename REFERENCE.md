@@ -3518,8 +3518,8 @@ theorem pair_mem_implies_snd_in_range (R x y : U) :
 
 #### Par en Relación Implica Segunda Componente en Imagen
 
-**Ubicación**: `Relations.lean`, línea 513  
-**Orden**: 11º teorema principal
+**Ubicación**: `Relations.lean`, línea 434  
+**Orden**: 24º teorema principal
 
 **Enunciado Matemático**: Si ⟨x, y⟩ ∈ R, entonces y ∈ imag R.
 
