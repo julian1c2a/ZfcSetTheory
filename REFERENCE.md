@@ -59,7 +59,7 @@ Este documento cumple con todos los requisitos especificados en [AIDER-AI-GUIDE.
 | `BooleanRing.lean` | `SetUniverse.BooleanRing` | `PowerSetAlgebra` + anteriores | ✅ Completo |
 | `PowerSetAlgebra.lean` | `SetUniverse.PowerSetAlgebra` | `PowerSet`, `BooleanAlgebra` + anteriores | ✅ Completo |
 | `AtomicBooleanAlgebra.lean` | `SetUniverse.AtomicBooleanAlgebra` | `PowerSetAlgebra`, `SetOrder`, `SetStrictOrder` + anteriores | 🔶 Parcial |
-| `Cardinality.lean` | `SetUniverse.Cardinality` | `Functions` + todos los anteriores | ✅ Completo |
+| `Cardinality.lean` | `SetUniverse.Cardinality` | `Functions` + todos los anteriores | ✅ Completo (2026-03-16) |
 | `NaturalNumbers.lean` | `SetUniverse.NaturalNumbers` | `Cardinality` + todos los anteriores | ✅ Completo |
 | `Infinity.lean` | `SetUniverse.InfinityAxiom` | `NaturalNumbers` + todos los anteriores | ✅ Completo |
 | `PeanoImport.lean` | `SetUniverse` | `NaturalNumbers`, `Infinity`, `PeanoNatLib.PeanoNatAxioms` | ✅ Completo |
@@ -1472,6 +1472,76 @@ noncomputable def DiagonalSet (f A : U) : U :=
 ```
 
 **Dependencias**: `SpecSet`, `apply`
+
+#### Función Singleton (singletonMap)
+
+**Ubicación**: `Cardinality.lean`, línea 95  
+**Orden**: 2ª definición principal
+
+**Enunciado Matemático**: La inyección canónica de A en 𝒫(A): x ↦ {x}.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def singletonMap (A : U) : U :=
+  SpecSet (A ×ₛ 𝒫 A) (fun p => ∃ x, x ∈ A ∧ p = ⟨x, {x}⟩)
+```
+
+**Dependencias**: `SpecSet`, `CartesianProduct`, `PowerSet`, `OrderedPair`, `Singleton`
+
+#### Diferencia de Conjuntos (SetDiff)
+
+**Ubicación**: `Cardinality.lean`, línea 186  
+**Orden**: 3ª definición principal
+
+**Enunciado Matemático**: Diferencia de conjuntos: A \ B = { x ∈ A | x ∉ B }.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def SetDiff (A B : U) : U :=
+  SpecSet A (fun x => x ∉ B)
+notation:70 A " ∖ " B => SetDiff A B
+```
+
+**Dependencias**: `SpecSet`
+
+**Notación**: `A ∖ B` para `SetDiff A B`
+
+#### Núcleo CSB (CSB_core)
+
+**Ubicación**: `Cardinality.lean`, línea 211  
+**Orden**: 4ª definición principal
+
+**Enunciado Matemático**: El núcleo CSB: intersección de todos los conjuntos cerrados bajo g ∘ f que contienen A \ g[B].
+
+**Firma Lean4**:
+
+```lean
+noncomputable def CSB_core (f g A B : U) : U :=
+  SpecSet A (fun x => ∀ X, X ⊆ A → isCSB_closed f g A B X → x ∈ X)
+```
+
+**Dependencias**: `SpecSet`, `isCSB_closed`, `subseteq`
+
+#### Biyección CSB (CSB_bijection)
+
+**Ubicación**: `Cardinality.lean`, línea 276  
+**Orden**: 5ª definición principal
+
+**Enunciado Matemático**: La biyección de Cantor-Schröder-Bernstein: h(x) = f(x) si x ∈ C, g⁻¹(x) si x ∉ C.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def CSB_bijection (f g A B : U) : U :=
+  let C := CSB_core f g A B
+  SpecSet (A ×ₛ B) (fun p =>
+    ∃ x y, p = ⟨x, y⟩ ∧ x ∈ A ∧
+      ((x ∈ C ∧ y = f⦅x⦆) ∨ (x ∉ C ∧ ⟨y, x⟩ ∈ g)))
+```
+
+**Dependencias**: `CSB_core`, `SpecSet`, `CartesianProduct`, `OrderedPair`, `apply`
 
 ### 3.14 NaturalNumbers.lean
 
@@ -4597,10 +4667,72 @@ theorem atom_is_singleton (A X : U) (hAtom : isAtom A X) :
 
 ### 4.8 Cardinality.lean
 
-#### Teorema de Cantor
+#### Caracterización del Conjunto Diagonal (DiagonalSet_is_specified)
 
-**Ubicación**: `Cardinality.lean`, línea 65  
-**Orden**: 1º teorema principal
+**Ubicación**: `Cardinality.lean`, línea 42  
+**Orden**: 1º teorema auxiliar
+
+**Enunciado Matemático**: x ∈ DiagonalSet f A ↔ x ∈ A ∧ x ∉ f⦅x⦆.
+
+**Firma Lean4**:
+
+```lean
+theorem DiagonalSet_is_specified (f A x : U) :
+    x ∈ DiagonalSet f A ↔ x ∈ A ∧ x ∉ f⦅x⦆
+```
+
+**Dependencias**: `DiagonalSet`, `SpecSet_is_specified`
+
+#### El Conjunto Diagonal es Subconjunto (DiagonalSet_subset)
+
+**Ubicación**: `Cardinality.lean`, línea 47  
+**Orden**: 2º teorema auxiliar
+
+**Enunciado Matemático**: DiagonalSet f A ⊆ A.
+
+**Firma Lean4**:
+
+```lean
+theorem DiagonalSet_subset (f A : U) : DiagonalSet f A ⊆ A
+```
+
+**Dependencias**: `DiagonalSet`, `DiagonalSet_is_specified`
+
+#### El Conjunto Diagonal está en el Conjunto Potencia (DiagonalSet_in_PowerSet)
+
+**Ubicación**: `Cardinality.lean`, línea 52  
+**Orden**: 3º teorema auxiliar
+
+**Enunciado Matemático**: DiagonalSet f A ∈ 𝒫 A.
+
+**Firma Lean4**:
+
+```lean
+theorem DiagonalSet_in_PowerSet (f A : U) : DiagonalSet f A ∈ 𝒫 A
+```
+
+**Dependencias**: `DiagonalSet`, `PowerSet_is_specified`, `DiagonalSet_subset`
+
+#### El Conjunto Diagonal no está en el Rango (DiagonalSet_not_in_range)
+
+**Ubicación**: `Cardinality.lean`, línea 57  
+**Orden**: 4º teorema auxiliar (lema clave)
+
+**Enunciado Matemático**: No existe d ∈ A tal que f⦅d⦆ = DiagonalSet f A.
+
+**Firma Lean4**:
+
+```lean
+theorem DiagonalSet_not_in_range (f A : U) :
+    ¬∃ d, d ∈ A ∧ f⦅d⦆ = DiagonalSet f A
+```
+
+**Dependencias**: `DiagonalSet`, `DiagonalSet_is_specified`, `Classical.byContradiction`
+
+#### Teorema de Cantor (cantor_no_surjection)
+
+**Ubicación**: `Cardinality.lean`, línea 78  
+**Orden**: 1º teorema principal (TEOREMA FUNDAMENTAL)
 
 **Enunciado Matemático**: No existe suryección de A a 𝒫(A).
 
@@ -4611,7 +4743,349 @@ theorem cantor_no_surjection (f A : U) (hf : isFunctionFromTo f A (𝒫 A)) :
   ¬isSurjectiveOnto f (𝒫 A)
 ```
 
-**Dependencias**: `DiagonalSet`, `isFunctionFromTo`, `isSurjectiveOnto`
+**Dependencias**: `DiagonalSet`, `DiagonalSet_not_in_range`, `isFunctionFromTo`, `isSurjectiveOnto`
+
+#### No hay Biyección de A a 𝒫(A) (cantor_no_bijection)
+
+**Ubicación**: `Cardinality.lean`, línea 90  
+**Orden**: 2º teorema principal
+
+**Enunciado Matemático**: No existe biyección de A a 𝒫(A).
+
+**Firma Lean4**:
+
+```lean
+theorem cantor_no_bijection (f A : U) (hf : isFunctionFromTo f A (𝒫 A)) :
+    ¬isBijection f A (𝒫 A)
+```
+
+**Dependencias**: `cantor_no_surjection`, `isBijection`
+
+#### Caracterización de singletonMap (singletonMap_is_specified)
+
+**Ubicación**: `Cardinality.lean`, línea 100  
+**Orden**: 5º teorema auxiliar
+
+**Enunciado Matemático**: ⟨x, y⟩ ∈ singletonMap A ↔ x ∈ A ∧ y = {x}.
+
+**Firma Lean4**:
+
+```lean
+theorem singletonMap_is_specified (A x y : U) :
+    ⟨x, y⟩ ∈ singletonMap A ↔ x ∈ A ∧ y = {x}
+```
+
+**Dependencias**: `singletonMap`, `SpecSet_is_specified`, `Eq_of_OrderedPairs_given_projections`
+
+#### singletonMap es Función (singletonMap_is_function)
+
+**Ubicación**: `Cardinality.lean`, línea 112  
+**Orden**: 6º teorema auxiliar
+
+**Enunciado Matemático**: singletonMap A es función de A a 𝒫(A).
+
+**Firma Lean4**:
+
+```lean
+theorem singletonMap_is_function (A : U) : isFunctionFromTo (singletonMap A) A (𝒫 A)
+```
+
+**Dependencias**: `singletonMap`, `singletonMap_is_specified`, `isFunctionFromTo`
+
+#### singletonMap es Inyectiva (singletonMap_is_injective)
+
+**Ubicación**: `Cardinality.lean`, línea 125  
+**Orden**: 7º teorema auxiliar
+
+**Enunciado Matemático**: singletonMap A es inyectiva.
+
+**Firma Lean4**:
+
+```lean
+theorem singletonMap_is_injective (A : U) : isInjective (singletonMap A)
+```
+
+**Dependencias**: `singletonMap`, `singletonMap_is_specified`, `isInjective`, `Singleton_is_specified`
+
+#### A es Dominado por 𝒫(A) (A_dominated_by_PowerSet)
+
+**Ubicación**: `Cardinality.lean`, línea 136  
+**Orden**: 3º teorema principal
+
+**Enunciado Matemático**: A ≼ₛ 𝒫(A).
+
+**Firma Lean4**:
+
+```lean
+theorem A_dominated_by_PowerSet (A : U) : isDominatedBy A (𝒫 A)
+```
+
+**Dependencias**: `singletonMap`, `singletonMap_is_function`, `singletonMap_is_injective`, `isDominatedBy`
+
+#### 𝒫(A) no Domina a A (PowerSet_not_dominated_by_A)
+
+**Ubicación**: `Cardinality.lean`, línea 140  
+**Orden**: 4º teorema principal
+
+**Enunciado Matemático**: ¬(𝒫(A) ≼ₛ A).
+
+**Firma Lean4**:
+
+```lean
+theorem PowerSet_not_dominated_by_A (A : U) : ¬isDominatedBy (𝒫 A) A
+```
+
+**Dependencias**: `isDominatedBy`, `SpecSet`, `Classical.byContradiction`
+
+#### Dominación Estricta de Cantor (cantor_strict_dominance)
+
+**Ubicación**: `Cardinality.lean`, línea 180  
+**Orden**: 5º teorema principal (FORMA CARDINAL)
+
+**Enunciado Matemático**: A ≺ₛ 𝒫(A).
+
+**Firma Lean4**:
+
+```lean
+theorem cantor_strict_dominance (A : U) : isStrictlyDominatedBy A (𝒫 A)
+```
+
+**Dependencias**: `A_dominated_by_PowerSet`, `PowerSet_not_dominated_by_A`, `isStrictlyDominatedBy`
+
+#### A y 𝒫(A) no son Equipotentes (cantor_not_equipotent)
+
+**Ubicación**: `Cardinality.lean`, línea 183  
+**Orden**: 6º teorema principal
+
+**Enunciado Matemático**: ¬(A ≃ₛ 𝒫(A)).
+
+**Firma Lean4**:
+
+```lean
+theorem cantor_not_equipotent (A : U) : ¬isEquipotent A (𝒫 A)
+```
+
+**Dependencias**: `isEquipotent`, `cantor_no_bijection`
+
+#### Caracterización de SetDiff (SetDiff_is_specified)
+
+**Ubicación**: `Cardinality.lean`, línea 191  
+**Orden**: 8º teorema auxiliar
+
+**Enunciado Matemático**: x ∈ (A ∖ B) ↔ x ∈ A ∧ x ∉ B.
+
+**Firma Lean4**:
+
+```lean
+theorem SetDiff_is_specified (A B x : U) :
+    x ∈ (A ∖ B) ↔ x ∈ A ∧ x ∉ B
+```
+
+**Dependencias**: `SetDiff`, `SpecSet_is_specified`
+
+#### SetDiff es Subconjunto (SetDiff_subset)
+
+**Ubicación**: `Cardinality.lean`, línea 196  
+**Orden**: 9º teorema auxiliar
+
+**Enunciado Matemático**: (A ∖ B) ⊆ A.
+
+**Firma Lean4**:
+
+```lean
+theorem SetDiff_subset (A B : U) : (A ∖ B) ⊆ A
+```
+
+**Dependencias**: `SetDiff`, `SetDiff_is_specified`
+
+#### CSB_core es Subconjunto (CSB_core_subset)
+
+**Ubicación**: `Cardinality.lean`, línea 216  
+**Orden**: 10º teorema auxiliar
+
+**Enunciado Matemático**: CSB_core f g A B ⊆ A.
+
+**Firma Lean4**:
+
+```lean
+theorem CSB_core_subset (f g A B : U) : CSB_core f g A B ⊆ A
+```
+
+**Dependencias**: `CSB_core`, `SpecSet_is_specified`
+
+#### CSB_core Contiene la Base (CSB_core_contains_base)
+
+**Ubicación**: `Cardinality.lean`, línea 223  
+**Orden**: 11º teorema auxiliar
+
+**Enunciado Matemático**: (A ∖ ImageSet g B) ⊆ CSB_core f g A B.
+
+**Firma Lean4**:
+
+```lean
+theorem CSB_core_contains_base (f g A B : U) :
+    (A ∖ ImageSet g B) ⊆ CSB_core f g A B
+```
+
+**Dependencias**: `CSB_core`, `SetDiff`, `ImageSet`, `SpecSet_is_specified`
+
+#### CSB_core es Cerrado (CSB_core_closed)
+
+**Ubicación**: `Cardinality.lean`, línea 234  
+**Orden**: 12º teorema auxiliar
+
+**Enunciado Matemático**: Si x ∈ CSB_core f g A B, entonces g⦅f⦅x⦆⦆ ∈ CSB_core f g A B.
+
+**Firma Lean4**:
+
+```lean
+theorem CSB_core_closed (f g A B : U)
+    (hf : isFunctionFromTo f A B) (hg : isFunctionFromTo g B A) :
+    ∀ x, x ∈ CSB_core f g A B → g⦅f⦅x⦆⦆ ∈ CSB_core f g A B
+```
+
+**Dependencias**: `CSB_core`, `isFunctionFromTo`, `apply`, `SpecSet_is_specified`
+
+#### Complemento de CSB_core está en Imagen (CSB_complement_in_image)
+
+**Ubicación**: `Cardinality.lean`, línea 256  
+**Orden**: 13º teorema auxiliar
+
+**Enunciado Matemático**: Si x ∈ A y x ∉ CSB_core f g A B, entonces x ∈ ImageSet g B.
+
+**Firma Lean4**:
+
+```lean
+theorem CSB_complement_in_image (f g A B x : U)
+    (_ : isFunctionFromTo f A B) (_ : isFunctionFromTo g B A)
+    (hx_A : x ∈ A) (hx_not : x ∉ CSB_core f g A B) :
+    x ∈ ImageSet g B
+```
+
+**Dependencias**: `CSB_core`, `ImageSet`, `CSB_core_contains_base`, `SetDiff`, `Classical.byContradiction`
+
+#### Caracterización de CSB_bijection (CSB_bijection_is_specified)
+
+**Ubicación**: `Cardinality.lean`, línea 285  
+**Orden**: 14º teorema auxiliar
+
+**Enunciado Matemático**: ⟨x, y⟩ ∈ CSB_bijection f g A B ↔ x ∈ A ∧ y ∈ B ∧ ((x ∈ CSB_core f g A B ∧ y = f⦅x⦆) ∨ (x ∉ CSB_core f g A B ∧ ⟨y, x⟩ ∈ g)).
+
+**Firma Lean4**:
+
+```lean
+theorem CSB_bijection_is_specified (f g A B x y : U) :
+    ⟨x, y⟩ ∈ CSB_bijection f g A B ↔
+      x ∈ A ∧ y ∈ B ∧
+      ((x ∈ CSB_core f g A B ∧ y = f⦅x⦆) ∨
+       (x ∉ CSB_core f g A B ∧ ⟨y, x⟩ ∈ g))
+```
+
+**Dependencias**: `CSB_bijection`, `CSB_core`, `SpecSet_is_specified`, `OrderedPair_mem_CartesianProduct`, `Eq_of_OrderedPairs_given_projections`
+
+#### CSB_bijection es Función (CSB_bijection_is_function)
+
+**Ubicación**: `Cardinality.lean`, línea 302  
+**Orden**: 15º teorema auxiliar
+
+**Enunciado Matemático**: CSB_bijection f g A B es función de A a B.
+
+**Firma Lean4**:
+
+```lean
+theorem CSB_bijection_is_function (f g A B : U)
+    (hf : isFunctionFromTo f A B) (hg : isFunctionFromTo g B A)
+    (_ : isInjective f) (hg_inj : isInjective g) :
+    isFunctionFromTo (CSB_bijection f g A B) A B
+```
+
+**Dependencias**: `CSB_bijection`, `CSB_bijection_is_specified`, `CSB_core_closed`, `CSB_complement_in_image`, `isFunctionFromTo`, `ExistsUnique`
+
+#### CSB_bijection es Inyectiva (CSB_bijection_is_injective)
+
+**Ubicación**: `Cardinality.lean`, línea 351  
+**Orden**: 16º teorema auxiliar
+
+**Enunciado Matemático**: CSB_bijection f g A B es inyectiva.
+
+**Firma Lean4**:
+
+```lean
+theorem CSB_bijection_is_injective (f g A B : U)
+    (hf : isFunctionFromTo f A B) (hg : isFunctionFromTo g B A) (hf_inj : isInjective f) :
+    isInjective (CSB_bijection f g A B)
+```
+
+**Dependencias**: `CSB_bijection`, `CSB_bijection_is_specified`, `CSB_core`, `CSB_core_closed`, `isInjective`, `apply_eq`
+
+#### CSB_bijection es Suryectiva (CSB_bijection_is_surjective)
+
+**Ubicación**: `Cardinality.lean`, línea 393  
+**Orden**: 17º teorema auxiliar
+
+**Enunciado Matemático**: CSB_bijection f g A B es suryectiva en B.
+
+**Firma Lean4**:
+
+```lean
+theorem CSB_bijection_is_surjective (f g A B : U)
+    (hf : isFunctionFromTo f A B) (hg : isFunctionFromTo g B A)
+    (_ : isInjective f) (hg_inj : isInjective g) :
+    isSurjectiveOnto (CSB_bijection f g A B) B
+```
+
+**Dependencias**: `CSB_bijection`, `CSB_bijection_is_specified`, `CSB_core`, `ImageSet`, `isSurjectiveOnto`, `Classical.byContradiction`
+
+#### CSB_bijection es Biyección (CSB_bijection_is_bijection)
+
+**Ubicación**: `Cardinality.lean`, línea 476  
+**Orden**: 18º teorema auxiliar
+
+**Enunciado Matemático**: CSB_bijection f g A B es biyección de A a B.
+
+**Firma Lean4**:
+
+```lean
+theorem CSB_bijection_is_bijection (f g A B : U)
+    (hf : isFunctionFromTo f A B) (hg : isFunctionFromTo g B A)
+    (hf_inj : isInjective f) (hg_inj : isInjective g) :
+    isBijection (CSB_bijection f g A B) A B
+```
+
+**Dependencias**: `CSB_bijection_is_function`, `CSB_bijection_is_injective`, `CSB_bijection_is_surjective`, `isBijection`
+
+#### Teorema de Cantor-Schröder-Bernstein (cantor_schroeder_bernstein)
+
+**Ubicación**: `Cardinality.lean`, línea 483  
+**Orden**: 7º teorema principal (TEOREMA FUNDAMENTAL)
+
+**Enunciado Matemático**: Si A ≼ₛ B y B ≼ₛ A, entonces A ≃ₛ B.
+
+**Firma Lean4**:
+
+```lean
+theorem cantor_schroeder_bernstein (A B : U)
+    (hab : isDominatedBy A B) (hba : isDominatedBy B A) :
+    isEquipotent A B
+```
+
+**Dependencias**: `CSB_bijection`, `CSB_bijection_is_bijection`, `isDominatedBy`, `isEquipotent`
+
+#### Antisimetría de Dominación (dominated_antisymm)
+
+**Ubicación**: `Cardinality.lean`, línea 490  
+**Orden**: 8º teorema principal
+
+**Enunciado Matemático**: ≼ₛ es antisimétrica módulo equipotencia.
+
+**Firma Lean4**:
+
+```lean
+theorem dominated_antisymm (A B : U) :
+    isDominatedBy A B → isDominatedBy B A → isEquipotent A B
+```
+
+**Dependencias**: `cantor_schroeder_bernstein`
 
 ### 4.9 NaturalNumbers.lean
 
@@ -6803,10 +7277,17 @@ REFERENCE.md
 
 ```lean
 export Cardinality (
-  DiagonalSet singletonMap
-  cantor_no_surjection cantor_strict_dominance cantor_not_equipotent
-  A_dominated_by_PowerSet PowerSet_not_dominated_by_A
-  CSB_bijection cantor_schroeder_bernstein dominated_antisymm
+  DiagonalSet DiagonalSet_is_specified DiagonalSet_subset DiagonalSet_in_PowerSet
+  DiagonalSet_not_in_range
+  cantor_no_surjection cantor_no_bijection cantor_not_equipotent
+  singletonMap singletonMap_is_specified singletonMap_is_function singletonMap_is_injective
+  A_dominated_by_PowerSet PowerSet_not_dominated_by_A cantor_strict_dominance
+  SetDiff SetDiff_is_specified SetDiff_subset
+  CSB_core CSB_core_subset CSB_core_contains_base CSB_core_closed
+  CSB_bijection CSB_bijection_is_specified
+  CSB_bijection_is_function CSB_bijection_is_injective CSB_bijection_is_surjective
+  CSB_bijection_is_bijection
+  cantor_schroeder_bernstein dominated_antisymm
 )
 ```
 
@@ -7406,7 +7887,9 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 
 ---
 
-*Última actualización: 2026-03-16 17:00 — Proyección completa de Functions.lean: añadida definición Restriction (§3.10) con notación f ↾ C, 4 teoremas sobre Restriction en §4.6 (Restriction_is_specified, Restriction_subset, Restriction_is_function, Restriction_apply), actualizadas ubicaciones de definiciones y teoremas, actualizada notación en §5.4, simplificados exports en §6.4. Total: 16 definiciones y teoremas de restricción completamente proyectados.*
+*Última actualización: 2026-03-16 17:30 — Proyección completa de Cardinality.lean: añadidas 4 definiciones faltantes (singletonMap, SetDiff con notación A ∖ B, CSB_core, CSB_bijection) en §3.13, añadidos 19 teoremas faltantes en §4.8 (todos los teoremas auxiliares de Cantor y CSB completos), actualizados exports en §6.5 con 28 elementos. Total: 5 definiciones + 20 teoremas completamente proyectados. Estado verificado: ✅ 0 sorry (CSB completamente demostrado).*
+
+*Actualización anterior: 2026-03-16 17:00 — Proyección completa de Functions.lean: añadida definición Restriction (§3.10) con notación f ↾ C, 4 teoremas sobre Restriction en §4.6 (Restriction_is_specified, Restriction_subset, Restriction_is_function, Restriction_apply), actualizadas ubicaciones de definiciones y teoremas, actualizada notación en §5.4, simplificados exports en §6.4. Total: 16 definiciones y teoremas de restricción completamente proyectados.*
 
 *Actualización anterior: 2026-03-16 16:30 — Proyección completa de Relations.lean: añadidas 19 definiciones faltantes en §3.9 (isRelationFrom, Related, isIrreflexiveOn, isAsymmetricOn, isConnectedOn, isStronglyConnectedOn, isTrichotomousOn, isPreorderOn, isLinearOrderOn, isStrictOrderOn, isStrictPartialOrderOn, isStrictLinearOrderOn, isWellFoundedOn, isWellOrderOn, QuotientSet, domain, range, imag, InverseRel) y 13 teoremas faltantes en §4.5 (StrictOrder_is_Irreflexive, StrictPartialOrder_is_Irreflexive, Irreflexive_Transitive_implies_Asymmetric, Asymmetric_iff_Irreflexive_and_AntiSymmetric, PartialOrder_Connected_is_LinearOrder, LinearOrder_comparable, StrictOrder_Connected_is_Trichotomous, StrictLinearOrder_iff_StrictOrder_Connected, mem_IdRel, EqClass_mem_self, mem_EqClass_of_Related, Related_of_mem_EqClass, mem_EqClass_iff). Total: 28 definiciones y 24 teoremas en Relations.lean.*
 
