@@ -126,11 +126,46 @@
   5. Cambiar estado de "✅ Completo" a "🔶 Parcial" hasta completar proyección
 - **Fecha de revisión:** 2026-03-16
 
+### ❌ PowerSet.lean
+- **Estado en REFERENCE.md:** ❌ NO PROYECTADO (marcado incorrectamente como "✅ Completo" en tabla 1.1)
+- **Verificación:** Completamente ausente de REFERENCE.md
+- **Acciones necesarias:**
+  1. **CREAR sección 2.6** "Axioma de Conjunto Potencia":
+     - Axioma `PowerSet` con ubicación, namespace, orden
+     - Enunciado matemático: ∀A ∃P ∀x (x ∈ P ↔ x ⊆ A)
+     - Firma Lean4
+     - Dependencias: `ExtSet`
+  2. **CREAR sección 3.7** "PowerSet.lean - Definiciones":
+     - `PowerSetExistsUnique` (existencia única)
+     - `PowerSetOf` (definición principal)
+     - Notación `𝒫 A` para `PowerSetOf A`
+     - `PowerSet_is_specified` (caracterización)
+     - `PowerSet_is_unique` (unicidad)
+  3. **CREAR sección 4.X** "PowerSet.lean - Teoremas Principales":
+     - Propiedades básicas:
+       - `empty_mem_PowerSet`
+       - `self_mem_PowerSet`
+       - `PowerSet_nonempty`
+       - `PowerSet_empty`
+     - Relaciones con subconjuntos:
+       - `PowerSet_mono`
+       - `PowerSet_mono_iff`
+     - Relaciones con unión e intersección:
+       - `PowerSet_inter`
+       - `PowerSet_union_subset`
+     - Relaciones con unión generalizada:
+       - `subset_PowerSet_Union`
+       - `Union_PowerSet`
+  4. **CREAR sección 6.X** "PowerSet.lean - Exports":
+     - Documentar todos los 14 exports del módulo
+  5. **ACTUALIZAR tabla 1.1**: Cambiar de "✅ Completo" a "🔶 Parcial" hasta completar proyección
+  6. **RENUMERAR secciones**: Las actuales 3.7+ deben pasar a 3.8+ para hacer espacio
+- **Fecha de revisión:** 2026-03-16
+- **Prioridad:** ALTA (módulo fundamental completamente ausente)
+
 ---
 
 ## Módulos Pendientes de Revisión
-
-- [ ] PowerSet.lean
 - [ ] PowerSetAlgebra.lean
 - [ ] OrderedPair.lean
 - [ ] CartesianProduct.lean
