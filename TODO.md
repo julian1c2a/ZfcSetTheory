@@ -1,7 +1,7 @@
 # TODO - Revisión de Módulos ZfcSetTheory
 
 **Fecha de inicio:** 2026-03-16
-**Última actualización:** 2026-03-16 18:30
+**Última actualización:** 2026-03-16 19:30
 
 ## Estado de Revisión de Módulos
 
@@ -203,39 +203,33 @@
 - **Fecha de revisión:** 2026-03-16 18:30
 
 ### ✅ Infinity.lean
-- **Estado en REFERENCE.md:** ✅ Completo (con contenido adicional no proyectado)
+- **Estado en REFERENCE.md:** ✅ Completo
 - **Verificación:** Correctamente proyectado
-- **Revisión detallada completada:** 2026-03-16 19:00
+- **Proyección completa realizada:** 2026-03-16 19:30
 - **Contenido verificado:**
   - 1 axioma: `ExistsInductiveSet` (§2.7)
-  - 2 definiciones principales: `WitnessInductiveSet`, `Omega` con notación ω
-  - 10 teoremas principales completamente proyectados (§4.10)
-  - 21 exports (10 proyectados + 11 adicionales no proyectados)
+  - 2 definiciones principales: `WitnessInductiveSet`, `Omega` con notación ω (§3.15)
+  - 17 teoremas principales completamente proyectados (§4.10):
+    - 10 teoremas principales originales
+    - 7 teoremas de orden en ω (natLt_trans, natLt_asymm, natLt_trichotomy, natLe_refl, natLe_trans, Omega_has_min, nat_mem_wf)
+  - 3 notaciones registradas (§5.7): ω, ≺, ≼
+  - 21 exports organizados por categorías (§6.7)
   - 0 sorry (100% demostrado)
-- **Contenido adicional en el código NO proyectado en REFERENCE.md:**
-  - **7 teoremas de orden en ω** (líneas 263-311):
-    - `natLt_trans`: Transitividad de ≺
-    - `natLt_asymm`: Asimetría de ≺
-    - `natLt_trichotomy`: Tricotomía
-    - `natLe_refl`: Reflexividad de ≼
-    - `natLe_trans`: Transitividad de ≼
-    - `Omega_has_min`: Todo subconjunto no vacío tiene mínimo
-    - `nat_mem_wf`: Buena fundación (ya mencionado en §4.10 pero sin detalles)
-  - **2 notaciones** (líneas 256-260):
-    - `n ≺ m` para `n ∈ m` (orden estricto)
-    - `n ≼ m` para `n ∈ m ∨ n = m` (orden no estricto)
-- **Acciones recomendadas (opcionales):**
-  1. Añadir a REFERENCE.md §4.10 los 6 teoremas de orden adicionales
-  2. Añadir a REFERENCE.md §5.7 las notaciones ≺ y ≼
-  3. Actualizar exports en §6.7 con los 11 elementos adicionales
-  4. **Nota**: El contenido adicional es coherente y útil, pero no es crítico para la completitud del módulo
+- **Contenido proyectado en REFERENCE.md:**
+  - ✅ Sección 2.7: axioma ExistsInductiveSet
+  - ✅ Sección 3.15: 2 definiciones (WitnessInductiveSet, Omega)
+  - ✅ Sección 4.10: 17 teoremas (10 principales + 7 de orden)
+  - ✅ Sección 5.7: 3 notaciones (ω, ≺, ≼)
+  - ✅ Sección 6.7: 21 exports organizados
+  - ✅ Tabla §1.1: estado "✅ Completo" correcto
 - **Observaciones especiales:**
-  - Documentación interna excepcional con explicaciones claras
-  - Teorema `nat_mem_wf` es un resultado importante de buena fundación
-  - Los teoremas de orden proporcionan una API completa para trabajar con ω
-  - Cumple 100% con AIDER-AI-GUIDE.md (puntos 0-14) para el contenido proyectado
-- **Estado final:** ✅ Completo (contenido principal 100% proyectado, contenido adicional opcional no proyectado)
-- **Fecha de revisión:** 2026-03-16 19:00
+  - Documentación interna excepcional con explicaciones claras sobre el Axioma de Infinito
+  - Teorema `nat_mem_wf` es fundamental para la buena fundación de ω
+  - Los teoremas de orden (≺ y ≼) proporcionan una API completa para trabajar con ω
+  - Las notaciones scoped facilitan el trabajo con órdenes en ω
+  - Cumple 100% con AIDER-AI-GUIDE.md (puntos 0-14)
+- **Acciones necesarias:** Ninguna
+- **Fecha de revisión:** 2026-03-16 19:30
 - [ ] PeanoImport.lean
 - [ ] GeneralizedDeMorgan.lean
 - [ ] GeneralizedDistributive.lean
