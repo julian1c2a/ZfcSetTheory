@@ -181,10 +181,71 @@
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-16
 
+### ⚠️ Relations.lean
+- **Estado en REFERENCE.md:** 🔶 Parcial (marcado como completo pero faltan definiciones y teoremas)
+- **Verificación:** Parcialmente proyectado
+- **Revisión detallada completada:** 2026-03-16
+- **Contenido verificado:**
+  - 28 definiciones (9 proyectadas, 19 faltantes)
+  - 24 teoremas principales (11 proyectados, 13 faltantes)
+  - 56 exports documentados
+- **Contenido proyectado actualmente en REFERENCE.md:**
+  - ✅ 9 definiciones en §3.9
+  - ✅ 11 teoremas en §4.5
+  - ✅ Exports en §6.2
+- **Acciones necesarias:**
+  1. **AÑADIR a REFERENCE.md §3.9** las 19 definiciones faltantes:
+     - **Definiciones básicas** (2):
+       - `isRelationFrom` (línea 47): R ⊆ A ×ₛ B
+       - `Related` (línea 50): ⟨x, y⟩ ∈ R
+     - **Propiedades fundamentales** (5):
+       - `isIrreflexiveOn` (línea 58): ∀x ∈ A, ⟨x,x⟩ ∉ R
+       - `isAsymmetricOn` (línea 70): ∀x,y ∈ A, ⟨x,y⟩ ∈ R → ⟨y,x⟩ ∉ R
+       - `isConnectedOn` (línea 78): ∀x≠y ∈ A, ⟨x,y⟩ ∈ R ∨ ⟨y,x⟩ ∈ R
+       - `isStronglyConnectedOn` (línea 82): ∀x,y ∈ A, ⟨x,y⟩ ∈ R ∨ ⟨y,x⟩ ∈ R
+       - `isTrichotomousOn` (línea 86): exactamente una de x<y, x=y, y<x
+     - **Tipos compuestos** (6):
+       - `isPreorderOn` (línea 98): reflexiva y transitiva
+       - `isLinearOrderOn` (línea 106): orden parcial + conexa
+       - `isStrictOrderOn` (línea 110): irreflexiva y transitiva
+       - `isStrictPartialOrderOn` (línea 114): asimétrica y transitiva
+       - `isStrictLinearOrderOn` (línea 118): orden estricto + tricotómica
+       - `isWellFoundedOn` (línea 124): todo subconjunto no vacío tiene mínimo
+       - `isWellOrderOn` (línea 128): orden lineal + bien fundada
+     - **Clases de equivalencia** (1):
+       - `QuotientSet` (línea 138): conjunto cociente A/R
+     - **Dominio y rango** (4):
+       - `domain` (línea 150): {x | ∃y, ⟨x,y⟩ ∈ R}
+       - `range` (línea 155): {y | ∃x, ⟨x,y⟩ ∈ R}
+       - `imag` (línea 159): alias de range
+       - `InverseRel` (línea 162): {⟨y,x⟩ | ⟨x,y⟩ ∈ R}
+  2. **AÑADIR a REFERENCE.md §4.5** los 13 teoremas faltantes:
+     - **Propiedades de irreflexividad** (2):
+       - `StrictOrder_is_Irreflexive` (línea 173)
+       - `StrictPartialOrder_is_Irreflexive` (línea 178)
+     - **Implicaciones de asimetría** (2):
+       - `Irreflexive_Transitive_implies_Asymmetric` (línea 183)
+       - `Asymmetric_iff_Irreflexive_and_AntiSymmetric` (línea 189)
+     - **Órdenes lineales** (4):
+       - `PartialOrder_Connected_is_LinearOrder` (línea 200)
+       - `LinearOrder_comparable` (línea 204)
+       - `StrictOrder_Connected_is_Trichotomous` (línea 215)
+       - `StrictLinearOrder_iff_StrictOrder_Connected` (línea 242)
+     - **Relación identidad** (1):
+       - `mem_IdRel` (línea 258)
+     - **Clases de equivalencia** (4):
+       - `EqClass_mem_self` (línea 294)
+       - `mem_EqClass_of_Related` (línea 301)
+       - `Related_of_mem_EqClass` (línea 308)
+       - `mem_EqClass_iff` (línea 314)
+  3. **VERIFICAR** que los 56 exports en §6.2 coincidan exactamente con las líneas 443-498 del archivo
+  4. **ACTUALIZAR** tabla §1.1: mantener "✅ Completo" solo después de añadir las definiciones y teoremas faltantes
+- **Prioridad:** MEDIA (módulo marcado como completo pero incompleto en proyección)
+- **Fecha de revisión:** 2026-03-16
+
 ---
 
 ## Módulos Pendientes de Revisión
-- [ ] Relations.lean
 - [ ] Functions.lean
 - [ ] Cardinality.lean
 - [ ] NaturalNumbers.lean
