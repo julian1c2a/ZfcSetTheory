@@ -253,6 +253,181 @@ bash git-lock.bash list                                # muestra estado
 
 ---
 
+## Comandos de Revisión de Módulos
+
+### (21.) Sistema de Comandos para Revisión Sistemática
+
+Para facilitar la revisión sistemática de módulos .lean y su proyección en REFERENCE.md, se definen los siguientes comandos:
+
+#### Comando: `revisar <módulo>`
+
+**Sintaxis**: `revisar <nombre_módulo.lean>`
+
+**Acción**:
+1. Cargar el archivo `ZfcSetTheory/<nombre_módulo.lean>` si no está ya en el chat
+2. Analizar el contenido del módulo:
+   - Cabecera de copyright y licencia
+   - Definiciones (con notación, computabilidad, terminación)
+   - Axiomas (ubicación, namespace, orden)
+   - Teoremas principales (sin demostración)
+   - Exports
+3. Comparar con REFERENCE.md:
+   - Verificar si el módulo está proyectado
+   - Identificar definiciones/teoremas/exports faltantes
+   - Detectar inconsistencias en el estado de proyección
+4. Actualizar TODO.md con:
+   - Estado de revisión (✅ Completo / ⚠️ Parcial / ❌ No proyectado)
+   - Lista detallada de acciones necesarias
+   - Fecha de revisión (formato YYYY-MM-DD)
+5. Descargar el módulo del chat al finalizar
+
+**Ejemplo de uso**:
+```
+revisar PowerSet.lean
+```
+
+#### Comando: `proyectar <módulo>`
+
+**Sintaxis**: `proyectar <nombre_módulo.lean>`
+
+**Acción**:
+1. Cargar el archivo `ZfcSetTheory/<nombre_módulo.lean>` si no está ya en el chat
+2. Cargar REFERENCE.md si no está ya en el chat
+3. Extraer toda la información relevante del módulo:
+   - Axiomas con ubicación, namespace, orden, enunciado matemático, firma Lean4, dependencias
+   - Definiciones con ubicación, namespace, orden, enunciado matemático, firma Lean4, notación, computabilidad, terminación, dependencias
+   - Teoremas principales con ubicación, namespace, orden, enunciado matemático, firma Lean4, dependencias (sin demostración)
+   - Exports completos
+4. Actualizar REFERENCE.md:
+   - Crear/actualizar sección de axiomas (§2.X)
+   - Crear/actualizar sección de definiciones (§3.X)
+   - Crear/actualizar sección de teoremas (§4.X)
+   - Crear/actualizar sección de notación (§5.X)
+   - Crear/actualizar sección de exports (§6.X)
+   - Actualizar tabla de módulos (§1.1) con estado "✅ Completo"
+   - Renumerar secciones si es necesario
+5. Actualizar TODO.md marcando el módulo como ✅ Completo
+6. Actualizar timestamp en REFERENCE.md (formato YYYY-MM-DD HH:MM)
+7. Descargar el módulo del chat al finalizar
+
+**Ejemplo de uso**:
+```
+proyectar PowerSet.lean
+```
+
+#### Comando: `siguiente módulo`
+
+**Sintaxis**: `siguiente módulo`
+
+**Acción**:
+1. Consultar TODO.md para identificar módulos pendientes de revisión
+2. Analizar dependencias en REFERENCE.md (tabla §1.1)
+3. Seleccionar el módulo con menos dependencias no revisadas
+4. Informar al usuario qué módulo se va a revisar y por qué
+5. Solicitar confirmación antes de proceder
+
+**Ejemplo de uso**:
+```
+siguiente módulo
+```
+
+#### Comando: `estado revisión`
+
+**Sintaxis**: `estado revisión`
+
+**Acción**:
+1. Leer TODO.md
+2. Generar resumen con:
+   - Total de módulos revisados (✅)
+   - Total de módulos con acciones pendientes (⚠️)
+   - Total de módulos no proyectados (❌)
+   - Total de módulos pendientes de revisión ([ ])
+   - Lista de módulos por categoría
+3. Mostrar próximo módulo sugerido según dependencias
+
+**Ejemplo de uso**:
+```
+estado revisión
+```
+
+#### Comando: `verificar proyección <módulo>`
+
+**Sintaxis**: `verificar proyección <nombre_módulo.lean>`
+
+**Acción**:
+1. Cargar el archivo `ZfcSetTheory/<nombre_módulo.lean>`
+2. Cargar REFERENCE.md
+3. Verificar exhaustivamente:
+   - Todos los axiomas están proyectados
+   - Todas las definiciones están proyectadas
+   - Todos los teoremas principales están proyectados
+   - Todos los exports están documentados
+   - La notación está registrada
+   - Las dependencias están correctas
+   - El estado en tabla §1.1 es correcto
+4. Generar informe de verificación
+5. Actualizar TODO.md si se detectan problemas
+6. Descargar el módulo del chat al finalizar
+
+**Ejemplo de uso**:
+```
+verificar proyección NaturalNumbers.lean
+```
+
+#### Comando: `ciclo revisión completo`
+
+**Sintaxis**: `ciclo revisión completo`
+
+**Acción**:
+1. Ejecutar `siguiente módulo`
+2. Ejecutar `revisar <módulo_seleccionado>`
+3. Si el módulo requiere proyección, preguntar al usuario si proceder
+4. Si el usuario confirma, ejecutar `proyectar <módulo_seleccionado>`
+5. Repetir hasta que no queden módulos pendientes
+6. Generar informe final de revisión
+
+**Ejemplo de uso**:
+```
+ciclo revisión completo
+```
+
+### (22.) Protocolo de Trabajo con Comandos
+
+**Flujo recomendado**:
+
+1. **Inicio de sesión de revisión**:
+   ```
+   estado revisión
+   ```
+
+2. **Revisión individual**:
+   ```
+   siguiente módulo
+   revisar <módulo>
+   proyectar <módulo>  # si es necesario
+   ```
+
+3. **Revisión automática**:
+   ```
+   ciclo revisión completo
+   ```
+
+4. **Verificación post-proyección**:
+   ```
+   verificar proyección <módulo>
+   ```
+
+**Reglas de los comandos**:
+
+- Los comandos son **case-insensitive** (mayúsculas/minúsculas no importan)
+- Los nombres de módulos deben incluir la extensión `.lean`
+- Los comandos siempre descargan los módulos .lean del chat al finalizar
+- Los comandos siempre actualizan timestamps en formato YYYY-MM-DD HH:MM
+- Los comandos siempre actualizan TODO.md con el estado actual
+- Los comandos respetan el sistema de bloqueo de archivos (§20)
+
+---
+
 ## Cumplimiento de Requisitos
 
-Verificar que REFERENCE.md, archivos .lean y otros archivos de documentación cumplan con todos los puntos (0-20) antes de considerar la documentación completa y actualizada.
+Verificar que REFERENCE.md, archivos .lean y otros archivos de documentación cumplan con todos los puntos (0-22) antes de considerar la documentación completa y actualizada.
