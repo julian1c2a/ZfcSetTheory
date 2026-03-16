@@ -47,7 +47,7 @@ Este documento cumple con todos los requisitos especificados en [AIDER-AI-GUIDE.
 | `Extension.lean` | `SetUniverse.ExtensionAxiom` | `Prelim` | ✅ Completo |
 | `Existence.lean` | `SetUniverse.ExistenceAxiom` | `Prelim`, `Extension` | ✅ Completo |
 | `Specification.lean` | `SetUniverse.SpecificationAxiom` | `Prelim`, `Extension`, `Existence` | ✅ Completo |
-| `Pairing.lean` | `SetUniverse.PairingAxiom` | `Prelim`, `Extension`, `Existence`, `Specification` | ✅ Completo |
+| `Pairing.lean` | `SetUniverse.PairingAxiom` | `Prelim`, `Extension`, `Existence`, `Specification` | ✅ Completo (2026-03-16) |
 | `Union.lean` | `SetUniverse.UnionAxiom` | `Prelim`, `Extension`, `Existence`, `Specification`, `Pairing` | ✅ Completo |
 | `PowerSet.lean` | `SetUniverse.PowerSetAxiom` | `Prelim`, `Extension`, `Existence`, `Specification`, `Pairing`, `Union` | ✅ Completo |
 | `PowerSetAlgebra.lean` | `SetUniverse.PowerSetAlgebra` | `PowerSet`, `BooleanAlgebra` + anteriores | ✅ Completo |
@@ -378,10 +378,49 @@ notation " { " x " } " => Singleton x
 
 **Dependencias**: `PairSet`
 
+#### Predicado de Pertenencia a Intersección (member_inter)
+
+**Ubicación**: `Pairing.lean`, línea 68  
+**Orden**: 3ª definición principal
+
+**Enunciado Matemático**: w es miembro de la intersección de v si w pertenece a todo conjunto y en v.
+
+**Firma Lean4**:
+
+```lean
+@[simp] def member_inter (w v : U) : Prop :=
+  ∀ (y : U), ( y ∈ w ) → ( v ∈ y )
+```
+
+**Dependencias**: `mem`
+
+#### Intersección de Familia (interSet)
+
+**Ubicación**: `Pairing.lean`, línea 73  
+**Orden**: 4ª definición principal
+
+**Enunciado Matemático**: La intersección de una familia de conjuntos w: ⋂ w = {v | ∀y ∈ w, v ∈ y}.
+
+**Firma Lean4**:
+
+```lean
+@[simp] noncomputable def interSet (w : U) : U :=
+  if h : ∃ y, y ∈ w then
+    let y₀ := choose h
+    SpecSet y₀ (fun v => ∀ y, y ∈ w → v ∈ y)
+  else
+    ∅
+notation:100 "⋂ " w => interSet w
+```
+
+**Dependencias**: `SpecSet`, `EmptySet`, `Classical.choose`
+
+**Notación**: `⋂ w` para `interSet w`
+
 #### Par Ordenado (OrderedPair)
 
 **Ubicación**: `Pairing.lean`, línea 95  
-**Orden**: 3ª definición principal
+**Orden**: 5ª definición principal
 
 **Enunciado Matemático**: El par ordenado de Kuratowski ⟨a,b⟩ = {{a}, {a,b}}.
 
@@ -394,6 +433,462 @@ notation " ⟨ " x " , " y " ⟩ " => OrderedPair x y
 ```
 
 **Dependencias**: `PairSet`, `Singleton`
+
+#### Predicado de Par Ordenado (isOrderedPair)
+
+**Ubicación**: `Pairing.lean`, línea 103  
+**Orden**: 6ª definición principal
+
+**Enunciado Matemático**: w es un par ordenado si existen x, y tales que w = ⟨x, y⟩.
+
+**Firma Lean4**:
+
+```lean
+@[simp] def isOrderedPair (w : U) : Prop :=
+  ∃ (x y : U), w = (⟨ x , y ⟩  : U)
+```
+
+**Dependencias**: `OrderedPair`
+
+#### Primera Proyección (fst)
+
+**Ubicación**: `Pairing.lean`, línea 108  
+**Orden**: 7ª definición principal
+
+**Enunciado Matemático**: La primera proyección de un par ordenado: fst(w) = ⋂(⋂ w).
+
+**Firma Lean4**:
+
+```lean
+@[simp] noncomputable def fst (w : U) : U := (⋂ (⋂ w))
+```
+
+**Dependencias**: `interSet`
+
+#### Segunda Proyección (snd)
+
+**Ubicación**: `Pairing.lean`, línea 111  
+**Orden**: 8ª definición principal
+
+**Enunciado Matemático**: La segunda proyección de un par ordenado: snd(w) se calcula según si w \ {⋂ w} es vacío o no.
+
+**Firma Lean4**:
+
+```lean
+@[simp] noncomputable def snd (w : U) : U :=
+  let I := ⋂ w
+  let s := w \ {I}
+  if h : s = ∅ then
+    ⋂ I
+  else
+    have h_exists : ∃ y, y ∈ s := (nonempty_iff_exists_mem s).mp h
+    let s_elem := choose h_exists
+    let r := s_elem \ I
+    ⋂ r
+```
+
+**Dependencias**: `interSet`, `Difference`, `Singleton`, `Classical.choose`, `nonempty_iff_exists_mem`
+
+### 3.5.1 Pairing.lean - Predicados de Relaciones y Funciones
+
+#### Relación (isRelation)
+
+**Ubicación**: `Pairing.lean`, línea 348  
+**Orden**: 1º predicado
+
+**Enunciado Matemático**: R es una relación si todo elemento de R es un par ordenado.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def isRelation (R : U) : Prop :=
+  ∀ (z : U), (z ∈ R) ↔ (isOrderedPair z)
+```
+
+**Dependencias**: `isOrderedPair`
+
+#### Relación en Conjunto (isRelation_in_Set)
+
+**Ubicación**: `Pairing.lean`, línea 351  
+**Orden**: 2º predicado
+
+**Enunciado Matemático**: R es una relación en A × B si todo elemento de R es un par ordenado ⟨x,y⟩ con x ∈ A y y ∈ B.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def isRelation_in_Set (A B R : U) : Prop :=
+  ∀ (z : U), z ∈ R → ∃ (x y : U), z = ⟨ x , y ⟩ ∧ x ∈ A ∧ y ∈ B
+```
+
+**Dependencias**: `OrderedPair`
+
+#### Relación en Conjuntos (isRelation_in_Sets)
+
+**Ubicación**: `Pairing.lean`, línea 354  
+**Orden**: 3º predicado
+
+**Enunciado Matemático**: R es una relación en A × B (versión implicativa).
+
+**Firma Lean4**:
+
+```lean
+noncomputable def isRelation_in_Sets (A B R : U) : Prop :=
+  ∀ (z : U), z ∈ R → ∃ (x y : U), z = ⟨ x , y ⟩ → x ∈ A ∧ y ∈ B
+```
+
+**Dependencias**: `OrderedPair`
+
+#### Par Ordenado Inverso (ReverseOrderedPair)
+
+**Ubicación**: `Pairing.lean`, línea 357  
+**Orden**: 4º predicado
+
+**Enunciado Matemático**: El par ordenado inverso de w: {snd w, fst w}.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def ReverseOrderedPair (w : U) : U := { snd w , fst w }
+```
+
+**Dependencias**: `fst`, `snd`, `PairSet`
+
+#### Relación Inversa (isReverseRelation)
+
+**Ubicación**: `Pairing.lean`, línea 359  
+**Orden**: 5º predicado
+
+**Enunciado Matemático**: R es la relación inversa de S si w ∈ R ↔ ReverseOrderedPair(w) ∈ S.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def isReverseRelation (R S : U) : Prop :=
+  ∀ (w : U), w ∈ R ↔ (ReverseOrderedPair w) ∈ S
+```
+
+**Dependencias**: `ReverseOrderedPair`
+
+#### Relación Identidad (isIdRelation)
+
+**Ubicación**: `Pairing.lean`, línea 362  
+**Orden**: 6º predicado
+
+**Enunciado Matemático**: I es una relación identidad si fst(x) = snd(x) para todo x ∈ I.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def isIdRelation (I : U) : Prop :=
+  ∀ (x : U), x ∈ I → fst x = snd x
+```
+
+**Dependencias**: `fst`, `snd`
+
+#### En Composición (isInComposition)
+
+**Ubicación**: `Pairing.lean`, línea 365  
+**Orden**: 7º predicado
+
+**Enunciado Matemático**: w está en la composición de R y S.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def isInComposition (R S w : U) : Prop :=
+  ∃ (W : U), w ∈ W ↔ ∃ (r : U), r ∈ R → ∃ (s : U), s ∈ S → snd r = fst s ∧ w = ⟨ fst r , snd s ⟩
+```
+
+**Dependencias**: `fst`, `snd`, `OrderedPair`
+
+#### Reflexiva (isReflexive)
+
+**Ubicación**: `Pairing.lean`, línea 368  
+**Orden**: 8º predicado
+
+**Enunciado Matemático**: w es reflexiva si ⟨x,y⟩ ∈ w implica ⟨x,x⟩ ∈ w.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def isReflexive (w : U) : Prop :=
+  ∃ (x y : U), ⟨ x , y ⟩ ∈ w → ⟨ x , x ⟩ ∈ w
+```
+
+**Dependencias**: `OrderedPair`
+
+#### Reflexiva en Conjunto (isReflexive_in_Set)
+
+**Ubicación**: `Pairing.lean`, línea 371  
+**Orden**: 9º predicado
+
+**Enunciado Matemático**: R es reflexiva en A si para todo x ∈ A, ⟨x,x⟩ ∈ R.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def isReflexive_in_Set ( A R : U ) : Prop :=
+  ∃ (x : U), x ∈ A → ⟨ x , x ⟩ ∈ R
+```
+
+**Dependencias**: `OrderedPair`
+
+#### Irreflexiva (isIReflexive)
+
+**Ubicación**: `Pairing.lean`, línea 374  
+**Orden**: 10º predicado
+
+**Enunciado Matemático**: w es irreflexiva si ⟨x,x⟩ ∉ w para todo x.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def isIReflexive (w : U) : Prop :=
+  ∀ (x : U), ⟨ x , x ⟩ ∉ w
+```
+
+**Dependencias**: `OrderedPair`
+
+#### Simétrica (isSymmetric)
+
+**Ubicación**: `Pairing.lean`, línea 377  
+**Orden**: 11º predicado
+
+**Enunciado Matemático**: w es simétrica si ⟨x,y⟩ ∈ w implica ⟨y,x⟩ ∈ w.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def isSymmetric (w : U) : Prop :=
+  ∀ (x y : U), ⟨ x , y ⟩ ∈ w → ⟨ y , x ⟩ ∈ w
+```
+
+**Dependencias**: `OrderedPair`
+
+#### Asimétrica (isAsymmetric)
+
+**Ubicación**: `Pairing.lean`, línea 380  
+**Orden**: 12º predicado
+
+**Enunciado Matemático**: w es asimétrica si ⟨x,y⟩ ∈ w implica ⟨y,x⟩ ∉ w.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def isAsymmetric (w : U) : Prop :=
+  ∀ (x y : U), ⟨ x , y ⟩ ∈ w → ⟨ y , x ⟩ ∉ w
+```
+
+**Dependencias**: `OrderedPair`
+
+#### Antisimétrica (isAntiSymmetric)
+
+**Ubicación**: `Pairing.lean`, línea 383  
+**Orden**: 13º predicado
+
+**Enunciado Matemático**: w es antisimétrica si ⟨x,y⟩ ∈ w y ⟨y,x⟩ ∈ w implica x = y.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def isAntiSymmetric (w : U) : Prop :=
+  ∀ (x y : U), ⟨ x , y ⟩ ∈ w → ⟨ y , x ⟩ ∈ w → x = y
+```
+
+**Dependencias**: `OrderedPair`
+
+#### Transitiva (isTransitive)
+
+**Ubicación**: `Pairing.lean`, línea 386  
+**Orden**: 14º predicado
+
+**Enunciado Matemático**: w es transitiva si ⟨x,y⟩ ∈ w y ⟨y,z⟩ ∈ w implica ⟨x,z⟩ ∈ w.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def isTransitive (w : U) : Prop :=
+  ∀ (x y z : U), ⟨ x , y ⟩ ∈ w → ⟨ y , z ⟩ ∈ w → ⟨ x , z ⟩ ∈ w
+```
+
+**Dependencias**: `OrderedPair`
+
+#### Relación de Equivalencia (isEquivalenceRelation)
+
+**Ubicación**: `Pairing.lean`, línea 389  
+**Orden**: 15º predicado
+
+**Enunciado Matemático**: w es una relación de equivalencia si es reflexiva, simétrica y transitiva.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def isEquivalenceRelation (w : U) : Prop :=
+  isReflexive w ∧ isSymmetric w ∧ isTransitive w
+```
+
+**Dependencias**: `isReflexive`, `isSymmetric`, `isTransitive`
+
+#### Relación de Equivalencia en Conjunto (isEquivalenceRelation_in_Set)
+
+**Ubicación**: `Pairing.lean`, línea 392  
+**Orden**: 16º predicado
+
+**Enunciado Matemático**: R es una relación de equivalencia en A.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def isEquivalenceRelation_in_Set (A R : U) : Prop :=
+  isReflexive_in_Set A R ∧ isSymmetric R ∧ isTransitive R
+```
+
+**Dependencias**: `isReflexive_in_Set`, `isSymmetric`, `isTransitive`
+
+#### Orden Parcial (isPartialOrder)
+
+**Ubicación**: `Pairing.lean`, línea 395  
+**Orden**: 17º predicado
+
+**Enunciado Matemático**: R es un orden parcial si es reflexiva, antisimétrica y transitiva.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def isPartialOrder (R : U) : Prop :=
+  isReflexive R ∧ isAntiSymmetric R ∧ isTransitive R
+```
+
+**Dependencias**: `isReflexive`, `isAntiSymmetric`, `isTransitive`
+
+#### Orden Estricto (isStrictOrder)
+
+**Ubicación**: `Pairing.lean`, línea 398  
+**Orden**: 18º predicado
+
+**Enunciado Matemático**: R es un orden estricto si es asimétrica y transitiva.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def isStrictOrder (R : U) : Prop :=
+  isAsymmetric R ∧ isTransitive R
+```
+
+**Dependencias**: `isAsymmetric`, `isTransitive`
+
+#### Bien Definida (isWellDefined)
+
+**Ubicación**: `Pairing.lean`, línea 401  
+**Orden**: 19º predicado
+
+**Enunciado Matemático**: R es bien definida si ⟨x,y₁⟩ ∈ R y ⟨x,y₂⟩ ∈ R implica y₁ = y₂.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def isWellDefined (R : U) : Prop :=
+  ∀ (x y₁ y₂ : U), ⟨ x , y₁ ⟩ ∈ R → ⟨ x , y₂ ⟩ ∈ R → y₁ = y₂
+```
+
+**Dependencias**: `OrderedPair`
+
+#### Orden Total (isTotalOrder)
+
+**Ubicación**: `Pairing.lean`, línea 404  
+**Orden**: 20º predicado
+
+**Enunciado Matemático**: R es un orden total si es orden parcial y para x ≠ y, ⟨x,y⟩ ∈ R o ⟨y,x⟩ ∈ R.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def isTotalOrder (R : U) : Prop :=
+  isPartialOrder R ∧ ∀ (x y : U), x ≠ y → ⟨ x , y ⟩ ∈ R ∨ ⟨ y , x ⟩ ∈ R
+```
+
+**Dependencias**: `isPartialOrder`, `OrderedPair`
+
+#### Bien Fundada (isWellFounded)
+
+**Ubicación**: `Pairing.lean`, línea 407  
+**Orden**: 21º predicado
+
+**Enunciado Matemático**: R es bien fundada si todo subconjunto no vacío tiene un elemento minimal.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def isWellFounded (R : U) : Prop :=
+  ∀ (A : U), A ≠ ∅ → ∃ (x : U), x ∈ A ∧ ∀ (y : U), ⟨ y , x ⟩ ∈ R → y ∉ A
+```
+
+**Dependencias**: `EmptySet`, `OrderedPair`
+
+#### Función (isFunction)
+
+**Ubicación**: `Pairing.lean`, línea 410  
+**Orden**: 22º predicado
+
+**Enunciado Matemático**: R es una función en A si para todo x ∈ A existe único y tal que ⟨x,y⟩ ∈ R.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def isFunction (A R : U) : Prop :=
+  ∀ (x : U), x ∈ A → ∃ (y₁ : U), ∀ (y₂ : U), ⟨ x , y₁ ⟩ ∈ R → ⟨ x , y₂ ⟩ ∈ R → y₁ = y₂
+```
+
+**Dependencias**: `OrderedPair`
+
+#### Inyectiva (isInyective)
+
+**Ubicación**: `Pairing.lean`, línea 413  
+**Orden**: 23º predicado
+
+**Enunciado Matemático**: R es inyectiva si ⟨x₁,y⟩ ∈ R y ⟨x₂,y⟩ ∈ R implica x₁ = x₂.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def isInyective (R : U) : Prop :=
+  ∀ (x₁ x₂ : U), ∃ (y : U), ⟨ x₁ , y ⟩ ∈ R → ⟨ x₂ , y ⟩ ∈ R → x₁ = x₂
+```
+
+**Dependencias**: `OrderedPair`
+
+#### Función Suryectiva (isSurjectiveFunction)
+
+**Ubicación**: `Pairing.lean`, línea 416  
+**Orden**: 24º predicado
+
+**Enunciado Matemático**: R es suryectiva de A a B si para todo y ∈ B existe x ∈ A con ⟨x,y⟩ ∈ R.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def isSurjectiveFunction (A B R : U) : Prop :=
+  ∀ (y : U), y ∈ B → ∃ (x : U), x ∈ A ∧ ⟨ x , y ⟩ ∈ R
+```
+
+**Dependencias**: `OrderedPair`
+
+#### Función Biyectiva (isBijectiveFunction)
+
+**Ubicación**: `Pairing.lean`, línea 419  
+**Orden**: 25º predicado
+
+**Enunciado Matemático**: R es biyectiva de A a B si es función, inyectiva y suryectiva.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def isBijectiveFunction (A B R : U) : Prop :=
+  isFunction A R ∧ isInyective R ∧ isSurjectiveFunction A B R
+```
+
+**Dependencias**: `isFunction`, `isInyective`, `isSurjectiveFunction`
 
 ### 3.6 Union.lean
 
@@ -2947,12 +3442,186 @@ noncomputable def mul (m n : U) : U :=
 
 ### 4.2 Pairing.lean
 
-#### Corrección de fst
+#### No Vacío si y solo si Existe Elemento (nonempty_iff_exists_mem)
+
+**Ubicación**: `Pairing.lean`, línea 88  
+**Orden**: 1º teorema auxiliar
+
+**Enunciado Matemático**: w ≠ ∅ ↔ ∃y, y ∈ w.
+
+**Firma Lean4**:
+
+```lean
+@[simp] theorem nonempty_iff_exists_mem (w : U) : w ≠ ∅ ↔ ∃ y, y ∈ w
+```
+
+**Dependencias**: `EmptySet`, `ExtSet`, `EmptySet_is_empty`
+
+#### Intersección de Singleton (interSet_of_singleton)
+
+**Ubicación**: `Pairing.lean`, línea 101  
+**Orden**: 2º teorema auxiliar
+
+**Enunciado Matemático**: ⋂{A} = A.
+
+**Firma Lean4**:
+
+```lean
+@[simp] theorem interSet_of_singleton (A : U) : (⋂ { A }) = A
+```
+
+**Dependencias**: `interSet`, `Singleton`, `SpecSet_is_specified`, `Singleton_is_specified`
+
+#### Elemento Único de Singleton (is_singleton_unique_elem)
+
+**Ubicación**: `Pairing.lean`, línea 158  
+**Orden**: 3º teorema auxiliar
+
+**Enunciado Matemático**: Si s = {a}, entonces todo x ∈ s satisface x = a.
+
+**Firma Lean4**:
+
+```lean
+theorem is_singleton_unique_elem (s a : U) :
+  s = {a} → ∀ x, x ∈ s → x = a
+```
+
+**Dependencias**: `Singleton`, `Singleton_is_specified`
+
+#### Par Igual a Singleton (pair_set_eq_singleton)
+
+**Ubicación**: `Pairing.lean`, línea 164  
+**Orden**: 4º teorema auxiliar
+
+**Enunciado Matemático**: {x, x} = {x}.
+
+**Firma Lean4**:
+
+```lean
+theorem pair_set_eq_singleton (x : U) :
+  ({x, x} : U) = ({x} : U)
+```
+
+**Dependencias**: `PairSet`, `Singleton`, `ExtSet`, `PairSet_is_specified`, `Singleton_is_specified`
+
+#### Par Ordenado de Elemento Consigo Mismo (ordered_pair_self_eq_singleton_singleton)
+
+**Ubicación**: `Pairing.lean`, línea 171  
+**Orden**: 5º teorema auxiliar
+
+**Enunciado Matemático**: ⟨x, x⟩ = {{x}}.
+
+**Firma Lean4**:
+
+```lean
+theorem ordered_pair_self_eq_singleton_singleton (x : U) :
+  (⟨x, x⟩ : U) = ({{x}} : U)
+```
+
+**Dependencias**: `OrderedPair`, `pair_set_eq_singleton`
+
+#### Diferencia de Par Ordenado con Singleton (diff_ordered_pair_neq)
+
+**Ubicación**: `Pairing.lean`, línea 177  
+**Orden**: 6º teorema auxiliar
+
+**Enunciado Matemático**: Si x ≠ y, entonces ⟨x, y⟩ \ {{x}} = {{x, y}}.
+
+**Firma Lean4**:
+
+```lean
+theorem diff_ordered_pair_neq (x y : U) (h_neq : x ≠ y) :
+  ((⟨x, y⟩ : U) \ ({{x}} : U)) = {{x, y}}
+```
+
+**Dependencias**: `OrderedPair`, `Difference`, `Singleton`, `Difference_is_specified`, `OrderedPair_is_specified`, `Singleton_is_specified`
+
+#### Diferencia de Par con Singleton (diff_pair_singleton)
+
+**Ubicación**: `Pairing.lean`, línea 203  
+**Orden**: 7º teorema auxiliar
+
+**Enunciado Matemático**: Si x ≠ y, entonces {x, y} \ {x} = {y}.
+
+**Firma Lean4**:
+
+```lean
+theorem diff_pair_singleton (x y : U) (h_neq : x ≠ y) :
+  (({x, y} : U) \ ({x} : U)) = ({y} : U)
+```
+
+**Dependencias**: `PairSet`, `Singleton`, `Difference`, `ExtSet`, `Difference_is_specified`, `PairSet_is_specified`, `Singleton_is_specified`
+
+#### Idempotencia de Or en Membresía (auxiliary_idempotence_of_or_in)
+
+**Ubicación**: `Pairing.lean`, línea 227  
+**Orden**: 8º teorema auxiliar
+
+**Enunciado Matemático**: x ∈ y ↔ x ∈ y ∨ x ∈ y.
+
+**Firma Lean4**:
+
+```lean
+theorem auxiliary_idempotence_of_or_in (x y : U) :
+  x ∈ y ↔ x ∈ y ∨ x ∈ y
+```
+
+**Dependencias**: Ninguna (lógica proposicional)
+
+#### Idempotencia de Or en Igualdad (auxiliary_idempotence_of_or_eq)
+
+**Ubicación**: `Pairing.lean`, línea 237  
+**Orden**: 9º teorema auxiliar
+
+**Enunciado Matemático**: x = y ↔ x = y ∨ x = y.
+
+**Firma Lean4**:
+
+```lean
+theorem auxiliary_idempotence_of_or_eq (x y : U) :
+  x = y ↔ x = y ∨ x = y
+```
+
+**Dependencias**: Ninguna (lógica proposicional)
+
+#### Membresía en Par Ordenado con Igualdad (ordered_pair_eq_mem)
+
+**Ubicación**: `Pairing.lean`, línea 247  
+**Orden**: 10º teorema auxiliar
+
+**Enunciado Matemático**: Si x = y, entonces todo z ∈ ⟨x, y⟩ satisface z = {y}.
+
+**Firma Lean4**:
+
+```lean
+theorem ordered_pair_eq_mem (x y : U) (h_eq : x = y) :
+  ∀ (z : U), z ∈ (⟨x, y⟩ : U) → z = ({y} : U)
+```
+
+**Dependencias**: `OrderedPair`, `Singleton`, `inter_of_ordered_pair`, `OrderedPair_is_specified`, `Singleton_is_specified`
+
+#### Diferencia de Par con Intersección (diff_pair_sing_inter)
+
+**Ubicación**: `Pairing.lean`, línea 271  
+**Orden**: 11º teorema auxiliar
+
+**Enunciado Matemático**: Si x = y, entonces ⟨x, y⟩ \ {⋂ ⟨x, y⟩} = ∅.
+
+**Firma Lean4**:
+
+```lean
+theorem diff_pair_sing_inter (x y : U) :
+  (x = y) → (((⟨x, y⟩ : U) \ ({(⋂ (⟨x, y⟩ : U))})) = (∅ : U))
+```
+
+**Dependencias**: `OrderedPair`, `interSet`, `Difference`, `Singleton`, `inter_of_ordered_pair`, `ordered_pair_self_eq_singleton_singleton`, `Difference_self_empty`
+
+#### Corrección de fst (fst_of_ordered_pair)
 
 **Ubicación**: `Pairing.lean`, línea 286  
 **Orden**: 1º teorema principal
 
-**Enunciado Matemático**: La primera proyección de un par ordenado es el primer elemento.
+**Enunciado Matemático**: La primera proyección de un par ordenado es el primer elemento: fst(⟨x, y⟩) = x.
 
 **Firma Lean4**:
 
@@ -2960,14 +3629,77 @@ noncomputable def mul (m n : U) : U :=
 @[simp] theorem fst_of_ordered_pair (x y : U) : fst (⟨x, y⟩ : U) = x
 ```
 
-**Dependencias**: `fst`, `OrderedPair`, `inter_of_ordered_pair`
+**Dependencias**: `fst`, `OrderedPair`, `inter_of_ordered_pair`, `interSet_of_singleton`
 
-#### Corrección de snd
+#### Membresía en Par Ordenado con Desigualdad (ordered_pair_neq_mem)
+
+**Ubicación**: `Pairing.lean`, línea 287  
+**Orden**: 12º teorema auxiliar
+
+**Enunciado Matemático**: Todo z ∈ ⟨x, y⟩ satisface z = {x, y} o z = {x}.
+
+**Firma Lean4**:
+
+```lean
+theorem ordered_pair_neq_mem (x y : U) :
+  ∀ (z : U), (z ∈ (⟨x, y⟩ : U)) → (z = ({x, y} : U) ∨ (z = ({x} : U)))
+```
+
+**Dependencias**: `OrderedPair`, `PairSet`, `Singleton`, `OrderedPair_is_specified`
+
+#### Intersección de Par Ordenado (inter_of_ordered_pair)
+
+**Ubicación**: `Pairing.lean`, línea 293  
+**Orden**: 13º teorema auxiliar
+
+**Enunciado Matemático**: ⋂ ⟨x, y⟩ = {x}.
+
+**Firma Lean4**:
+
+```lean
+theorem inter_of_ordered_pair (x y : U) : (⋂ ⟨x, y⟩) = {x}
+```
+
+**Dependencias**: `interSet`, `OrderedPair`, `Singleton`, `ExtSet`, `OrderedPair_is_specified`, `Singleton_is_specified`, `PairSet_is_specified`
+
+#### Intersección de Par Ordenado con Desigualdad (inter_of_ordered_pair_neq_mem)
+
+**Ubicación**: `Pairing.lean`, línea 295  
+**Orden**: 14º teorema auxiliar
+
+**Enunciado Matemático**: Si x ≠ y, entonces ⟨x, y⟩ \ {⋂ ⟨x, y⟩} = {{x, y}}.
+
+**Firma Lean4**:
+
+```lean
+theorem inter_of_ordered_pair_neq_mem (x y : U) (h_eq : x ≠ y) :
+  (((⟨x, y⟩ : U)  \ ({((⋂ (⟨x, y⟩ : U)) : U)} : U)  : U) = ({{x, y}} : U))
+```
+
+**Dependencias**: `OrderedPair`, `interSet`, `Difference`, `Singleton`, `ExtSet`, `inter_of_ordered_pair`, `Difference_is_specified`, `OrderedPair_is_specified`, `Singleton_is_specified`
+
+#### Segunda Proyección con Igualdad (snd_of_ordered_pair_eq)
+
+**Ubicación**: `Pairing.lean`, línea 318  
+**Orden**: 15º teorema auxiliar
+
+**Enunciado Matemático**: Si x = y, entonces snd(⟨x, y⟩) = y.
+
+**Firma Lean4**:
+
+```lean
+theorem snd_of_ordered_pair_eq (x y : U) (h_eq : x = y) :
+  snd ⟨x, y⟩ = y
+```
+
+**Dependencias**: `snd`, `OrderedPair`, `diff_pair_sing_inter`, `inter_of_ordered_pair`, `interSet_of_singleton`
+
+#### Corrección de snd (snd_of_ordered_pair)
 
 **Ubicación**: `Pairing.lean`, línea 325  
 **Orden**: 2º teorema principal
 
-**Enunciado Matemático**: La segunda proyección de un par ordenado es el segundo elemento.
+**Enunciado Matemático**: La segunda proyección de un par ordenado es el segundo elemento: snd(⟨x, y⟩) = y.
 
 **Firma Lean4**:
 
@@ -2975,7 +3707,87 @@ noncomputable def mul (m n : U) : U :=
 @[simp] theorem snd_of_ordered_pair (x y : U) : snd ⟨x, y⟩ = y
 ```
 
-**Dependencias**: `snd`, `OrderedPair`, múltiples lemas auxiliares
+**Dependencias**: `snd`, `OrderedPair`, `snd_of_ordered_pair_eq`, `diff_ordered_pair_neq`, `diff_pair_singleton`, `inter_of_ordered_pair`, `interSet_of_singleton`, `is_singleton_unique_elem`, `nonempty_iff_exists_mem`
+
+#### Par Ordenado Bien Construido (OrderedPairSet_is_WellConstructed)
+
+**Ubicación**: `Pairing.lean`, línea 336  
+**Orden**: 3º teorema principal
+
+**Enunciado Matemático**: Si w es un par ordenado, entonces w = ⟨fst w, snd w⟩.
+
+**Firma Lean4**:
+
+```lean
+@[simp] theorem OrderedPairSet_is_WellConstructed (w : U) :
+  (isOrderedPair w) → w = (⟨ fst w, snd w ⟩ : U)
+```
+
+**Dependencias**: `isOrderedPair`, `fst`, `snd`, `OrderedPair`, `fst_of_ordered_pair`, `snd_of_ordered_pair`
+
+#### Igualdad de Pares Ordenados por Proyecciones (Eq_of_OrderedPairs_given_projections)
+
+**Ubicación**: `Pairing.lean`, línea 344  
+**Orden**: 4º teorema principal
+
+**Enunciado Matemático**: Si ⟨a, b⟩ = ⟨c, d⟩, entonces a = c y b = d.
+
+**Firma Lean4**:
+
+```lean
+theorem Eq_of_OrderedPairs_given_projections (a b c d : U) :
+  (⟨a, b⟩ : U) = (⟨c, d⟩ : U) → a = c ∧ b = d
+```
+
+**Dependencias**: `OrderedPair`, `fst`, `snd`, `fst_of_ordered_pair`, `snd_of_ordered_pair`
+
+#### Igualdad de Pares Ordenados (Eq_OrderedPairs)
+
+**Ubicación**: `Pairing.lean`, línea 357  
+**Orden**: 5º teorema principal
+
+**Enunciado Matemático**: Para pares ordenados w y v, (fst w = fst v ∧ snd w = snd v) ↔ w = v.
+
+**Firma Lean4**:
+
+```lean
+theorem Eq_OrderedPairs (w v : U) :
+  isOrderedPair w → isOrderedPair v → ((fst w = fst v ∧ snd w = snd v) ↔ (w = v))
+```
+
+**Dependencias**: `isOrderedPair`, `fst`, `snd`, `fst_of_ordered_pair`, `snd_of_ordered_pair`, `Eq_of_OrderedPairs_given_projections`
+
+#### Equivalencia de Predicados de Par Ordenado (isOrderedPair_equiv_isOrderedPair_concept)
+
+**Ubicación**: `Pairing.lean`, línea 380  
+**Orden**: 6º teorema principal
+
+**Enunciado Matemático**: isOrderedPair w ↔ ∃x y, w = ⟨x, y⟩.
+
+**Firma Lean4**:
+
+```lean
+theorem isOrderedPair_equiv_isOrderedPair_concept (w : U) :
+  isOrderedPair w ↔ ∃ (x y : U), w = ⟨ x , y ⟩
+```
+
+**Dependencias**: `isOrderedPair`, `OrderedPair`
+
+#### Par Ordenado por Construcción (isOrderedPair_by_construction)
+
+**Ubicación**: `Pairing.lean`, línea 388  
+**Orden**: 7º teorema principal
+
+**Enunciado Matemático**: isOrderedPair w ↔ w = ⟨fst w, snd w⟩.
+
+**Firma Lean4**:
+
+```lean
+theorem isOrderedPair_by_construction (w : U) :
+  isOrderedPair w ↔ (w = (⟨ fst w , snd w ⟩ : U))
+```
+
+**Dependencias**: `isOrderedPair`, `fst`, `snd`, `OrderedPair`, `OrderedPairSet_is_WellConstructed`
 
 ### 4.3 PowerSet.lean - Teoremas Principales
 
@@ -7108,6 +7920,7 @@ theorem fromPeano_le_iff (p q : Peano.ℕ₀) :
 
 - `{a}` - Singleton (`Singleton`)
 - `{a, b}` - Par no ordenado (`PairSet`)
+- `⋂ w` - Intersección de familia (`interSet`)
 - `⟨a, b⟩` - Par ordenado (`OrderedPair`)
 - `A ×ₛ B` - Producto cartesiano (`CartesianProduct`)
 
@@ -7887,7 +8700,9 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 
 ---
 
-*Última actualización: 2026-03-16 17:30 — Proyección completa de Cardinality.lean: añadidas 4 definiciones faltantes (singletonMap, SetDiff con notación A ∖ B, CSB_core, CSB_bijection) en §3.13, añadidos 19 teoremas faltantes en §4.8 (todos los teoremas auxiliares de Cantor y CSB completos), actualizados exports en §6.5 con 28 elementos. Total: 5 definiciones + 20 teoremas completamente proyectados. Estado verificado: ✅ 0 sorry (CSB completamente demostrado).*
+*Última actualización: 2026-03-16 18:00 — Proyección completa de Pairing.lean: añadidas 5 definiciones faltantes (member_inter, interSet con notación ⋂, fst, snd) en §3.5, creada nueva subsección §3.5.1 con 25 predicados de relaciones y funciones (isRelation, isSymmetric, isTransitive, isFunction, etc.), añadidos 20 teoremas auxiliares en §4.2 (nonempty_iff_exists_mem, inter_of_ordered_pair, diff_pair_singleton, etc.), actualizados exports en §6.2 con 62 elementos organizados por categorías. Total: 8 definiciones + 25 predicados + 20 teoremas auxiliares + 7 teoremas principales completamente proyectados. Estado verificado: ✅ Completo.*
+
+*Actualización anterior: 2026-03-16 17:30 — Proyección completa de Cardinality.lean: añadidas 4 definiciones faltantes (singletonMap, SetDiff con notación A ∖ B, CSB_core, CSB_bijection) en §3.13, añadidos 19 teoremas faltantes en §4.8 (todos los teoremas auxiliares de Cantor y CSB completos), actualizados exports en §6.5 con 28 elementos. Total: 5 definiciones + 20 teoremas completamente proyectados. Estado verificado: ✅ 0 sorry (CSB completamente demostrado).*
 
 *Actualización anterior: 2026-03-16 17:00 — Proyección completa de Functions.lean: añadida definición Restriction (§3.10) con notación f ↾ C, 4 teoremas sobre Restriction en §4.6 (Restriction_is_specified, Restriction_subset, Restriction_is_function, Restriction_apply), actualizadas ubicaciones de definiciones y teoremas, actualizada notación en §5.4, simplificados exports en §6.4. Total: 16 definiciones y teoremas de restricción completamente proyectados.*
 
