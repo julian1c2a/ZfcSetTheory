@@ -31,3 +31,6 @@ import ZfcSetTheory.Infinity
 import ZfcSetTheory.PeanoImport
 import ZfcSetTheory.NaturalNumbersAdd
 import ZfcSetTheory.NaturalNumbersMul
+import ZfcSetTheory.NaturalNumbersPow
+import ZfcSetTheory.NaturalNumbersSub
+import ZfcSetTheory.NaturalNumbersDiv

@@ -11,7 +11,17 @@
       "Read(//^## 14/. PeanoNatFactorial/,/**)",
       "Read(//^## 15/. PeanoNatBinom/,/**)",
       "Read(//^## 17/. PeanoNatNewtonBinom/,/**)",
-      "Read(//^## 17/. PeanoNatNewtonBinom/**)"
+      "Read(//^## 17/. PeanoNatNewtonBinom/**)",
+      "Bash(bash \"e:/Dropbox/GitHub/lean4/ZfcSetTheory/git-lock.bash\" list)",
+      "Bash(lake update:*)",
+      "Bash(bash git-lock.bash lock ZfcSetTheory.lean)",
+      "Bash(lake build:*)",
+      "Bash(bash git-lock.bash unlock ZfcSetTheory.lean)",
+      "Bash(bash git-lock.bash lock ZfcSetTheory/NaturalNumbersSub.lean)",
+      "Bash(grep -n \"^---$\\\\|^## 5\\\\.\" REFERENCE.md)",
+      "Bash(bash git-lock.bash lock ZfcSetTheory/NaturalNumbersDiv.lean)",
+      "Bash(grep -n \"NaturalNumbersSub.lean - Sustrac\\\\|^- \\\\`NaturalNumbersMul\" REFERENCE.md)",
+      "Bash(ls ZfcSetTheory/NaturalNumbers*.lean)"
     ]
   }
 }

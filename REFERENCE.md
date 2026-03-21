@@ -70,6 +70,8 @@ Este documento cumple con todos los requisitos especificados en [AIDER-AI-GUIDE.
 | `Recursion.lean` | `SetUniverse.Recursion` | `NaturalNumbers`, `Functions`, `Relations` + anteriores | ✅ Completo |
 | `NaturalNumbersAdd.lean` | `SetUniverse.NaturalNumbersAdd` | `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `PeanoNatLib.PeanoNatAdd` | ✅ Completo |
 | `NaturalNumbersMul.lean` | `SetUniverse.NaturalNumbersMul` | `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersAdd`, `PeanoNatLib.PeanoNatMul` | ✅ Completo |
+| `NaturalNumbersSub.lean` | `SetUniverse.NaturalNumbersSub` | `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersAdd`, `PeanoNatLib.PeanoNatSub` | ✅ Completo |
+| `NaturalNumbersDiv.lean` | `SetUniverse.NaturalNumbersDiv` | `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersAdd`, `NaturalNumbersMul`, `NaturalNumbersSub`, `PeanoNatLib.PeanoNatDiv` | ✅ Completo |
 
 ## 2. Axiomas ZFC Implementados
 
@@ -3417,6 +3419,118 @@ noncomputable def mul (m n : U) : U :=
 ```
 
 **Dependencias**: `mulFn`, `apply`
+
+---
+
+### 3.25 NaturalNumbersSub.lean
+
+**Módulo**: `ZfcSetTheory.NaturalNumbersSub`
+**Namespace**: `SetUniverse.NaturalNumbersSub`
+**Dependencias**: `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersAdd`, `PeanoNatLib.PeanoNatSub`
+**Actualizado**: 2026-03-21
+**Descripción**: Define la sustracción saturada (monus) en ω mediante el Teorema de Recursión con `predecessorFn` como función de paso. Fijado m ∈ ω, `subFn m hm` aplica el predecesor n veces a m, saturando en ∅. El teorema puente `fromPeano_sub` se prueba por inducción usando el lema auxiliar `peano_sub_succ_tau : sub p (σ q) = τ (sub p q)` (válido incondicionalmente).
+
+#### Función predecesora ZFC (predecessorFn)
+
+**Ubicación**: `NaturalNumbersSub.lean`, línea 73
+**Orden**: 1ª definición
+
+**Enunciado Matemático**: `predecessorFn = {⟨n, predecessor n⟩ | n ∈ ω} ⊆ ω ×ₛ ω`. Dado que `predecessor (σ n) = n` y `predecessor ∅ = ∅`, representa el predecesor saturado.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def predecessorFn : U :=
+  SpecSet (ω ×ₛ ω) (fun p => ∃ n, n ∈ (ω : U) ∧ p = ⟨n, predecessor n⟩)
+```
+
+**Dependencias**: `SpecSet`, `CartesianProduct`, `predecessor`
+
+#### Función de sustracción fijado m (subFn)
+
+**Ubicación**: `NaturalNumbersSub.lean`, línea 122
+**Orden**: 2ª definición
+
+**Enunciado Matemático**: `subFn m hm` es la única función ZFC `F : ω → ω` con `F(∅) = m` y `F(σ n) = predecessor(F(n))`, construida vía `RecursiveFn`.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def subFn (m : U) (hm : m ∈ (ω : U)) : U :=
+  RecursiveFn ω m predecessorFn hm predecessorFn_is_function
+```
+
+**Dependencias**: `RecursiveFn`, `predecessorFn`, `predecessorFn_is_function`
+
+#### Sustracción saturada en ω (sub)
+
+**Ubicación**: `NaturalNumbersSub.lean`, línea 133
+**Orden**: 3ª definición
+
+**Enunciado Matemático**: `sub m n = (subFn m hm)(n)` si `m ∈ ω`, y `∅` en otro caso. No lleva argumento de prueba.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def sub (m n : U) : U :=
+  if h : m ∈ (ω : U) then apply (subFn m h) n else ∅
+```
+
+**Dependencias**: `subFn`, `apply`
+
+---
+
+### 3.26 NaturalNumbersDiv.lean
+
+**Módulo**: `ZfcSetTheory.NaturalNumbersDiv`
+**Namespace**: `SetUniverse.NaturalNumbersDiv`
+**Dependencias**: `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersAdd`, `NaturalNumbersMul`, `NaturalNumbersSub`, `PeanoNatLib.PeanoNatDiv`
+**Actualizado**: 2026-03-21
+**Descripción**: Define la división euclídea (cociente y resto) en ω mediante Patrón B (bridge-only). Levanta `Peano.Div.div` y `Peano.Div.mod` directamente via el isomorfismo `fromPeano`/`toPeano`. El helper privado `toPeano_proof_irrel` garantiza que el resultado de `toPeano n h` no depende del testigo `h : isNat n`.
+
+#### Cociente euclídeo (divOf)
+
+**Ubicación**: `NaturalNumbersDiv.lean`, línea 91
+**Orden**: 1ª definición
+
+**Enunciado Matemático**: `divOf m n = ⌊m / n⌋` para `m, n ∈ ω`, definido por transporte del Peano `Peano.Div.div (toPeano m _) (toPeano n _)`.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def divOf (m n : U) : U :=
+  if hm : m ∈ (ω : U) then
+    if hn : n ∈ (ω : U) then
+      fromPeano (Peano.Div.div
+        (toPeano m (mem_Omega_is_Nat m hm))
+        (toPeano n (mem_Omega_is_Nat n hn)))
+    else ∅
+  else ∅
+```
+
+**Dependencias**: `fromPeano`, `toPeano`, `Peano.Div.div`, `mem_Omega_is_Nat`
+
+#### Resto euclídeo (modOf)
+
+**Ubicación**: `NaturalNumbersDiv.lean`, línea 102
+**Orden**: 2ª definición
+
+**Enunciado Matemático**: `modOf m n = m mod n` para `m, n ∈ ω`, análogo a `divOf` con `Peano.Div.mod`.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def modOf (m n : U) : U :=
+  if hm : m ∈ (ω : U) then
+    if hn : n ∈ (ω : U) then
+      fromPeano (Peano.Div.mod
+        (toPeano m (mem_Omega_is_Nat m hm))
+        (toPeano n (mem_Omega_is_Nat n hn)))
+    else ∅
+  else ∅
+```
+
+**Dependencias**: `fromPeano`, `toPeano`, `Peano.Div.mod`, `mem_Omega_is_Nat`
 
 ---
 
@@ -8000,6 +8114,103 @@ theorem fromPeano_le_iff (p q : Peano.ℕ₀) :
 
 ---
 
+### 4.21 NaturalNumbersSub.lean
+
+**Módulo**: `ZfcSetTheory.NaturalNumbersSub`
+**Namespace**: `SetUniverse.NaturalNumbersSub`
+**Actualizado**: 2026-03-21
+
+#### Sección 0: predecessorFn
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `mem_predecessorFn` | `⟨n, predecessor n⟩ ∈ predecessorFn` para n ∈ ω | `theorem mem_predecessorFn (n : U) (hn : n ∈ (ω : U)) : (⟨n, predecessor n⟩ : U) ∈ (predecessorFn : U)` |
+| `predecessorFn_is_function` | `predecessorFn` es función de ω en ω | `theorem predecessorFn_is_function : isFunctionFromTo (predecessorFn : U) ω ω` |
+| `predecessorFn_apply` | Aplicar `predecessorFn` a n ∈ ω da `predecessor n` | `theorem predecessorFn_apply (n : U) (hn : n ∈ (ω : U)) : apply (predecessorFn : U) n = predecessor n` |
+
+#### Sección 1: subFn y sub
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `subFn_is_function` | `subFn m hm` es función de ω en ω | `theorem subFn_is_function (m : U) (hm : m ∈ (ω : U)) : isFunctionFromTo (subFn m hm) ω ω` |
+| `sub_eq` | Si m ∈ ω, `sub m n = apply (subFn m hm) n` | `theorem sub_eq (m n : U) (hm : m ∈ (ω : U)) : sub m n = apply (subFn m hm) n` |
+| `sub_in_Omega` | `sub m n ∈ ω` para m, n ∈ ω | `theorem sub_in_Omega (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) : sub m n ∈ ω` |
+
+#### Sección 2: Ecuaciones de recursión
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `sub_zero` | m - ∅ = m (identidad derecha) | `theorem sub_zero (m : U) (hm : m ∈ (ω : U)) : sub m ∅ = m` |
+| `sub_succ` | m - σ n = predecessor (m - n) | `theorem sub_succ (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) : sub m (σ n) = predecessor (sub m n)` |
+
+**Nota sobre `sub_succ`**: La saturación en ∅ se garantiza automáticamente porque `predecessor ∅ = ∅`.
+
+#### Sección 4: Teorema puente
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `fromPeano_sub` | `fromPeano(p - q) = sub(fromPeano p)(fromPeano q)` | `theorem fromPeano_sub (p q : Peano.ℕ₀) : (fromPeano (Peano.Sub.sub p q) : U) = sub (fromPeano p) (fromPeano q)` |
+
+**Descripción**: Demostrado por inducción sobre q. Usa el lema privado `peano_sub_succ_tau : Peano.Sub.sub p (σ q) = Peano.τ (Peano.Sub.sub p q)` (válido incondicionalmente: cuando σq ≤ p usa `succ_sub`; cuando σq > p ambos lados son 0) y `predecessor_fromPeano_eq_tau : predecessor (fromPeano x) = fromPeano (τ x)`.
+
+**Dependencias**: `sub_zero`, `sub_succ`, `predecessor_fromPeano_eq_tau`, `Nat_in_Omega`, `fromPeano_is_nat`, `Peano.Sub.succ_sub`, `Peano.Sub.sub_self`, `Peano.Order.nle_then_gt_wp`, `Peano.Order.lt_succ_iff_le`, `Peano.Order.le_antisymm`, `predecessor_of_successor`
+
+#### Sección 5: Propiedades algebraicas
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `zero_sub_Omega` | ∅ - n = ∅ (sustraer de cero siempre da cero) | `theorem zero_sub_Omega (n : U) (hn : n ∈ (ω : U)) : sub ∅ n = ∅` |
+| `sub_self_Omega` | m - m = ∅ (todo natural menos sí mismo es cero) | `theorem sub_self_Omega (m : U) (hm : m ∈ (ω : U)) : sub m m = ∅` |
+| `sub_succ_succ_Omega` | σm - σn = m - n (cancelar sucesores) | `theorem sub_succ_succ_Omega (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) : sub (σ m) (σ n) = sub m n` |
+| `sub_k_add_k_Omega` | (m + n) - n = m (substraer lo sumado cancela) | `theorem sub_k_add_k_Omega (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) : sub (add m n) n = m` |
+| `add_k_sub_k_Omega` | n ≤ m → (m - n) + n = m (sumar lo restado recupera) | `theorem add_k_sub_k_Omega (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) (h_le : n ∈ m ∨ n = m) : add (sub m n) n = m` |
+| `sub_le_self_Omega` | m - n ≤ m (la sustracción no excede el minuendo) | `theorem sub_le_self_Omega (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) : sub m n ∈ m ∨ sub m n = m` |
+| `sub_pos_iff_lt_Omega` | m - n ≠ ∅ ↔ n ∈ m (positivo iff estrictamente menor) | `theorem sub_pos_iff_lt_Omega (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) : sub m n ≠ ∅ ↔ n ∈ m` |
+
+**Patrón de demostración**: `fromPeano_surjective` + `subst` + `fromPeano_sub`/`fromPeano_add` + `congrArg fromPeano (Peano.Sub.teorema ...)`.
+
+**Dependencias para Sección 5**: `fromPeano_surjective`, `fromPeano_sub`, `fromPeano_add`, `fromPeano_le_iff`, `fromPeano_lt_iff`, `fromPeano_injective`, `Peano.Sub.sub_le_self`, `Peano.Sub.sub_self`, `Peano.Sub.sub_succ_succ_eq`, `Peano.Sub.sub_k_add_k`, `Peano.Sub.add_k_sub_k`, `Peano.Sub.sub_pos_iff_lt`, `Peano.Sub.lt_b_a_then_sub_a_b_neq_0`, `Peano.Order.zero_le`, `Peano.Order.le_zero_eq`, `Peano.Order.succ_le_succ_iff`, `Nat_in_Omega`, `fromPeano_is_nat`
+
+---
+
+### 4.22 NaturalNumbersDiv.lean
+
+**Módulo**: `ZfcSetTheory.NaturalNumbersDiv`
+**Namespace**: `SetUniverse.NaturalNumbersDiv`
+**Actualizado**: 2026-03-21
+
+#### Sección 1: Clausura en ω
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `divOf_in_Omega` | `divOf m n ∈ ω` para m, n ∈ ω | `theorem divOf_in_Omega (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) : divOf m n ∈ ω` |
+| `modOf_in_Omega` | `modOf m n ∈ ω` para m, n ∈ ω | `theorem modOf_in_Omega (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) : modOf m n ∈ ω` |
+
+#### Sección 2: Teoremas puente
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `fromPeano_div` | `fromPeano (div p q) = divOf (fromPeano p) (fromPeano q)` | `theorem fromPeano_div (p q : Peano.ℕ₀) : (fromPeano (Peano.Div.div p q) : U) = divOf (fromPeano p) (fromPeano q)` |
+| `fromPeano_mod` | `fromPeano (mod p q) = modOf (fromPeano p) (fromPeano q)` | `theorem fromPeano_mod (p q : Peano.ℕ₀) : (fromPeano (Peano.Div.mod p q) : U) = modOf (fromPeano p) (fromPeano q)` |
+
+**Descripción**: Demostrados con `simp only [divOf/modOf, dif_pos ...]` + `congr 1; congr 1` para aislar los argumentos de `toPeano`, luego `toPeano_proof_irrel` (para cambiar el testigo de `isNat`) y `toPeano_fromPeano` (para simplificar `toPeano (fromPeano p) _ = p`).
+
+#### Sección 3: Propiedades algebraicas
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `divMod_eq_Omega` | n ≠ ∅ → m = (divOf m n) · n + modOf m n | `theorem divMod_eq_Omega (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) (h_n_neq_zero : n ≠ ∅) : m = add (mul (divOf m n) n) (modOf m n)` |
+| `mod_lt_divisor_Omega` | n ≠ ∅ → modOf m n ∈ n (resto estrictamente menor que divisor) | `theorem mod_lt_divisor_Omega (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) (h_n_neq_zero : n ≠ ∅) : modOf m n ∈ n` |
+| `div_of_lt_Omega` | m ∈ n → divOf m n = ∅ (dividendo < divisor ⟹ cociente = 0) | `theorem div_of_lt_Omega (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) (h_lt : m ∈ n) : divOf m n = ∅` |
+| `mod_of_lt_Omega` | m ∈ n → modOf m n = m (dividendo < divisor ⟹ resto = dividendo) | `theorem mod_of_lt_Omega (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) (h_lt : m ∈ n) : modOf m n = m` |
+| `div_le_self_Omega` | n ≠ ∅ → divOf m n ∈ m ∨ divOf m n = m (cociente ≤ dividendo) | `theorem div_le_self_Omega (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) (h_n_neq_zero : n ≠ ∅) : divOf m n ∈ m ∨ divOf m n = m` |
+
+**Patrón de demostración**: `fromPeano_surjective` + `subst` + `fromPeano_div`/`fromPeano_mod`/`fromPeano_mul`/`fromPeano_add` + teoremas de `Peano.Div`.
+
+**Dependencias**: `fromPeano_surjective`, `fromPeano_div`, `fromPeano_mod`, `fromPeano_mul`, `fromPeano_add`, `fromPeano_lt_iff`, `fromPeano_le_iff`, `fromPeano_injective`, `fromPeano_zero_is_empty` (privado), `toPeano_fromPeano`, `zero_is_nat`, `Peano.Div.divMod_eq`, `Peano.Div.mod_lt_divisor`, `Peano.Div.div_of_lt`, `Peano.Div.mod_of_lt`, `Peano.Div.div_le_self`, `Nat_in_Omega`, `fromPeano_is_nat`
+
+---
+
 ## 5. Notación y Sintaxis
 
 ### 5.1 Operadores Básicos
@@ -8751,6 +8962,67 @@ export NaturalNumbersMul (
 )
 ```
 
+### 6.21 NaturalNumbersSub.lean
+
+**Namespace**: `SetUniverse.NaturalNumbersSub` (exportado a `SetUniverse`)
+**Última modificación**: 2026-03-21
+**Dependencias**: `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersAdd`, `PeanoNatLib.PeanoNatSub`
+
+```lean
+export NaturalNumbersSub (
+  -- Sección 0: predecessorFn
+  predecessorFn
+  mem_predecessorFn
+  predecessorFn_is_function
+  predecessorFn_apply
+  -- Sección 1: sub
+  subFn
+  subFn_is_function
+  sub
+  sub_eq
+  sub_in_Omega
+  -- Sección 2: ecuaciones de recursión
+  sub_zero
+  sub_succ
+  -- Sección 4: puente
+  fromPeano_sub
+  -- Sección 5: propiedades algebraicas
+  zero_sub_Omega
+  sub_self_Omega
+  sub_succ_succ_Omega
+  sub_k_add_k_Omega
+  add_k_sub_k_Omega
+  sub_le_self_Omega
+  sub_pos_iff_lt_Omega
+)
+```
+
+### 6.22 NaturalNumbersDiv.lean
+
+**Namespace**: `SetUniverse.NaturalNumbersDiv` (exportado a `SetUniverse`)
+**Última modificación**: 2026-03-21
+**Dependencias**: `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersAdd`, `NaturalNumbersMul`, `NaturalNumbersSub`, `PeanoNatLib.PeanoNatDiv`
+
+```lean
+export NaturalNumbersDiv (
+  -- Sección 0: definiciones
+  divOf
+  modOf
+  -- Sección 1: clausura
+  divOf_in_Omega
+  modOf_in_Omega
+  -- Sección 2: teoremas puente
+  fromPeano_div
+  fromPeano_mod
+  -- Sección 3: propiedades algebraicas
+  divMod_eq_Omega
+  mod_lt_divisor_Omega
+  div_of_lt_Omega
+  mod_of_lt_Omega
+  div_le_self_Omega
+)
+```
+
 ## 7. Estado de Proyección por Módulo
 
 ### 7.1 Leyenda de Estados
@@ -8787,6 +9059,8 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `PeanoImport.lean` - Isomorfismo Von Neumann ↔ Peano completo: biyección, compatibilidad algebraica, transporte de recursión (simple y con paso), puentes de orden
 - `NaturalNumbersAdd.lean` - Suma en ω: definición vía Recursión, teorema puente `fromPeano_add`, propiedades de semianillo (conmutatividad, asociatividad, cancelación, monotonía)
 - `NaturalNumbersMul.lean` - Multiplicación en ω: definición vía Recursión, teorema puente `fromPeano_mul`, propiedades de anillo conmutativo (distributividad, asociatividad, identidades)
+- `NaturalNumbersSub.lean` - Sustracción saturada (monus) en ω: definición vía Recursión con predecessorFn, teorema puente `fromPeano_sub`, propiedades (cancelación, orden, positividad)
+- `NaturalNumbersDiv.lean` - División euclídea en ω: Patrón B (bridge-only) vía isomorfismo, teoremas puente `fromPeano_div`/`fromPeano_mod`, identidad euclídea, cota del resto, propiedades de cociente/resto
 
 ### 7.3 Archivos Parcialmente Proyectados
 
@@ -8810,7 +9084,11 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 
 ---
 
-*Última actualización: 2026-03-16 19:30 — Proyección completa de Infinity.lean: añadidos 7 teoremas de orden en ω (natLt_trans, natLt_asymm, natLt_trichotomy, natLe_refl, natLe_trans, Omega_has_min, nat_mem_wf ya estaba), 2 notaciones (≺ y ≼) en §5.7, actualizados exports en §6.7 con 21 elementos organizados por categorías. Total: 1 axioma + 2 definiciones + 17 teoremas completamente proyectados. Estado confirmado: ✅ 100% completo, 0 sorry, cumple todos los requisitos de AIDER-AI-GUIDE.md (puntos 0-14). Documentación interna excepcional con explicaciones claras sobre el Axioma de Infinito y construcción de ω.*
+*Última actualización: 2026-03-21 — Proyección completa de NaturalNumbersDiv.lean: §3.26 con 2 definiciones (divOf, modOf), §4.22 con 9 teoremas (2 clausura, 2 puente, 5 propiedades algebraicas), §6.22 con 11 exports. Patrón B (bridge-only): toPeano_proof_irrel para proof-irrelevance de isNat. Estado: ✅ 100% completo, 0 sorry. Módulo compilado al primer intento (tras fix de dirección en congr 1).*
+
+*Actualización anterior: 2026-03-21 — Proyección completa de NaturalNumbersSub.lean: §3.25 con 3 definiciones (predecessorFn, subFn, sub), §4.21 con 13 teoremas (3 sobre predecessorFn, 3 sobre sub, 2 ecuaciones de recursión, 1 puente fromPeano_sub, 7 propiedades algebraicas), §6.21 con 22 exports. Total: 3 definiciones + 13 teoremas completamente proyectados. Estado: ✅ 100% completo, 0 sorry. Módulo compilado sin errores.*
+
+*Actualización anterior: 2026-03-16 19:30 — Proyección completa de Infinity.lean: añadidos 7 teoremas de orden en ω (natLt_trans, natLt_asymm, natLt_trichotomy, natLe_refl, natLe_trans, Omega_has_min, nat_mem_wf ya estaba), 2 notaciones (≺ y ≼) en §5.7, actualizados exports en §6.7 con 21 elementos organizados por categorías. Total: 1 axioma + 2 definiciones + 17 teoremas completamente proyectados. Estado confirmado: ✅ 100% completo, 0 sorry, cumple todos los requisitos de AIDER-AI-GUIDE.md (puntos 0-14). Documentación interna excepcional con explicaciones claras sobre el Axioma de Infinito y construcción de ω.*
 
 *Actualización anterior: 2026-03-16 18:00 — Proyección completa de Pairing.lean: añadidas 5 definiciones faltantes (member_inter, interSet con notación ⋂, fst, snd) en §3.5, creada nueva subsección §3.5.1 con 25 predicados de relaciones y funciones (isRelation, isSymmetric, isTransitive, isFunction, etc.), añadidos 20 teoremas auxiliares en §4.2 (nonempty_iff_exists_mem, inter_of_ordered_pair, diff_pair_singleton, etc.), actualizados exports en §6.2 con 62 elementos organizados por categorías. Total: 8 definiciones + 25 predicados + 20 teoremas auxiliares + 7 teoremas principales completamente proyectados. Estado verificado: ✅ Completo.*
 
