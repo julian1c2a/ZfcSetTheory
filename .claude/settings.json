@@ -21,7 +21,10 @@
       "Bash(grep -n \"^---$\\\\|^## 5\\\\.\" REFERENCE.md)",
       "Bash(bash git-lock.bash lock ZfcSetTheory/NaturalNumbersDiv.lean)",
       "Bash(grep -n \"NaturalNumbersSub.lean - Sustrac\\\\|^- \\\\`NaturalNumbersMul\" REFERENCE.md)",
-      "Bash(ls ZfcSetTheory/NaturalNumbers*.lean)"
+      "Bash(ls ZfcSetTheory/NaturalNumbers*.lean)",
+      "Bash(bash git-lock.bash unlock ZfcSetTheory/NaturalNumbersSub.lean)",
+      "Bash(bash git-lock.bash unlock ZfcSetTheory/NaturalNumbersDiv.lean)",
+      "Bash(bash git-lock.bash lock ZfcSetTheory/NaturalNumbersPow.lean)"
     ]
   }
 }

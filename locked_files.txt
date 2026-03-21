@@ -27,3 +27,4 @@ ZfcSetTheory/Prelim.lean
 ZfcSetTheory/NaturalNumbersSub.lean
 ZfcSetTheory.lean
 ZfcSetTheory/NaturalNumbersDiv.lean
+ZfcSetTheory/NaturalNumbersPow.lean
