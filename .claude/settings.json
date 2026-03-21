@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(curl -s \"https://raw.githubusercontent.com/julian1c2a/Peano/master/REFERENCE.md\")",
+      "Read(//tmp/**)",
+      "Read(//^## 8/. PeanoNatSub/,/**)",
+      "Read(//^## 13/. PeanoNatPow/,/**)",
+      "Read(//^## 10/. PeanoNatDiv/,/**)",
+      "Read(//^## 11/. PeanoArith/,/**)",
+      "Read(//^## 14/. PeanoNatFactorial/,/**)",
+      "Read(//^## 15/. PeanoNatBinom/,/**)",
+      "Read(//^## 17/. PeanoNatNewtonBinom/,/**)",
+      "Read(//^## 17/. PeanoNatNewtonBinom/**)"
+    ]
+  }
+}
