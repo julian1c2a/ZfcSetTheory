@@ -28,7 +28,9 @@
       "Bash(grep -v \"--|noncomputable\\\\|def\\\\|fun\\\\|have\\\\|exact\\\\|rw\\\\|simp\\\\|let\\\\|subst\\\\|obtain\")",
       "Read(//c/Users/julia/.claude/projects/e--Dropbox-GitHub-lean4-ZfcSetTheory/memory/**)",
       "Bash(ls e:/Dropbox/GitHub/lean4/ZfcSetTheory/*.md)",
-      "Bash(bash git-lock.bash unlock ZfcSetTheory/NaturalNumbersArith.lean)"
+      "Bash(bash git-lock.bash unlock ZfcSetTheory/NaturalNumbersArith.lean)",
+      "Bash(bash git-lock.bash lock ZfcSetTheory/NaturalNumbersArith.lean)",
+      "Bash(bash git-lock.bash lock ZfcSetTheory/NaturalNumbersFactorial.lean)"
     ]
   }
 }
