@@ -34,3 +34,4 @@ import ZfcSetTheory.NaturalNumbersMul
 import ZfcSetTheory.NaturalNumbersPow
 import ZfcSetTheory.NaturalNumbersSub
 import ZfcSetTheory.NaturalNumbersDiv
+import ZfcSetTheory.NaturalNumbersArith

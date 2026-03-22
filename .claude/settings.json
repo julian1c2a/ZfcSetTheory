@@ -24,7 +24,8 @@
       "Bash(ls ZfcSetTheory/NaturalNumbers*.lean)",
       "Bash(bash git-lock.bash unlock ZfcSetTheory/NaturalNumbersSub.lean)",
       "Bash(bash git-lock.bash unlock ZfcSetTheory/NaturalNumbersDiv.lean)",
-      "Bash(bash git-lock.bash lock ZfcSetTheory/NaturalNumbersPow.lean)"
+      "Bash(bash git-lock.bash lock ZfcSetTheory/NaturalNumbersPow.lean)",
+      "Bash(grep -v \"--|noncomputable\\\\|def\\\\|fun\\\\|have\\\\|exact\\\\|rw\\\\|simp\\\\|let\\\\|subst\\\\|obtain\")"
     ]
   }
 }
