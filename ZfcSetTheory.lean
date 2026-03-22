@@ -35,3 +35,4 @@ import ZfcSetTheory.NaturalNumbersPow
 import ZfcSetTheory.NaturalNumbersSub
 import ZfcSetTheory.NaturalNumbersDiv
 import ZfcSetTheory.NaturalNumbersArith
+import ZfcSetTheory.NaturalNumbersFactorial

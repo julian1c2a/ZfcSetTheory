@@ -238,6 +238,27 @@
 - [ ] Recursion.lean
 - [ ] NaturalNumbersAdd.lean
 - [ ] NaturalNumbersMul.lean
+- [ ] NaturalNumbersSub.lean
+- [ ] NaturalNumbersDiv.lean
+
+### ✅ NaturalNumbersPow.lean
+- **Estado en REFERENCE.md:** ✅ Completo
+- **Proyección completada:** 2026-03-22 12:00
+- **Contenido proyectado:** §3.27 (2 def), §4.23 (13 teoremas), §6.23 (18 exports)
+- **Patrón:** RecursiveFn con mulFn como función de paso
+- **Acciones necesarias:** Ninguna
+
+### ✅ NaturalNumbersArith.lean
+- **Estado en REFERENCE.md:** ✅ Completo
+- **Proyección completada:** 2026-03-22 12:00
+- **Contenido proyectado:** §3.28 (5 def), §4.24 (43 teoremas en 3 grupos), §6.24 (43 exports)
+- **Patrón:** div/mod RecursiveFn + gcdOf/lcmOf Patrón B + Bézout substractivo
+- **Acciones necesarias:** Ninguna
+
+### 🔜 NaturalNumbersFactorial.lean
+- **Estado:** Pendiente de implementar
+- **Plan:** Patrón B (bridge-only) via `Peano.Factorial.factorial`
+- **Fecha estimada:** 2026-03-22
 
 ---
 

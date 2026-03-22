@@ -238,9 +238,9 @@ namespace SetUniverse
         Applying this step `m` times from `⟨∅, ∅⟩` yields `⟨⌊m/n⌋, m mod n⟩`. -/
     private noncomputable def divMod_stepFn (n : U) : U :=
       SpecSet ((ω ×ₛ ω) ×ₛ (ω ×ₛ ω)) (fun p =>
-        ∃ q ∈ (ω : U), ∃ r ∈ (ω : U),
-          (σ r = n ∧ p = ⟨⟨q, r⟩, ⟨σ q, ∅⟩⟩) ∨
-          (σ r ≠ n ∧ p = ⟨⟨q, r⟩, ⟨q, σ r⟩⟩))
+        ∃ q : U, q ∈ (ω : U) ∧ ∃ r : U, r ∈ (ω : U) ∧
+          ((σ r = n ∧ p = ⟨⟨q, r⟩, ⟨σ q, (∅ : U)⟩⟩) ∨
+           (σ r ≠ n ∧ p = ⟨⟨q, r⟩, ⟨q, σ r⟩⟩)))
 
     private theorem mem_divMod_stepFn_wrap (n q r : U)
         (hq : q ∈ (ω : U)) (hr : r ∈ (ω : U)) (h_wrap : σ r = n) :
@@ -250,7 +250,8 @@ namespace SetUniverse
       refine ⟨?_, q, hq, r, hr, Or.inl ⟨h_wrap, rfl⟩⟩
       rw [OrderedPair_mem_CartesianProduct]
       exact ⟨(OrderedPair_mem_CartesianProduct q r ω ω).mpr ⟨hq, hr⟩,
-             (OrderedPair_mem_CartesianProduct (σ q) ∅ ω ω).mpr ⟨succ_in_Omega q hq, zero_in_Omega⟩⟩
+             (OrderedPair_mem_CartesianProduct (σ q) (∅ : U) ω ω).mpr
+               ⟨succ_in_Omega q hq, zero_in_Omega⟩⟩
 
     private theorem mem_divMod_stepFn_continue (n q r : U)
         (hq : q ∈ (ω : U)) (hr : r ∈ (ω : U)) (h_cont : σ r ≠ n) :
@@ -277,7 +278,7 @@ namespace SetUniverse
         by_cases h_wrap : σ (snd x) = n
         · -- Wrap case: unique output is ⟨σ (fst x), ∅⟩
           refine ⟨⟨σ (fst x), ∅⟩, ?_, fun y hy => ?_⟩
-          · rw [hx_eq]
+          · rw [hx_eq, fst_of_ordered_pair]
             exact mem_divMod_stepFn_wrap n (fst x) (snd x) hq hr h_wrap
           · dsimp only at hy
             unfold divMod_stepFn at hy
@@ -298,7 +299,7 @@ namespace SetUniverse
               exact absurd (hr'_eq ▸ h_wrap) h_nc
         · -- Continue case: unique output is ⟨fst x, σ (snd x)⟩
           refine ⟨⟨fst x, σ (snd x)⟩, ?_, fun y hy => ?_⟩
-          · rw [hx_eq]
+          · rw [hx_eq, fst_of_ordered_pair, snd_of_ordered_pair]
             exact mem_divMod_stepFn_continue n (fst x) (snd x) hq hr h_wrap
           · dsimp only at hy
             unfold divMod_stepFn at hy
@@ -344,21 +345,24 @@ namespace SetUniverse
         (divMod_stepFn_is_function n)
 
     private theorem divModFn_is_function (n : U) (hn : n ∈ (ω : U)) :
-        isFunctionFromTo (divModFn n hn) ω (ω ×ₛ ω) :=
-      RecursiveFn_is_function (ω ×ₛ ω) ⟨∅, ∅⟩ (divMod_stepFn n)
+        isFunctionFromTo (divModFn n hn) ω (ω ×ₛ ω) := by
+      unfold divModFn
+      exact RecursiveFn_is_function (ω ×ₛ ω) ⟨∅, ∅⟩ (divMod_stepFn n)
         ((OrderedPair_mem_CartesianProduct ∅ ∅ ω ω).mpr ⟨zero_in_Omega, zero_in_Omega⟩)
         (divMod_stepFn_is_function n)
 
     private theorem divModFn_zero (n : U) (hn : n ∈ (ω : U)) :
-        apply (divModFn n hn) ∅ = (⟨∅, ∅⟩ : U) :=
-      RecursiveFn_zero (ω ×ₛ ω) ⟨∅, ∅⟩ (divMod_stepFn n)
+        apply (divModFn n hn) ∅ = (⟨∅, ∅⟩ : U) := by
+      unfold divModFn
+      exact RecursiveFn_zero (ω ×ₛ ω) ⟨∅, ∅⟩ (divMod_stepFn n)
         ((OrderedPair_mem_CartesianProduct ∅ ∅ ω ω).mpr ⟨zero_in_Omega, zero_in_Omega⟩)
         (divMod_stepFn_is_function n)
 
     private theorem divModFn_succ (n m : U) (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U)) :
         apply (divModFn n hn) (σ m) =
-          apply (divMod_stepFn n) (apply (divModFn n hn) m) :=
-      RecursiveFn_succ (ω ×ₛ ω) ⟨∅, ∅⟩ (divMod_stepFn n)
+          apply (divMod_stepFn n) (apply (divModFn n hn) m) := by
+      unfold divModFn
+      exact RecursiveFn_succ (ω ×ₛ ω) ⟨∅, ∅⟩ (divMod_stepFn n)
         ((OrderedPair_mem_CartesianProduct ∅ ∅ ω ω).mpr ⟨zero_in_Omega, zero_in_Omega⟩)
         (divMod_stepFn_is_function n) m hm
 
@@ -367,7 +371,7 @@ namespace SetUniverse
       have hf := divModFn_is_function n hn
       have h_pair := apply_mem (divModFn n hn) m (hf.2 m hm)
       exact ((OrderedPair_mem_CartesianProduct m (apply (divModFn n hn) m) ω (ω ×ₛ ω)).mp
-        (hf.1 h_pair)).2
+        (hf.1 _ h_pair)).2
 
     /-- `div m n` is the Euclidean quotient of `m` by `n`, defined via ZFC recursion. -/
     noncomputable def div (m n : U) : U :=
@@ -479,33 +483,55 @@ namespace SetUniverse
         exact ⟨by rw [zero_mul_Omega (fromPeano q) hq_om, add_zero ∅ zero_in_Omega],
                zero_mem_of_nat_nonempty _ (fromPeano_is_nat q) h_pos⟩
       | succ p' ih =>
-        simp only [fromPeano]
+        -- Use NaturalNumbers.successor (fully qualified) to avoid σ notation ambiguity
+        -- with PeanoNatLib's σ n:max notation
+        have hfp_succ : (fromPeano (Peano.ℕ₀.succ p') : U) =
+            NaturalNumbers.successor (fromPeano p') := by simp only [fromPeano]
+        rw [hfp_succ]
         have hm' : fromPeano p' ∈ (ω : U) := Nat_in_Omega _ (fromPeano_is_nat p')
-        obtain ⟨ih_eq, ih_mod_lt⟩ := ih hm'
+        obtain ⟨ih_eq, ih_mod_lt⟩ := ih
         have hd := div_in_Omega (fromPeano p') (fromPeano q) hm' hq_om
         have hr := mod_in_Omega (fromPeano p') (fromPeano q) hm' hq_om
-        by_cases h_wrap : σ (mod (fromPeano p') (fromPeano q)) = fromPeano q
+        rcases Classical.em
+            (NaturalNumbers.successor (mod (fromPeano p') (fromPeano q)) = fromPeano q)
+            with h_wrap | h_wrap
         · -- Wrap: quotient increments, remainder resets to ∅
           rw [div_succ_wrap (fromPeano p') (fromPeano q) hm' hq_om h_wrap,
               mod_succ_wrap (fromPeano p') (fromPeano q) hm' hq_om h_wrap]
           constructor
-          · rw [add_zero _ (mul_in_Omega _ _ (succ_in_Omega _ hd) hq_om),
-                succ_mul_Omega _ _ hd hq_om, ← h_wrap,
-                ← add_succ _ _ (mul_in_Omega _ _ hd hq_om) hr]
-            exact congrArg σ ih_eq
+          · symm
+            calc add (mul (NaturalNumbers.successor (div (fromPeano p') (fromPeano q)))
+                      (fromPeano q)) (∅ : U)
+                = mul (NaturalNumbers.successor (div (fromPeano p') (fromPeano q)))
+                      (fromPeano q) :=
+                    add_zero _ (mul_in_Omega _ _ (succ_in_Omega _ hd) hq_om)
+              _ = add (mul (div (fromPeano p') (fromPeano q)) (fromPeano q)) (fromPeano q) :=
+                    succ_mul_Omega _ _ hd hq_om
+              _ = add (mul (div (fromPeano p') (fromPeano q)) (fromPeano q))
+                      (NaturalNumbers.successor (mod (fromPeano p') (fromPeano q))) :=
+                    by rw [h_wrap]
+              _ = NaturalNumbers.successor
+                      (add (mul (div (fromPeano p') (fromPeano q)) (fromPeano q))
+                      (mod (fromPeano p') (fromPeano q))) :=
+                    add_succ _ _ (mul_in_Omega _ _ hd hq_om) hr
+              _ = NaturalNumbers.successor (fromPeano p') :=
+                    (congrArg NaturalNumbers.successor ih_eq).symm
           · exact zero_mem_of_nat_nonempty _ (fromPeano_is_nat q) h_pos
         · -- Continue: quotient unchanged, remainder increments
           rw [div_succ_continue (fromPeano p') (fromPeano q) hm' hq_om h_wrap,
               mod_succ_continue (fromPeano p') (fromPeano q) hm' hq_om h_wrap]
           constructor
           · rw [add_succ _ _ (mul_in_Omega _ _ hd hq_om) hr]
-            exact congrArg σ ih_eq
-          · -- σ (mod p' q) ∈ fromPeano q: use that mod p' q ∈ q and σ (mod p' q) ≠ q
-            have h_succ_in_succ : σ (mod (fromPeano p') (fromPeano q)) ∈ σ (fromPeano q) :=
+            exact congrArg NaturalNumbers.successor ih_eq
+          · -- NaturalNumbers.successor (mod p' q) ∈ fromPeano q
+            have h_succ_in_succ :
+                NaturalNumbers.successor (mod (fromPeano p') (fromPeano q)) ∈
+                NaturalNumbers.successor (fromPeano q) :=
               (succ_mem_succ_iff (mod (fromPeano p') (fromPeano q)) (fromPeano q)
-                (mem_Omega_is_Nat _ hr) (fromPeano_is_nat q)).mpr ih_mod_lt
+                (mem_Omega_is_Nat _ hr) (fromPeano_is_nat q)).mp ih_mod_lt
             exact ((successor_is_specified (fromPeano q)
-              (σ (mod (fromPeano p') (fromPeano q)))).mp h_succ_in_succ).resolve_right h_wrap
+              (NaturalNumbers.successor (mod (fromPeano p') (fromPeano q)))).mp
+              h_succ_in_succ).resolve_right h_wrap
 
     /-- The Euclidean equation for ZFC-native division: `m = (div m n)*n + (mod m n)`. -/
     theorem divMod_eq_ZFC (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) (h : n ≠ ∅) :
@@ -527,12 +553,12 @@ namespace SetUniverse
         (hs2 : Peano.StrictOrder.Lt s2 q) :
         r1 = r2 ∧ s1 = s2 := by
       have hr1_le : Peano.Order.Le (Peano.Mul.mul r1 q) p := by
-        rw [h1]; exact Peano.Add.le_add_cancel (Peano.Mul.mul r1 q) s1
+        rw [h1]; exact Peano.Add.le_self_add (Peano.Mul.mul r1 q) s1
       have hr1_lt : Peano.StrictOrder.Lt p (Peano.Mul.mul (Peano.ℕ₀.succ r1) q) := by
         rw [h1, Peano.Mul.succ_mul]
         exact (Peano.Add.add_lt_add_left_iff (Peano.Mul.mul r1 q) s1 q).mpr hs1
       have hr2_le : Peano.Order.Le (Peano.Mul.mul r2 q) p := by
-        rw [h2]; exact Peano.Add.le_add_cancel (Peano.Mul.mul r2 q) s2
+        rw [h2]; exact Peano.Add.le_self_add (Peano.Mul.mul r2 q) s2
       have hr2_lt : Peano.StrictOrder.Lt p (Peano.Mul.mul (Peano.ℕ₀.succ r2) q) := by
         rw [h2, Peano.Mul.succ_mul]
         exact (Peano.Add.add_lt_add_left_iff (Peano.Mul.mul r2 q) s2 q).mpr hs2

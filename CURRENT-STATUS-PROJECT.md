@@ -1,24 +1,42 @@
 # Current Status - ZfcSetTheory Project
 
-**Date**: 2026-03-04 12:00
+**Date**: 2026-03-22 12:00
 **Lean Version**: 4.23.0-rc2
 **Author**: Julián Calderón Almendros
 
 ## Executive Summary
 
-This project implements ZFC set theory in Lean 4, focusing on fundamental axioms, relations, functions, and cardinality. All proofs are complete with no `sorry` statements remaining. A new `PeanoImport.lean` module establishes the formal isomorphism between Von Neumann and Peano natural numbers via the external `peanolib` library.
+This project implements ZFC set theory in Lean 4, focusing on fundamental axioms, relations, functions, cardinality, and arithmetic of the Von Neumann naturals. All proofs are complete with no `sorry` statements remaining. The `PeanoImport.lean` module establishes the formal isomorphism between Von Neumann and Peano natural numbers via the external `peanolib` library. Arithmetic modules (Add, Mul, Sub, Div, Pow, Arith) provide full arithmetic in ω via RecursiveFn and Pattern B bridge.
 
 ### Statistics
 
-- **Total files**: 25 modules (+ 1 external: peanolib)
-- **Compilation**: ✅ Successful (28/28 jobs)
+- **Total files**: 29 modules (+ 1 external: peanolib)
+- **Compilation**: ✅ Successful (0 sorry, 0 errors)
 - **Complete proofs**: 100%
 - **Remaining `sorry`**: 0
-- **Documentation**: REFERENCE.md fully updated with all 25 modules
+- **Documentation**: REFERENCE.md fully updated with all 29 modules
 
 ## Recent Achievements
 
-### Latest Updates (March 4, 2026)
+### Latest Updates (March 22, 2026)
+
+#### 1. NaturalNumbersPow.lean — Potenciación en ω (✅ Complete)
+
+- `powFn m hm` — función de potenciación vía `RecursiveFn ω (σ ∅) (mulFn m hm)`
+- `pow m n = mⁿ` — potencia de naturales de von Neumann
+- `fromPeano_pow` — teorema puente con `Peano.Pow.pow`
+- 13 teoremas: `pow_zero`, `pow_succ`, `zero_pow_Omega`, `one_pow_Omega`, `pow_one_Omega`, `pow_ne_zero_Omega`, `pow_two_Omega`, `pow_add_eq_mul_pow_Omega`, `mul_pow_Omega`, `pow_pow_eq_pow_mul_Omega`
+
+#### 2. NaturalNumbersArith.lean — Divisibilidad, GCD, LCM (✅ Complete)
+
+- `divides m n` — predicado ZFC directo: ∃ k ∈ ω, n = m*k
+- `div`/`mod` — división euclídea nativa ZFC via `divMod_stepFn` + RecursiveFn en ω×ω
+- `div_eq_divOf`/`mod_eq_modOf` — equivalencia con los Pattern B anteriores
+- `gcdOf`/`lcmOf` — Pattern B via isomorfismo; 8 propiedades de gcd/lcm
+- `bezout_natform_Omega` — Bézout en forma substractiva ZFC
+- 43 exports totales
+
+### Previous Updates (March 4, 2026)
 
 #### 1. New Module: PeanoImport.lean — Von Neumann ↔ Peano Isomorphism (✅ Complete)
 

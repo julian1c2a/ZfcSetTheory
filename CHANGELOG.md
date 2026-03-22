@@ -1,6 +1,6 @@
 # Changelog
 
-**Última actualización:** 2026-03-08 14:00
+**Última actualización:** 2026-03-22 12:00
 **Autor**: Julián Calderón Almendros
 
 Todos los cambios notables de este proyecto serán documentados en este archivo.
@@ -9,6 +9,47 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Añadido (2026-03-22 12:00)
+
+- **Nuevo módulo NaturalNumbersPow.lean — Potenciación en ω** (Patrón RecursiveFn):
+  - ✅ `powFn (m : U) (hm : m ∈ ω) : U` — función de potenciación vía `RecursiveFn ω (σ ∅) (mulFn m hm)`
+  - ✅ `pow (m n : U) : U` — potencia de naturales de von Neumann
+  - ✅ `fromPeano_pow` — teorema puente con `Peano.Pow.pow`
+  - ✅ 13 teoremas: `pow_zero`, `pow_succ`, `pow_eq`, `pow_in_Omega`, `zero_pow_Omega`, `one_pow_Omega`, `pow_one_Omega`, `pow_ne_zero_Omega`, `pow_two_Omega`, `pow_add_eq_mul_pow_Omega`, `mul_pow_Omega`, `pow_pow_eq_pow_mul_Omega`, `powFn_is_function`
+  - ✅ 18 exports totales; build limpio
+
+- **Nuevo módulo NaturalNumbersArith.lean — Divisibilidad, GCD, LCM, Bézout** (Patrón RecursiveFn + Patrón B):
+  - ✅ `divides (m n : U) : Prop` — predicado ZFC directo: ∃ k ∈ ω, n = m*k
+  - ✅ `div (m n : U) : U` — cociente euclídeo nativo ZFC via `divMod_stepFn` (función paso en ω×ω)
+  - ✅ `mod (m n : U) : U` — resto euclídeo nativo ZFC (mismo RecursiveFn)
+  - ✅ `div_eq_divOf`/`mod_eq_modOf` — equivalencia con Pattern B de NaturalNumbersDiv
+  - ✅ `gcdOf (m n : U) : U` — MCD Pattern B via `Peano.Arith.gcd`
+  - ✅ `lcmOf (m n : U) : U` — MCM Pattern B via `Peano.Arith.lcm`
+  - ✅ `bezout_natform_Omega` — Bézout en forma substractiva: ∃ a b, a*m − b*n = gcd(m,n) ∨ a*n − b*m = gcd(m,n)
+  - ✅ 13 propiedades de divisibilidad, 8 propiedades de gcd/lcm, 14 propiedades de div/mod nativo
+  - ✅ 43 exports totales; build limpio (tras fix de ambigüedad σ con NaturalNumbers.successor)
+
+- **REFERENCE.md**: actualización completa
+  - ✅ §1.1: NaturalNumbersPow.lean y NaturalNumbersArith.lean añadidos a tabla
+  - ✅ §3.27-§3.28: nuevas secciones de definiciones
+  - ✅ §4.23-§4.24: nuevas secciones de teoremas
+  - ✅ §6.23-§6.24: nuevas secciones de exports
+  - ✅ §7.2: lista de archivos completos actualizada
+
+### Añadido (2026-03-21 12:00)
+
+- **Nuevo módulo NaturalNumbersSub.lean — Sustracción saturada en ω** (Patrón RecursiveFn):
+  - ✅ `predecessorFn : U` — función predecesor para Recursión
+  - ✅ `subFn (m : U) (hm : m ∈ ω) : U` — función de sustracción vía `RecursiveFn`
+  - ✅ `sub (m n : U) : U` — sustracción saturada (monus) de naturales de von Neumann
+  - ✅ `fromPeano_sub` — teorema puente con `Peano.Sub.sub`
+  - ✅ 13 teoremas algebraicos
+
+- **Nuevo módulo NaturalNumbersDiv.lean — División euclídea en ω** (Patrón B):
+  - ✅ `divOf (m n : U) : U` — cociente via isomorfismo
+  - ✅ `modOf (m n : U) : U` — resto via isomorfismo
+  - ✅ `divMod_eq_Omega`, `mod_lt_divisor_Omega`, `div_of_lt_Omega`, `mod_of_lt_Omega`, `div_le_self_Omega`
 
 ### Añadido (2026-03-08 14:00)
 

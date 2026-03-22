@@ -1,6 +1,6 @@
 # Referencia Técnica - ZfcSetTheory
 
-*Última actualización: 2026-03-16 18:30*
+*Última actualización: 2026-03-22 12:00*
 **Autor**: Julián Calderón Almendros
 
 ## 📋 Cumplimiento con AIDER-AI-GUIDE.md
@@ -72,6 +72,8 @@ Este documento cumple con todos los requisitos especificados en [AIDER-AI-GUIDE.
 | `NaturalNumbersMul.lean` | `SetUniverse.NaturalNumbersMul` | `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersAdd`, `PeanoNatLib.PeanoNatMul` | ✅ Completo |
 | `NaturalNumbersSub.lean` | `SetUniverse.NaturalNumbersSub` | `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersAdd`, `PeanoNatLib.PeanoNatSub` | ✅ Completo |
 | `NaturalNumbersDiv.lean` | `SetUniverse.NaturalNumbersDiv` | `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersAdd`, `NaturalNumbersMul`, `NaturalNumbersSub`, `PeanoNatLib.PeanoNatDiv` | ✅ Completo |
+| `NaturalNumbersPow.lean` | `SetUniverse.NaturalNumbersPow` | `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersMul`, `PeanoNatLib.PeanoNatPow` | ✅ Completo |
+| `NaturalNumbersArith.lean` | `SetUniverse.NaturalNumbersArith` | `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersAdd`, `NaturalNumbersMul`, `NaturalNumbersSub`, `NaturalNumbersDiv`, `PeanoNatLib.PeanoNatArith` | ✅ Completo |
 
 ## 2. Axiomas ZFC Implementados
 
@@ -3531,6 +3533,149 @@ noncomputable def modOf (m n : U) : U :=
 ```
 
 **Dependencias**: `fromPeano`, `toPeano`, `Peano.Div.mod`, `mem_Omega_is_Nat`
+
+### 3.27 NaturalNumbersPow.lean
+
+**Módulo**: `ZfcSetTheory.NaturalNumbersPow`
+**Namespace**: `SetUniverse.NaturalNumbersPow`
+**Dependencias**: `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersMul`, `PeanoNatLib.PeanoNatPow`
+**Actualizado**: 2026-03-22
+**Descripción**: Define la potenciación `pow m n = mⁿ` en ω mediante Patrón RecursiveFn. Usa `mulFn m hm` como función de paso: `powFn m = RecursiveFn ω (σ ∅) (mulFn m hm) ...`. El teorema puente `fromPeano_pow` establece compatibilidad con `Peano.Pow.pow`.
+
+#### Función auxiliar de potenciación (powFn)
+
+**Ubicación**: `NaturalNumbersPow.lean`, línea 70
+**Orden**: 1ª definición
+
+**Enunciado Matemático**: `powFn m` es la función recursiva en ω con valor inicial `1 = σ ∅` y paso de recursión `mulFn m hm`. Satisface: `powFn m ⦅∅⦆ = 1` y `powFn m ⦅σ n⦆ = m * powFn m ⦅n⦆`.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def powFn (m : U) (hm : m ∈ (ω : U)) : U :=
+  RecursiveFn ω (σ (∅ : U)) (mulFn m hm) (succ_in_Omega ∅ zero_in_Omega) (mulFn_is_function m hm)
+```
+
+**Dependencias**: `RecursiveFn`, `mulFn`, `mulFn_is_function`, `succ_in_Omega`
+
+#### Potenciación (pow)
+
+**Ubicación**: `NaturalNumbersPow.lean`, línea 85
+**Orden**: 2ª definición
+
+**Enunciado Matemático**: `pow m n = mⁿ` para `m ∈ ω`. Devuelve `∅` si `m ∉ ω`.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def pow (m n : U) : U :=
+  if h : m ∈ (ω : U) then apply (powFn m h) n else ∅
+```
+
+**Dependencias**: `powFn`, `apply`
+
+---
+
+### 3.28 NaturalNumbersArith.lean
+
+**Módulo**: `ZfcSetTheory.NaturalNumbersArith`
+**Namespace**: `SetUniverse.NaturalNumbersArith`
+**Dependencias**: `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersAdd`, `NaturalNumbersMul`, `NaturalNumbersSub`, `NaturalNumbersDiv`, `PeanoNatLib.PeanoNatArith`
+**Actualizado**: 2026-03-22
+**Descripción**: Define divisibilidad en ZFC directamente y construye `div`/`mod` nativos con Patrón RecursiveFn (función de paso `divMod_stepFn`). Conecta con `divOf`/`modOf` mediante unicidad de la división euclídea. Define `gcdOf`/`lcmOf` con Patrón B (bridge-only). Prueba el teorema de Bézout (forma substractiva). No incluye Teorema Fundamental de la Aritmética (FTA se aplaza para módulo futuro de primalidad).
+
+#### Predicado de divisibilidad (divides)
+
+**Ubicación**: `NaturalNumbersArith.lean`, línea 68
+**Orden**: 1ª definición
+
+**Enunciado Matemático**: `divides m n` iff ∃ k ∈ ω tal que n = m * k.
+
+**Firma Lean4**:
+
+```lean
+def divides (m n : U) : Prop := ∃ k : U, k ∈ (ω : U) ∧ n = mul m k
+```
+
+**Dependencias**: `mul`, `ω`
+
+#### División euclídea nativa ZFC (div)
+
+**Ubicación**: `NaturalNumbersArith.lean`, línea 377
+**Orden**: 2ª definición pública
+
+**Enunciado Matemático**: `div m n = ⌊m / n⌋` definido vía `RecursiveFn` en ω×ω con función de paso `divMod_stepFn n`.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def div (m n : U) : U :=
+  if hm : m ∈ (ω : U) then
+    if hn : n ∈ (ω : U) then fst (apply (divModFn n hn) m)
+    else ∅
+  else ∅
+```
+
+**Dependencias**: `divModFn` (privado), `fst`, `apply`
+
+#### Resto euclídeo nativo ZFC (mod)
+
+**Ubicación**: `NaturalNumbersArith.lean`, línea 385
+**Orden**: 3ª definición pública
+
+**Firma Lean4**:
+
+```lean
+noncomputable def mod (m n : U) : U :=
+  if hm : m ∈ (ω : U) then
+    if hn : n ∈ (ω : U) then snd (apply (divModFn n hn) m)
+    else ∅
+  else ∅
+```
+
+**Dependencias**: `divModFn` (privado), `snd`, `apply`
+
+#### MCD (gcdOf)
+
+**Ubicación**: `NaturalNumbersArith.lean`, línea 640
+**Orden**: 4ª definición pública
+
+**Enunciado Matemático**: `gcdOf m n = mcd(m, n)` definido por Patrón B vía isomorfismo.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def gcdOf (m n : U) : U :=
+  if hm : m ∈ (ω : U) then
+    if hn : n ∈ (ω : U) then
+      fromPeano (Peano.Arith.gcd
+        (toPeano m (mem_Omega_is_Nat m hm))
+        (toPeano n (mem_Omega_is_Nat n hn)))
+    else ∅
+  else ∅
+```
+
+**Dependencias**: `fromPeano`, `toPeano`, `Peano.Arith.gcd`
+
+#### MCM (lcmOf)
+
+**Ubicación**: `NaturalNumbersArith.lean`, línea 649
+**Orden**: 5ª definición pública
+
+**Firma Lean4**:
+
+```lean
+noncomputable def lcmOf (m n : U) : U :=
+  if hm : m ∈ (ω : U) then
+    if hn : n ∈ (ω : U) then
+      fromPeano (Peano.Arith.lcm
+        (toPeano m (mem_Omega_is_Nat m hm))
+        (toPeano n (mem_Omega_is_Nat n hn)))
+    else ∅
+  else ∅
+```
+
+**Dependencias**: `fromPeano`, `toPeano`, `Peano.Arith.lcm`
 
 ---
 
@@ -8211,6 +8356,89 @@ theorem fromPeano_le_iff (p q : Peano.ℕ₀) :
 
 ---
 
+### 4.23 NaturalNumbersPow.lean
+
+| Teorema | Enunciado Matemático | Firma Lean4 |
+|---------|---------------------|-------------|
+| `powFn_is_function` | powFn m es función ω → ω | `theorem powFn_is_function (m : U) (hm : m ∈ (ω : U)) : isFunctionFromTo (powFn m hm) ω ω` |
+| `pow_eq` | pow m n = powFn m ⦅n⦆ (para m ∈ ω) | `theorem pow_eq (m n : U) (hm : m ∈ (ω : U)) : pow m n = apply (powFn m hm) n` |
+| `pow_in_Omega` | m, n ∈ ω → pow m n ∈ ω | `theorem pow_in_Omega (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) : pow m n ∈ (ω : U)` |
+| `pow_zero` | m⁰ = 1 | `theorem pow_zero (m : U) (hm : m ∈ (ω : U)) : pow m ∅ = σ ∅` |
+| `pow_succ` | m^(σ n) = m * mⁿ | `theorem pow_succ (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) : pow m (σ n) = mul m (pow m n)` |
+| `fromPeano_pow` | Puente: fromPeano(p^q) = pow(fromPeano p)(fromPeano q) | `theorem fromPeano_pow (p q : Peano.ℕ₀) : (fromPeano (Peano.Pow.pow p q) : U) = pow (fromPeano p) (fromPeano q)` |
+| `zero_pow_Omega` | 0^n = 0 para n ≠ 0 | `theorem zero_pow_Omega (n : U) (hn : n ∈ (ω : U)) (hn_ne : n ≠ ∅) : pow ∅ n = ∅` |
+| `one_pow_Omega` | 1^n = 1 | `theorem one_pow_Omega (n : U) (hn : n ∈ (ω : U)) : pow (σ ∅) n = σ ∅` |
+| `pow_one_Omega` | m^1 = m | `theorem pow_one_Omega (m : U) (hm : m ∈ (ω : U)) : pow m (σ ∅) = m` |
+| `pow_ne_zero_Omega` | m ≠ 0 → m^n ≠ 0 | `theorem pow_ne_zero_Omega {m : U} (hm : m ∈ (ω : U)) (hm_ne : m ≠ ∅) (n : U) (hn : n ∈ (ω : U)) : pow m n ≠ ∅` |
+| `pow_two_Omega` | m² = m * m | `theorem pow_two_Omega (m : U) (hm : m ∈ (ω : U)) : pow m (σ (σ ∅)) = mul m m` |
+| `pow_add_eq_mul_pow_Omega` | m^(n+k) = m^n * m^k | `theorem pow_add_eq_mul_pow_Omega (m n k : U) (...) : pow m (add n k) = mul (pow m n) (pow m k)` |
+| `mul_pow_Omega` | (m*n)^k = m^k * n^k | `theorem mul_pow_Omega (m n k : U) (...) : pow (mul m n) k = mul (pow m k) (pow n k)` |
+| `pow_pow_eq_pow_mul_Omega` | (m^n)^k = m^(n*k) | `theorem pow_pow_eq_pow_mul_Omega (m n k : U) (...) : pow (pow m n) k = pow m (mul n k)` |
+
+**Dependencias**: `RecursiveFn_zero`, `RecursiveFn_succ`, `fromPeano_pow`, `fromPeano_mul`, `Peano.Pow.*`, `mul_in_Omega`, `mul_comm_Omega`, `mul_assoc_Omega`
+
+---
+
+### 4.24 NaturalNumbersArith.lean
+
+#### Sección 0-2: Divisibilidad
+
+| Teorema | Enunciado Matemático | Firma Lean4 |
+|---------|---------------------|-------------|
+| `fromPeano_divides` | Puente: Peano.Divides p q ↔ divides(fromPeano p)(fromPeano q) | `theorem fromPeano_divides (p q : Peano.ℕ₀) : Peano.Arith.Divides p q ↔ divides (fromPeano p : U) (fromPeano q)` |
+| `divides_refl_Omega` | m ∣ m | `theorem divides_refl_Omega (m : U) (hm : m ∈ (ω : U)) : divides m m` |
+| `one_divides_Omega` | 1 ∣ m | `theorem one_divides_Omega (m : U) (hm : m ∈ (ω : U)) : divides (σ ∅) m` |
+| `divides_zero_Omega` | m ∣ 0 | `theorem divides_zero_Omega (m : U) (hm : m ∈ (ω : U)) : divides m ∅` |
+| `zero_divides_iff_Omega` | 0 ∣ n ↔ n = 0 | `theorem zero_divides_iff_Omega (n : U) (hn : n ∈ (ω : U)) : divides ∅ n ↔ n = ∅` |
+| `divides_trans_Omega` | m ∣ n ∧ n ∣ k → m ∣ k | `theorem divides_trans_Omega (m n k : U) (hm hn hk) : divides m n → divides n k → divides m k` |
+| `divides_mul_right_Omega` | m ∣ n → m ∣ n*k | `theorem divides_mul_right_Omega (m n k : U) (hm hn hk) : divides m n → divides m (mul n k)` |
+| `divides_mul_left_Omega` | m ∣ n → m ∣ k*n | `theorem divides_mul_left_Omega (m n k : U) (hm hn hk) : divides m n → divides m (mul k n)` |
+| `divides_add_Omega` | m ∣ n ∧ m ∣ k → m ∣ n+k | `theorem divides_add_Omega (m n k : U) (hm hn hk) : divides m n → divides m k → divides m (add n k)` |
+| `divides_sub_Omega` | n < m ∧ k ∣ m ∧ k ∣ n → k ∣ m−n | `theorem divides_sub_Omega (m n k : U) (hm hn hk) (h_lt : n ∈ m) (hdm hdm) : divides k (sub m n)` |
+| `divides_modOf_Omega` | k ∣ m ∧ k ∣ n → k ∣ (m mod n) | `theorem divides_modOf_Omega (m n k : U) (hm hn hk) (hdm hdn) : divides k (modOf m n)` |
+| `divides_le_Omega` | m ∣ n ∧ n ≠ 0 → m ≤ n | `theorem divides_le_Omega (m n : U) (hm hn) : divides m n → n ≠ ∅ → m ∈ n ∨ m = n` |
+| `antisymm_divides_Omega` | m ∣ n ∧ n ∣ m → m = n | `theorem antisymm_divides_Omega (m n : U) (hm hn) : divides m n → divides n m → m = n` |
+
+#### Sección 2.5: div/mod nativos ZFC
+
+| Teorema | Enunciado Matemático | Firma Lean4 |
+|---------|---------------------|-------------|
+| `div_eq` | div m n = fst(divModFn n ⦅m⦆) | `theorem div_eq (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) : div m n = fst (apply (divModFn n hn) m)` |
+| `mod_eq` | mod m n = snd(divModFn n ⦅m⦆) | `theorem mod_eq (m n : U) (hm hn) : mod m n = snd (apply (divModFn n hn) m)` |
+| `div_in_Omega` | div m n ∈ ω | `theorem div_in_Omega (m n : U) (hm hn) : div m n ∈ (ω : U)` |
+| `mod_in_Omega` | mod m n ∈ ω | `theorem mod_in_Omega (m n : U) (hm hn) : mod m n ∈ (ω : U)` |
+| `div_zero_left` | div 0 n = 0 | `theorem div_zero_left (n : U) (hn : n ∈ (ω : U)) : div ∅ n = ∅` |
+| `mod_zero_left` | mod 0 n = 0 | `theorem mod_zero_left (n : U) (hn : n ∈ (ω : U)) : mod ∅ n = ∅` |
+| `div_succ_wrap` | σ(mod m n) = n → div(σ m) n = σ(div m n) | `theorem div_succ_wrap (m n : U) (hm hn) (h : σ (mod m n) = n) : div (σ m) n = σ (div m n)` |
+| `mod_succ_wrap` | σ(mod m n) = n → mod(σ m) n = 0 | `theorem mod_succ_wrap (m n : U) (hm hn) (h : σ (mod m n) = n) : mod (σ m) n = ∅` |
+| `div_succ_continue` | σ(mod m n) ≠ n → div(σ m) n = div m n | `theorem div_succ_continue (m n : U) (hm hn) (h : σ (mod m n) ≠ n) : div (σ m) n = div m n` |
+| `mod_succ_continue` | σ(mod m n) ≠ n → mod(σ m) n = σ(mod m n) | `theorem mod_succ_continue (m n : U) (hm hn) (h : σ (mod m n) ≠ n) : mod (σ m) n = σ (mod m n)` |
+| `divMod_eq_ZFC` | n ≠ 0 → m = div(m,n)*n + mod(m,n) | `theorem divMod_eq_ZFC (m n : U) (hm hn) (h : n ≠ ∅) : m = add (mul (div m n) n) (mod m n)` |
+| `mod_lt_divisor_ZFC` | n ≠ 0 → mod m n ∈ n | `theorem mod_lt_divisor_ZFC (m n : U) (hm hn) (h : n ≠ ∅) : mod m n ∈ n` |
+| `div_eq_divOf` | n ≠ 0 → div m n = divOf m n | `theorem div_eq_divOf (m n : U) (hm hn) (h_pos : n ≠ ∅) : div m n = divOf m n` |
+| `mod_eq_modOf` | n ≠ 0 → mod m n = modOf m n | `theorem mod_eq_modOf (m n : U) (hm hn) (h_pos : n ≠ ∅) : mod m n = modOf m n` |
+
+#### Sección 3-6: gcdOf, lcmOf, Bézout
+
+| Teorema | Enunciado Matemático | Firma Lean4 |
+|---------|---------------------|-------------|
+| `gcdOf_in_Omega` | gcdOf m n ∈ ω | `theorem gcdOf_in_Omega (m n : U) (hm hn) : gcdOf m n ∈ (ω : U)` |
+| `lcmOf_in_Omega` | lcmOf m n ∈ ω | `theorem lcmOf_in_Omega (m n : U) (hm hn) : lcmOf m n ∈ (ω : U)` |
+| `fromPeano_gcd` | Puente: fromPeano(gcd p q) = gcdOf(fromPeano p)(fromPeano q) | `theorem fromPeano_gcd (p q : Peano.ℕ₀) : (fromPeano (Peano.Arith.gcd p q) : U) = gcdOf (fromPeano p) (fromPeano q)` |
+| `fromPeano_lcm` | Puente: fromPeano(lcm p q) = lcmOf(fromPeano p)(fromPeano q) | `theorem fromPeano_lcm (p q : Peano.ℕ₀) : (fromPeano (Peano.Arith.lcm p q) : U) = lcmOf (fromPeano p) (fromPeano q)` |
+| `gcdOf_divides_left_Omega` | gcd(m,n) ∣ m | `theorem gcdOf_divides_left_Omega (m n : U) (hm hn) : divides (gcdOf m n) m` |
+| `gcdOf_divides_right_Omega` | gcd(m,n) ∣ n | `theorem gcdOf_divides_right_Omega (m n : U) (hm hn) : divides (gcdOf m n) n` |
+| `gcdOf_greatest_Omega` | k ∣ m ∧ k ∣ n → k ∣ gcd(m,n) | `theorem gcdOf_greatest_Omega (m n k : U) (hm hn hk) : divides k m → divides k n → divides k (gcdOf m n)` |
+| `gcdOf_comm_Omega` | gcd(m,n) = gcd(n,m) | `theorem gcdOf_comm_Omega (m n : U) (hm hn) : gcdOf m n = gcdOf n m` |
+| `lcmOf_multiple_left_Omega` | m ∣ lcm(m,n) | `theorem lcmOf_multiple_left_Omega (m n : U) (hm hn) : divides m (lcmOf m n)` |
+| `lcmOf_multiple_right_Omega` | n ∣ lcm(m,n) | `theorem lcmOf_multiple_right_Omega (m n : U) (hm hn) : divides n (lcmOf m n)` |
+| `lcmOf_comm_Omega` | lcm(m,n) = lcm(n,m) | `theorem lcmOf_comm_Omega (m n : U) (hm hn) : lcmOf m n = lcmOf n m` |
+| `bezout_natform_Omega` | ∃ a b, a*m − b*n = gcd(m,n) ∨ a*n − b*m = gcd(m,n) | `theorem bezout_natform_Omega (m n : U) (hm hn) : ∃ mp np : U, (mp ∈ ω ∧ np ∈ ω) ∧ (sub (mul mp m) (mul np n) = gcdOf m n ∨ sub (mul np n) (mul mp m) = gcdOf m n)` |
+
+**Dependencias**: `fromPeano_surjective`, `fromPeano_injective`, `fromPeano_mul`, `fromPeano_add`, `fromPeano_sub`, `fromPeano_mod`, `fromPeano_le_iff`, `fromPeano_lt_iff`, `Peano.Arith.*`, `divides`, `mul`, `add`, `sub`, `modOf`, `gcdOf`, `lcmOf`
+
+---
+
 ## 5. Notación y Sintaxis
 
 ### 5.1 Operadores Básicos
@@ -9023,6 +9251,101 @@ export NaturalNumbersDiv (
 )
 ```
 
+### 6.23 NaturalNumbersPow.lean
+
+**Namespace**: `SetUniverse.NaturalNumbersPow` (exportado a `SetUniverse`)
+**Última modificación**: 2026-03-22
+**Dependencias**: `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersMul`, `PeanoNatLib.PeanoNatPow`
+
+```lean
+export NaturalNumbersPow (
+  -- Sección 1: powFn y pow
+  powFn
+  powFn_is_function
+  pow
+  pow_eq
+  pow_in_Omega
+  -- Sección 2: ecuaciones de recursión
+  pow_zero
+  pow_succ
+  -- Sección 3: puente
+  fromPeano_pow
+  -- Sección 4: propiedades algebraicas
+  zero_pow_Omega
+  one_pow_Omega
+  pow_one_Omega
+  pow_ne_zero_Omega
+  pow_two_Omega
+  pow_add_eq_mul_pow_Omega
+  mul_pow_Omega
+  pow_pow_eq_pow_mul_Omega
+)
+```
+
+### 6.24 NaturalNumbersArith.lean
+
+**Namespace**: `SetUniverse.NaturalNumbersArith` (exportado a `SetUniverse`)
+**Última modificación**: 2026-03-22
+**Dependencias**: `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersAdd`, `NaturalNumbersMul`, `NaturalNumbersSub`, `NaturalNumbersDiv`, `PeanoNatLib.PeanoNatArith`
+
+```lean
+export NaturalNumbersArith (
+  -- Sección 0: predicado de divisibilidad
+  divides
+  -- Sección 1: puente
+  fromPeano_divides
+  -- Sección 2: propiedades básicas de divisibilidad
+  divides_refl_Omega
+  one_divides_Omega
+  divides_zero_Omega
+  zero_divides_iff_Omega
+  divides_trans_Omega
+  divides_mul_right_Omega
+  divides_mul_left_Omega
+  divides_add_Omega
+  divides_sub_Omega
+  divides_modOf_Omega
+  divides_le_Omega
+  antisymm_divides_Omega
+  -- Sección 2.5: div/mod nativos ZFC
+  div
+  mod
+  div_eq
+  mod_eq
+  div_in_Omega
+  mod_in_Omega
+  div_zero_left
+  mod_zero_left
+  div_succ_wrap
+  mod_succ_wrap
+  div_succ_continue
+  mod_succ_continue
+  divMod_eq_ZFC
+  mod_lt_divisor_ZFC
+  div_eq_divOf
+  mod_eq_modOf
+  -- Sección 3: definiciones gcdOf, lcmOf
+  gcdOf
+  lcmOf
+  gcdOf_in_Omega
+  lcmOf_in_Omega
+  -- Sección 4: puente para gcd/lcm
+  fromPeano_gcd
+  fromPeano_lcm
+  -- Sección 5: propiedades de gcdOf
+  gcdOf_divides_left_Omega
+  gcdOf_divides_right_Omega
+  gcdOf_greatest_Omega
+  gcdOf_comm_Omega
+  -- Sección 6: propiedades de lcmOf
+  lcmOf_multiple_left_Omega
+  lcmOf_multiple_right_Omega
+  lcmOf_comm_Omega
+  -- Sección 7: Bézout
+  bezout_natform_Omega
+)
+```
+
 ## 7. Estado de Proyección por Módulo
 
 ### 7.1 Leyenda de Estados
@@ -9061,6 +9384,8 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `NaturalNumbersMul.lean` - Multiplicación en ω: definición vía Recursión, teorema puente `fromPeano_mul`, propiedades de anillo conmutativo (distributividad, asociatividad, identidades)
 - `NaturalNumbersSub.lean` - Sustracción saturada (monus) en ω: definición vía Recursión con predecessorFn, teorema puente `fromPeano_sub`, propiedades (cancelación, orden, positividad)
 - `NaturalNumbersDiv.lean` - División euclídea en ω: Patrón B (bridge-only) vía isomorfismo, teoremas puente `fromPeano_div`/`fromPeano_mod`, identidad euclídea, cota del resto, propiedades de cociente/resto
+- `NaturalNumbersPow.lean` - Potenciación en ω: Patrón RecursiveFn (mulFn como paso), teorema puente `fromPeano_pow`, propiedades algebraicas (leyes de exponentes, identidades)
+- `NaturalNumbersArith.lean` - Aritmética avanzada en ω: predicado `divides` (ZFC nativo), `div`/`mod` nativos vía RecursiveFn + `divMod_stepFn`, `gcdOf`/`lcmOf` Patrón B, teorema de Bézout (forma substractiva), 13 propiedades de divisibilidad
 
 ### 7.3 Archivos Parcialmente Proyectados
 
@@ -9084,7 +9409,9 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 
 ---
 
-*Última actualización: 2026-03-21 — Proyección completa de NaturalNumbersDiv.lean: §3.26 con 2 definiciones (divOf, modOf), §4.22 con 9 teoremas (2 clausura, 2 puente, 5 propiedades algebraicas), §6.22 con 11 exports. Patrón B (bridge-only): toPeano_proof_irrel para proof-irrelevance de isNat. Estado: ✅ 100% completo, 0 sorry. Módulo compilado al primer intento (tras fix de dirección en congr 1).*
+*Última actualización: 2026-03-22 — Proyección completa de NaturalNumbersPow.lean (§3.27, §4.23, §6.23: 2 def + 13 teoremas + 18 exports, Patrón RecursiveFn con mulFn como paso) y NaturalNumbersArith.lean (§3.28, §4.24, §6.24: 5 def públicas + 43 exports, div/mod nativos ZFC con divMod_stepFn + gcdOf/lcmOf Patrón B + Bézout substractivo). Tabla §1.1 actualizada. Estado: ✅ 100% completo, 0 sorry.*
+
+*Actualización anterior: 2026-03-21 — Proyección completa de NaturalNumbersDiv.lean: §3.26 con 2 definiciones (divOf, modOf), §4.22 con 9 teoremas (2 clausura, 2 puente, 5 propiedades algebraicas), §6.22 con 11 exports. Patrón B (bridge-only): toPeano_proof_irrel para proof-irrelevance de isNat. Estado: ✅ 100% completo, 0 sorry. Módulo compilado al primer intento (tras fix de dirección en congr 1).*
 
 *Actualización anterior: 2026-03-21 — Proyección completa de NaturalNumbersSub.lean: §3.25 con 3 definiciones (predecessorFn, subFn, sub), §4.21 con 13 teoremas (3 sobre predecessorFn, 3 sobre sub, 2 ecuaciones de recursión, 1 puente fromPeano_sub, 7 propiedades algebraicas), §6.21 con 22 exports. Total: 3 definiciones + 13 teoremas completamente proyectados. Estado: ✅ 100% completo, 0 sorry. Módulo compilado sin errores.*
 

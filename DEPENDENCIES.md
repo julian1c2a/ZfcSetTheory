@@ -1,6 +1,6 @@
 # Diagrama de Dependencias - ZfcSetTheory
 
-**Última actualización:** 2026-03-08 14:00
+**Última actualización:** 2026-03-22 12:00
 **Autor**: Julián Calderón Almendros
 
 ## Estructura General del Proyecto
@@ -24,6 +24,10 @@ ZfcSetTheory/
 ├── PeanoImport.lean                # Isomorfismo Von Neumann ↔ Peano (2026-03-04)
 ├── NaturalNumbersAdd.lean          # Suma en ω vía Recursión + puentes Peano (nuevo 2026-03-08)
 ├── NaturalNumbersMul.lean          # Multiplicación en ω vía Recursión + puentes Peano (nuevo 2026-03-08)
+├── NaturalNumbersSub.lean          # Sustracción saturada en ω vía Recursión (2026-03-21)
+├── NaturalNumbersDiv.lean          # División euclídea Patrón B (2026-03-21)
+├── NaturalNumbersPow.lean          # Potenciación en ω vía Recursión (2026-03-22)
+├── NaturalNumbersArith.lean        # Divisibilidad, GCD, LCM, Bézout (2026-03-22)
 ├── BooleanAlgebra.lean             # Álgebra Booleana de conjuntos (teoremas)
 ├── BooleanRing.lean                # Anillo Booleano con SymDiff
 ├── PowerSetAlgebra.lean            # Álgebra del conjunto potencia (complemento, De Morgan)
