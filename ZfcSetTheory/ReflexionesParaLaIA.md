@@ -27,3 +27,7 @@
 **[15.]** Lo siguiente a todo lo anterior (que podría seguir incrementándose hasta el infinito) es crear módulos para los números enteros en ZFC, para los racionales, y finalmente para los reales.
 
 **[16.]** Una vez terminada toda esa parte más práctica, habría que empeza a introducir ordinales, recursión transfinita, y demás temas como aritmética ordinal, el teorema de (cada conjunto al que se le asigne un orden es isomorfo a un único ordinal) etc. Para esto habrá que incorporar los axiomas de ZFC como el de reemplazo y el de elección.
+
+**[17.]**  Acontinuación habría que introducir la teoría de cardinales (aleph) y comenzar a exponer la jerarquía de conjuntos de Zermelo, y después la jerarquía de Gödel (construibles).
+
+**[18.]** Habrá que exponer la teoría de modelos, construcción de modelos, expresiones lógicas relativas y absolutas. Introducción de modelos que satisfacen distintos axiomas, etc.

@@ -32,7 +32,8 @@
       "Bash(bash git-lock.bash lock ZfcSetTheory/NaturalNumbersArith.lean)",
       "Bash(bash git-lock.bash lock ZfcSetTheory/NaturalNumbersFactorial.lean)",
       "Bash(grep -n \"proof_irrel\\\\|Proof_irrel\\\\|proof_irrelevance\" ZfcSetTheory/*.lean)",
-      "Bash(grep -rn \"notation.*∅\\\\|EmptyCollection\" ZfcSetTheory/*.lean)"
+      "Bash(grep -rn \"notation.*∅\\\\|EmptyCollection\" ZfcSetTheory/*.lean)",
+      "Bash(grep -n \"strong_induction_principle\" ZfcSetTheory/*.lean)"
     ]
   }
 }
