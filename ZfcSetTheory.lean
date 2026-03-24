@@ -36,3 +36,4 @@ import ZfcSetTheory.NaturalNumbersSub
 import ZfcSetTheory.NaturalNumbersDiv
 import ZfcSetTheory.NaturalNumbersArith
 import ZfcSetTheory.NaturalNumbersFactorial
+import ZfcSetTheory.NaturalNumbersGcd
