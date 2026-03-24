@@ -75,6 +75,7 @@ Este documento cumple con todos los requisitos especificados en [AIDER-AI-GUIDE.
 | `NaturalNumbersPow.lean` | `SetUniverse.NaturalNumbersPow` | `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersMul`, `PeanoNatLib.PeanoNatPow` | ✅ Completo |
 | `NaturalNumbersArith.lean` | `SetUniverse.NaturalNumbersArith` | `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersAdd`, `NaturalNumbersMul`, `NaturalNumbersSub`, `NaturalNumbersDiv`, `PeanoNatLib.PeanoNatArith` | ✅ Completo |
 | `NaturalNumbersFactorial.lean` | `SetUniverse.NaturalNumbersFactorial` | `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersMul`, `PeanoNatLib.PeanoNatFactorial` | ✅ Completo |
+| `NaturalNumbersGcd.lean` | `SetUniverse.NaturalNumbersGcd` | `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersAdd`, `NaturalNumbersMul`, `NaturalNumbersSub`, `NaturalNumbersDiv`, `NaturalNumbersArith` | ✅ Completo |
 
 ## 2. Axiomas ZFC Implementados
 
@@ -3669,6 +3670,56 @@ noncomputable def factorialOf (n : U) : U :=
 ```
 
 **Dependencias**: `fromPeano`, `toPeano`, `Peano.Factorial.factorial`, `mem_Omega_is_Nat`
+
+### 3.30 NaturalNumbersGcd.lean
+
+**Módulo**: `ZfcSetTheory.NaturalNumbersGcd`
+**Namespace**: `SetUniverse.NaturalNumbersGcd`
+**Dependencias**: `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersAdd`, `NaturalNumbersMul`, `NaturalNumbersSub`, `NaturalNumbersDiv`, `NaturalNumbersArith`
+**Actualizado**: 2026-03-24
+**Descripción**: GCD y LCM ZFC-nativos en ω. El GCD se define ejecutando σ b pasos del algoritmo euclídeo sobre pares ⟨a, b⟩ → ⟨b, a mod b⟩ mediante `RecursiveFn` en ω ×ₛ ω. Se demuestra convergencia por inducción fuerte en b. Un teorema puente `gcd_eq_gcdOf` conecta con `gcdOf` (Patrón B de NaturalNumbersArith). El LCM se define como `divOf (mul a b) (gcd a b)` y se conecta vía `lcm_eq_lcmOf`.
+
+#### GCD (gcd)
+
+**Ubicación**: `NaturalNumbersGcd.lean`, §6
+**Orden**: 1ª definición pública
+
+**Enunciado Matemático**: `gcd(a, b)` = primera componente de la iteración σ b-ésima del paso euclídeo ⟨a, b⟩ → ⟨b, a mod b⟩. Devuelve ∅ si a ∉ ω o b ∉ ω.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def gcd (a b : U) : U :=
+  if ha : a ∈ (ω : U) then
+    if hb : b ∈ (ω : U) then
+      fst (apply (euclidFn a b ha hb) (σ b))
+    else ∅
+  else ∅
+```
+
+**Dependencias**: `RecursiveFn`, `euclid_stepFn` (privada), `fst`, `σ`, `ω`
+**Computabilidad**: No computable (usa `Classical.choice`)
+
+#### LCM (lcm)
+
+**Ubicación**: `NaturalNumbersGcd.lean`, §10
+**Orden**: 2ª definición pública
+
+**Enunciado Matemático**: `lcm(a, b) = (a · b) / gcd(a, b)`. Devuelve ∅ si a ∉ ω o b ∉ ω.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def lcm (a b : U) : U :=
+  if ha : a ∈ (ω : U) then
+    if hb : b ∈ (ω : U) then
+      divOf (mul a b) (gcd a b)
+    else ∅
+  else ∅
+```
+
+**Dependencias**: `divOf`, `mul`, `gcd`, `ω`
+**Computabilidad**: No computable
 
 ---
 
@@ -8696,6 +8747,56 @@ theorem fromPeano_le_iff (p q : Peano.ℕ₀) :
 
 **Dependencias**: `fromPeano_surjective`, `fromPeano_injective`, `fromPeano_factorial`, `fromPeano_mul`, `fromPeano_le_iff`, `fromPeano_lt_iff`, `toPeano_proof_irrel`, `toPeano_fromPeano`, `toPeano_zero`, `Peano.Factorial.*`, `Nat_in_Omega`, `fromPeano_is_nat`, `mul_one_Omega`, `one_mul_Omega`, `zero_in_Omega`, `succ_in_Omega`
 
+### 4.26 NaturalNumbersGcd.lean
+
+**Módulo**: `ZfcSetTheory.NaturalNumbersGcd`
+**Namespace**: `SetUniverse.NaturalNumbersGcd`
+**Actualizado**: 2026-03-24
+
+#### Sección 1: Clausura en ω
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `gcd_in_Omega` | gcd(a, b) ∈ ω | `theorem gcd_in_Omega (a b : U) (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U)) : gcd a b ∈ (ω : U)` |
+| `lcm_in_Omega` | lcm(a, b) ∈ ω | `theorem lcm_in_Omega (a b : U) (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U)) : lcm a b ∈ (ω : U)` |
+
+#### Sección 2: Ecuaciones del algoritmo euclídeo
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `gcd_zero` | gcd(a, 0) = a | `theorem gcd_zero (a : U) (ha : a ∈ (ω : U)) : gcd a ∅ = a` |
+| `gcd_pos_step` | b ≠ 0 → gcd(a, b) = gcd(b, a mod b) | `theorem gcd_pos_step (a b : U) (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U)) (hb_pos : b ≠ ∅) : gcd a b = gcd b (mod a b)` |
+
+#### Sección 3: Teoremas puente
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `gcd_eq_gcdOf` | gcd(a, b) = gcdOf(a, b) | `theorem gcd_eq_gcdOf (a b : U) (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U)) : gcd a b = gcdOf a b` |
+| `lcm_eq_lcmOf` | lcm(a, b) = lcmOf(a, b) | `theorem lcm_eq_lcmOf (a b : U) (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U)) : lcm a b = lcmOf a b` |
+
+**Descripción**: `gcd_eq_gcdOf` se demuestra por inducción fuerte en b con `strong_induction_principle`. Caso base via `gcd_zero` y `gcdOf_zero_right`. Paso inductivo via `gcd_pos_step`, la hipótesis de inducción para `mod a b ∈ b`, y `gcdOf_pos_step`. `lcm_eq_lcmOf` usa `fromPeano_surjective` + bridges aritméticos.
+
+#### Sección 4: Propiedades de divisibilidad del GCD
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `gcd_divides_left_Omega` | gcd(a, b) ∣ a | `theorem gcd_divides_left_Omega (a b : U) (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U)) : divides (gcd a b) a` |
+| `gcd_divides_right_Omega` | gcd(a, b) ∣ b | `theorem gcd_divides_right_Omega (a b : U) (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U)) : divides (gcd a b) b` |
+| `gcd_greatest_Omega` | k ∣ a ∧ k ∣ b → k ∣ gcd(a, b) | `theorem gcd_greatest_Omega (a b k : U) (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U)) (hk : k ∈ (ω : U)) (hka : divides k a) (hkb : divides k b) : divides k (gcd a b)` |
+| `gcd_comm_Omega` | gcd(a, b) = gcd(b, a) | `theorem gcd_comm_Omega (a b : U) (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U)) : gcd a b = gcd b a` |
+
+#### Sección 5: Propiedades del LCM
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `lcm_multiple_left_Omega` | a ∣ lcm(a, b) | `theorem lcm_multiple_left_Omega (a b : U) (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U)) : divides a (lcm a b)` |
+| `lcm_multiple_right_Omega` | b ∣ lcm(a, b) | `theorem lcm_multiple_right_Omega (a b : U) (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U)) : divides b (lcm a b)` |
+| `lcm_comm_Omega` | lcm(a, b) = lcm(b, a) | `theorem lcm_comm_Omega (a b : U) (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U)) : lcm a b = lcm b a` |
+
+**Patrón de demostración (§4-§5)**: Vía `gcd_eq_gcdOf`/`lcm_eq_lcmOf` reduciendo a las propiedades ya probadas de `gcdOf`/`lcmOf` en NaturalNumbersArith.
+
+**Dependencias**: `gcdOf`, `gcdOf_divides_left_Omega`, `gcdOf_divides_right_Omega`, `gcdOf_greatest_Omega`, `gcdOf_comm_Omega`, `lcmOf`, `lcmOf_in_Omega`, `lcmOf_multiple_left_Omega`, `lcmOf_multiple_right_Omega`, `lcmOf_comm_Omega`, `fromPeano_surjective`, `fromPeano_gcd`, `fromPeano_lcm`, `fromPeano_mul`, `fromPeano_div`, `divides_refl_Omega`, `divides_zero_Omega`, `antisymm_divides_Omega`, `divides_modOf_Omega`, `divides_add_Omega`, `divides_mul_left_Omega`, `mod_in_Omega`, `mod_lt_divisor_ZFC`, `mod_eq_modOf`, `divMod_eq_ZFC`, `strong_induction_principle`, `RecursiveFn`, `euclid_stable_add`, `euclidFn_shift`
+
 ---
 
 ## 5. Notación y Sintaxis
@@ -9691,6 +9792,36 @@ export NaturalNumbersFactorial (
 )
 ```
 
+### 6.27 NaturalNumbersGcd.lean
+
+**Namespace**: `SetUniverse.NaturalNumbersGcd` (exportado a `SetUniverse`)
+**Última modificación**: 2026-03-24
+**Dependencias**: `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersAdd`, `NaturalNumbersMul`, `NaturalNumbersSub`, `NaturalNumbersDiv`, `NaturalNumbersArith`
+
+```lean
+export NaturalNumbersGcd (
+  -- Definiciones
+  gcd
+  lcm
+  -- GCD propiedades básicas
+  gcd_in_Omega
+  gcd_zero
+  gcd_pos_step
+  gcd_eq_gcdOf
+  -- GCD divisibilidad
+  gcd_divides_left_Omega
+  gcd_divides_right_Omega
+  gcd_greatest_Omega
+  gcd_comm_Omega
+  -- LCM propiedades
+  lcm_in_Omega
+  lcm_eq_lcmOf
+  lcm_multiple_left_Omega
+  lcm_multiple_right_Omega
+  lcm_comm_Omega
+)
+```
+
 ## 7. Estado de Proyección por Módulo
 
 ### 7.1 Leyenda de Estados
@@ -9733,6 +9864,7 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `NaturalNumbersArith.lean` - Aritmética avanzada en ω: predicado `divides` (ZFC nativo), `div`/`mod` nativos vía RecursiveFn + `divMod_stepFn`, `gcdOf`/`lcmOf` Patrón B, teorema de Bézout (forma substractiva), 13 propiedades de divisibilidad
 - `AtomicBooleanAlgebra.lean` - Álgebra de Boole atómica en conjuntos potencia: 4 definiciones (`isAtom`, `isAtomic`, `Atoms`, `atomBelow`), 14 teoremas (singletons ↔ átomos, atomicidad de 𝒫(A), descomposición en átomos)
 - `NaturalNumbersFactorial.lean` - Factorial en ω: Patrón B (bridge-only) vía isomorfismo, 1 definición (`factorialOf`), teorema puente `fromPeano_factorial`, valores concretos (0!, 1!, 2!), ecuación de recursión, positividad y monotonía
+- `NaturalNumbersGcd.lean` - GCD y LCM en ω: GCD ZFC-nativo vía algoritmo euclídeo con RecursiveFn sobre ω ×ₛ ω, 2 definiciones (`gcd`, `lcm`), teoremas puente `gcd_eq_gcdOf`/`lcm_eq_lcmOf`, ecuaciones del algoritmo (caso base + paso), 4 propiedades de divisibilidad del GCD, 3 propiedades del LCM, 17 exports
 
 ### 7.3 Archivos Parcialmente Proyectados
 
@@ -9756,7 +9888,9 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 
 ---
 
-*Última actualización: 2026-03-24 — Proyección completa de NaturalNumbersFactorial.lean (§3.29, §4.25, §6.26: 1 def + 11 teoremas + 12 exports, Patrón B bridge-only vía isomorfismo Peano). Tabla §1.1 actualizada. Estado: ✅ 100% completo, 0 sorry.*
+*Última actualización: 2026-03-24 — Proyección completa de NaturalNumbersGcd.lean (§3.30, §4.26, §6.27: 2 def + 13 teoremas + 17 exports, GCD ZFC-nativo vía algoritmo euclídeo + LCM vía bridge). Tabla §1.1 actualizada. Estado: ✅ 100% completo, 0 sorry.*
+
+*Actualización anterior: 2026-03-24 — Proyección completa de NaturalNumbersFactorial.lean (§3.29, §4.25, §6.26: 1 def + 11 teoremas + 12 exports, Patrón B bridge-only vía isomorfismo Peano). Tabla §1.1 actualizada. Estado: ✅ 100% completo, 0 sorry.*
 
 *Actualización anterior: 2026-03-22 — Proyección completa de NaturalNumbersPow.lean (§3.27, §4.23, §6.23: 2 def + 13 teoremas + 18 exports, Patrón RecursiveFn con mulFn como paso) y NaturalNumbersArith.lean (§3.28, §4.24, §6.24: 5 def públicas + 43 exports, div/mod nativos ZFC con divMod_stepFn + gcdOf/lcmOf Patrón B + Bézout substractivo). Tabla §1.1 actualizada. Estado: ✅ 100% completo, 0 sorry.*
 
