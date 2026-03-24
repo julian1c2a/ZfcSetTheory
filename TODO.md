@@ -219,10 +219,42 @@
   - Cumple 100% con AIDER-AI-GUIDE.md (puntos 0-14)
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-16 19:30
-- [ ] NaturalNumbersAdd.lean
-- [ ] NaturalNumbersMul.lean
-- [ ] NaturalNumbersSub.lean
-- [ ] NaturalNumbersDiv.lean
+
+### ✅ NaturalNumbersAdd.lean
+
+- **Estado en REFERENCE.md:** ✅ Completo
+- **Verificación:** Correctamente proyectado (verificado 2026-03-24)
+- **Contenido verificado:** §3.23 (3 def), §4.19 (16 teoremas + fromPeano_add), §6.X (exports)
+- **Patrón:** RecursiveFn con successorFn como función de paso
+- **Acciones necesarias:** Ninguna
+- **Fecha de revisión:** 2026-03-24
+
+### ✅ NaturalNumbersMul.lean
+
+- **Estado en REFERENCE.md:** ✅ Completo
+- **Verificación:** Correctamente proyectado (verificado 2026-03-24)
+- **Contenido verificado:** §3.24 (2 def), §4.20 (13 teoremas + fromPeano_mul), §6.X (exports)
+- **Patrón:** RecursiveFn con addFn como función de paso
+- **Acciones necesarias:** Ninguna
+- **Fecha de revisión:** 2026-03-24
+
+### ✅ NaturalNumbersSub.lean
+
+- **Estado en REFERENCE.md:** ✅ Completo
+- **Verificación:** Correctamente proyectado (verificado 2026-03-24)
+- **Contenido verificado:** §3.25 (3 def), §4.21 (13 teoremas + fromPeano_sub), §6.X (exports)
+- **Patrón:** RecursiveFn con predecessorFn como función de paso
+- **Acciones necesarias:** Ninguna
+- **Fecha de revisión:** 2026-03-24
+
+### ✅ NaturalNumbersDiv.lean
+
+- **Estado en REFERENCE.md:** ✅ Completo
+- **Verificación:** Correctamente proyectado (verificado 2026-03-24)
+- **Contenido verificado:** §3.26 (2 def), §4.22 (5 teoremas + fromPeano_div/mod), §6.X (exports)
+- **Patrón:** Patrón B (bridge-only via isomorfismo Peano)
+- **Acciones necesarias:** Ninguna
+- **Fecha de revisión:** 2026-03-24
 
 ### ✅ PeanoImport.lean
 

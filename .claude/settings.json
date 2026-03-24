@@ -30,7 +30,9 @@
       "Bash(ls e:/Dropbox/GitHub/lean4/ZfcSetTheory/*.md)",
       "Bash(bash git-lock.bash unlock ZfcSetTheory/NaturalNumbersArith.lean)",
       "Bash(bash git-lock.bash lock ZfcSetTheory/NaturalNumbersArith.lean)",
-      "Bash(bash git-lock.bash lock ZfcSetTheory/NaturalNumbersFactorial.lean)"
+      "Bash(bash git-lock.bash lock ZfcSetTheory/NaturalNumbersFactorial.lean)",
+      "Bash(grep -n \"proof_irrel\\\\|Proof_irrel\\\\|proof_irrelevance\" ZfcSetTheory/*.lean)",
+      "Bash(grep -rn \"notation.*∅\\\\|EmptyCollection\" ZfcSetTheory/*.lean)"
     ]
   }
 }
