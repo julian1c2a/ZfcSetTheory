@@ -219,16 +219,79 @@
   - Cumple 100% con AIDER-AI-GUIDE.md (puntos 0-14)
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-16 19:30
-- [ ] PeanoImport.lean
-- [ ] GeneralizedDeMorgan.lean
-- [ ] GeneralizedDistributive.lean
-- [ ] SetOrder.lean
-- [ ] SetStrictOrder.lean
-- [ ] Recursion.lean
 - [ ] NaturalNumbersAdd.lean
 - [ ] NaturalNumbersMul.lean
 - [ ] NaturalNumbersSub.lean
 - [ ] NaturalNumbersDiv.lean
+
+### ✅ PeanoImport.lean
+
+- **Estado en REFERENCE.md:** ✅ Completo
+- **Verificación:** Correctamente proyectado (verificado 2026-03-24)
+- **Contenido verificado:**
+  - 2 definiciones en §3.22: `fromPeano` (notación ΠZ), `toPeano` (notación ZΠ)
+  - 17 teoremas en §4.18: biyección (3), álgebra Peano (5), transporte de recursión (4), puente de orden (5)
+  - 2 notaciones en §5.11: ΠZ, ZΠ
+  - 23 exports en §6.18
+- **Acciones necesarias:** Ninguna
+- **Fecha de revisión:** 2026-03-24
+
+### ✅ GeneralizedDeMorgan.lean
+
+- **Estado en REFERENCE.md:** ✅ Completo
+- **Proyección completada:** 2026-03-24
+- **Contenido proyectado:**
+  - 1 definición en §3.16: `ComplementFamily`
+  - 10 teoremas en §4.11: `ComplementFamily_is_specified`, `complement_mem_ComplementFamily`, `interSet_mem_iff`, `inter_complement_eq_complement_union`, `union_complement_eq_complement_inter`, `double_complement`, `union_subsets`, `complement_inter_complement_eq_union`, `inter_subsets`, `complement_union_complement_eq_inter`
+  - 8 exports en §6.8
+- **Nota:** REFERENCE.md tenía documentación incorrecta (3 definiciones no existentes); corregida con la API real
+- **Acciones necesarias:** Ninguna
+- **Fecha de revisión:** 2026-03-24
+
+### ✅ GeneralizedDistributive.lean
+
+- **Estado en REFERENCE.md:** ✅ Completo
+- **Proyección completada:** 2026-03-24
+- **Contenido proyectado:**
+  - 2 definiciones en §3.17: `IntersectFamily`, `UnionFamily`
+  - 10 teoremas en §4.12: `IntersectFamily_is_specified`, `intersect_mem_IntersectFamily`, `UnionFamily_is_specified`, `union_mem_UnionFamily`, `inter_distrib_union`, `IntersectFamily_nonempty`, `UnionFamily_nonempty`, `union_distrib_inter`, `union_inter_distrib`, `inter_union_distrib`
+  - 12 exports en §6.9
+- **Nota:** REFERENCE.md tenía documentación incorrecta (5 definiciones no existentes); corregida con la API real
+- **Acciones necesarias:** Ninguna
+- **Fecha de revisión:** 2026-03-24
+
+### ✅ SetOrder.lean
+
+- **Estado en REFERENCE.md:** ✅ Completo
+- **Verificación:** Correctamente proyectado (verificado 2026-03-24)
+- **Contenido verificado:**
+  - 6 definiciones en §3.18: `isUpperBound`, `isLowerBound`, `isSupremum`, `isInfimum`, `isBoundedAbove`, `isBoundedBelow`
+  - 12 teoremas en §4.13
+  - Exports en §6.12
+- **Acciones necesarias:** Ninguna
+- **Fecha de revisión:** 2026-03-24
+
+### ✅ SetStrictOrder.lean
+
+- **Estado en REFERENCE.md:** ✅ Completo
+- **Verificación:** Correctamente proyectado (verificado 2026-03-24)
+- **Contenido verificado:**
+  - Sin definiciones nuevas (usa ⊂ de Extension.lean)
+  - 11 teoremas en §4.14
+  - Exports en §6.13
+- **Acciones necesarias:** Ninguna
+- **Fecha de revisión:** 2026-03-24
+
+### ✅ Recursion.lean
+
+- **Estado en REFERENCE.md:** ✅ Completo
+- **Proyección completada:** 2026-03-24
+- **Contenido proyectado:**
+  - 3 variantes de recursión: estándar (`RecursionTheorem`), paso-indexado (`RecursionTheoremWithStep`), curso-de-valores (`RecursionCourseOfValues`)
+  - Función canónica: `RecursiveFn` con 4 teoremas
+  - §6.17 expandido con exports de variantes step y CoV (anteriormente incompleto)
+- **Acciones necesarias:** Ninguna
+- **Fecha de revisión:** 2026-03-24
 
 ### ✅ NaturalNumbersPow.lean
 - **Estado en REFERENCE.md:** ✅ Completo
@@ -244,10 +307,12 @@
 - **Patrón:** div/mod RecursiveFn + gcdOf/lcmOf Patrón B + Bézout substractivo
 - **Acciones necesarias:** Ninguna
 
-### 🔜 NaturalNumbersFactorial.lean
-- **Estado:** Pendiente de implementar
-- **Plan:** Patrón B (bridge-only) via `Peano.Factorial.factorial`
-- **Fecha estimada:** 2026-03-22
+### ✅ NaturalNumbersFactorial.lean
+
+- **Estado en REFERENCE.md:** ✅ Completo
+- **Implementación completada:** 2026-03-22
+- **Patrón:** Patrón B (bridge-only) via `Peano.Factorial.factorial`
+- **Acciones necesarias:** Ninguna
 
 ---
 

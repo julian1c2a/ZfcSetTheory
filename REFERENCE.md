@@ -3002,143 +3002,58 @@ notation "ω" => Omega
 
 ### 3.16 GeneralizedDeMorgan.lean
 
-#### Imagen de Familia por Función (ImageFamily)
-
-**Ubicación**: `GeneralizedDeMorgan.lean`, línea 25  
-**Orden**: 1ª definición principal
-
-**Enunciado Matemático**: La imagen de una familia F bajo una función f: {f(X) | X ∈ F}.
-
-**Firma Lean4**:
-
-```lean
-noncomputable def ImageFamily (f F : U) : U :=
-  SpecSet (𝒫 (Ran f)) (fun Y => ∃ X, X ∈ F ∧ Y = ImageSet f X)
-```
-
-**Dependencias**: `SpecSet`, `PowerSet`, `Ran`, `ImageSet`
-
 #### Familia de Complementos (ComplementFamily)
 
-**Ubicación**: `GeneralizedDeMorgan.lean`, línea 35  
-**Orden**: 2ª definición principal
+**Ubicación**: `GeneralizedDeMorgan.lean`, línea 50
+**Orden**: 1ª definición principal
+**Computable**: No (`noncomputable`)
 
-**Enunciado Matemático**: La familia de complementos de F en A: {A \ X | X ∈ F}.
+**Enunciado Matemático**: Dado un universo A y una familia F de subconjuntos de A, ComplementFamily(A, F) = { A \ X | X ∈ F } ⊆ 𝒫(A).
 
 **Firma Lean4**:
 
 ```lean
 noncomputable def ComplementFamily (A F : U) : U :=
-  ImageFamily (ComplementFunction A) F
-notation A " \\ᶠ " F => ComplementFamily A F
+  SpecSet (𝒫 A) (fun Y => ∃ X, X ∈ F ∧ Y = Difference A X)
 ```
 
-**Dependencias**: `ImageFamily`, `ComplementFunction`
-
-#### Función Complemento (ComplementFunction)
-
-**Ubicación**: `GeneralizedDeMorgan.lean`, línea 45  
-**Orden**: 3ª definición principal
-
-**Enunciado Matemático**: La función que mapea cada subconjunto X de A a su complemento A \ X.
-
-**Firma Lean4**:
-
-```lean
-noncomputable def ComplementFunction (A : U) : U :=
-  SpecSet ((𝒫 A) ×ₛ (𝒫 A)) (fun p => 
-    isOrderedPair p ∧ snd p = A \ fst p)
-```
-
-**Dependencias**: `SpecSet`, `PowerSet`, `CartesianProduct`, `OrderedPair`, `Difference`
+**Dependencias**: `SpecSet`, `PowerSet`, `Difference`
 
 ### 3.17 GeneralizedDistributive.lean
 
-#### Intersección Generalizada de Familia (GeneralizedIntersection)
+#### Familia de Intersecciones (IntersectFamily)
 
-**Ubicación**: `GeneralizedDistributive.lean`, línea 25  
+**Ubicación**: `GeneralizedDistributive.lean`, línea 52
 **Orden**: 1ª definición principal
+**Computable**: No (`noncomputable`)
 
-**Enunciado Matemático**: La intersección generalizada de una familia F: ⋂ F = {x | ∀Y ∈ F, x ∈ Y}.
+**Enunciado Matemático**: IntersectFamily(A, F) = { A ∩ X | X ∈ F } ⊆ 𝒫(A).
 
 **Firma Lean4**:
 
 ```lean
-noncomputable def GeneralizedIntersection (F : U) : U :=
-  if h : F = ∅ then ∅ else
-    SpecSet (⋃ F) (fun x => ∀ Y, Y ∈ F → x ∈ Y)
-notation "⋂ " F:100 => GeneralizedIntersection F
+noncomputable def IntersectFamily (A F : U) : U :=
+  SpecSet (𝒫 A) (fun Y => ∃ X, X ∈ F ∧ Y = BinInter A X)
 ```
 
-**Dependencias**: `SpecSet`, `UnionSet`, `EmptySet`
+**Dependencias**: `SpecSet`, `PowerSet`, `BinInter`
 
-#### Imagen de Familia por Intersección (IntersectionImageFamily)
+#### Familia de Uniones (UnionFamily)
 
-**Ubicación**: `GeneralizedDistributive.lean`, línea 45  
+**Ubicación**: `GeneralizedDistributive.lean`, línea 74
 **Orden**: 2ª definición principal
+**Computable**: No (`noncomputable`)
 
-**Enunciado Matemático**: La familia de intersecciones de X con cada elemento de F: {X ∩ Y | Y ∈ F}.
-
-**Firma Lean4**:
-
-```lean
-noncomputable def IntersectionImageFamily (X F : U) : U :=
-  ImageFamily (IntersectionFunction X) F
-notation X " ∩ᶠ " F => IntersectionImageFamily X F
-```
-
-**Dependencias**: `ImageFamily`, `IntersectionFunction`
-
-#### Función Intersección (IntersectionFunction)
-
-**Ubicación**: `GeneralizedDistributive.lean`, línea 55  
-**Orden**: 3ª definición principal
-
-**Enunciado Matemático**: La función que mapea cada conjunto Y a X ∩ Y.
+**Enunciado Matemático**: UnionFamily(A, F) = { A ∪ X | X ∈ F } ⊆ 𝒫(A ∪ ⋃F).
 
 **Firma Lean4**:
 
 ```lean
-noncomputable def IntersectionFunction (X : U) : U :=
-  SpecSet (𝒫 (⋃ {X, ⋃ (𝒫 X)}) ×ₛ 𝒫 (⋃ {X, ⋃ (𝒫 X)})) 
-    (fun p => isOrderedPair p ∧ snd p = X ∩ fst p)
+noncomputable def UnionFamily (A F : U) : U :=
+  SpecSet (𝒫 (A ∪ (⋃ F))) (fun Y => ∃ X, X ∈ F ∧ Y = BinUnion A X)
 ```
 
-**Dependencias**: `SpecSet`, `PowerSet`, `CartesianProduct`, `BinInter`, `OrderedPair`
-
-#### Imagen de Familia por Unión (UnionImageFamily)
-
-**Ubicación**: `GeneralizedDistributive.lean`, línea 75  
-**Orden**: 4ª definición principal
-
-**Enunciado Matemático**: La familia de uniones de X con cada elemento de F: {X ∪ Y | Y ∈ F}.
-
-**Firma Lean4**:
-
-```lean
-noncomputable def UnionImageFamily (X F : U) : U :=
-  ImageFamily (UnionFunction X) F
-notation X " ∪ᶠ " F => UnionImageFamily X F
-```
-
-**Dependencias**: `ImageFamily`, `UnionFunction`
-
-#### Función Unión (UnionFunction)
-
-**Ubicación**: `GeneralizedDistributive.lean`, línea 85  
-**Orden**: 5ª definición principal
-
-**Enunciado Matemático**: La función que mapea cada conjunto Y a X ∪ Y.
-
-**Firma Lean4**:
-
-```lean
-noncomputable def UnionFunction (X : U) : U :=
-  SpecSet (𝒫 (⋃ {X, ⋃ (𝒫 X)}) ×ₛ 𝒫 (⋃ {X, ⋃ (𝒫 X)})) 
-    (fun p => isOrderedPair p ∧ snd p = X ∪ fst p)
-```
-
-**Dependencias**: `SpecSet`, `PowerSet`, `CartesianProduct`, `BinUnion`, `OrderedPair`
+**Dependencias**: `SpecSet`, `PowerSet`, `BinUnion`, `UnionSet`
 
 ### 3.18 SetOrder.lean
 
@@ -6859,295 +6774,331 @@ theorem Omega_has_min (T : U) (hT_sub : T ⊆ (ω : U)) (hT_ne : T ≠ ∅) :
 
 ### 4.11 GeneralizedDeMorgan.lean
 
-#### Primera Ley de De Morgan Generalizada
+#### Especificación de ComplementFamily (ComplementFamily_is_specified)
 
-**Ubicación**: `GeneralizedDeMorgan.lean`, línea 85  
-**Orden**: 1º teorema principal (LEY FUNDAMENTAL)
+**Ubicación**: `GeneralizedDeMorgan.lean`, línea 54
+**Orden**: 1º teorema
 
-**Enunciado Matemático**: El complemento de la unión es la intersección de los complementos: A \ (⋃ F) = ⋂ (A \\ᶠ F).
-
-**Firma Lean4**:
-
-```lean
-theorem generalized_demorgan_union (A F : U) :
-  A \ (⋃ F) = ⋂ (A \\ᶠ F)
-```
-
-**Dependencias**: `Difference`, `UnionSet`, `BinInter`, `ComplementFamily`, `ExtSet`
-
-#### Segunda Ley de De Morgan Generalizada
-
-**Ubicación**: `GeneralizedDeMorgan.lean`, línea 125  
-**Orden**: 2º teorema principal (LEY DUAL)
-
-**Enunciado Matemático**: El complemento de la intersección es la unión de los complementos: A \ (⋂ F) = ⋃ (A \\ᶠ F).
+**Enunciado Matemático**: Y ∈ ComplementFamily(A, F) ↔ Y ⊆ A ∧ ∃ X ∈ F, Y = A \ X.
 
 **Firma Lean4**:
 
 ```lean
-theorem generalized_demorgan_intersection (A F : U) (hF_ne : F ≠ ∅) :
-  A \ (⋂ F) = ⋃ (A \\ᶠ F)
+theorem ComplementFamily_is_specified (A F Y : U) :
+    Y ∈ ComplementFamily A F ↔ Y ⊆ A ∧ ∃ X, X ∈ F ∧ Y = Difference A X
 ```
 
-**Dependencias**: `Difference`, `BinInter`, `UnionSet`, `ComplementFamily`, `ExtSet`
+**Dependencias**: `ComplementFamily`, `SpecSet_is_specified`, `PowerSet_is_specified`
 
-#### Complemento de Familia Vacía
+#### Complemento pertenece a ComplementFamily (complement_mem_ComplementFamily)
 
-**Ubicación**: `GeneralizedDeMorgan.lean`, línea 165  
-**Orden**: 3º teorema principal
+**Ubicación**: `GeneralizedDeMorgan.lean`, línea 60
+**Orden**: 2º teorema
 
-**Enunciado Matemático**: El complemento de la familia vacía es la familia que contiene solo A.
+**Enunciado Matemático**: X ∈ F → A \ X ∈ ComplementFamily(A, F).
 
 **Firma Lean4**:
 
 ```lean
-theorem complement_empty_family (A : U) :
-  A \\ᶠ ∅ = {A}
+theorem complement_mem_ComplementFamily (A F X : U) (hX : X ∈ F) :
+    Difference A X ∈ ComplementFamily A F
 ```
 
-**Dependencias**: `ComplementFamily`, `EmptySet`, `Singleton`, `ExtSet`
+**Dependencias**: `ComplementFamily_is_specified`, `Difference_is_specified`
 
-#### Complemento de Singleton
+#### Membresía en intersección generalizada (interSet_mem_iff)
 
-**Ubicación**: `GeneralizedDeMorgan.lean`, línea 185  
-**Orden**: 4º teorema principal
+**Ubicación**: `GeneralizedDeMorgan.lean`, línea 72
+**Orden**: 3º teorema
 
-**Enunciado Matemático**: El complemento de una familia singleton es el singleton del complemento: A \\ᶠ {X} = {A \ X}.
+**Enunciado Matemático**: F ≠ ∅ → (z ∈ ⋂ F ↔ ∀ X ∈ F, z ∈ X).
 
 **Firma Lean4**:
 
 ```lean
-theorem complement_singleton_family (A X : U) (hX : X ⊆ A) :
-  A \\ᶠ {X} = {A \ X}
+theorem interSet_mem_iff (F z : U) (hF : F ≠ ∅) :
+    z ∈ (⋂ F) ↔ ∀ X, X ∈ F → z ∈ X
 ```
 
-**Dependencias**: `ComplementFamily`, `Singleton`, `Difference`, `ExtSet`
+**Dependencias**: `interSet`, `SpecSet_is_specified`, `nonempty_iff_exists_mem`
 
-#### Involutividad del Complemento
+#### Primera Ley de De Morgan Generalizada (inter_complement_eq_complement_union)
 
-**Ubicación**: `GeneralizedDeMorgan.lean`, línea 205  
-**Orden**: 5º teorema principal
+**Ubicación**: `GeneralizedDeMorgan.lean`, línea 90
+**Orden**: 4º teorema (LEY FUNDAMENTAL)
 
-**Enunciado Matemático**: El complemento del complemento es la identidad: A \\ᶠ (A \\ᶠ F) = F (para F ⊆ 𝒫(A)).
+**Enunciado Matemático**: F ≠ ∅, ∀ X ∈ F, X ⊆ A → ⋂(ComplementFamily(A, F)) = A \ ⋃F.
 
 **Firma Lean4**:
 
 ```lean
-theorem complement_involution (A F : U) (hF : F ⊆ 𝒫 A) :
-  A \\ᶠ (A \\ᶠ F) = F
+theorem inter_complement_eq_complement_union (A F : U)
+    (hF_nonempty : F ≠ ∅) (_hF_subsets : ∀ X, X ∈ F → X ⊆ A) :
+    (⋂ (ComplementFamily A F)) = Difference A (⋃ F)
 ```
 
-**Dependencias**: `ComplementFamily`, `PowerSet`, `ExtSet`, `Difference`
+**Dependencias**: `ComplementFamily`, `interSet_mem_iff`, `complement_mem_ComplementFamily`, `Difference_is_specified`, `UnionSet_is_specified`, `ExtSet`
 
-#### Antimonotonicidad del Complemento
+#### Segunda Ley de De Morgan Generalizada (union_complement_eq_complement_inter)
 
-**Ubicación**: `GeneralizedDeMorgan.lean`, línea 235  
-**Orden**: 6º teorema principal
+**Ubicación**: `GeneralizedDeMorgan.lean`, línea 148
+**Orden**: 5º teorema (LEY DUAL)
 
-**Enunciado Matemático**: El complemento invierte las inclusiones: F ⊆ G → A \\ᶠ G ⊆ A \\ᶠ F.
+**Enunciado Matemático**: F ≠ ∅, ∀ X ∈ F, X ⊆ A → ⋃(ComplementFamily(A, F)) = A \ ⋂F.
 
 **Firma Lean4**:
 
 ```lean
-theorem complement_antimono (A F G : U) (hFG : F ⊆ G) :
-  A \\ᶠ G ⊆ A \\ᶠ F
+theorem union_complement_eq_complement_inter (A F : U)
+    (hF_nonempty : F ≠ ∅) (_hF_subsets : ∀ X, X ∈ F → X ⊆ A) :
+    (⋃ (ComplementFamily A F)) = Difference A (⋂ F)
 ```
 
-**Dependencias**: `ComplementFamily`, `subseteq`, `ImageFamily`
+**Dependencias**: `ComplementFamily`, `interSet_mem_iff`, `Difference_is_specified`, `UnionSet_is_specified`, `ExtSet`
 
-#### Distributividad del Complemento sobre Unión
+#### Doble complemento (double_complement)
 
-**Ubicación**: `GeneralizedDeMorgan.lean`, línea 255  
-**Orden**: 7º teorema principal
+**Ubicación**: `GeneralizedDeMorgan.lean`, línea 195
+**Orden**: 6º teorema
 
-**Enunciado Matemático**: A \\ᶠ (F ∪ G) = (A \\ᶠ F) ∪ (A \\ᶠ G).
+**Enunciado Matemático**: B ⊆ A → A \ (A \ B) = B.
 
 **Firma Lean4**:
 
 ```lean
-theorem complement_union_distrib (A F G : U) :
-  A \\ᶠ (F ∪ G) = (A \\ᶠ F) ∪ (A \\ᶠ G)
+theorem double_complement (A B : U) (hB_sub : B ⊆ A) :
+    Difference A (Difference A B) = B
 ```
 
-**Dependencias**: `ComplementFamily`, `BinUnion`, `ExtSet`
+**Dependencias**: `Difference_is_specified`, `ExtSet`, `Classical.byContradiction`
 
-#### Distributividad del Complemento sobre Intersección
+#### Unión de subconjuntos (union_subsets)
 
-**Ubicación**: `GeneralizedDeMorgan.lean`, línea 275  
-**Orden**: 8º teorema principal
+**Ubicación**: `GeneralizedDeMorgan.lean`, línea 215
+**Orden**: 7º teorema
 
-**Enunciado Matemático**: A \\ᶠ (F ∩ G) = (A \\ᶠ F) ∩ (A \\ᶠ G).
+**Enunciado Matemático**: (∀ X ∈ F, X ⊆ A) → ⋃F ⊆ A.
 
 **Firma Lean4**:
 
 ```lean
-theorem complement_intersection_distrib (A F G : U) :
-  A \\ᶠ (F ∩ G) = (A \\ᶠ F) ∩ (A \\ᶠ G)
+theorem union_subsets (F A : U) (hF_subsets : ∀ X, X ∈ F → X ⊆ A) :
+    (⋃ F) ⊆ A
 ```
 
-**Dependencias**: `ComplementFamily`, `BinInter`, `ExtSet`
+**Dependencias**: `UnionSet_is_specified`
+
+#### Complemento de la intersección del complemento es la unión (complement_inter_complement_eq_union)
+
+**Ubicación**: `GeneralizedDeMorgan.lean`, línea 224
+**Orden**: 8º teorema
+
+**Enunciado Matemático**: F ≠ ∅, ∀ X ∈ F, X ⊆ A → A \ ⋂(ComplementFamily(A,F)) = ⋃F.
+
+**Firma Lean4**:
+
+```lean
+theorem complement_inter_complement_eq_union (A F : U)
+    (hF_nonempty : F ≠ ∅) (hF_subsets : ∀ X, X ∈ F → X ⊆ A) :
+    Difference A (⋂ (ComplementFamily A F)) = ⋃ F
+```
+
+**Dependencias**: `inter_complement_eq_complement_union`, `double_complement`, `union_subsets`
+
+#### Intersección de subconjuntos (inter_subsets)
+
+**Ubicación**: `GeneralizedDeMorgan.lean`, línea 234
+**Orden**: 9º teorema
+
+**Enunciado Matemático**: F ≠ ∅, ∀ X ∈ F, X ⊆ A → ⋂F ⊆ A.
+
+**Firma Lean4**:
+
+```lean
+theorem inter_subsets (F A : U) (hF_nonempty : F ≠ ∅) (hF_subsets : ∀ X, X ∈ F → X ⊆ A) :
+    (⋂ F) ⊆ A
+```
+
+**Dependencias**: `interSet_mem_iff`, `nonempty_iff_exists_mem`
+
+#### Complemento de la unión del complemento es la intersección (complement_union_complement_eq_inter)
+
+**Ubicación**: `GeneralizedDeMorgan.lean`, línea 244
+**Orden**: 10º teorema
+
+**Enunciado Matemático**: F ≠ ∅, ∀ X ∈ F, X ⊆ A → A \ ⋃(ComplementFamily(A,F)) = ⋂F.
+
+**Firma Lean4**:
+
+```lean
+theorem complement_union_complement_eq_inter (A F : U)
+    (hF_nonempty : F ≠ ∅) (hF_subsets : ∀ X, X ∈ F → X ⊆ A) :
+    Difference A (⋃ (ComplementFamily A F)) = (⋂ F)
+```
+
+**Dependencias**: `union_complement_eq_complement_inter`, `double_complement`, `inter_subsets`
 
 ### 4.12 GeneralizedDistributive.lean
 
-#### Primera Ley Distributiva Generalizada
+#### Especificación de IntersectFamily (IntersectFamily_is_specified)
 
-**Ubicación**: `GeneralizedDistributive.lean`, línea 125  
-**Orden**: 1º teorema principal (LEY FUNDAMENTAL)
+**Ubicación**: `GeneralizedDistributive.lean`, línea 56
+**Orden**: 1º teorema
 
-**Enunciado Matemático**: La intersección distribuye sobre la unión: X ∩ (⋃ F) = ⋃ (X ∩ᶠ F).
-
-**Firma Lean4**:
-
-```lean
-theorem generalized_distributive_intersection_union (X F : U) :
-  X ∩ (⋃ F) = ⋃ (X ∩ᶠ F)
-```
-
-**Dependencias**: `BinInter`, `UnionSet`, `IntersectionImageFamily`, `ExtSet`
-
-#### Segunda Ley Distributiva Generalizada
-
-**Ubicación**: `GeneralizedDistributive.lean`, línea 165  
-**Orden**: 2º teorema principal (LEY DUAL)
-
-**Enunciado Matemático**: La unión distribuye sobre la intersección: X ∪ (⋂ F) = ⋂ (X ∪ᶠ F) (para F ≠ ∅).
+**Enunciado Matemático**: Y ∈ IntersectFamily(A, F) ↔ Y ⊆ A ∧ ∃ X ∈ F, Y = A ∩ X.
 
 **Firma Lean4**:
 
 ```lean
-theorem generalized_distributive_union_intersection (X F : U) (hF_ne : F ≠ ∅) :
-  X ∪ (⋂ F) = ⋂ (X ∪ᶠ F)
+theorem IntersectFamily_is_specified (A F Y : U) :
+    Y ∈ IntersectFamily A F ↔ Y ⊆ A ∧ ∃ X, X ∈ F ∧ Y = BinInter A X
 ```
 
-**Dependencias**: `BinUnion`, `GeneralizedIntersection`, `UnionImageFamily`, `ExtSet`
+**Dependencias**: `IntersectFamily`, `SpecSet_is_specified`, `PowerSet_is_specified`
 
-#### Distributividad de Intersección sobre Familia Vacía
+#### Intersección pertenece a IntersectFamily (intersect_mem_IntersectFamily)
 
-**Ubicación**: `GeneralizedDistributive.lean`, línea 205  
-**Orden**: 3º teorema principal
+**Ubicación**: `GeneralizedDistributive.lean`, línea 62
+**Orden**: 2º teorema
 
-**Enunciado Matemático**: X ∩ (⋃ ∅) = ⋃ (X ∩ᶠ ∅).
+**Enunciado Matemático**: X ∈ F → A ∩ X ∈ IntersectFamily(A, F).
 
 **Firma Lean4**:
 
 ```lean
-theorem distributive_intersection_empty_family (X : U) :
-  X ∩ (⋃ ∅) = ⋃ (X ∩ᶠ ∅)
+theorem intersect_mem_IntersectFamily (A F X : U) (hX : X ∈ F) :
+    BinInter A X ∈ IntersectFamily A F
 ```
 
-**Dependencias**: `BinInter`, `UnionSet`, `IntersectionImageFamily`, `EmptySet`
+**Dependencias**: `IntersectFamily_is_specified`, `BinInter_is_specified`
 
-#### Distributividad de Intersección sobre Singleton
+#### Especificación de UnionFamily (UnionFamily_is_specified)
 
-**Ubicación**: `GeneralizedDistributive.lean`, línea 225  
-**Orden**: 4º teorema principal
+**Ubicación**: `GeneralizedDistributive.lean`, línea 78
+**Orden**: 3º teorema
 
-**Enunciado Matemático**: X ∩ (⋃ {Y}) = ⋃ (X ∩ᶠ {Y}).
+**Enunciado Matemático**: Y ∈ UnionFamily(A, F) ↔ Y ⊆ A ∪ ⋃F ∧ ∃ X ∈ F, Y = A ∪ X.
 
 **Firma Lean4**:
 
 ```lean
-theorem distributive_intersection_singleton_family (X Y : U) :
-  X ∩ (⋃ {Y}) = ⋃ (X ∩ᶠ {Y})
+theorem UnionFamily_is_specified (A F Y : U) :
+    Y ∈ UnionFamily A F ↔ Y ⊆ BinUnion A (⋃ F) ∧ ∃ X, X ∈ F ∧ Y = BinUnion A X
 ```
 
-**Dependencias**: `BinInter`, `UnionSet`, `IntersectionImageFamily`, `Singleton`
+**Dependencias**: `UnionFamily`, `SpecSet_is_specified`, `PowerSet_is_specified`
 
-#### Distributividad de Unión sobre Singleton
+#### Unión pertenece a UnionFamily (union_mem_UnionFamily)
 
-**Ubicación**: `GeneralizedDistributive.lean`, línea 245  
-**Orden**: 5º teorema principal
+**Ubicación**: `GeneralizedDistributive.lean`, línea 84
+**Orden**: 4º teorema
 
-**Enunciado Matemático**: X ∪ (⋂ {Y}) = ⋂ (X ∪ᶠ {Y}).
+**Enunciado Matemático**: X ∈ F → A ∪ X ∈ UnionFamily(A, F).
 
 **Firma Lean4**:
 
 ```lean
-theorem distributive_union_singleton_family (X Y : U) :
-  X ∪ (⋂ {Y}) = ⋂ (X ∪ᶠ {Y})
+theorem union_mem_UnionFamily (A F X : U) (hX : X ∈ F) :
+    BinUnion A X ∈ UnionFamily A F
 ```
 
-**Dependencias**: `BinUnion`, `GeneralizedIntersection`, `UnionImageFamily`, `Singleton`
+**Dependencias**: `UnionFamily_is_specified`, `BinUnion_is_specified`, `UnionSet_is_specified`
 
-#### Monotonicidad de la Intersección
+#### Primera Ley Distributiva Generalizada (inter_distrib_union)
 
-**Ubicación**: `GeneralizedDistributive.lean`, línea 265  
-**Orden**: 6º teorema principal
+**Ubicación**: `GeneralizedDistributive.lean`, línea 102
+**Orden**: 5º teorema (LEY FUNDAMENTAL)
 
-**Enunciado Matemático**: Si F ⊆ G, entonces X ∩ᶠ F ⊆ X ∩ᶠ G.
+**Enunciado Matemático**: A ∩ (⋃F) = ⋃(IntersectFamily(A, F)).
 
 **Firma Lean4**:
 
 ```lean
-theorem intersection_family_monotonic (X F G : U) (hFG : F ⊆ G) :
-  X ∩ᶠ F ⊆ X ∩ᶠ G
+theorem inter_distrib_union (A F : U) :
+    BinInter A (⋃ F) = (⋃ (IntersectFamily A F))
 ```
 
-**Dependencias**: `IntersectionImageFamily`, `subseteq`, `ImageFamily`
+**Dependencias**: `IntersectFamily_is_specified`, `intersect_mem_IntersectFamily`, `BinInter_is_specified`, `UnionSet_is_specified`, `ExtSet`
 
-#### Monotonicidad de la Unión
+#### IntersectFamily no vacía (IntersectFamily_nonempty)
 
-**Ubicación**: `GeneralizedDistributive.lean`, línea 285  
-**Orden**: 7º teorema principal
+**Ubicación**: `GeneralizedDistributive.lean`, línea 139
+**Orden**: 6º teorema
 
-**Enunciado Matemático**: Si F ⊆ G, entonces X ∪ᶠ F ⊆ X ∪ᶠ G.
+**Enunciado Matemático**: F ≠ ∅ → IntersectFamily(A, F) ≠ ∅.
 
 **Firma Lean4**:
 
 ```lean
-theorem union_family_monotonic (X F G : U) (hFG : F ⊆ G) :
-  X ∪ᶠ F ⊆ X ∪ᶠ G
+theorem IntersectFamily_nonempty (A F : U) (hF : F ≠ ∅) :
+    IntersectFamily A F ≠ ∅
 ```
 
-**Dependencias**: `UnionImageFamily`, `subseteq`, `ImageFamily`
+**Dependencias**: `intersect_mem_IntersectFamily`, `nonempty_iff_exists_mem`, `EmptySet_is_empty`
 
-#### Distributividad sobre Unión de Familias
+#### UnionFamily no vacía (UnionFamily_nonempty)
 
-**Ubicación**: `GeneralizedDistributive.lean`, línea 305  
-**Orden**: 8º teorema principal
+**Ubicación**: `GeneralizedDistributive.lean`, línea 150
+**Orden**: 7º teorema
 
-**Enunciado Matemático**: X ∩ᶠ (F ∪ G) = (X ∩ᶠ F) ∪ (X ∩ᶠ G).
+**Enunciado Matemático**: F ≠ ∅ → UnionFamily(A, F) ≠ ∅.
 
 **Firma Lean4**:
 
 ```lean
-theorem intersection_family_union_distrib (X F G : U) :
-  X ∩ᶠ (F ∪ G) = (X ∩ᶠ F) ∪ (X ∩ᶠ G)
+theorem UnionFamily_nonempty (A F : U) (hF : F ≠ ∅) :
+    UnionFamily A F ≠ ∅
 ```
 
-**Dependencias**: `IntersectionImageFamily`, `BinUnion`, `ExtSet`
+**Dependencias**: `union_mem_UnionFamily`, `nonempty_iff_exists_mem`, `EmptySet_is_empty`
 
-#### Distributividad de Unión sobre Unión de Familias
+#### Segunda Ley Distributiva Generalizada (union_distrib_inter)
 
-**Ubicación**: `GeneralizedDistributive.lean`, línea 325  
-**Orden**: 9º teorema principal
+**Ubicación**: `GeneralizedDistributive.lean`, línea 163
+**Orden**: 8º teorema (LEY DUAL)
 
-**Enunciado Matemático**: X ∪ᶠ (F ∪ G) = (X ∪ᶠ F) ∪ (X ∪ᶠ G).
+**Enunciado Matemático**: F ≠ ∅ → A ∪ (⋂F) = ⋂(UnionFamily(A, F)).
 
 **Firma Lean4**:
 
 ```lean
-theorem union_family_union_distrib (X F G : U) :
-  X ∪ᶠ (F ∪ G) = (X ∪ᶠ F) ∪ (X ∪ᶠ G)
+theorem union_distrib_inter (A F : U) (hF : F ≠ ∅) :
+    BinUnion A (⋂ F) = (⋂ (UnionFamily A F))
 ```
 
-**Dependencias**: `UnionImageFamily`, `BinUnion`, `ExtSet`
+**Dependencias**: `UnionFamily_nonempty`, `interSet_mem_iff`, `union_mem_UnionFamily`, `UnionFamily_is_specified`, `BinUnion_is_specified`, `ExtSet`
 
-#### Asociatividad Generalizada de Intersección
+#### Distributividad conmutada de intersección (union_inter_distrib)
 
-**Ubicación**: `GeneralizedDistributive.lean`, línea 345  
-**Orden**: 10º teorema principal
+**Ubicación**: `GeneralizedDistributive.lean`, línea 207
+**Orden**: 9º teorema
 
-**Enunciado Matemático**: (X ∩ Y) ∩ᶠ F = X ∩ᶠ (Y ∩ᶠ F).
+**Enunciado Matemático**: (⋃F) ∩ A = ⋃(IntersectFamily(A, F)).
 
 **Firma Lean4**:
 
 ```lean
-theorem intersection_family_associative (X Y F : U) :
-  (X ∩ Y) ∩ᶠ F = X ∩ᶠ (Y ∩ᶠ F)
+theorem union_inter_distrib (A F : U) :
+    BinInter (⋃ F) A = (⋃ (IntersectFamily A F))
 ```
 
-**Dependencias**: `IntersectionImageFamily`, `BinInter`, `ExtSet`
+**Dependencias**: `inter_distrib_union`, `BinInter_commutative`
+
+#### Distributividad conmutada de unión (inter_union_distrib)
+
+**Ubicación**: `GeneralizedDistributive.lean`, línea 214
+**Orden**: 10º teorema
+
+**Enunciado Matemático**: F ≠ ∅ → (⋂F) ∪ A = ⋂(UnionFamily(A, F)).
+
+**Firma Lean4**:
+
+```lean
+theorem inter_union_distrib (A F : U) (hF : F ≠ ∅) :
+    BinUnion (⋂ F) A = (⋂ (UnionFamily A F))
+```
+
+**Dependencias**: `union_distrib_inter`, `BinUnion_comm`
 
 ### 4.13 SetOrder.lean
 
@@ -8950,50 +8901,53 @@ export InfinityAxiom (
 
 ### 6.8 GeneralizedDeMorgan.lean
 
+**Namespace**: `SetUniverse.GeneralizedDeMorgan` (exportado a `SetUniverse`)
+**Última modificación**: 2026-03-24
+**Dependencias**: `PowerSetAlgebra`, `Union`, `Specification` + anteriores
+
 ```lean
 export GeneralizedDeMorgan (
-  -- Core definitions
-  ImageFamily ComplementFamily ComplementFunction
-  -- Basic properties
-  mem_ImageFamily mem_ComplementFamily
-  ComplementFunction_is_function ComplementFunction_domain
-  ComplementFunction_range ComplementFunction_apply
-  -- Main theorems
-  generalized_demorgan_union generalized_demorgan_intersection
-  complement_empty_family complement_singleton_family
-  complement_involution complement_antimono
-  complement_union_distrib complement_intersection_distrib
-  -- Additional properties
-  complement_preserves_finite complement_preserves_countable
-  complement_empty_set complement_universe
+  -- Definición
+  ComplementFamily
+  -- Especificación y membresía
+  ComplementFamily_is_specified
+  complement_mem_ComplementFamily
+  -- Auxiliar de intersección generalizada
+  interSet_mem_iff
+  -- Leyes de De Morgan generalizadas
+  inter_complement_eq_complement_union
+  union_complement_eq_complement_inter
+  -- Formas doble-complemento
+  complement_inter_complement_eq_union
+  complement_union_complement_eq_inter
 )
 ```
 
 ### 6.9 GeneralizedDistributive.lean
 
+**Namespace**: `SetUniverse.GeneralizedDistributive` (exportado a `SetUniverse`)
+**Última modificación**: 2026-03-24
+**Dependencias**: `GeneralizedDeMorgan`, `PowerSetAlgebra` + anteriores
+
 ```lean
 export GeneralizedDistributive (
-  -- Core definitions
-  GeneralizedIntersection IntersectionImageFamily IntersectionFunction
-  UnionImageFamily UnionFunction
-  -- Basic properties
-  mem_GeneralizedIntersection mem_IntersectionImageFamily mem_UnionImageFamily
-  IntersectionFunction_is_function IntersectionFunction_apply
-  UnionFunction_is_function UnionFunction_apply
-  -- Main theorems
-  generalized_distributive_intersection_union generalized_distributive_union_intersection
-  distributive_intersection_empty_family distributive_intersection_singleton_family
-  distributive_union_singleton_family
-  -- Monotonicity
-  intersection_family_monotonic union_family_monotonic
-  -- Distributivity over family operations
-  intersection_family_union_distrib union_family_union_distrib
-  intersection_family_intersection_distrib union_family_intersection_distrib
-  -- Associativity
-  intersection_family_associative union_family_associative
-  -- Additional properties
-  intersection_family_empty union_family_empty
-  intersection_family_singleton union_family_singleton
+  -- Definiciones
+  IntersectFamily
+  UnionFamily
+  -- Especificación y membresía
+  IntersectFamily_is_specified
+  intersect_mem_IntersectFamily
+  UnionFamily_is_specified
+  union_mem_UnionFamily
+  -- Leyes distributivas generalizadas
+  inter_distrib_union
+  union_distrib_inter
+  -- Propiedades de familias
+  IntersectFamily_nonempty
+  UnionFamily_nonempty
+  -- Formas conmutadas
+  union_inter_distrib
+  inter_union_distrib
 )
 ```
 
@@ -9313,7 +9267,25 @@ export Recursion (
   RecursionComputations
   computations_are_compatible
   RecursionTheorem
+  -- Computation (step-indexed variant: g : ω ×ₛ A → A)
+  isComputationStep
+  restriction_is_computation_step
+  restriction_computation_general_step
+  computation_uniqueness_step
+  computation_existence_step
+  RecursionComputationsStep
+  computations_are_compatible_step
   RecursionTheoremWithStep
+  -- Computation (course-of-values: g : 𝒫(ω ×ₛ A) → A)
+  isComputationCoV
+  restriction_is_computation_cov
+  restriction_computation_general_cov
+  computation_uniqueness_cov
+  computation_existence_cov
+  RecursionComputationsCoV
+  computations_are_compatible_cov
+  RecursionCourseOfValues
+  -- Canonical recursive function
   RecursiveFn
   RecursiveFn_is_function
   RecursiveFn_zero
