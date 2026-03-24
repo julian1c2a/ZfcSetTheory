@@ -7,9 +7,9 @@
 
 > 📊 **Project Status**: See [CURRENT-STATUS-PROJECT.md](CURRENT-STATUS-PROJECT.md) for complete details
 >
-> ✅ **27/27 modules** compiling successfully (28/28 jobs with peanolib)
+> ✅ **31/31 modules** compiling successfully (32/32 jobs with peanolib)
 > ✅ **100% of theorems** completely proven
-> ✅ **0 `sorry`** in all 27 modules
+> ✅ **0 `sorry`** in all 31 modules
 
 Una implementación formal de la **Teoría de Conjuntos de Zermelo-Fraenkel (ZFC)** en Lean 4, sin dependencias de Mathlib.
 
@@ -44,6 +44,11 @@ Este proyecto desarrolla los axiomas fundamentales de ZFC de manera progresiva, 
 | **Isomorfismo Von Neumann ↔ Peano** | `PeanoImport.lean` | Biyección ℕ_VN ↔ Peano.ℕ₀ (peanolib) | ✅ Completo |
 | **Suma en ℕ (ZFC)** | `NaturalNumbersAdd.lean` | Suma via Recursión, puente `fromPeano_add`, semianillo | ✅ Completo |
 | **Multiplicación en ℕ (ZFC)** | `NaturalNumbersMul.lean` | Mul via Recursión, puente `fromPeano_mul`, anillo conmutativo | ✅ Completo |
+| **Sustracción saturada en ℕ** | `NaturalNumbersSub.lean` | Monus via Recursión (sustracción truncada), puente `fromPeano_sub` | ✅ Completo |
+| **División euclídea en ℕ** | `NaturalNumbersDiv.lean` | `divOf`/`modOf` via Patrón B (isomorfismo), algoritmo de Euclides | ✅ Completo |
+| **Potenciación en ℕ** | `NaturalNumbersPow.lean` | `pow` via RecursiveFn + mulFn, puente `fromPeano_pow` | ✅ Completo |
+| **Aritmética en ℕ (GCD, LCM, Bézout)** | `NaturalNumbersArith.lean` | `div`/`mod` nativo ZFC, `gcdOf`/`lcmOf` Patrón B, Bézout substractivo | ✅ Completo |
+| **Factorial en ℕ** | `NaturalNumbersFactorial.lean` | `factorial` via Patrón B (peanolib), 10 propiedades | ✅ Completo |
 | **Álgebra Booleana** | `BooleanAlgebra.lean` | Leyes fundamentales, idempotencia, absorción | ✅ Completo |
 | **Anillo Booleano** | `BooleanRing.lean` | Diferencia simétrica, propiedades de anillo | ✅ Completo |
 | **Álgebra de 𝒫(A)** | `PowerSetAlgebra.lean` | Complemento, De Morgan, distributividad | ✅ Completo |
@@ -54,7 +59,7 @@ Este proyecto desarrolla los axiomas fundamentales de ZFC de manera progresiva, 
 | **Orden Estricto** | `SetStrictOrder.lean` | Propiedades de orden estricto | ✅ Completo |
 | **Cardinalidad** | `Cardinality.lean` | Teorema de Cantor, CSB | ✅ Completo |
 
-### Total: 27 módulos — 27/27 con 0 sorry
+### Total: 31 módulos — 31/31 con 0 sorry
 
 ## ✨ Características Destacadas
 
@@ -113,6 +118,11 @@ ZfcSetTheory/
 ├── PeanoImport.lean             # Isomorfismo Von Neumann ↔ Peano (peanolib)
 ├── NaturalNumbersAdd.lean       # Suma en ω vía Recursión + puente fromPeano_add
 ├── NaturalNumbersMul.lean       # Multiplicación en ω vía Recursión + puente fromPeano_mul
+├── NaturalNumbersSub.lean       # Sustracción saturada (monus) + puente fromPeano_sub
+├── NaturalNumbersDiv.lean       # División euclídea (divOf/modOf) via Patrón B
+├── NaturalNumbersPow.lean       # Potenciación en ω vía RecursiveFn + mulFn
+├── NaturalNumbersArith.lean     # Divisibilidad, GCD, LCM, Bézout (nativo ZFC + Patrón B)
+├── NaturalNumbersFactorial.lean # Factorial en ω via Patrón B (peanolib)
 └── ZfcSetTheory.lean            # Módulo raíz
 ```
 
@@ -232,4 +242,4 @@ Este proyecto se desarrolló basándose en las siguientes fuentes:
 ---
 
 **Autor**: Julián Calderón Almendros
-*Last updated: 2026-03-08 14:00*
+*Last updated: 2026-03-24 10:00*

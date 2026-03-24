@@ -1,218 +1,145 @@
 # Current Status - ZfcSetTheory Project
 
-**Date**: 2026-03-22 12:00
+**Date**: 2026-03-24 10:00
 **Lean Version**: 4.23.0-rc2
 **Author**: Julián Calderón Almendros
 
 ## Executive Summary
 
-This project implements ZFC set theory in Lean 4, focusing on fundamental axioms, relations, functions, cardinality, and arithmetic of the Von Neumann naturals. All proofs are complete with no `sorry` statements remaining. The `PeanoImport.lean` module establishes the formal isomorphism between Von Neumann and Peano natural numbers via the external `peanolib` library. Arithmetic modules (Add, Mul, Sub, Div, Pow, Arith) provide full arithmetic in ω via RecursiveFn and Pattern B bridge.
+This project implements ZFC set theory in Lean 4, focusing on fundamental axioms, relations, functions, cardinality, and full arithmetic of the Von Neumann naturals. All proofs are complete with no `sorry` statements remaining. The `PeanoImport.lean` module establishes the formal isomorphism between Von Neumann and Peano natural numbers via the external `peanolib` library. Arithmetic modules (Add, Mul, Sub, Div, Pow, Arith, Factorial) provide full arithmetic in ω via RecursiveFn and Pattern B bridge.
 
 ### Statistics
 
-- **Total files**: 29 modules (+ 1 external: peanolib)
-- **Compilation**: ✅ Successful (0 sorry, 0 errors)
+- **Total modules**: 31 (+ 1 external: peanolib)
+- **Compilation**: ✅ Successful (32/32 jobs)
 - **Complete proofs**: 100%
 - **Remaining `sorry`**: 0
-- **Documentation**: REFERENCE.md fully updated with all 29 modules
+- **Documentation**: REFERENCE.md fully updated (all 31 modules projected)
 
 ## Recent Achievements
 
-### Latest Updates (March 22, 2026)
+### Latest Updates (March 24, 2026)
+
+#### 1. NaturalNumbersFactorial.lean — Factorial en ω (✅ Complete)
+
+- `factorial (n : U) : U` — factorial via Patrón B: `fromPeano (Peano.Factorial.factorial (toPeano n hn))`
+- `fromPeano_factorial` — teorema puente con `Peano.Factorial.factorial`
+- 10 teoremas: `factorial_zero`, `factorial_one`, `factorial_two`, `factorial_succ`, `factorial_pos`, `factorial_ne_zero`, `factorial_ge_one`, `factorial_le_succ`, `factorial_le_mono`, `factorial_in_Omega`
+- Build limpio; 31/31 módulos compilados
+
+#### 2. REFERENCE.md — Proyección y corrección completa (✅ Complete)
+
+- `AtomicBooleanAlgebra.lean`: proyección completada (estado 🔶 Parcial → ✅ Completo); §3.12 (4 def), §4.7 (14 teoremas), §6.25 (19 exports)
+- `GeneralizedDeMorgan.lean`: corregida documentación incorrecta; §3.16 (1 def real), §4.11 (10 teoremas reales), §6.8 (8 exports)
+- `GeneralizedDistributive.lean`: corregida documentación incorrecta; §3.17 (2 def reales), §4.12 (10 teoremas reales), §6.9 (12 exports)
+- `Recursion.lean`: expandido §6.17 con exports completos de variantes step y CoV
+- `SetOrder.lean`, `SetStrictOrder.lean`, `PeanoImport.lean`: verificados correctamente proyectados
+
+### Previous Updates (March 22, 2026)
 
 #### 1. NaturalNumbersPow.lean — Potenciación en ω (✅ Complete)
 
 - `powFn m hm` — función de potenciación vía `RecursiveFn ω (σ ∅) (mulFn m hm)`
-- `pow m n = mⁿ` — potencia de naturales de von Neumann
+- `pow m n` — potencia de naturales de von Neumann
 - `fromPeano_pow` — teorema puente con `Peano.Pow.pow`
 - 13 teoremas: `pow_zero`, `pow_succ`, `zero_pow_Omega`, `one_pow_Omega`, `pow_one_Omega`, `pow_ne_zero_Omega`, `pow_two_Omega`, `pow_add_eq_mul_pow_Omega`, `mul_pow_Omega`, `pow_pow_eq_pow_mul_Omega`
 
-#### 2. NaturalNumbersArith.lean — Divisibilidad, GCD, LCM (✅ Complete)
+#### 2. NaturalNumbersArith.lean — Divisibilidad, GCD, LCM, Bézout (✅ Complete)
 
 - `divides m n` — predicado ZFC directo: ∃ k ∈ ω, n = m*k
 - `div`/`mod` — división euclídea nativa ZFC via `divMod_stepFn` + RecursiveFn en ω×ω
-- `div_eq_divOf`/`mod_eq_modOf` — equivalencia con los Pattern B anteriores
+- `div_eq_divOf`/`mod_eq_modOf` — equivalencia con los Pattern B de NaturalNumbersDiv
 - `gcdOf`/`lcmOf` — Pattern B via isomorfismo; 8 propiedades de gcd/lcm
 - `bezout_natform_Omega` — Bézout en forma substractiva ZFC
 - 43 exports totales
 
+### Previous Updates (March 21, 2026)
+
+#### 1. NaturalNumbersSub.lean (✅ Complete)
+
+- `sub m n` — sustracción saturada (monus) via RecursiveFn
+- `fromPeano_sub` — puente con `Peano.Sub.sub`
+- 13 teoremas algebraicos
+
+#### 2. NaturalNumbersDiv.lean (✅ Complete)
+
+- `divOf`/`modOf` — cociente y resto via Patrón B (isomorfismo Peano)
+- `divMod_eq_Omega`, `mod_lt_divisor_Omega`, `div_of_lt_Omega`, `mod_of_lt_Omega`, `div_le_self_Omega`
+
+### Previous Updates (March 8, 2026)
+
+#### 1. NaturalNumbersAdd.lean (✅ Complete)
+
+- `add m n` — suma via RecursiveFn; `fromPeano_add` — puente; 16 teoremas algebraicos
+
+#### 2. NaturalNumbersMul.lean (✅ Complete)
+
+- `mul m n` — multiplicación via RecursiveFn; `fromPeano_mul` — puente; 13 teoremas algebraicos
+
+#### 3. PeanoImport.lean — Extensión de puentes (✅ Complete)
+
+- `recursion_transport_step`, `recursion_transport_step_inv` — transporte de RecursionTheoremWithStep
+- `fromPeano_lt_iff`, `fromPeano_le_iff` — puentes de orden
+- `succ_mem_succ_iff` — `σ m ∈ σ n ↔ m ∈ n`
+
 ### Previous Updates (March 4, 2026)
 
-#### 1. New Module: PeanoImport.lean — Von Neumann ↔ Peano Isomorphism (✅ Complete)
+#### 1. PeanoImport.lean — Isomorfismo Von Neumann ↔ Peano (✅ Complete)
 
-**Achievement**: Formal proof that the Von Neumann naturals (defined in this project) are isomorphic to the Peano naturals from the external `peanolib` library.
+- `fromPeano : Peano.ℕ₀ → U` — recursión estructural: `zero → ∅`, `succ n → σ(fromPeano n)`
+- `toPeano : (n : U) → isNat n → Peano.ℕ₀` — via `Classical.choose` de sobreyectividad
+- 7 teoremas de biyección completos
 
-**Key definitions**:
+#### 2. Infinity.lean — nat_mem_wf demostrado sin sorry (✅ Complete)
 
-- `fromPeano : Peano.ℕ₀ → U` — structural recursion: `zero → ∅`, `succ n → σ(fromPeano n)`
-- `toPeano : (n : U) → isNat n → Peano.ℕ₀` — via `Classical.choose` from surjectivity
-
-**Key theorems (7 total)**:
-
-- `fromPeano_is_nat` — image is Von Neumann naturals
-- `fromPeano_injective` — injectivity (tricky: `Function.Injective` uses `⦃⦄` implicit binders)
-- `fromPeano_surjective` — surjectivity (proved by strong induction on ω via `SpecSet`)
-- `fromPeano_toPeano`, `toPeano_fromPeano` — mutual inverses
-- `toPeano_injective`, `toPeano_surjective` — full bijection
-
-**Notable technical insights**:
-
-- `Function.Injective` uses strict-implicit `⦃⦄` binders; IH must be applied as `ih proof` not `ih n' proof`
-- `successor_injective` requires explicit `isNat` arguments
-- `Classical.choose`-based `toPeano` avoids termination issues entirely
-- `peanolib` type is `Peano.ℕ₀` (not `Peano.ℕ`)
-
-#### 2. Infinity.lean — nat_mem_wf Proved Without sorry (✅ Complete)
-
-**Achievement**: `nat_mem_wf : WellFounded (fun a b : U => a ∈ ω ∧ b ∈ ω ∧ a ∈ b)` is now fully proved.
-
-**Strategy**: Elements outside ω are vacuously accessible (no predecessor in the relation). Elements in ω are proved accessible by strong induction, constructing `S = SpecSet ω (fun n => Acc R n)` and applying `strong_induction_principle`.
-
-Added to Infinity.lean exports.
-
-#### 3. NaturalNumbers.lean — Predecessor Exports (✅ Complete)
-
-**Achievement**: `predecessor`, `predecessor_of_successor`, `predecessor_is_nat`, `predecessor_mem` are now publicly exported.
-
-#### 4. Documentation Updated (✅ Complete)
-
-- REFERENCE.md: +§3.21 PeanoImport (defs), +§4.17 PeanoImport (7 theorems), updated §4.9 Infinity, updated §3.13 NaturalNumbers
-- CHANGELOG.md, TEMPORAL.md, DEPENDENCIES.md, README.md, VALIDATION-AIDER-AI-GUIDE.md: all updated
+- `nat_mem_wf : WellFounded (fun a b : U => a ∈ ω ∧ b ∈ ω ∧ a ∈ b)` completamente probado
 
 ### Previous Updates (February 12, 2026)
 
-#### 5. Complete Documentation Projection (✅ Complete)
-
-**Achievement**: Full projection of `BooleanRing.lean` and `PowerSetAlgebra.lean` into REFERENCE.md
-
-**Sections added**:
-
-- §3.20 PowerSetAlgebra.lean - Complement definition
-- §4.15 BooleanRing.lean - 11 theorems on symmetric difference
-- §4.16 PowerSetAlgebra.lean - 15+ theorems on complements and Boolean algebra
-- §6.9 BooleanRing - 11 exports
-- §6.10 PowerSetAlgebra - 30 exports
-
-**Documentation status**:
-
-- ✅ All 25 modules fully projected in REFERENCE.md
-- ✅ All 14 AIDER-AI-GUIDE.md requirements met
-- ✅ Complete mathematical descriptions with Lean4 signatures
-- ✅ Dependency tracking for all definitions and theorems
-
-### 2. Unique Existence Infrastructure (✅ Complete)
-
-**Problem solved**: Lean 4's standard `∃!` notation wasn't compatible with parentheses or explicit types.
-
-**Implemented solution**:
-
-- Custom definition: `ExistsUnique {α : Sort u} (p : α → Prop) : Prop := ∃ x, p x ∧ ∀ y, p y → y = x`
-- Notation macro: `∃! x, P` → `ExistsUnique fun x => P`
-- Complete API: `.intro`, `.exists`, `.choose`, `.choose_spec`, `.unique`
-
-**Affected files**:
-
-- `Prelim.lean` (52 lines - base infrastructure)
-- Fixed theorems across 6 files: Existence, Specification, Pairing, Union, PowerSet, Functions
-
-### 3. Relation Domain and Range (✅ Complete)
-
-**Problem identified**: Original `domain` and `range` definitions in `Pairing.lean` use `fst R` and `snd R`, designed for individual ordered pairs, not relations (sets of pairs).
-
-**Problematic definitions**:
-
-```lean
--- In Pairing.lean (❌ Structurally incorrect for relations)
-domain R = SpecSet (fst R) (fun x => ∃ y, ⟨x,y⟩ ∈ R)
-range R = SpecSet (snd R) (fun y => ∃ x, ⟨x,y⟩ ∈ R)
-```
-
-**Solution implemented** in `Relations.lean`:
-
-```lean
--- ✅ Mathematically correct
-domain_rel R = SpecSet (⋃(⋃ R)) (fun x => ∃ y, ⟨x,y⟩ ∈ R)
-range_rel R = SpecSet (⋃(⋃ R)) (fun y => ∃ x, ⟨x,y⟩ ∈ R)
-imag_rel R = range_rel R  -- Alias
-```
-
-**Completed theorems** (no `sorry`):
-
-- `mem_domain_rel`: `x ∈ domain_rel R ↔ ∃ y, ⟨x, y⟩ ∈ R`
-- `mem_range_rel`: `y ∈ range_rel R ↔ ∃ x, ⟨x, y⟩ ∈ R`
-- `mem_imag_rel`: `y ∈ imag_rel R ↔ ∃ x, ⟨x, y⟩ ∈ R`
-- `pair_mem_implies_fst_in_domain_rel`
-- `pair_mem_implies_snd_in_range_rel`
-- `pair_mem_implies_snd_in_imag_rel`
-
-**Code organization**:
-
-- **Section 1**: Correct definitions (`domain_rel`, `range_rel`) with complete theorems
-- **Section 2**: "Legacy Domain and Range (Structural Issues)" - old definitions with documented `sorry` and references to correct versions
-
-### 4. isFunctionFromTo Update (✅ Complete)
-
-**Structure change**:
-
-```lean
--- Before (ternary):
-isFunctionFromTo : U → U → U → Prop
-
--- Now (binary):
-isFunctionFromTo : U → U → Prop
-isFunctionFromTo f A = (f ⊆ A ×ₛ B) ∧ (∀ x, x ∈ A → ∃! y, ⟨x,y⟩ ∈ f)
-```
-
-**Updates**:
-
-- `Cardinality.lean`: All references updated (no compilation errors)
-- `Functions.lean`: 2 `sorry` resolved (apply_mem, apply_eq)
-- Total `sorry` reduced: 3 → 1 in Functions.lean
+- **Recursion.lean**: todos los errores de tipo resueltos; 0 sorry; build limpio
+- **Cardinality.lean**: CSB completamente demostrado (0 sorry); Cantor + CSB_bijection_is_function
+- **Functions.lean**: 0 sorry; `apply_mem`, `apply_eq`, `apply_id` completamente probados
+- **Documentación**: proyección completa de todos los módulos previos en REFERENCE.md
 
 ## Status by File
 
-### ✅ Completely Proven (No `sorry`)
+### ✅ Completely Proven (0 sorry)
 
-1. **Prelim.lean** - Base infrastructure and unique existence
-2. **Existence.lean** - Axiom of existence (empty set)
-3. **Extension.lean** - Axiom of extensionality
-4. **Specification.lean** - Axiom of specification
-5. **Pairing.lean** - Axiom of pairing, ordered pairs
-6. **Union.lean** - Axiom of union
-7. **PowerSet.lean** - Axiom of power set
-8. **CartesianProduct.lean** - Cartesian products
-9. **OrderedPair.lean** - Ordered pairs
-10. **SetOrder.lean** - Set orders
-11. **SetStrictOrder.lean** - Strict orders
-12. **GeneralizedDeMorgan.lean** - Generalized De Morgan laws
-13. **GeneralizedDistributive.lean** - Generalized distributive laws
-14. **BooleanAlgebra.lean** - Boolean algebra
-15. **BooleanRing.lean** - Boolean rings (SymDiff as addition, intersection as multiplication)
-16. **AtomicBooleanAlgebra.lean** - Atomic Boolean algebras
-17. **PowerSetAlgebra.lean** - Power set algebra (complement, De Morgan laws)
-18. **NaturalNumbers.lean** - Natural numbers (base construction, predecessor exported)
-19. **Infinity.lean** - Infinity axiom and ω set (nat_mem_wf fully proved)
-20. **PeanoImport.lean** - Isomorphism Von Neumann ↔ Peano naturals (new 2026-03-04)
+1. **Prelim.lean** — Base infrastructure (ExistsUnique)
+2. **Existence.lean** — Axiom of existence (∅)
+3. **Extension.lean** — Axiom of extensionality (⊆, ⊂, ⟂)
+4. **Specification.lean** — Axiom of specification (SpecSet, ∩, \)
+5. **Pairing.lean** — Axiom of pairing (pairs, OrderedPair, fst, snd, relations, functions)
+6. **Union.lean** — Axiom of union (⋃, ∪, △)
+7. **PowerSet.lean** — Axiom of power set (𝒫)
+8. **CartesianProduct.lean** — Cartesian product (A ×ₛ B)
+9. **OrderedPair.lean** — Ordered pair extensions
+10. **Relations.lean** — Relations (domain, range, equivalence, order, well-founded)
+11. **Functions.lean** — Functions (apply, restriction, composition, inverse)
+12. **Cardinality.lean** — Cardinality (Cantor, CSB theorem)
+13. **BooleanAlgebra.lean** — Boolean algebra laws
+14. **BooleanRing.lean** — Boolean ring (SymDiff as addition)
+15. **PowerSetAlgebra.lean** — Power set algebra (complement, De Morgan)
+16. **GeneralizedDeMorgan.lean** — Generalized De Morgan laws (ComplementFamily)
+17. **GeneralizedDistributive.lean** — Generalized distributive laws (IntersectFamily, UnionFamily)
+18. **SetOrder.lean** — Lattice structure (bounds, supremum, infimum)
+19. **SetStrictOrder.lean** — Strict order properties
+20. **AtomicBooleanAlgebra.lean** — Atomic Boolean algebra (𝒫(A) is atomic)
+21. **NaturalNumbers.lean** — ℕ as von Neumann ordinals (predecessor exported)
+22. **Infinity.lean** — Infinity axiom and ω (nat_mem_wf proved, ≺ and ≼ orders)
+23. **Recursion.lean** — Recursion theorem on ℕ (3 variants: standard, step-indexed, CoV)
+24. **PeanoImport.lean** — Von Neumann ↔ Peano isomorphism (ΠZ, ZΠ, 17 theorems)
+25. **NaturalNumbersAdd.lean** — Addition in ω (RecursiveFn, 16 theorems)
+26. **NaturalNumbersMul.lean** — Multiplication in ω (RecursiveFn, 13 theorems)
+27. **NaturalNumbersSub.lean** — Saturated subtraction in ω (RecursiveFn, 13 theorems)
+28. **NaturalNumbersDiv.lean** — Euclidean division in ω (Pattern B, 5 key theorems)
+29. **NaturalNumbersPow.lean** — Exponentiation in ω (RecursiveFn + mulFn, 13 theorems)
+30. **NaturalNumbersArith.lean** — Divisibility, GCD, LCM, Bézout (43 theorems)
+31. **NaturalNumbersFactorial.lean** — Factorial in ω (Pattern B, 10 theorems)
 
-### ⚠️ With Pending `sorry`
+## Project Architecture
 
-#### 1. **Recursion.lean** (12 `sorry` activos)
-
-**Contexto**: Teorema de recursión sobre números naturales — la prueba del teorema principal de existencia y unicidad.
-
-**Dificultad**: Alta — lógica inductiva detallada con múltiples casos sobre la estructura de las computaciones parciales.
-
-**Estado**: Requiere análisis extensivo; el resto del proyecto no depende de este módulo.
-
-### ✅ Previously Reported (Now Confirmed Clean)
-
-- **Relations.lean**: ✅ 0 sorry (los 2 sorry legacy fueron eliminados)
-- **Functions.lean**: ✅ 0 sorry (completado en sesión anterior)
-- **Cardinality.lean**: ✅ 0 sorry — Cantor + CSB completamente demostrados
-
-## Arquitectura del Proyecto
-
-### Jerarquía de Dependencias
+### Dependency Hierarchy
 
 ```text
 Prelim.lean (ExistsUnique infrastructure)
@@ -221,226 +148,144 @@ Axioms (Existence, Extension, Specification, Pairing, Union, PowerSet)
    ↓
 OrderedPair.lean, CartesianProduct.lean
    ↓
-Relations.lean (domain, range)
+Relations.lean (domain, range, equivalence, orders)
    ↓
-Functions.lean (apply, composition, inverse)
+Functions.lean (apply, composition, inverse, restriction)
    ↓
 Cardinality.lean (Cantor, CSB theorems)
    ↓
-NaturalNumbers.lean
+NaturalNumbers.lean (von Neumann ℕ, predecessor)
    ↓
-Recursion.lean
+Infinity.lean (ω, nat_mem_wf, ≺ and ≼)
+   ↓
+Recursion.lean (RecursionTheorem, RecursionTheoremWithStep, RecursionCourseOfValues, RecursiveFn)
+   ↓
+PeanoImport.lean (fromPeano ΠZ, toPeano ZΠ, isomorphism)
+   ↓
+NaturalNumbersAdd.lean → NaturalNumbersMul.lean → NaturalNumbersSub.lean
+   ↓
+NaturalNumbersDiv.lean → NaturalNumbersPow.lean → NaturalNumbersArith.lean
+   ↓
+NaturalNumbersFactorial.lean
 ```
 
-### Algebra Modules (Parallel branch)
+### Boolean Algebra Branch (Parallel)
 
 ```text
 SetOrder.lean, SetStrictOrder.lean
    ↓
-GeneralizedDeMorgan.lean, GeneralizedDistributive.lean
-   ↓
 BooleanAlgebra.lean
    ↓
-BooleanRing.lean, AtomicBooleanAlgebra.lean
+BooleanRing.lean, PowerSetAlgebra.lean
    ↓
-PowerSetAlgebra.lean
+GeneralizedDeMorgan.lean, GeneralizedDistributive.lean
+   ↓
+AtomicBooleanAlgebra.lean
+```
+
+## Implementation Patterns
+
+### Pattern RecursiveFn (Add, Mul, Sub, Pow)
+
+```lean
+noncomputable def opFn (m : U) (hm : m ∈ ω) : U :=
+  RecursiveFn ω base (stepFn m hm) base_in_ω step_is_fn
+noncomputable def op (m n : U) : U :=
+  if h : m ∈ ω then apply (opFn m h) n else ∅
+```
+
+### Pattern B / Bridge-only (Div, Mod, GCD, LCM, Factorial)
+
+```lean
+noncomputable def opOf (m n : U) : U :=
+  if hm : isNat m then
+    if hn : isNat n then fromPeano (Peano.Op.f (toPeano m hm) (toPeano n hn))
+    else ∅
+  else ∅
+```
+
+### Key bridge proof technique
+
+```lean
+-- congr 1; congr 1; then toPeano_proof_irrel + toPeano_fromPeano
 ```
 
 ## Important Design Decisions
 
 ### 1. Custom ExistsUnique
 
-**Reason**: Lean 4's standard implementation (`∃!`) doesn't support:
-
-- Parentheses: `(∃! x, P x)` ❌
-- Explicit types: `∃! (x : U), P x` ❌
-
-**Solution advantages**:
-
-- Compatible with all necessary syntax ✅
-- Complete API with convenience methods
-- Transparent to user (identical syntax)
+Lean 4's standard `∃!` doesn't support parentheses `(∃! x, P)` or explicit types `∃! (x : U), P`. Custom definition with `.intro`, `.exists`, `.choose`, `.choose_spec`, `.unique` API resolves this.
 
 ### 2. Separation domain/legacy domain
 
-**Decision**: Maintain both definitions instead of replacing
-
-**Reasons**:
-
-1. Legacy `domain` used in existing code (Pairing.lean)
-2. Global change would require updating multiple modules
-3. Both can coexist with clear documentation
-
-**Strategy**:
-
-- New developments: use `domain`/`range` from Relations.lean
-- Legacy code: keep old `domain`/`range` with documented `sorry`
-- Dedicated "Legacy" section at end of Relations.lean
+`domain`/`range` in `Pairing.lean` are legacy (structurally limited to individual pairs). Correct definitions are `domain_rel`/`range_rel` in `Relations.lean` using `⋃(⋃ R)` as the ambient set. New developments should use the Relations.lean versions.
 
 ### 3. Binary isFunctionFromTo
 
-**Change**: From ternary `(f, A, B)` to binary `(f, A)` with `B` eliminated
+Changed from ternary `(f, A, B)` to binary `(f, A)`. The codomain B is recoverable from f. This simplifies type signatures across the project.
 
-**Impact**:
+### 4. Saturated subtraction (monus)
 
-- Simplifies type signature
-- Maintains all necessary information (B recoverable from f)
-- Required massive update in Cardinality.lean
-
-**Result**: Successful - clean compilation
+ZFC naturals use saturated subtraction: `m - n = 0` when `m ≤ n`. This matches `Peano.Sub.sub` in peanolib.
 
 ## Suggested Next Steps
 
-### High Priority
+### Medium Priority
 
-1. **Completar inverse_is_specified** (Functions.lean)
-   - Desarrollar lemas sobre universos de pares ordenados
-   - Probar `p ∈ 𝒫(𝒫(⋃(⋃ f)))` para inversiones
-   - Tiempo estimado: 2-4 horas
+1. **ZFC-native GCD/LCM** — implement via well-founded recursion (Euclidean algorithm) instead of Pattern B bridge; currently only Pattern B versions exist in NaturalNumbersArith
 
-2. **Resolver sorry en Cardinality** (CSB theorem)
-   - Crear lema: `pair_mem_implies_snd_in_snd`
-   - Aplicar al caso de restricción
-   - Tiempo estimado: 1-2 horas
+2. **Axiom of Replacement** — not yet implemented; required for constructing functions with large codomains
 
-### Prioridad Media
+3. **Axiom of Foundation** — not yet implemented; needed for rank function and universe stratification
 
-1. **Documentar domain vs legacy domain**
-   - Agregar sección en README
-   - Guía de migración para código existente
-   - Ejemplos de uso recomendado
+### Low Priority
 
-2. **Completar Recursion.lean**
-   - Análisis detallado del paso inductivo
-   - Descomposición en sub-lemas
-   - Tiempo estimado: 4-8 horas
-
-### Prioridad Baja
-
-1. **Consider global refactoring**
-   - Replace legacy `domain`/`range` in `Pairing.lean` with improved `domain`/`range` from `Relations.lean` throughout code
-   - Update Pairing.lean with correct definitions
-   - Impact: High - requires reviewing Functions.lean, Cardinality.lean
-
-2. **Proof optimization**
-   - Some proofs use verbose constructions
-   - Opportunities for additional simp lemmas
-   - Create custom tactics for common patterns
+1. **N-tuples** — ordered tuples via recursive pair construction
+2. **Proof optimization** — some proofs use verbose constructions; opportunities for simp lemmas
+3. **Custom tactics** — for common patterns in arithmetic proofs
 
 ## Quality Metrics
 
 ### Proof Coverage
 
-- **Basic axioms**: 100% proven
-- **Ordered pairs and products**: 100% proven
-- **Relations**: 95% proven (2 structural sorry)
-- **Functions**: 97% proven (1 sorry)
-- **Cardinality**: 98% proven (1 sorry)
-- **Recursion**: 90% proven (1 complex sorry)
+- **Basic axioms (7)**: 100% proven
+- **Ordered pairs, products, relations**: 100% proven
+- **Functions**: 100% proven
+- **Cardinality**: 100% proven (Cantor + CSB)
+- **Recursion (3 variants)**: 100% proven
+- **Peano isomorphism**: 100% proven
+- **Arithmetic (Add, Mul, Sub, Div, Pow, Arith, Factorial)**: 100% proven
+- **Boolean algebra (all modules)**: 100% proven
 
 ### Documentation
 
-- ✅ All theorems have docstrings
-- ✅ Comments explain complex steps
-- ✅ Notes about `sorry` with references to alternatives
-- ✅ Organized sections with visual separators
-- ✅ REFERENCE.md: 18 modules fully documented with mathematical descriptions
-
-### Code Conventions
-
-- ✅ Consistent notation (`⟨x, y⟩`, `∃! x, P`)
-- ✅ Descriptive names (snake_case for theorems)
-- ✅ Clear modular structure
-- ✅ Explicit exports at end of each module
+- ✅ REFERENCE.md: 31 modules fully projected (mathematical descriptions + Lean 4 signatures)
+- ✅ All exports documented with section references
+- ✅ AIDER-AI-GUIDE.md: complete development guide (14 requirements)
+- ✅ CHANGELOG.md, README.md, CURRENT-STATUS-PROJECT.md: up to date
 
 ## Tools and Workflow
 
 ### Lake Commands
 
 ```bash
-lake build          # Full compilation (24 jobs)
-lake clean          # Clean cache
-lake build ZfcSetTheory.Relations  # Build specific module
+lake build                              # Full compilation
+lake clean                              # Clean cache
+lake build ZfcSetTheory.Foo             # Build specific module
+bash git-lock.bash list                 # Check locked files
+bash git-lock.bash lock ZfcSetTheory/Foo.lean
+bash git-lock.bash unlock ZfcSetTheory/Foo.lean
 ```
 
-### Sorry Verification
+### File Locking Protocol
 
-```bash
-# Search for all active sorry
-grep -r "sorry" ZfcSetTheory/*.lean | grep -v "^[[:space:]]*--"
-```
-
-### File Structure
-
-```text
-ZfcSetTheory/
-├── Prelim.lean              # Base + ExistsUnique
-├── Existence.lean           # Axiom of existence
-├── Extension.lean           # Axiom of extensionality
-├── Specification.lean       # Axiom of specification
-├── Pairing.lean            # Pairs and domain/range (legacy)
-├── Union.lean              # Axiom of union
-├── PowerSet.lean           # Axiom of power set
-├── CartesianProduct.lean   # Cartesian products
-├── OrderedPair.lean        # Ordered pairs
-├── Relations.lean          # Relations + domain/range ⭐
-├── Functions.lean          # Functions (1 sorry)
-├── Cardinality.lean        # Cardinality (1 sorry)
-├── NaturalNumbers.lean     # ℕ construction (predecessor exported)
-├── Infinity.lean           # Infinity axiom and ω set (nat_mem_wf proved)
-├── Recursion.lean          # Recursion (1 sorry)
-├── PeanoImport.lean        # Isomorphism Von Neumann ↔ Peano (new)
-├── SetOrder.lean           # Orders
-├── SetStrictOrder.lean     # Strict orders
-├── GeneralizedDeMorgan.lean
-├── GeneralizedDistributive.lean
-├── BooleanAlgebra.lean
-├── BooleanRing.lean
-├── AtomicBooleanAlgebra.lean
-└── PowerSetAlgebra.lean
-```
-
-## Conclusion
-
-The project is in excellent condition with only 4 pending `sorry` out of hundreds of theorems. Key achievements include:
-
-1. ✅ Complete functional unique existence infrastructure
-2. ✅ ZFC axioms completely proven
-3. ✅ Correct domain/range definitions for relations
-4. ✅ Successful isFunctionFromTo update
-5. ✅ Complete documentation projection of 18 modules in REFERENCE.md
-6. ✅ Boolean algebra modules (BooleanRing, PowerSetAlgebra) fully implemented and documented
-7. ⚠️ 4 `sorry` well documented with alternatives or clear next steps
-
-The code is well structured, documented, and ready for continued development or use in dependent projects.
-
-### Documentation Achievement
-
-- **REFERENCE.md**: 4500+ lines of comprehensive technical reference
-- **Coverage**: 18 fully projected modules with mathematical descriptions
-- **Compliance**: 100% adherence to AIDER-AI-GUIDE.md requirements
-- **Self-sufficient**: Complete context without loading source files (~200k tokens)
+At most ONE `.lean` file unlocked at a time. Pre-commit hook blocks commits touching locked files.
 
 ---
 
-**Last updated**: 2026-03-04 12:00
+**Last updated**: 2026-03-24 10:00
 **Author**: Julián Calderón Almendros
 **GitHub**: [@julian1c2a](https://github.com/julian1c2a)
-**License**: MIT License (see [LICENSE](LICENSE))
+**License**: MIT License
 
-**Status**: ✅ **100% COMPLETE** - ZfcSetTheory project fully documented and compiled
-
-- ✅ PeanoImport.lean: nuevo módulo con isomorfismo Von Neumann ↔ Peano (2 def + 7 teoremas)
-- ✅ Infinity.lean: nat_mem_wf completamente probado (sin sorry), exportado
-- ✅ NaturalNumbers.lean: predecessor y teoremas relacionados exportados
-- ✅ Toda la documentación markdown actualizada con timestamps ISO 8601 y autoría
-- ✅ Cumplimiento total con AIDER-AI-GUIDE.md (requisitos 1-14)
-- ✅ 28/28 módulos compilándose correctamente (0 errores, 0 sorry)
-
-## Credits
-
-This project was developed based on:
-
-- **Educational Resources**: "Razonando con Lean" (José A. Alonso), Adrián GQ (@conjuntos_y_logica)
-- **Bibliography**: "Axiomatic Set Theory" (Patrick Suppes, 1960/1972; Paul Bernays, 1958)
-- **AI Assistance**: Claude Code AI (Anthropic), Gemini AI (Google)
+**Status**: ✅ **100% COMPLETE** — 31/31 modules, 0 sorry, full arithmetic in ω

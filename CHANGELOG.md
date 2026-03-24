@@ -1,6 +1,6 @@
 # Changelog
 
-**Última actualización:** 2026-03-22 12:00
+**Última actualización:** 2026-03-24 10:00
 **Autor**: Julián Calderón Almendros
 
 Todos los cambios notables de este proyecto serán documentados en este archivo.
@@ -9,6 +9,21 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Añadido (2026-03-24 10:00)
+
+- **Nuevo módulo NaturalNumbersFactorial.lean — Factorial en ω** (Patrón B, bridge-only):
+  - ✅ `factorial (n : U) : U` — factorial de naturales de von Neumann via `fromPeano (Peano.Factorial.factorial (toPeano n hn))`
+  - ✅ `fromPeano_factorial` — teorema puente con `Peano.Factorial.factorial`
+  - ✅ 10 teoremas: `factorial_zero`, `factorial_one`, `factorial_two`, `factorial_succ`, `factorial_pos`, `factorial_ne_zero`, `factorial_ge_one`, `factorial_le_succ`, `factorial_le_mono`, `factorial_in_Omega`
+  - ✅ Build limpio; 31/31 módulos compilados correctamente
+
+- **REFERENCE.md — Proyección y corrección completa de 7 módulos**:
+  - ✅ `AtomicBooleanAlgebra.lean`: completada proyección parcial; §3.12 (4 def), §4.7 (14 teoremas), §6.25 (19 exports); estado 🔶 Parcial → ✅ Completo
+  - ✅ `GeneralizedDeMorgan.lean`: corregida documentación incorrecta — §3.16 (1 def real vs. 3 ficticias anteriores), §4.11 (10 teoremas reales vs. 8 ficticios), §6.8 (8 exports reales)
+  - ✅ `GeneralizedDistributive.lean`: corregida documentación incorrecta — §3.17 (2 def reales vs. 5 ficticias anteriores), §4.12 (10 teoremas reales), §6.9 (12 exports reales)
+  - ✅ `Recursion.lean`: expandido §6.17 con todos los exports de variantes step e CoV (anteriormente incompleto: ~15 entradas faltaban)
+  - ✅ `SetOrder.lean`, `SetStrictOrder.lean`, `PeanoImport.lean`: verificados correctamente proyectados
 
 ### Añadido (2026-03-22 12:00)
 
