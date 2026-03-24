@@ -1,6 +1,6 @@
 # Referencia Técnica - ZfcSetTheory
 
-*Última actualización: 2026-03-24 10:00*
+*Última actualización: 2026-03-24 14:00*
 **Autor**: Julián Calderón Almendros
 
 ## 📋 Cumplimiento con AIDER-AI-GUIDE.md
@@ -74,6 +74,7 @@ Este documento cumple con todos los requisitos especificados en [AIDER-AI-GUIDE.
 | `NaturalNumbersDiv.lean` | `SetUniverse.NaturalNumbersDiv` | `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersAdd`, `NaturalNumbersMul`, `NaturalNumbersSub`, `PeanoNatLib.PeanoNatDiv` | ✅ Completo |
 | `NaturalNumbersPow.lean` | `SetUniverse.NaturalNumbersPow` | `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersMul`, `PeanoNatLib.PeanoNatPow` | ✅ Completo |
 | `NaturalNumbersArith.lean` | `SetUniverse.NaturalNumbersArith` | `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersAdd`, `NaturalNumbersMul`, `NaturalNumbersSub`, `NaturalNumbersDiv`, `PeanoNatLib.PeanoNatArith` | ✅ Completo |
+| `NaturalNumbersFactorial.lean` | `SetUniverse.NaturalNumbersFactorial` | `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersMul`, `PeanoNatLib.PeanoNatFactorial` | ✅ Completo |
 
 ## 2. Axiomas ZFC Implementados
 
@@ -223,6 +224,7 @@ def ExistsUnique {α : Sort u} (p : α → Prop) : Prop :=
 | `ExistsUnique.unique h y hy` | `choose_uniq h hy` | unicidad: `y = choose` |
 
 **Notas**:
+
 - `choose_unique`, `choose_spec_unique`, `choose_uniq` son aliases top-level que replican la API de `Peano.PeanoNatLib` para unificación entre proyectos.
 - La diferencia de estilo: ZFC usa dot-notation `h.choose`; Peano pasa `h` como argumento a `choose_unique h`.
 
@@ -3641,6 +3643,32 @@ noncomputable def lcmOf (m n : U) : U :=
 ```
 
 **Dependencias**: `fromPeano`, `toPeano`, `Peano.Arith.lcm`
+
+### 3.29 NaturalNumbersFactorial.lean
+
+**Módulo**: `ZfcSetTheory.NaturalNumbersFactorial`
+**Namespace**: `SetUniverse.NaturalNumbersFactorial`
+**Dependencias**: `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersMul`, `PeanoNatLib.PeanoNatFactorial`
+**Actualizado**: 2026-03-24
+**Descripción**: Define la función factorial `factorialOf n = n!` en ω mediante Patrón B (bridge-only). Levanta `Peano.Factorial.factorial` directamente via el isomorfismo `fromPeano`/`toPeano`. El helper privado `toPeano_proof_irrel` garantiza que el resultado de `toPeano n h` no depende del testigo `h : isNat n`.
+
+#### Factorial (factorialOf)
+
+**Ubicación**: `NaturalNumbersFactorial.lean`, línea 76
+**Orden**: Única definición pública
+
+**Enunciado Matemático**: `factorialOf n = n!` para `n ∈ ω`, definido por transporte del Peano `Peano.Factorial.factorial (toPeano n _)`. Devuelve `∅` si `n ∉ ω`.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def factorialOf (n : U) : U :=
+  if hn : n ∈ (ω : U) then
+    fromPeano (Peano.Factorial.factorial (toPeano n (mem_Omega_is_Nat n hn)))
+  else ∅
+```
+
+**Dependencias**: `fromPeano`, `toPeano`, `Peano.Factorial.factorial`, `mem_Omega_is_Nat`
 
 ---
 
@@ -8560,7 +8588,7 @@ theorem fromPeano_le_iff (p q : Peano.ℕ₀) :
 | `pow_ne_zero_Omega` | m ≠ 0 → m^n ≠ 0 | `theorem pow_ne_zero_Omega {m : U} (hm : m ∈ (ω : U)) (hm_ne : m ≠ ∅) (n : U) (hn : n ∈ (ω : U)) : pow m n ≠ ∅` |
 | `pow_two_Omega` | m² = m * m | `theorem pow_two_Omega (m : U) (hm : m ∈ (ω : U)) : pow m (σ (σ ∅)) = mul m m` |
 | `pow_add_eq_mul_pow_Omega` | m^(n+k) = m^n * m^k | `theorem pow_add_eq_mul_pow_Omega (m n k : U) (...) : pow m (add n k) = mul (pow m n) (pow m k)` |
-| `mul_pow_Omega` | (m*n)^k = m^k * n^k | `theorem mul_pow_Omega (m n k : U) (...) : pow (mul m n) k = mul (pow m k) (pow n k)` |
+| `mul_pow_Omega` | (m*n)^k = m^k* n^k | `theorem mul_pow_Omega (m n k : U) (...) : pow (mul m n) k = mul (pow m k) (pow n k)` |
 | `pow_pow_eq_pow_mul_Omega` | (m^n)^k = m^(n*k) | `theorem pow_pow_eq_pow_mul_Omega (m n k : U) (...) : pow (pow m n) k = pow m (mul n k)` |
 
 **Dependencias**: `RecursiveFn_zero`, `RecursiveFn_succ`, `fromPeano_pow`, `fromPeano_mul`, `Peano.Pow.*`, `mul_in_Omega`, `mul_comm_Omega`, `mul_assoc_Omega`
@@ -8624,6 +8652,49 @@ theorem fromPeano_le_iff (p q : Peano.ℕ₀) :
 | `bezout_natform_Omega` | ∃ a b, a*m − b*n = gcd(m,n) ∨ a*n − b*m = gcd(m,n) | `theorem bezout_natform_Omega (m n : U) (hm hn) : ∃ mp np : U, (mp ∈ ω ∧ np ∈ ω) ∧ (sub (mul mp m) (mul np n) = gcdOf m n ∨ sub (mul np n) (mul mp m) = gcdOf m n)` |
 
 **Dependencias**: `fromPeano_surjective`, `fromPeano_injective`, `fromPeano_mul`, `fromPeano_add`, `fromPeano_sub`, `fromPeano_mod`, `fromPeano_le_iff`, `fromPeano_lt_iff`, `Peano.Arith.*`, `divides`, `mul`, `add`, `sub`, `modOf`, `gcdOf`, `lcmOf`
+
+### 4.25 NaturalNumbersFactorial.lean
+
+**Módulo**: `ZfcSetTheory.NaturalNumbersFactorial`
+**Namespace**: `SetUniverse.NaturalNumbersFactorial`
+**Actualizado**: 2026-03-24
+
+#### Sección 1: Clausura en ω
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `factorialOf_in_Omega` | `factorialOf n ∈ ω` para n ∈ ω | `theorem factorialOf_in_Omega (n : U) (hn : n ∈ (ω : U)) : factorialOf n ∈ (ω : U)` |
+
+#### Sección 2: Teorema puente
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `fromPeano_factorial` | `fromPeano (factorial p) = factorialOf (fromPeano p)` | `theorem fromPeano_factorial (p : Peano.ℕ₀) : (fromPeano (Peano.Factorial.factorial p) : U) = factorialOf (fromPeano p)` |
+
+**Descripción**: Demostrado con `simp only [factorialOf, dif_pos ...]` + `congrArg` para aislar los argumentos de `toPeano`, luego `toPeano_proof_irrel` y `toPeano_fromPeano`.
+
+#### Sección 3: Valores concretos y ecuación de recursión
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `factorialOf_zero` | 0! = 1 | `theorem factorialOf_zero : factorialOf (∅ : U) = σ (∅ : U)` |
+| `factorialOf_succ` | (σ n)! = n! · (σ n) | `theorem factorialOf_succ (n : U) (hn : n ∈ (ω : U)) : factorialOf (NaturalNumbers.successor n) = mul (factorialOf n) (NaturalNumbers.successor n)` |
+| `factorialOf_one` | 1! = 1 | `theorem factorialOf_one : factorialOf (σ (∅ : U)) = σ (∅ : U)` |
+| `factorialOf_two` | 2! = 2 | `theorem factorialOf_two : factorialOf (σ (σ (∅ : U))) = σ (σ (∅ : U))` |
+
+#### Sección 4: Positividad y cotas
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `factorialOf_ne_zero` | n! ≠ 0 | `theorem factorialOf_ne_zero (n : U) (hn : n ∈ (ω : U)) : factorialOf n ≠ ∅` |
+| `factorialOf_pos` | 0 < n! (i.e. ∅ ∈ n!) | `theorem factorialOf_pos (n : U) (hn : n ∈ (ω : U)) : (∅ : U) ∈ factorialOf n` |
+| `factorialOf_ge_one` | 1 ≤ n! (i.e. σ ∅ ∈ n! ∨ σ ∅ = n!) | `theorem factorialOf_ge_one (n : U) (hn : n ∈ (ω : U)) : σ (∅ : U) ∈ factorialOf n ∨ σ (∅ : U) = factorialOf n` |
+| `factorialOf_le_succ` | n! ≤ (n+1)! | `theorem factorialOf_le_succ (n : U) (hn : n ∈ (ω : U)) : factorialOf n ∈ factorialOf (NaturalNumbers.successor n) ∨ factorialOf n = factorialOf (NaturalNumbers.successor n)` |
+| `factorialOf_le_mono` | m ≤ n → m! ≤ n! | `theorem factorialOf_le_mono {m n : U} (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) (h_le : m ∈ n ∨ m = n) : factorialOf m ∈ factorialOf n ∨ factorialOf m = factorialOf n` |
+
+**Patrón de demostración**: `fromPeano_surjective` + `subst` + `fromPeano_factorial` + teoremas de `Peano.Factorial`.
+
+**Dependencias**: `fromPeano_surjective`, `fromPeano_injective`, `fromPeano_factorial`, `fromPeano_mul`, `fromPeano_le_iff`, `fromPeano_lt_iff`, `toPeano_proof_irrel`, `toPeano_fromPeano`, `toPeano_zero`, `Peano.Factorial.*`, `Nat_in_Omega`, `fromPeano_is_nat`, `mul_one_Omega`, `one_mul_Omega`, `zero_in_Omega`, `succ_in_Omega`
 
 ---
 
@@ -8804,6 +8875,7 @@ export Functions (
 Ahora actualizo el timestamp en REFERENCE.md:
 
 REFERENCE.md
+
 ````markdown
 <<<<<<< SEARCH
 *Última actualización: 2026-03-16 16:30*
@@ -9591,6 +9663,34 @@ export AtomicBooleanAlgebra (
 )
 ```
 
+### 6.26 NaturalNumbersFactorial.lean
+
+**Namespace**: `SetUniverse.NaturalNumbersFactorial` (exportado a `SetUniverse`)
+**Última modificación**: 2026-03-24
+**Dependencias**: `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersMul`, `PeanoNatLib.PeanoNatFactorial`
+
+```lean
+export NaturalNumbersFactorial (
+  -- Sección 0: definición
+  factorialOf
+  -- Sección 1: clausura
+  factorialOf_in_Omega
+  -- Sección 2: puente
+  fromPeano_factorial
+  -- Sección 3: valores concretos y recursión
+  factorialOf_zero
+  factorialOf_one
+  factorialOf_two
+  factorialOf_succ
+  -- Sección 4: positividad y cotas
+  factorialOf_ne_zero
+  factorialOf_pos
+  factorialOf_ge_one
+  factorialOf_le_succ
+  factorialOf_le_mono
+)
+```
+
 ## 7. Estado de Proyección por Módulo
 
 ### 7.1 Leyenda de Estados
@@ -9632,6 +9732,7 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `NaturalNumbersPow.lean` - Potenciación en ω: Patrón RecursiveFn (mulFn como paso), teorema puente `fromPeano_pow`, propiedades algebraicas (leyes de exponentes, identidades)
 - `NaturalNumbersArith.lean` - Aritmética avanzada en ω: predicado `divides` (ZFC nativo), `div`/`mod` nativos vía RecursiveFn + `divMod_stepFn`, `gcdOf`/`lcmOf` Patrón B, teorema de Bézout (forma substractiva), 13 propiedades de divisibilidad
 - `AtomicBooleanAlgebra.lean` - Álgebra de Boole atómica en conjuntos potencia: 4 definiciones (`isAtom`, `isAtomic`, `Atoms`, `atomBelow`), 14 teoremas (singletons ↔ átomos, atomicidad de 𝒫(A), descomposición en átomos)
+- `NaturalNumbersFactorial.lean` - Factorial en ω: Patrón B (bridge-only) vía isomorfismo, 1 definición (`factorialOf`), teorema puente `fromPeano_factorial`, valores concretos (0!, 1!, 2!), ecuación de recursión, positividad y monotonía
 
 ### 7.3 Archivos Parcialmente Proyectados
 
@@ -9655,7 +9756,9 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 
 ---
 
-*Última actualización: 2026-03-22 — Proyección completa de NaturalNumbersPow.lean (§3.27, §4.23, §6.23: 2 def + 13 teoremas + 18 exports, Patrón RecursiveFn con mulFn como paso) y NaturalNumbersArith.lean (§3.28, §4.24, §6.24: 5 def públicas + 43 exports, div/mod nativos ZFC con divMod_stepFn + gcdOf/lcmOf Patrón B + Bézout substractivo). Tabla §1.1 actualizada. Estado: ✅ 100% completo, 0 sorry.*
+*Última actualización: 2026-03-24 — Proyección completa de NaturalNumbersFactorial.lean (§3.29, §4.25, §6.26: 1 def + 11 teoremas + 12 exports, Patrón B bridge-only vía isomorfismo Peano). Tabla §1.1 actualizada. Estado: ✅ 100% completo, 0 sorry.*
+
+*Actualización anterior: 2026-03-22 — Proyección completa de NaturalNumbersPow.lean (§3.27, §4.23, §6.23: 2 def + 13 teoremas + 18 exports, Patrón RecursiveFn con mulFn como paso) y NaturalNumbersArith.lean (§3.28, §4.24, §6.24: 5 def públicas + 43 exports, div/mod nativos ZFC con divMod_stepFn + gcdOf/lcmOf Patrón B + Bézout substractivo). Tabla §1.1 actualizada. Estado: ✅ 100% completo, 0 sorry.*
 
 *Actualización anterior: 2026-03-21 — Proyección completa de NaturalNumbersDiv.lean: §3.26 con 2 definiciones (divOf, modOf), §4.22 con 9 teoremas (2 clausura, 2 puente, 5 propiedades algebraicas), §6.22 con 11 exports. Patrón B (bridge-only): toPeano_proof_irrel para proof-irrelevance de isNat. Estado: ✅ 100% completo, 0 sorry. Módulo compilado al primer intento (tras fix de dirección en congr 1).*
 
