@@ -1,6 +1,6 @@
 # Referencia Técnica - ZfcSetTheory
 
-*Última actualización: 2026-03-22 12:00*
+*Última actualización: 2026-03-24 10:00*
 **Autor**: Julián Calderón Almendros
 
 ## 📋 Cumplimiento con AIDER-AI-GUIDE.md
@@ -58,7 +58,7 @@ Este documento cumple con todos los requisitos especificados en [AIDER-AI-GUIDE.
 | `BooleanAlgebra.lean` | `SetUniverse.BooleanAlgebra` | `Union`, `Specification`, `Pairing`, `Extension`, `Existence`, `Prelim` | ✅ Completo |
 | `BooleanRing.lean` | `SetUniverse.BooleanRing` | `PowerSetAlgebra` + anteriores | ✅ Completo |
 | `PowerSetAlgebra.lean` | `SetUniverse.PowerSetAlgebra` | `PowerSet`, `BooleanAlgebra` + anteriores | ✅ Completo |
-| `AtomicBooleanAlgebra.lean` | `SetUniverse.AtomicBooleanAlgebra` | `PowerSetAlgebra`, `SetOrder`, `SetStrictOrder` + anteriores | 🔶 Parcial |
+| `AtomicBooleanAlgebra.lean` | `SetUniverse.AtomicBooleanAlgebra` | `PowerSetAlgebra`, `SetOrder`, `SetStrictOrder` + anteriores | ✅ Completo (2026-03-24) |
 | `Cardinality.lean` | `SetUniverse.Cardinality` | `Functions` + todos los anteriores | ✅ Completo (2026-03-16) |
 | `NaturalNumbers.lean` | `SetUniverse.NaturalNumbers` | `Cardinality` + todos los anteriores | ✅ Completo |
 | `Infinity.lean` | `SetUniverse.InfinityAxiom` | `NaturalNumbers` + todos los anteriores | ✅ Completo |
@@ -1953,6 +1953,56 @@ def isAtom (A X : U) : Prop :=
 ```
 
 **Dependencias**: `PowerSet`, `EmptySet`, `subset`
+
+#### Álgebra Atómica (isAtomic)
+
+**Ubicación**: `AtomicBooleanAlgebra.lean`, línea 227
+**Orden**: 2ª definición principal
+**Computable**: No (Prop)
+
+**Enunciado Matemático**: 𝒫(A) es atómica si todo subconjunto no vacío contiene un átomo.
+
+**Firma Lean4**:
+
+```lean
+def isAtomic (A : U) : Prop :=
+  ∀ X, X ∈ 𝒫 A → X ≠ ∅ → ∃ Y, isAtom A Y ∧ Y ⊆ X
+```
+
+**Dependencias**: `isAtom`, `PowerSet`, `EmptySet`
+
+#### Familia de Átomos (Atoms)
+
+**Ubicación**: `AtomicBooleanAlgebra.lean`, línea 201
+**Orden**: 3ª definición principal
+**Computable**: No (`noncomputable`)
+
+**Enunciado Matemático**: Atoms(A) = { X ∈ 𝒫(A) | X es átomo en 𝒫(A) }.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def Atoms (A : U) : U :=
+  SpecSet (𝒫 A) (fun X => isAtom A X)
+```
+
+**Dependencias**: `isAtom`, `SpecSet`, `PowerSet`
+
+#### Átomo Debajo (atomBelow)
+
+**Ubicación**: `AtomicBooleanAlgebra.lean`, línea 279
+**Orden**: 4ª definición principal
+**Computable**: No (Prop)
+
+**Enunciado Matemático**: Y es un átomo de 𝒫(A) por debajo de X si Y es átomo en 𝒫(A) e Y ⊆ X.
+
+**Firma Lean4**:
+
+```lean
+def atomBelow (A X Y : U) : Prop := isAtom A Y ∧ Y ⊆ X
+```
+
+**Dependencias**: `isAtom`, `subset`
 
 ### 3.13 Cardinality.lean
 
@@ -5705,12 +5755,88 @@ theorem cantor_schroeder_bernstein (A B : U)
 
 ### 4.7 AtomicBooleanAlgebra.lean
 
-#### Los Singletons son Átomos
+#### Caracterización Alternativa de Átomo (isAtom_alt)
 
-**Ubicación**: `AtomicBooleanAlgebra.lean`, línea 85  
-**Orden**: 1º teorema principal
+**Ubicación**: `AtomicBooleanAlgebra.lean`, línea 62
+**Orden**: 1º teorema
 
-**Enunciado Matemático**: {x} es un átomo en 𝒫(A) cuando x ∈ A.
+**Enunciado Matemático**: X es átomo en 𝒫(A) ↔ X ∈ 𝒫(A) ∧ X ≠ ∅ ∧ ∀ Y ⊆ X, Y = ∅ ∨ Y = X.
+
+**Firma Lean4**:
+
+```lean
+theorem isAtom_alt (A X : U) :
+    isAtom A X ↔ X ∈ 𝒫 A ∧ X ≠ ∅ ∧ ∀ Y, Y ⊆ X → Y = ∅ ∨ Y = X
+```
+
+**Dependencias**: `isAtom`, `PowerSet`
+
+#### Singleton como Subconjunto (singleton_subset)
+
+**Ubicación**: `AtomicBooleanAlgebra.lean`, línea 86
+**Orden**: 2º teorema
+
+**Enunciado Matemático**: x ∈ A → {x} ⊆ A.
+
+**Firma Lean4**:
+
+```lean
+theorem singleton_subset (A x : U) (hx : x ∈ A) : {x} ⊆ A
+```
+
+**Dependencias**: `Singleton_is_specified`
+
+#### Singleton en Conjunto Potencia (singleton_mem_PowerSet)
+
+**Ubicación**: `AtomicBooleanAlgebra.lean`, línea 93
+**Orden**: 3º teorema
+
+**Enunciado Matemático**: x ∈ A → {x} ∈ 𝒫(A).
+
+**Firma Lean4**:
+
+```lean
+theorem singleton_mem_PowerSet (A x : U) (hx : x ∈ A) : {x} ∈ 𝒫 A
+```
+
+**Dependencias**: `singleton_subset`, `PowerSet_is_specified`
+
+#### Singleton No Vacío (singleton_nonempty)
+
+**Ubicación**: `AtomicBooleanAlgebra.lean`, línea 98
+**Orden**: 4º teorema
+
+**Enunciado Matemático**: {x} ≠ ∅.
+
+**Firma Lean4**:
+
+```lean
+theorem singleton_nonempty (x : U) : {x} ≠ ∅
+```
+
+**Dependencias**: `Singleton_is_specified`, `EmptySet_is_empty`
+
+#### Subconjuntos de un Singleton (subset_singleton)
+
+**Ubicación**: `AtomicBooleanAlgebra.lean`, línea 105
+**Orden**: 5º teorema
+
+**Enunciado Matemático**: Y ⊆ {x} → Y = ∅ ∨ Y = {x}.
+
+**Firma Lean4**:
+
+```lean
+theorem subset_singleton (x Y : U) (hY : Y ⊆ {x}) : Y = ∅ ∨ Y = {x}
+```
+
+**Dependencias**: `Singleton_is_specified`, `nonempty_iff_exists_mem`, `ExtSet`
+
+#### Los Singletons son Átomos (singleton_is_atom)
+
+**Ubicación**: `AtomicBooleanAlgebra.lean`, línea 127
+**Orden**: 6º teorema
+
+**Enunciado Matemático**: x ∈ A → {x} es átomo en 𝒫(A).
 
 **Firma Lean4**:
 
@@ -5718,23 +5844,134 @@ theorem cantor_schroeder_bernstein (A B : U)
 theorem singleton_is_atom (A x : U) (hx : x ∈ A) : isAtom A {x}
 ```
 
-**Dependencias**: `isAtom`, `Singleton`, `PowerSet`
+**Dependencias**: `isAtom_alt`, `singleton_mem_PowerSet`, `singleton_nonempty`, `subset_singleton`
 
-#### Los Átomos son Singletons
+#### Elemento Único de un Átomo (atom_has_unique_element)
 
-**Ubicación**: `AtomicBooleanAlgebra.lean`, línea 120  
-**Orden**: 2º teorema principal
+**Ubicación**: `AtomicBooleanAlgebra.lean`, línea 136
+**Orden**: 7º teorema
 
-**Enunciado Matemático**: Todo átomo es un singleton.
+**Enunciado Matemático**: Si X es átomo en 𝒫(A), entonces ∃! z, z ∈ X.
+
+**Firma Lean4**:
+
+```lean
+theorem atom_has_unique_element (A X : U) (hAtom : isAtom A X) :
+    ∃ z, z ∈ X ∧ ∀ y, y ∈ X → y = z
+```
+
+**Dependencias**: `isAtom_alt`, `nonempty_iff_exists_mem`, `singleton_nonempty`
+
+#### Los Átomos son Singletons (atom_is_singleton)
+
+**Ubicación**: `AtomicBooleanAlgebra.lean`, línea 166
+**Orden**: 8º teorema
+
+**Enunciado Matemático**: Todo átomo en 𝒫(A) es de la forma {x} con x ∈ A.
 
 **Firma Lean4**:
 
 ```lean
 theorem atom_is_singleton (A X : U) (hAtom : isAtom A X) :
-  ∃ x, x ∈ A ∧ X = {x}
+    ∃ x, x ∈ A ∧ X = {x}
 ```
 
-**Dependencias**: `isAtom`, `Singleton`
+**Dependencias**: `isAtom_alt`, `atom_has_unique_element`, `PowerSet_is_specified`, `ExtSet`
+
+#### Caracterización de Átomos (atom_iff_singleton)
+
+**Ubicación**: `AtomicBooleanAlgebra.lean`, línea 190
+**Orden**: 9º teorema
+
+**Enunciado Matemático**: X es átomo en 𝒫(A) ↔ ∃ x ∈ A, X = {x}.
+
+**Firma Lean4**:
+
+```lean
+theorem atom_iff_singleton (A X : U) :
+    isAtom A X ↔ ∃ x, x ∈ A ∧ X = {x}
+```
+
+**Dependencias**: `atom_is_singleton`, `singleton_is_atom`
+
+#### Especificación de Atoms (Atoms_is_specified)
+
+**Ubicación**: `AtomicBooleanAlgebra.lean`, línea 205
+**Orden**: 10º teorema
+
+**Enunciado Matemático**: X ∈ Atoms(A) ↔ X ∈ 𝒫(A) ∧ X es átomo en 𝒫(A).
+
+**Firma Lean4**:
+
+```lean
+theorem Atoms_is_specified (A X : U) :
+    X ∈ Atoms A ↔ X ∈ 𝒫 A ∧ isAtom A X
+```
+
+**Dependencias**: `Atoms`, `SpecSet_is_specified`
+
+#### Atoms son los Singletons (Atoms_eq_singletons)
+
+**Ubicación**: `AtomicBooleanAlgebra.lean`, línea 211
+**Orden**: 11º teorema
+
+**Enunciado Matemático**: X ∈ Atoms(A) ↔ ∃ x ∈ A, X = {x}.
+
+**Firma Lean4**:
+
+```lean
+theorem Atoms_eq_singletons (A X : U) :
+    X ∈ Atoms A ↔ ∃ x, x ∈ A ∧ X = {x}
+```
+
+**Dependencias**: `Atoms_is_specified`, `atom_iff_singleton`, `singleton_mem_PowerSet`
+
+#### 𝒫(A) es Atómica (PowerSet_is_atomic)
+
+**Ubicación**: `AtomicBooleanAlgebra.lean`, línea 231
+**Orden**: 12º teorema
+
+**Enunciado Matemático**: Para todo conjunto A, 𝒫(A) es una álgebra de Boole atómica.
+
+**Firma Lean4**:
+
+```lean
+theorem PowerSet_is_atomic (A : U) : isAtomic A
+```
+
+**Dependencias**: `isAtomic`, `nonempty_iff_exists_mem`, `PowerSet_is_specified`, `singleton_is_atom`, `Singleton_is_specified`
+
+#### Elemento como Unión de Átomos (element_is_union_of_atoms)
+
+**Ubicación**: `AtomicBooleanAlgebra.lean`, línea 248
+**Orden**: 13º teorema
+
+**Enunciado Matemático**: Si X ∈ 𝒫(A), entonces X = ⋃ { Y ∈ Atoms(A) | Y ⊆ X }.
+
+**Firma Lean4**:
+
+```lean
+theorem element_is_union_of_atoms (A X : U) (hX : X ∈ 𝒫 A) :
+    X = ⋃ (SpecSet (Atoms A) (fun Y => Y ⊆ X))
+```
+
+**Dependencias**: `Atoms`, `Atoms_is_specified`, `singleton_is_atom`, `singleton_mem_PowerSet`, `UnionSet_is_specified`, `SpecSet_is_specified`, `ExtSet`
+
+#### Singleton Debajo iff Membresía (singleton_below_iff)
+
+**Ubicación**: `AtomicBooleanAlgebra.lean`, línea 282
+**Orden**: 14º teorema
+
+**Enunciado Matemático**: x ∈ A → (atomBelow A X {x} ↔ x ∈ X).
+
+**Firma Lean4**:
+
+```lean
+theorem singleton_below_iff (A X x : U) (hx : x ∈ A) :
+    atomBelow A X {x} ↔ x ∈ X
+```
+
+**Dependencias**: `atomBelow`, `singleton_is_atom`, `Singleton_is_specified`
 
 ### 4.8 Cardinality.lean
 
@@ -9346,6 +9583,42 @@ export NaturalNumbersArith (
 )
 ```
 
+### 6.25 AtomicBooleanAlgebra.lean
+
+**Namespace**: `SetUniverse.AtomicBooleanAlgebra` (exportado a `SetUniverse`)
+**Última modificación**: 2026-03-24
+**Dependencias**: `PowerSetAlgebra`, `SetOrder`, `SetStrictOrder` + anteriores
+
+```lean
+export AtomicBooleanAlgebra (
+  -- Definiciones
+  isAtom
+  isAtomic
+  Atoms
+  atomBelow
+  -- Caracterizaciones de átomo
+  isAtom_alt
+  atom_iff_singleton
+  -- Auxiliares sobre singletons
+  singleton_subset
+  singleton_mem_PowerSet
+  singleton_nonempty
+  subset_singleton
+  -- Teoremas principales
+  singleton_is_atom
+  atom_has_unique_element
+  atom_is_singleton
+  -- Familia de átomos
+  Atoms_is_specified
+  Atoms_eq_singletons
+  -- Atomicidad
+  PowerSet_is_atomic
+  element_is_union_of_atoms
+  -- Relación átomo-debajo
+  singleton_below_iff
+)
+```
+
 ## 7. Estado de Proyección por Módulo
 
 ### 7.1 Leyenda de Estados
@@ -9386,12 +9659,13 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `NaturalNumbersDiv.lean` - División euclídea en ω: Patrón B (bridge-only) vía isomorfismo, teoremas puente `fromPeano_div`/`fromPeano_mod`, identidad euclídea, cota del resto, propiedades de cociente/resto
 - `NaturalNumbersPow.lean` - Potenciación en ω: Patrón RecursiveFn (mulFn como paso), teorema puente `fromPeano_pow`, propiedades algebraicas (leyes de exponentes, identidades)
 - `NaturalNumbersArith.lean` - Aritmética avanzada en ω: predicado `divides` (ZFC nativo), `div`/`mod` nativos vía RecursiveFn + `divMod_stepFn`, `gcdOf`/`lcmOf` Patrón B, teorema de Bézout (forma substractiva), 13 propiedades de divisibilidad
+- `AtomicBooleanAlgebra.lean` - Álgebra de Boole atómica en conjuntos potencia: 4 definiciones (`isAtom`, `isAtomic`, `Atoms`, `atomBelow`), 14 teoremas (singletons ↔ átomos, atomicidad de 𝒫(A), descomposición en átomos)
 
 ### 7.3 Archivos Parcialmente Proyectados
 
 Los siguientes archivos tienen **documentación parcial** (solo definiciones/teoremas principales):
 
-- `AtomicBooleanAlgebra.lean` - Solo definición de átomo y teoremas principales
+- (Ninguno actualmente)
 
 ### 7.4 Archivos Casi Completos (con `sorry` documentados)
 
