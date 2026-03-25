@@ -1,6 +1,6 @@
 # Referencia Técnica - ZfcSetTheory
 
-*Última actualización: 2026-03-24 14:00*
+*Última actualización: 2026-03-25 10:00*
 **Autor**: Julián Calderón Almendros
 
 ## 📋 Cumplimiento con AIDER-AI-GUIDE.md
@@ -76,6 +76,7 @@ Este documento cumple con todos los requisitos especificados en [AIDER-AI-GUIDE.
 | `NaturalNumbersArith.lean` | `SetUniverse.NaturalNumbersArith` | `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersAdd`, `NaturalNumbersMul`, `NaturalNumbersSub`, `NaturalNumbersDiv`, `PeanoNatLib.PeanoNatArith` | ✅ Completo |
 | `NaturalNumbersFactorial.lean` | `SetUniverse.NaturalNumbersFactorial` | `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersMul`, `PeanoNatLib.PeanoNatFactorial` | ✅ Completo |
 | `NaturalNumbersGcd.lean` | `SetUniverse.NaturalNumbersGcd` | `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersAdd`, `NaturalNumbersMul`, `NaturalNumbersSub`, `NaturalNumbersDiv`, `NaturalNumbersArith` | ✅ Completo |
+| `NaturalNumbersPrimes.lean` | `SetUniverse.NaturalNumbersPrimes` | `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersAdd`, `NaturalNumbersMul`, `NaturalNumbersSub`, `NaturalNumbersDiv`, `NaturalNumbersArith`, `NaturalNumbersGcd`, `PeanoNatLib.PeanoNatPrimes` | ✅ Completo |
 
 ## 2. Axiomas ZFC Implementados
 
@@ -3720,6 +3721,32 @@ noncomputable def lcm (a b : U) : U :=
 
 **Dependencias**: `divOf`, `mul`, `gcd`, `ω`
 **Computabilidad**: No computable
+
+### 3.31 NaturalNumbersPrimes.lean
+
+**Módulo**: `ZfcSetTheory.NaturalNumbersPrimes`
+**Namespace**: `SetUniverse.NaturalNumbersPrimes`
+**Dependencias**: `NaturalNumbersArith`, `NaturalNumbersGcd`, `PeanoNatLib.PeanoNatPrimes`
+**Estrategia**: Enfoque A — `DList ℕ₀` permanece en el lado Peano; la definición ZFC-nativa `isPrime` se puente vía `fromPeano_prime`.
+
+#### isPrime
+
+**Ubicación**: `NaturalNumbersPrimes.lean`, §1
+**Orden**: 1ª definición pública
+
+**Enunciado Matemático**: `p` es ZFC-primo si: `p ∈ ω`, `p ≠ ∅`, `p ≠ σ ∅`, y para todo `a, b ∈ ω`: `p ∣ a·b → p ∣ a ∨ p ∣ b`.
+
+**Firma Lean4**:
+
+```lean
+def isPrime (p : U) : Prop :=
+  p ∈ (ω : U) ∧ p ≠ (∅ : U) ∧ p ≠ σ (∅ : U) ∧
+  ∀ a b : U, a ∈ (ω : U) → b ∈ (ω : U) →
+    divides p (mul a b) → divides p a ∨ divides p b
+```
+
+**Dependencias**: `ω`, `divides`, `mul`
+**Computabilidad**: No computable (Prop)
 
 ---
 
@@ -8799,6 +8826,59 @@ theorem fromPeano_le_iff (p q : Peano.ℕ₀) :
 
 ---
 
+### 4.27 NaturalNumbersPrimes.lean
+
+**Módulo**: `ZfcSetTheory.NaturalNumbersPrimes`
+**Namespace**: `SetUniverse.NaturalNumbersPrimes`
+
+#### Sección 1: Teorema puente
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `fromPeano_prime` | Prime p ↔ isPrime (fromPeano p) | `theorem fromPeano_prime (p : Peano.ℕ₀) : Peano.Arith.Prime p ↔ isPrime (fromPeano p : U)` |
+
+**Patrón de demostración**: Enfoque A — dirección `→` descompone `Peano.Arith.Prime` en sus tres componentes y los convierte vía `fromPeano_zero_eq`/`fromPeano_one_eq` (injectividad) y `fromPeano_divides`+`fromPeano_mul`+`fromPeano_surjective` (divisibilidad). Dirección `←` aplica las mismas herramientas en sentido inverso.
+
+**Dependencias**: `fromPeano_injective`, `fromPeano_surjective`, `fromPeano_mul`, `fromPeano_divides`, `Nat_in_Omega`, `fromPeano_is_nat`, `mem_Omega_is_Nat`
+
+#### Sección 2: Propiedades básicas de isPrime
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `isPrime_in_Omega` | isPrime p → p ∈ ω | `theorem isPrime_in_Omega (p : U) (hp : isPrime p) : p ∈ (ω : U)` |
+| `isPrime_ne_zero` | isPrime p → p ≠ ∅ | `theorem isPrime_ne_zero (p : U) (hp : isPrime p) : p ≠ (∅ : U)` |
+| `isPrime_ne_one` | isPrime p → p ≠ σ ∅ | `theorem isPrime_ne_one (p : U) (hp : isPrime p) : p ≠ σ (∅ : U)` |
+| `isPrime_ge_two` | isPrime p → σ(σ ∅) ≤ p | `theorem isPrime_ge_two (p : U) (hp : isPrime p) : σ (σ (∅ : U)) ∈ p ∨ σ (σ (∅ : U)) = p` |
+| `isPrime_prime_divisors` | isPrime p ∧ d ∣ p → d = σ ∅ ∨ d = p | `theorem isPrime_prime_divisors (p d : U) (hp : isPrime p) (hd : d ∈ (ω : U)) (hdvd : divides d p) : d = σ (∅ : U) ∨ d = p` |
+
+**Dependencias**: `fromPeano_surjective`, `fromPeano_prime`, `prime_ge_two`, `prime_divisors`, `fromPeano_le_iff`, `fromPeano_divides`, `fromPeano_injective`, `fromPeano_one_eq`
+
+#### Sección 3: Existencia de divisor primo
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `exists_prime_divisor_ZFC` | ∀ n ∈ ω, 2 ≤ n → ∃ p primo que divide n | `theorem exists_prime_divisor_ZFC (n : U) (hn : n ∈ (ω : U)) (h_ge_2 : σ (σ (∅ : U)) ∈ n ∨ σ (σ (∅ : U)) = n) : ∃ p : U, isPrime p ∧ divides p n` |
+
+**Dependencias**: `fromPeano_surjective`, `fromPeano_le_iff`, `fromPeano_two_eq`, `exists_prime_divisor`, `fromPeano_prime`, `fromPeano_divides`
+
+#### Sección 4: TFA — Existencia de factorización prima (Enfoque A)
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `exists_prime_factorization_ZFC` | ∀ n ∈ ω, 2 ≤ n → ∃ ps : DList ℕ₀ de primos con ΠZ(∏ ps) = n | `theorem exists_prime_factorization_ZFC (n : U) (hn : n ∈ (ω : U)) (h_ge_2 : σ (σ (∅ : U)) ∈ n ∨ σ (σ (∅ : U)) = n) : ∃ ps : DList ℕ₀, PrimeList ps ∧ (fromPeano (product_list ps) : U) = n` |
+
+**Dependencias**: `fromPeano_surjective`, `fromPeano_le_iff`, `exists_prime_factorization`, `fromPeano_injective`
+
+#### Sección 5: TFA — Unicidad de factorización prima (Enfoque A)
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `unique_prime_factorization_ZFC` | Dos listas de primos con igual producto ZFC tienen la misma multiplicidad de cada primo | `theorem unique_prime_factorization_ZFC (ps qs : DList ℕ₀) (hps : PrimeList ps) (hqs : PrimeList qs) (h_prod : (fromPeano (product_list ps) : U) = fromPeano (product_list qs)) (p : Peano.ℕ₀) (hp : Peano.Arith.Prime p) : DList.length (DList.filter (fun q => decide (q = p)) ps) = DList.length (DList.filter (fun q => decide (q = p)) qs)` |
+
+**Dependencias**: `fromPeano_injective`, `unique_prime_factorization`
+
+---
+
 ## 5. Notación y Sintaxis
 
 ### 5.1 Operadores Básicos
@@ -9822,6 +9902,32 @@ export NaturalNumbersGcd (
 )
 ```
 
+### 6.28 NaturalNumbersPrimes.lean
+
+**Namespace**: `SetUniverse.NaturalNumbersPrimes` (exportado a `SetUniverse`)
+**Última modificación**: 2026-03-25
+**Dependencias**: `NaturalNumbersArith`, `NaturalNumbersGcd`, `PeanoNatLib.PeanoNatPrimes`
+
+```lean
+export NaturalNumbersPrimes (
+  -- Definición
+  isPrime
+  -- Teorema puente
+  fromPeano_prime
+  -- Propiedades básicas
+  isPrime_in_Omega
+  isPrime_ne_zero
+  isPrime_ne_one
+  isPrime_ge_two
+  isPrime_prime_divisors
+  -- Existencia de divisor primo
+  exists_prime_divisor_ZFC
+  -- Teorema Fundamental de la Aritmética (Enfoque A)
+  exists_prime_factorization_ZFC
+  unique_prime_factorization_ZFC
+)
+```
+
 ## 7. Estado de Proyección por Módulo
 
 ### 7.1 Leyenda de Estados
@@ -9865,6 +9971,7 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `AtomicBooleanAlgebra.lean` - Álgebra de Boole atómica en conjuntos potencia: 4 definiciones (`isAtom`, `isAtomic`, `Atoms`, `atomBelow`), 14 teoremas (singletons ↔ átomos, atomicidad de 𝒫(A), descomposición en átomos)
 - `NaturalNumbersFactorial.lean` - Factorial en ω: Patrón B (bridge-only) vía isomorfismo, 1 definición (`factorialOf`), teorema puente `fromPeano_factorial`, valores concretos (0!, 1!, 2!), ecuación de recursión, positividad y monotonía
 - `NaturalNumbersGcd.lean` - GCD y LCM en ω: GCD ZFC-nativo vía algoritmo euclídeo con RecursiveFn sobre ω ×ₛ ω, 2 definiciones (`gcd`, `lcm`), teoremas puente `gcd_eq_gcdOf`/`lcm_eq_lcmOf`, ecuaciones del algoritmo (caso base + paso), 4 propiedades de divisibilidad del GCD, 3 propiedades del LCM, 17 exports
+- `NaturalNumbersPrimes.lean` - Primalidad y TFA en ω: definición ZFC-nativa `isPrime`, teorema puente `fromPeano_prime` (Peano.Arith.Prime ↔ isPrime), propiedades básicas (∈ω, ≠∅, ≠σ∅, ≥2, divisores), existencia de divisor primo, TFA Existencia y Unicidad (Enfoque A: DList ℕ₀ en lado Peano), 11 exports
 
 ### 7.3 Archivos Parcialmente Proyectados
 
@@ -9889,6 +9996,8 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 ---
 
 *Última actualización: 2026-03-24 — Proyección completa de NaturalNumbersGcd.lean (§3.30, §4.26, §6.27: 2 def + 13 teoremas + 17 exports, GCD ZFC-nativo vía algoritmo euclídeo + LCM vía bridge). Tabla §1.1 actualizada. Estado: ✅ 100% completo, 0 sorry.*
+
+*Última actualización: 2026-03-25 — Proyección completa de NaturalNumbersPrimes.lean (§3.31, §4.27, §6.28: 1 def + 9 teoremas + 11 exports, primalidad ZFC-nativa + TFA Enfoque A). Tabla §1.1 y §7.2 actualizadas. Estado: ✅ 100% completo, 0 sorry.*
 
 *Actualización anterior: 2026-03-24 — Proyección completa de NaturalNumbersFactorial.lean (§3.29, §4.25, §6.26: 1 def + 11 teoremas + 12 exports, Patrón B bridge-only vía isomorfismo Peano). Tabla §1.1 actualizada. Estado: ✅ 100% completo, 0 sorry.*
 

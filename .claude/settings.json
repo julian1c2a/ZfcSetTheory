@@ -36,7 +36,8 @@
       "Bash(grep -n \"strong_induction_principle\" ZfcSetTheory/*.lean)",
       "Bash(grep -rn \"subset_of_mem_successor\\\\|succ_mem_succ_iff\\\\|le_then_exists_add\" ZfcSetTheory/*.lean)",
       "Bash(grep -rn \"succ_in_Omega\\\\b\" ZfcSetTheory/*.lean)",
-      "Read(//e/Dropbox/GitHub/lean4/**)"
+      "Read(//e/Dropbox/GitHub/lean4/**)",
+      "Bash(bash e:/Dropbox/GitHub/lean4/ZfcSetTheory/git-lock.bash list)"
     ],
     "additionalDirectories": [
       "e:\\Dropbox\\GitHub\\lean4\\ZfcSetTheory\\ZfcSetTheory"

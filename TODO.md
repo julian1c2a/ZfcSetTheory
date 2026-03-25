@@ -346,6 +346,20 @@
 - **Patrón:** Patrón B (bridge-only) via `Peano.Factorial.factorial`
 - **Acciones necesarias:** Ninguna
 
+### ✅ NaturalNumbersGcd.lean
+
+- **Estado en REFERENCE.md:** ✅ Completo
+- **Implementación completada:** 2026-03-24
+- **Patrón:** ZFC-nativo vía RecursiveFn sobre ω ×ₛ ω (algoritmo euclídeo); LCM vía bridge
+- **Acciones necesarias:** Ninguna
+
+### ✅ NaturalNumbersPrimes.lean
+
+- **Estado en REFERENCE.md:** ✅ Completo
+- **Implementación completada:** 2026-03-25
+- **Patrón:** Bridge-only (Enfoque A); `isPrime` ZFC-nativo + TFA vía `fromPeano`/`toPeano`
+- **Acciones necesarias:** Ninguna
+
 ---
 
 ## Leyenda
