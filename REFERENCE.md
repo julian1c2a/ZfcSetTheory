@@ -77,6 +77,7 @@ Este documento cumple con todos los requisitos especificados en [AIDER-AI-GUIDE.
 | `NaturalNumbersFactorial.lean` | `SetUniverse.NaturalNumbersFactorial` | `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersMul`, `PeanoNatLib.PeanoNatFactorial` | ✅ Completo |
 | `NaturalNumbersGcd.lean` | `SetUniverse.NaturalNumbersGcd` | `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersAdd`, `NaturalNumbersMul`, `NaturalNumbersSub`, `NaturalNumbersDiv`, `NaturalNumbersArith` | ✅ Completo |
 | `NaturalNumbersPrimes.lean` | `SetUniverse.NaturalNumbersPrimes` | `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersAdd`, `NaturalNumbersMul`, `NaturalNumbersSub`, `NaturalNumbersDiv`, `NaturalNumbersArith`, `NaturalNumbersGcd`, `PeanoNatLib.PeanoNatPrimes` | ✅ Completo |
+| `NaturalNumbersBinom.lean` | `SetUniverse.NaturalNumbersBinom` | `NaturalNumbers`, `Infinity`, `PeanoImport`, `NaturalNumbersAdd`, `NaturalNumbersMul`, `NaturalNumbersSub`, `NaturalNumbersFactorial`, `PeanoNatLib.PeanoNatBinom` | ✅ Completo |
 
 ## 2. Axiomas ZFC Implementados
 
@@ -3747,6 +3748,36 @@ def isPrime (p : U) : Prop :=
 
 **Dependencias**: `ω`, `divides`, `mul`
 **Computabilidad**: No computable (Prop)
+
+### 3.32 NaturalNumbersBinom.lean
+
+**Módulo**: `ZfcSetTheory.NaturalNumbersBinom`
+**Namespace**: `SetUniverse.NaturalNumbersBinom`
+**Dependencias**: `NaturalNumbersAdd`, `NaturalNumbersMul`, `NaturalNumbersSub`, `NaturalNumbersFactorial`, `PeanoNatLib.PeanoNatBinom`
+**Estrategia**: Patrón B (bridge-only) — Coeficientes binomiales levantados directamente del isomorfismo Peano.
+
+#### binomOf
+
+**Ubicación**: `NaturalNumbersBinom.lean`, §0
+**Orden**: 1ª definición pública
+
+**Enunciado Matemático**: C(n, k) en ω, levantado desde Peano vía el isomorfismo. Devuelve ∅ si n ∉ ω o k ∉ ω.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def binomOf (n k : U) : U :=
+  if hn : n ∈ (ω : U) then
+    if hk : k ∈ (ω : U) then
+      fromPeano (Peano.Binom.binom
+        (toPeano n (mem_Omega_is_Nat n hn))
+        (toPeano k (mem_Omega_is_Nat k hk)))
+    else ∅
+  else ∅
+```
+
+**Dependencias**: `fromPeano`, `toPeano`, `mem_Omega_is_Nat`, `Peano.Binom.binom`, `ω`
+**Computabilidad**: No computable
 
 ---
 
@@ -8879,6 +8910,81 @@ theorem fromPeano_le_iff (p q : Peano.ℕ₀) :
 
 ---
 
+### 4.28 NaturalNumbersBinom.lean
+
+**Módulo**: `ZfcSetTheory.NaturalNumbersBinom`
+**Namespace**: `SetUniverse.NaturalNumbersBinom`
+
+#### Sección 1: Clausura en ω
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `binomOf_in_Omega` | C(n,k) ∈ ω | `theorem binomOf_in_Omega (n k : U) (hn : n ∈ (ω : U)) (hk : k ∈ (ω : U)) : binomOf n k ∈ (ω : U)` |
+
+**Dependencias**: `Nat_in_Omega`, `fromPeano_is_nat`
+
+#### Sección 2: Teorema puente
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `fromPeano_binom` | ΠZ(C(p, q)) = binomOf(ΠZ p, ΠZ q) | `theorem fromPeano_binom (p q : Peano.ℕ₀) : (fromPeano (Peano.Binom.binom p q) : U) = binomOf (fromPeano p) (fromPeano q)` |
+
+**Patrón de demostración**: `simp only [binomOf, dif_pos ...]` + `congr 1; congr 1` + dos `toPeano_proof_irrel`/`toPeano_fromPeano` (patrón estándar Patrón B con dos argumentos, idéntico a `fromPeano_div`).
+
+**Dependencias**: `toPeano_proof_irrel`, `toPeano_fromPeano`, `Nat_in_Omega`, `fromPeano_is_nat`, `mem_Omega_is_Nat`
+
+#### Sección 3: Valores concretos
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `binomOf_zero_zero` | C(0, 0) = 1 | `theorem binomOf_zero_zero : binomOf (∅ : U) ∅ = σ (∅ : U)` |
+| `binomOf_succ_zero` | C(σ n, 0) = 1 | `theorem binomOf_succ_zero (n : U) (hn : n ∈ (ω : U)) : binomOf (σ n) ∅ = σ (∅ : U)` |
+| `binomOf_zero_succ` | C(0, σ k) = 0 | `theorem binomOf_zero_succ (k : U) (hk : k ∈ (ω : U)) : binomOf (∅ : U) (σ k) = ∅` |
+
+**Dependencias**: `zero_in_Omega`, `toPeano_proof_irrel`, `toPeano_zero`, `fromPeano_surjective`, `mem_Omega_is_Nat`, `Peano.Binom.binom_zero_zero`, `Peano.Binom.binom_succ_zero`, `Peano.Binom.binom_zero_succ`
+
+#### Sección 4: Regla de Pascal
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `binomOf_pascal` | C(σ n, σ k) = C(n, k) + C(n, σ k) | `theorem binomOf_pascal (n k : U) (hn : n ∈ (ω : U)) (hk : k ∈ (ω : U)) : binomOf (σ n) (σ k) = add (binomOf n k) (binomOf n (σ k))` |
+
+**Patrón de demostración**: `fromPeano_surjective` para obtener `p, q` Peano → `← fromPeano_binom` (×3) + `Peano.Binom.binom_pascal` + `fromPeano_add`.
+
+**Dependencias**: `fromPeano_surjective`, `fromPeano_binom`, `fromPeano_add`, `Peano.Binom.binom_pascal`
+
+#### Sección 5: Propiedades algebraicas
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `binomOf_n_zero` | C(n, 0) = 1 | `theorem binomOf_n_zero (n : U) (hn : n ∈ (ω : U)) : binomOf n ∅ = σ (∅ : U)` |
+| `binomOf_n_one` | C(n, 1) = n | `theorem binomOf_n_one (n : U) (hn : n ∈ (ω : U)) : binomOf n (σ (∅ : U)) = n` |
+| `binomOf_self` | C(n, n) = 1 | `theorem binomOf_self (n : U) (hn : n ∈ (ω : U)) : binomOf n n = σ (∅ : U)` |
+| `binomOf_succ_n_by_n` | C(σ n, n) = σ n | `theorem binomOf_succ_n_by_n (n : U) (hn : n ∈ (ω : U)) : binomOf (σ n) n = σ n` |
+
+**Dependencias**: `fromPeano_surjective`, `fromPeano_binom`, `Peano.Binom.binom_n_zero`, `Peano.Binom.binom_n_one`, `Peano.Binom.binom_self`, `Peano.Binom.binom_succ_n_by_n`
+
+#### Sección 6: Anulación y positividad
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `binomOf_eq_zero_of_gt` | n < k → C(n, k) = 0 | `theorem binomOf_eq_zero_of_gt {n k : U} (hn : n ∈ (ω : U)) (hk : k ∈ (ω : U)) (h : n ∈ k) : binomOf n k = ∅` |
+| `binomOf_pos` | k ≤ n → 0 < C(n, k) | `theorem binomOf_pos {n k : U} (hn : n ∈ (ω : U)) (hk : k ∈ (ω : U)) (h : k ∈ n ∨ k = n) : (∅ : U) ∈ binomOf n k` |
+
+**Dependencias**: `fromPeano_surjective`, `fromPeano_binom`, `fromPeano_lt_iff`, `fromPeano_le_iff`, `Peano.Binom.binom_eq_zero_of_gt`, `Peano.Binom.binom_pos`
+
+#### Sección 7: Conexión con factorial
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `binomOf_mul_factorials` | C(n,k) · k! · (n−k)! = n! | `theorem binomOf_mul_factorials {n k : U} (hn : n ∈ (ω : U)) (hk : k ∈ (ω : U)) (h_le : k ∈ n ∨ k = n) : mul (mul (binomOf n k) (factorialOf k)) (factorialOf (sub n k)) = factorialOf n` |
+
+**Patrón de demostración**: `fromPeano_surjective` → cadena completa de `← fromPeano_binom`, `← fromPeano_factorial`, `← fromPeano_sub`, `← fromPeano_mul` (×2), `← fromPeano_factorial` → `congrArg fromPeano (Peano.Binom.binom_mul_factorials ...)`.
+
+**Dependencias**: `fromPeano_surjective`, `fromPeano_binom`, `fromPeano_factorial`, `fromPeano_sub`, `fromPeano_mul`, `fromPeano_le_iff`, `Peano.Binom.binom_mul_factorials`
+
+---
+
 ## 5. Notación y Sintaxis
 
 ### 5.1 Operadores Básicos
@@ -9928,6 +10034,39 @@ export NaturalNumbersPrimes (
 )
 ```
 
+### 6.29 NaturalNumbersBinom.lean
+
+**Namespace**: `SetUniverse.NaturalNumbersBinom` (exportado a `SetUniverse`)
+**Última modificación**: 2026-03-25
+**Dependencias**: `NaturalNumbersAdd`, `NaturalNumbersMul`, `NaturalNumbersSub`, `NaturalNumbersFactorial`, `PeanoNatLib.PeanoNatBinom`
+
+```lean
+export NaturalNumbersBinom (
+  -- §0: definition
+  binomOf
+  -- §1: closure
+  binomOf_in_Omega
+  -- §2: bridge
+  fromPeano_binom
+  -- §3: concrete values
+  binomOf_zero_zero
+  binomOf_succ_zero
+  binomOf_zero_succ
+  -- §4: Pascal's rule
+  binomOf_pascal
+  -- §5: algebraic properties
+  binomOf_n_zero
+  binomOf_n_one
+  binomOf_self
+  binomOf_succ_n_by_n
+  -- §6: vanishing and positivity
+  binomOf_eq_zero_of_gt
+  binomOf_pos
+  -- §7: factorial connection
+  binomOf_mul_factorials
+)
+```
+
 ## 7. Estado de Proyección por Módulo
 
 ### 7.1 Leyenda de Estados
@@ -9972,6 +10111,7 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `NaturalNumbersFactorial.lean` - Factorial en ω: Patrón B (bridge-only) vía isomorfismo, 1 definición (`factorialOf`), teorema puente `fromPeano_factorial`, valores concretos (0!, 1!, 2!), ecuación de recursión, positividad y monotonía
 - `NaturalNumbersGcd.lean` - GCD y LCM en ω: GCD ZFC-nativo vía algoritmo euclídeo con RecursiveFn sobre ω ×ₛ ω, 2 definiciones (`gcd`, `lcm`), teoremas puente `gcd_eq_gcdOf`/`lcm_eq_lcmOf`, ecuaciones del algoritmo (caso base + paso), 4 propiedades de divisibilidad del GCD, 3 propiedades del LCM, 17 exports
 - `NaturalNumbersPrimes.lean` - Primalidad y TFA en ω: definición ZFC-nativa `isPrime`, teorema puente `fromPeano_prime` (Peano.Arith.Prime ↔ isPrime), propiedades básicas (∈ω, ≠∅, ≠σ∅, ≥2, divisores), existencia de divisor primo, TFA Existencia y Unicidad (Enfoque A: DList ℕ₀ en lado Peano), 11 exports
+- `NaturalNumbersBinom.lean` - Coeficientes binomiales en ω: Patrón B (bridge-only) vía isomorfismo Peano, 1 definición (`binomOf`), teorema puente `fromPeano_binom`, valores concretos (C(0,0), C(σn,0), C(0,σk)), regla de Pascal, propiedades algebraicas (C(n,0)=1, C(n,1)=n, C(n,n)=1, C(σn,n)=σn), anulación/positividad, conexión con factorial (C(n,k)·k!·(n-k)!=n!), 15 exports
 
 ### 7.3 Archivos Parcialmente Proyectados
 
@@ -9996,6 +10136,8 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 ---
 
 *Última actualización: 2026-03-24 — Proyección completa de NaturalNumbersGcd.lean (§3.30, §4.26, §6.27: 2 def + 13 teoremas + 17 exports, GCD ZFC-nativo vía algoritmo euclídeo + LCM vía bridge). Tabla §1.1 actualizada. Estado: ✅ 100% completo, 0 sorry.*
+
+*Última actualización: 2026-03-25 — Proyección completa de NaturalNumbersBinom.lean (§3.32, §4.28, §6.29: 1 def + 13 teoremas + 15 exports, Patrón B bridge-only, coeficientes binomiales vía isomorfismo Peano). Tabla §1.1 y §7.2 actualizadas. Estado: ✅ 100% completo, 0 sorry.*
 
 *Última actualización: 2026-03-25 — Proyección completa de NaturalNumbersPrimes.lean (§3.31, §4.27, §6.28: 1 def + 9 teoremas + 11 exports, primalidad ZFC-nativa + TFA Enfoque A). Tabla §1.1 y §7.2 actualizadas. Estado: ✅ 100% completo, 0 sorry.*
 

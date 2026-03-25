@@ -1,99 +1,20 @@
 # Next Steps — ZfcSetTheory Project
 
-**Last updated**: 2026-03-24
+**Last updated**: 2026-03-25
 
 This document outlines actionable next steps for the project, organized by priority and dependency.
 
 ---
 
-## 1. Fundamental Theorem of Arithmetic (TFA) — High Priority
+## 1. ~~Fundamental Theorem of Arithmetic (TFA)~~ — ✅ COMPLETE
 
-### 1.1 Status
-
-The TFA is **fully proved** in `peanolib` (`PeanoNatLib/PeanoNatPrimes.lean`):
-
-- §1–§2: `Prime`, `Irreducible`, equivalence `prime_iff_irreducible`
-- §3: Coprimality, Gauss's lemma (`coprime_dvd_of_dvd_mul`)
-- §4: `PrimeList`, `product_list` for `DList ℕ₀`
-- §5: `exists_prime_divisor` — every n ≥ 2 has a prime divisor
-- §6: `exists_prime_factorization` — TFA existence
-- §7: `unique_prime_factorization` — TFA uniqueness (same multiplicity for each prime)
-- §8: `ℙ` — the set of primes as a subtype
-
-**No bridge lemmas exist yet** between the Peano primes and ZFC.
-
-### 1.2 Proposed Plan: `NaturalNumbersPrimes.lean`
-
-Create a new module that:
-
-1. **Defines ZFC-native `isPrime`** (or `zfcPrime`):
-
-   ```
-   isPrime(p) ⟺ p ∈ ω ∧ p ≠ ∅ ∧ p ≠ σ ∅ ∧ ∀ a b ∈ ω, divides p (mul a b) → divides p a ∨ divides p b
-   ```
-
-2. **Creates bridge lemma `fromPeano_prime`**:
-
-   ```
-   Prime p ↔ isPrime (fromPeano p)
-   ```
-
-   This should follow directly from `fromPeano_divides`, `fromPeano_mul`, `fromPeano_injective` (for ≠ ∅, ≠ σ ∅).
-
-3. **Lifts the TFA** via the isomorphism:
-   - The main obstacle is representing `DList ℕ₀` (Peano lists) in ZFC. Two possible approaches:
-     - **(A) Direct bridge**: State the theorem using `DList ℕ₀` on the Peano side and transport to ZFC only the conclusion (existence of factors, uniqueness of multiplicity).
-     - **(B) ZFC-native lists**: Define finite sequences in ZFC as functions `f : n → ω` (where n ∈ ω), then bridge to `DList`.
-
-   **Recommendation**: Start with **(A)** — it's simpler and still gives a complete ZFC proof of TFA. Approach (B) can come later for a fully self-contained ZFC formulation.
-
-4. **Key theorems to export**:
-   - `isPrime_ne_zero`, `isPrime_ne_one`, `isPrime_ge_two`
-   - `isPrime_iff_irreducible` (ZFC version)
-   - `exists_prime_divisor_ZFC`: ∀ n ∈ ω, σ(σ ∅) ∈ n ∨ n = σ(σ ∅) → ∃ p ∈ ω, isPrime p ∧ divides p n
-   - `exists_prime_factorization_ZFC` (TFA existence)
-   - `unique_prime_factorization_ZFC` (TFA uniqueness)
-
-### 1.3 Dependencies
-
-- `NaturalNumbersGcd.lean` (already complete — provides `gcd`, `divides`)
-- `NaturalNumbersArith.lean` (provides `divides`, `gcdOf`, `divOf`, etc.)
-- `PeanoImport.lean` (provides `fromPeano`/`toPeano`, order bridges)
-- `PeanoNatLib.PeanoNatPrimes` (provides the Peano-side proofs)
-
-### 1.4 Estimated Difficulty
-
-**Medium**. The pattern is well-established by `NaturalNumbersGcd.lean` and `NaturalNumbersArith.lean`. The main new challenge is handling `DList ℕ₀` across the bridge, but approach (A) sidesteps this.
+Completed 2026-03-25 in `NaturalNumbersPrimes.lean`: `isPrime` ZFC-nativo, `fromPeano_prime` bridge, TFA Existencia + Unicidad (Enfoque A), 11 exports.
 
 ---
 
-## 2. Binomial Coefficients — Medium Priority
+## 2. ~~Binomial Coefficients~~ — ✅ COMPLETE
 
-### 2.1 Status
-
-`peanolib` has `PeanoNatBinom.lean` with:
-
-- `binom n k` (binomial coefficient)
-- Pascal's rule: `binom (σ n) (σ k) = add (binom n k) (binom n (σ k))`
-- `binom_mul_factorials`: n! = C(n,k) · k! · (n−k)!
-- Standard identities: C(n,0) = 1, C(n,n) = 1, C(n,1) = n, etc.
-
-And `PeanoNatNewtonBinom.lean` likely contains Newton's binomial theorem.
-
-**No bridge exists yet.**
-
-### 2.2 Proposed Plan: `NaturalNumbersBinom.lean`
-
-Follow Pattern B (bridge-only):
-
-1. Define `binomOf n k` via `fromPeano (binom (toPeano n _) (toPeano k _))`
-2. Bridge lemma `fromPeano_binom`
-3. Lift Pascal's rule and key identities
-
-### 2.3 Dependencies
-
-- `NaturalNumbersFactorial.lean` (for the factorial connection)
-- `NaturalNumbersMul.lean`, `NaturalNumbersAdd.lean`
+Completed 2026-03-25 in `NaturalNumbersBinom.lean`: `binomOf` Patrón B, `fromPeano_binom` bridge, regla de Pascal, propiedades algebraicas, conexión factorial, 15 exports.
 
 ---
 

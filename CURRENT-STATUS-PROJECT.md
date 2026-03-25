@@ -1,24 +1,46 @@
 # Current Status - ZfcSetTheory Project
 
-**Date**: 2026-03-24 10:00
+**Date**: 2026-03-25 15:00
 **Lean Version**: 4.23.0-rc2
 **Author**: Julián Calderón Almendros
 
 ## Executive Summary
 
-This project implements ZFC set theory in Lean 4, focusing on fundamental axioms, relations, functions, cardinality, and full arithmetic of the Von Neumann naturals. All proofs are complete with no `sorry` statements remaining. The `PeanoImport.lean` module establishes the formal isomorphism between Von Neumann and Peano natural numbers via the external `peanolib` library. Arithmetic modules (Add, Mul, Sub, Div, Pow, Arith, Factorial) provide full arithmetic in ω via RecursiveFn and Pattern B bridge.
+This project implements ZFC set theory in Lean 4, focusing on fundamental axioms, relations, functions, cardinality, and full arithmetic of the Von Neumann naturals. All proofs are complete with no `sorry` statements remaining. The `PeanoImport.lean` module establishes the formal isomorphism between Von Neumann and Peano natural numbers via the external `peanolib` library. Arithmetic modules (Add, Mul, Sub, Div, Pow, Arith, Factorial, Gcd, Primes, Binom) provide full arithmetic in ω via RecursiveFn and Pattern B bridge.
 
 ### Statistics
 
-- **Total modules**: 31 (+ 1 external: peanolib)
-- **Compilation**: ✅ Successful (32/32 jobs)
+- **Total modules**: 34 (+ 1 external: peanolib)
+- **Compilation**: ✅ Successful (52/52 jobs)
 - **Complete proofs**: 100%
 - **Remaining `sorry`**: 0
-- **Documentation**: REFERENCE.md fully updated (all 31 modules projected)
+- **Documentation**: REFERENCE.md fully updated (all 34 modules projected)
 
 ## Recent Achievements
 
-### Latest Updates (March 24, 2026)
+### Latest Updates (March 25, 2026)
+
+#### 1. NaturalNumbersBinom.lean — Coeficientes binomiales en ω (✅ Complete)
+
+- `binomOf (n k : U) : U` — coeficiente binomial C(n,k) via Patrón B: `fromPeano (Peano.Binom.binom (toPeano n _) (toPeano k _))`
+- `fromPeano_binom` — teorema puente con `Peano.Binom.binom`
+- 13 teoremas: `binomOf_n_zero`, `binomOf_n_n`, `binomOf_n_one`, `binomOf_one_succ`, `binomOf_pascal`, `binomOf_succ_n_by_n`, `binomOf_comm`, `binomOf_zero_pos`, `binomOf_le_vanish`, `binomOf_mul_factorials`, `binomOf_add_n_zero`, `binomOf_add_zero_n`, `binomOf_in_Omega`
+- 15 exports totales; build limpio: 52/52 jobs, 0 errors
+
+#### 2. NaturalNumbersPrimes.lean — Primalidad y TFA en ω (✅ Complete)
+
+- `isPrime (p : U) : Prop` — primalidad ZFC-nativa
+- `fromPeano_prime` — puente con `Peano.Primes.Prime`
+- TFA: `exists_prime_factorization_Omega` (existencia) + `unique_prime_factorization_Omega` (unicidad)
+- 11 exports totales
+
+#### 3. NaturalNumbersGcd.lean — GCD/LCM nativos ZFC en ω (✅ Complete)
+
+- `gcdNat`/`lcmNat` — GCD y LCM vía RecursiveFn con recursión bien fundada
+- `fromPeano_gcd`/`fromPeano_lcm` — puentes Peano
+- Propiedades: conmutatividad, asociatividad, Bézout, absorción, etc.
+
+### Previous Updates (March 24, 2026)
 
 #### 1. NaturalNumbersFactorial.lean — Factorial en ω (✅ Complete)
 
@@ -136,6 +158,9 @@ This project implements ZFC set theory in Lean 4, focusing on fundamental axioms
 29. **NaturalNumbersPow.lean** — Exponentiation in ω (RecursiveFn + mulFn, 13 theorems)
 30. **NaturalNumbersArith.lean** — Divisibility, GCD, LCM, Bézout (43 theorems)
 31. **NaturalNumbersFactorial.lean** — Factorial in ω (Pattern B, 10 theorems)
+32. **NaturalNumbersGcd.lean** — GCD/LCM in ω (RecursiveFn + Pattern B, multiple theorems)
+33. **NaturalNumbersPrimes.lean** — Primality and TFA in ω (ZFC-native isPrime, 11 exports)
+34. **NaturalNumbersBinom.lean** — Binomial coefficients in ω (Pattern B, 13 theorems, 15 exports)
 
 ## Project Architecture
 
@@ -166,7 +191,9 @@ NaturalNumbersAdd.lean → NaturalNumbersMul.lean → NaturalNumbersSub.lean
    ↓
 NaturalNumbersDiv.lean → NaturalNumbersPow.lean → NaturalNumbersArith.lean
    ↓
-NaturalNumbersFactorial.lean
+NaturalNumbersFactorial.lean → NaturalNumbersGcd.lean → NaturalNumbersPrimes.lean
+   ↓
+NaturalNumbersBinom.lean
 ```
 
 ### Boolean Algebra Branch (Parallel)
@@ -254,12 +281,12 @@ ZFC naturals use saturated subtraction: `m - n = 0` when `m ≤ n`. This matches
 - **Cardinality**: 100% proven (Cantor + CSB)
 - **Recursion (3 variants)**: 100% proven
 - **Peano isomorphism**: 100% proven
-- **Arithmetic (Add, Mul, Sub, Div, Pow, Arith, Factorial)**: 100% proven
+- **Arithmetic (Add, Mul, Sub, Div, Pow, Arith, Factorial, Gcd, Primes, Binom)**: 100% proven
 - **Boolean algebra (all modules)**: 100% proven
 
 ### Documentation
 
-- ✅ REFERENCE.md: 31 modules fully projected (mathematical descriptions + Lean 4 signatures)
+- ✅ REFERENCE.md: 34 modules fully projected (mathematical descriptions + Lean 4 signatures)
 - ✅ All exports documented with section references
 - ✅ AIDER-AI-GUIDE.md: complete development guide (14 requirements)
 - ✅ CHANGELOG.md, README.md, CURRENT-STATUS-PROJECT.md: up to date
@@ -283,9 +310,9 @@ At most ONE `.lean` file unlocked at a time. Pre-commit hook blocks commits touc
 
 ---
 
-**Last updated**: 2026-03-24 10:00
+**Last updated**: 2026-03-25 15:00
 **Author**: Julián Calderón Almendros
 **GitHub**: [@julian1c2a](https://github.com/julian1c2a)
 **License**: MIT License
 
-**Status**: ✅ **100% COMPLETE** — 31/31 modules, 0 sorry, full arithmetic in ω
+**Status**: ✅ **100% COMPLETE** — 34/34 modules, 0 sorry, full arithmetic in ω
