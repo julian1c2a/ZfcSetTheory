@@ -1,6 +1,6 @@
 # Estado de Compilación del Proyecto ZfcSetTheory
 
-**Fecha**: 2026-03-22 12:00
+**Fecha**: 2026-03-25 10:00
 **Autor**: Julián Calderón Almendros
 
 ## ✅ Compilación Exitosa
@@ -13,57 +13,71 @@
 
 | Archivo | Estado |
 | --- | --- |
-| Todos los módulos | ✅ 0 sorry |
+| Todos los módulos (33) | ✅ 0 sorry |
 
 ### 🎉 Mejoras Recientes
 
-**✅ Nuevo módulo y correcciones - 2026-03-04 12:00**
+#### ✅ NaturalNumbersPrimes.lean completado - 2026-03-25
 
-- ✅ PeanoImport.lean: isomorfismo Von Neumann ↔ Peano (0 sorry, 28/28 build)
-- ✅ Infinity.lean: nat_mem_wf completamente probado (sin sorry), exportado
-- ✅ NaturalNumbers.lean: predecessor y teoremas relacionados exportados
-- ✅ Todos los archivos markdown del proyecto actualizados con timestamps ISO 8601
+- ✅ Definición ZFC-nativa `isPrime` (p ∈ ω ∧ p ≠ ∅ ∧ p ≠ σ∅ ∧ propiedad de Euclides)
+- ✅ Teorema puente `fromPeano_prime`: Peano.Arith.Prime p ↔ isPrime (fromPeano p)
+- ✅ Propiedades básicas: `isPrime_in_Omega`, `isPrime_ne_zero`, `isPrime_ne_one`, `isPrime_ge_two`, `isPrime_prime_divisors`
+- ✅ `exists_prime_divisor_ZFC`: todo n ≥ 2 en ω tiene un divisor primo ZFC
+- ✅ TFA Existencia (Enfoque A): `exists_prime_factorization_ZFC`
+- ✅ TFA Unicidad (Enfoque A): `unique_prime_factorization_ZFC`
+- ✅ 11 exports al namespace `SetUniverse`
+- ✅ Proyectado completamente en REFERENCE.md (§3.31, §4.27, §6.28)
 
-**✅ Documentación Completa - Actualización Integral 2026-02-12 18:45**
+#### ✅ NaturalNumbersGcd.lean completado - 2026-03-24
 
-- ✅ NaturalNumbers.lean completamente proyectado en REFERENCE.md (2073 líneas documentadas)
-- ✅ Todos los archivos markdown del proyecto actualizados con timestamps ISO 8601
-- ✅ Información de autoría (Julián Calderón Almendros) agregada a todos los documentos
-- ✅ Cumplimiento total con AIDER-AI-GUIDE.md (requisitos 10-11 implementados)
-- ✅ REFERENCE.md: 5485 líneas de documentación técnica
-- **Archivos actualizados**: README.md, CURRENT-STATUS-PROJECT.md, DEPENDENCIES.md, CHANGELOG.md, TEMPORAL.md, VALIDATION-AIDER-AI-GUIDE.md, AIDER-AI-GUIDE.md
+- ✅ `gcd` ZFC-nativo vía algoritmo euclídeo con `RecursiveFn` sobre ω ×ₛ ω
+- ✅ `lcm` vía `divOf (mul a b) (gcd a b)`
+- ✅ Teoremas puente: `gcd_eq_gcdOf`, `lcm_eq_lcmOf`
+- ✅ Propiedades: divisibilidad del GCD, conmutatividad, GCD más grande, LCM
+- ✅ 17 exports al namespace `SetUniverse`
 
-**¡Functions.lean ahora está 100% completo!** (2026-02-12 14:52)
+#### ✅ NaturalNumbersFactorial.lean completado - 2026-03-22
 
-- ✅ Agregada definición faltante de `isSingleValued`
-- ✅ Corregida prueba de `injective_inverse_single_valued`
-- ✅ `InverseRel` mejorado en Relations.lean (ahora usa `range R ×ₛ domain R`)
-- ✅ Todos los errores de compilación resueltos
+- ✅ `factorialOf` via Patrón B (bridge-only) vía isomorfismo
+- ✅ Teorema puente `fromPeano_factorial`
+- ✅ Ecuación de recursión, valores concretos (0!, 1!, 2!), positividad, monotonía
+- ✅ 11 exports al namespace `SetUniverse`
 
-**Relations.lean está 100% completo** (2026-02-12 14:40) - mejora lograda en sesión anterior
+#### ✅ NaturalNumbersArith.lean completado - 2026-03-21
 
-- ✅ Los 2 `sorry` legacy (`domain_legacy_mem` y `range_legacy_mem`) han sido **eliminados**
-- ✅ El renombrado `domain_rel` → `domain`, `range_rel` → `range` consolidó las definiciones
-- ✅ Todas las funciones de dominio y rango ahora están completamente probadas
+- ✅ `divides` ZFC-nativo: `∃ k ∈ ω, mul m k = n`
+- ✅ `div`/`mod` nativos vía RecursiveFn (verificados iguales a `divOf`/`modOf`)
+- ✅ `gcdOf`/`lcmOf` Patrón B
+- ✅ Identidad de Bézout (forma substractiva)
+- ✅ 13 propiedades de divisibilidad
+
+#### ✅ PeanoImport.lean completo - 2026-03-08
+
+- ✅ Isomorfismo Von Neumann ↔ Peano completo (sin sorry)
+- ✅ Bridges de orden: `fromPeano_lt_iff`, `fromPeano_le_iff`
+- ✅ `toPeano_proof_irrel` demostrado
+
+#### ✅ Recursion.lean completado - 2026-03-05
+
+- ✅ Teorema de recursión sobre ℕ (0 sorry, 0 errores de tipo)
+- ✅ `RecursiveFn_zero`, `RecursiveFn_succ`, `RecursiveFn_unique`
 
 ### 📈 Métricas del Proyecto
 
-- **Módulos totales**: 24
+- **Módulos totales**: 33
 - **Compilación**: ✅ Exitosa (0 errores, 0 sorry)
-- **Pruebas completas**: 100% (mejorado desde 99%)
-- **Líneas de código Lean**: ~3,000+
-- **Líneas de documentación**: 6,500+ (7 archivos .md + REFERENCE.md 5485 líneas)
+- **Pruebas completas**: 100%
+- **Líneas de código Lean**: ~4,500+
+- **Líneas de documentación**: 10,000+ (REFERENCE.md ~10,000 líneas)
 
 ### 📝 Archivos de Documentación
 
-| Archivo | Líneas | Requisitos AIDER-AI-GUIDE |
-|---------|--------|---------------------------|
-| AIDER-AI-GUIDE.md | 116 | ✅ 13 requisitos definidos |
-| REFERENCE.md | 5,600+ | ✅ Todos cumplidos |
-| README.md | 204 | ✅ Actualizado |
-| CURRENT-STATUS-PROJECT.md | 450+ | ✅ Actualizado |
-| DEPENDENCIES.md | 730+ | ✅ 25 módulos |
-| CHANGELOG.md | 300+ | ✅ Timestamps completos |
+| Archivo | Estado |
+| --- | --- |
+| REFERENCE.md | ✅ ~10,000 lineas — 33 modulos proyectados |
+| NEXT-STEPS.md | ✅ Actualizado 2026-03-25 |
+| TODO.md | ✅ Actualizado 2026-03-25 |
+| README.md | ✅ Actualizado 2026-03-25 |
 
 ### 🎯 Estado por Categoría
 
@@ -74,27 +88,46 @@
 
 **Estructuras Algebraicas**:
 
-- ✅ Boolean Algebra completa
-- ✅ Boolean Ring completo
+- ✅ BooleanAlgebra completa
+- ✅ BooleanRing completo
 - ✅ PowerSetAlgebra completo
+- ✅ AtomicBooleanAlgebra completo (átomos, atomicidad de 𝒫(A))
 
 **Relaciones y Funciones**:
 
 - ✅ Producto Cartesiano completo
-- ✅ Relations.lean 100% completo (0 `sorry`)
-- ✅ Functions.lean 100% completo (0 `sorry`)
+- ✅ Relations.lean 100% completo (0 sorry)
+- ✅ Functions.lean 100% completo (0 sorry)
 - ✅ `domain`/`range`/`imag` completamente probados
-
-**Teoría de Números**:
-
-- ✅ NaturalNumbers.lean completo (predecessor exportado)
-- ✅ Infinity.lean completo (nat_mem_wf probado, exportado)
-- ✅ PeanoImport.lean completo (isomorfismo Von Neumann ↔ Peano)
-- ⚠️ Recursion.lean (12 `sorry` activos — teorema de recursión pendiente)
 
 **Cardinalidad**:
 
 - ✅ Cardinality.lean 100% completo (Cantor + CSB demostrados, 0 sorry)
+
+**Teoría de Números (ω)**:
+
+- ✅ NaturalNumbers.lean completo (predecessor exportado)
+- ✅ Infinity.lean completo (nat_mem_wf probado, exportado)
+- ✅ Recursion.lean completo (teorema de recursión, 0 sorry)
+- ✅ PeanoImport.lean completo (isomorfismo Von Neumann ↔ Peano, bridges de orden)
+- ✅ NaturalNumbersAdd.lean completo (suma ZFC, puente fromPeano_add)
+- ✅ NaturalNumbersMul.lean completo (multiplicación ZFC, puente fromPeano_mul)
+- ✅ NaturalNumbersSub.lean completo (monus ZFC, puente fromPeano_sub)
+- ✅ NaturalNumbersDiv.lean completo (divOf/modOf Patrón B, puente fromPeano_div/mod)
+- ✅ NaturalNumbersPow.lean completo (potenciación ZFC, puente fromPeano_pow)
+- ✅ NaturalNumbersArith.lean completo (divides nativo, gcdOf/lcmOf Patrón B, Bézout)
+- ✅ NaturalNumbersFactorial.lean completo (factorial Patrón B, 10 propiedades)
+- ✅ NaturalNumbersGcd.lean completo (gcd ZFC-nativo euclídeo, lcm, 17 exports)
+- ✅ NaturalNumbersPrimes.lean completo (isPrime ZFC-nativo, TFA Enfoque A, 11 exports)
+
+---
+
+## 🎯 Próximos Pasos
+
+1. **Coeficientes Binomiales** (`NaturalNumbersBinom.lean`) — Patrón B via `PeanoNatBinom`
+2. **Álgebra de Boole Completa** — completar teoremas de representación en `AtomicBooleanAlgebra`
+3. **Secuencias Finitas en ZFC** (`FiniteSequences.lean`) — funciones `f : n → ω`
+4. **Enteros ℤ en ZFC** — clases de equivalencia de pares (a, b) ∈ ω × ω
 
 ---
 
@@ -102,16 +135,12 @@
 
 El proyecto está en **excelente estado**:
 
-- ✅ Compilación exitosa sin errores (28/28 jobs)
-- ✅ 24/25 módulos 100% completos (0 sorry)
-- ✅ Documentación completa y actualizada según AIDER-AI-GUIDE.md
-- ⚠️ Solo Recursion.lean pendiente (12 sorry en el teorema principal)
-
-**Próximo paso principal**:
-
-1. Completar `Recursion.lean` — resolver los 12 `sorry` en el teorema de recursión sobre ℕ
+- ✅ Compilación exitosa sin errores (33 módulos, 0 sorry)
+- ✅ 33/33 módulos 100% completos
+- ✅ Teorema Fundamental de la Aritmética (TFA) completamente demostrado en ZFC
+- ✅ Documentación completa en REFERENCE.md (~10,000 líneas)
 
 ---
 
-**Autor**: Julián Calderón Almendros  
+**Autor**: Julián Calderón Almendros
 **License**: MIT License
