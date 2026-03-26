@@ -29,3 +29,9 @@ ZfcSetTheory/NaturalNumbersDiv.lean
 ZfcSetTheory/NaturalNumbersPow.lean
 ZfcSetTheory/NaturalNumbersArith.lean
 ZfcSetTheory/NaturalNumbersFactorial.lean
+ZfcSetTheory/NaturalNumbersGcd.lean
+ZfcSetTheory/NaturalNumbersPrimes.lean
+ZfcSetTheory/NaturalNumbersBinom.lean
+ZfcSetTheory/NaturalNumbersMaxMin.lean
+ZfcSetTheory/NaturalNumbersNewtonBinom.lean
+ZfcSetTheory/NaturalNumbersWellFounded.lean
