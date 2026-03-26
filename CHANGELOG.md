@@ -1,6 +1,6 @@
 # Changelog
 
-**Última actualización:** 2026-03-24 10:00
+**Última actualización:** 2026-03-26 14:00
 **Autor**: Julián Calderón Almendros
 
 Todos los cambios notables de este proyecto serán documentados en este archivo.
@@ -9,6 +9,36 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Añadido (2026-03-26 14:00)
+
+- **Nuevo módulo NaturalNumbersMaxMin.lean — Máximo y mínimo en ω** (Patrón B, bridge-only):
+  - ✅ `maxOf (n m : U) : U` — máximo vía `fromPeano (Peano.MaxMin.max (toPeano n _) (toPeano m _))`
+  - ✅ `minOf (n m : U) : U` — mínimo vía `fromPeano (Peano.MaxMin.min (toPeano n _) (toPeano m _))`
+  - ✅ `fromPeano_max`, `fromPeano_min` — teoremas puente
+  - ✅ 27 teoremas: idempotencia, conmutatividad, asociatividad, identidad/aniquilador con ∅, cotas sup/inf, caracterización vía ≤, max/min es uno de los argumentos, max=min⇔iguales
+  - ✅ 31 exports al namespace `SetUniverse`
+  - ✅ Build limpio; 37/37 módulos compilados correctamente
+
+- **Nuevo módulo NaturalNumbersNewtonBinom.lean — Teorema binomial de Newton en ω** (Patrón B, bridge-only, 4 argumentos):
+  - ✅ `binomTermOf (a b n k : U) : U` — C(n,k)·a^k·b^(n−k) vía `fromPeano (Peano.NewtonBinom.binomTerm ...)`
+  - ✅ `fromPeano_binomTerm` — teorema puente con 4 argumentos (`congr 1` ×4)
+  - ✅ 9 teoremas: valores concretos (k=0, k=n), expansión, separación de potencias n^(m+k)=n^m·n^k, Newton's binomial theorem (Peano→ZFC), Σ C(n,k)=2^n (Peano→ZFC), comparación de crecimiento existencial
+  - ✅ **Decisión de diseño**: `finSum` (función de orden superior) no se transporta a ZFC; `newton_binom_peano` y `sum_binom_eq_pow_two_peano` usan tipos Peano con resultado aplicado vía `fromPeano`
+  - ✅ 12 exports al namespace `SetUniverse`
+
+- **Nuevo módulo NaturalNumbersWellFounded.lean — Buen fundamento y buena ordenación en ω** (Patrón B, bridge-only):
+  - ✅ `acc_lt_Omega (n : U)` — accesibilidad bajo ∈ restringido a ω, delegando a `nat_mem_wf.apply n`
+  - ✅ `well_ordering_Omega (P : U → Prop)` — principio de buena ordenación con unicidad: todo subconjunto no vacío de ω tiene un mínimo único, transportado desde `Peano.WellFounded.well_ordering_principle`
+  - ✅ `well_ordering_Omega_exists` — forma simplificada sin unicidad
+  - ✅ 3 exports al namespace `SetUniverse`
+
+- **REFERENCE.md — Proyección completa de 3 módulos**:
+  - ✅ §1.1: 3 filas añadidas (MaxMin, NewtonBinom, WellFounded)
+  - ✅ §3.33 (MaxMin: 2 def), §3.34 (NewtonBinom: 1 def), §3.35 (WellFounded: 0 def)
+  - ✅ §4.29 (MaxMin: 29 teoremas en 10 secciones), §4.30 (NewtonBinom: 10 teoremas en 8 secciones), §4.31 (WellFounded: 3 teoremas en 2 secciones)
+  - ✅ §6.30 (31 exports), §6.31 (12 exports), §6.32 (3 exports)
+  - ✅ §7.2: 3 entradas añadidas a archivos completos
 
 ### Añadido (2026-03-24 10:00)
 

@@ -1,6 +1,6 @@
 # Next Steps — ZfcSetTheory Project
 
-**Last updated**: 2026-03-25
+**Last updated**: 2026-03-26
 
 This document outlines actionable next steps for the project, organized by priority and dependency.
 
@@ -18,7 +18,19 @@ Completed 2026-03-25 in `NaturalNumbersBinom.lean`: `binomOf` Patrón B, `fromPe
 
 ---
 
-## 3. Atomic Boolean Algebra Completion — Medium Priority
+## 3. ~~Maximum/Minimum, Newton Binomial, Well-Foundedness~~ — ✅ COMPLETE
+
+Completed 2026-03-26:
+
+- `NaturalNumbersMaxMin.lean`: `maxOf`, `minOf` (Patrón B), 29 teoremas (idempotencia, conmutatividad, asociatividad, identidad, cotas, caracterización), 31 exports.
+- `NaturalNumbersNewtonBinom.lean`: `binomTermOf` (Patrón B 4-arg), Newton's binomial theorem, Σ C(n,k)=2^n, separación de potencias, comparación de crecimiento, 12 exports.
+- `NaturalNumbersWellFounded.lean`: `acc_lt_Omega`, `well_ordering_Omega` (con unicidad), `well_ordering_Omega_exists`, 3 exports.
+
+**All peanolib bridge modules are now complete.** No remaining unbridged Peano modules.
+
+---
+
+## 4. Atomic Boolean Algebra Completion — Medium Priority
 
 ### 3.1 Status (per ReflexionesParaLaIA.md [6]–[11])
 
@@ -42,7 +54,7 @@ Create a unified module (or small family of modules) for items 1–6. This requi
 
 ---
 
-## 4. Finite Sequences in ZFC — Lower Priority (enabler for full ZFC-TFA)
+## 5. Finite Sequences in ZFC — Lower Priority (enabler for full ZFC-TFA)
 
 ### 4.1 Motivation
 
@@ -57,19 +69,19 @@ For a truly ZFC-native statement of TFA (approach B in §1), we need finite sequ
 
 ---
 
-## 5. Integers (ℤ) in ZFC — Future
+## 6. Integers (ℤ) in ZFC — Future
 
 Per ReflexionesParaLaIA.md [15]. Define ℤ as equivalence classes of pairs (a, b) ∈ ω × ω under (a, b) ~ (c, d) ⟺ a + d = b + c. All arithmetic operations, ring structure.
 
 ---
 
-## 6. Gödel's Incompleteness Theorems — Future
+## 7. Gödel's Incompleteness Theorems — Future
 
 Per ReflexionesParaLaIA.md [5], [12]. Rosser's strengthened form. Requires encoding of syntax, Gödel numbering, representability of recursive functions in ZFC.
 
 ---
 
-## 7. Project Reorganization — Future
+## 8. Project Reorganization — Future
 
 Per ReflexionesParaLaIA.md [14]. Restructure into clear module hierarchies:
 
@@ -85,11 +97,12 @@ Per ReflexionesParaLaIA.md [14]. Restructure into clear module hierarchies:
 
 | Priority | Task | New File | Key Dependency |
 |----------|------|----------|----------------|
-| **1** | TFA via Peano bridge (primes + factorization) | `NaturalNumbersPrimes.lean` | `NaturalNumbersGcd`, `PeanoNatPrimes` |
-| **2** | Binomial coefficients bridge | `NaturalNumbersBinom.lean` | `NaturalNumbersFactorial`, `PeanoNatBinom` |
-| **3** | Complete atomic Boolean algebra + representation | Extension of `AtomicBooleanAlgebra.lean` or new module | `AtomicBooleanAlgebra`, `Cardinality` |
-| **4** | Finite sequences in ZFC | `FiniteSequences.lean` | `Functions`, `NaturalNumbers` |
+| ~~**1**~~ | ~~TFA via Peano bridge~~ | ~~`NaturalNumbersPrimes.lean`~~ | ✅ Complete 2026-03-25 |
+| ~~**2**~~ | ~~Binomial coefficients bridge~~ | ~~`NaturalNumbersBinom.lean`~~ | ✅ Complete 2026-03-25 |
+| ~~**3**~~ | ~~MaxMin + NewtonBinom + WellFounded~~ | ~~3 modules~~ | ✅ Complete 2026-03-26 |
+| **4** | Complete atomic Boolean algebra + representation | Extension of `AtomicBooleanAlgebra.lean` or new module | `AtomicBooleanAlgebra`, `Cardinality` |
+| **5** | Finite sequences in ZFC | `FiniteSequences.lean` | `Functions`, `NaturalNumbers` |
 
 ---
 
-*Generated 2026-03-24 from analysis of peanolib, PeanoImport bridges, and ReflexionesParaLaIA.md roadmap.*
+*Updated 2026-03-26. All peanolib bridge modules complete. Next focus: algebraic structure completion and finite sequences.*

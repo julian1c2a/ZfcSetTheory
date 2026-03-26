@@ -78,6 +78,9 @@ Este documento cumple con todos los requisitos especificados en [AIDER-AI-GUIDE.
 | `NaturalNumbersGcd.lean` | `SetUniverse.NaturalNumbersGcd` | `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersAdd`, `NaturalNumbersMul`, `NaturalNumbersSub`, `NaturalNumbersDiv`, `NaturalNumbersArith` | ✅ Completo |
 | `NaturalNumbersPrimes.lean` | `SetUniverse.NaturalNumbersPrimes` | `NaturalNumbers`, `Infinity`, `Recursion`, `PeanoImport`, `NaturalNumbersAdd`, `NaturalNumbersMul`, `NaturalNumbersSub`, `NaturalNumbersDiv`, `NaturalNumbersArith`, `NaturalNumbersGcd`, `PeanoNatLib.PeanoNatPrimes` | ✅ Completo |
 | `NaturalNumbersBinom.lean` | `SetUniverse.NaturalNumbersBinom` | `NaturalNumbers`, `Infinity`, `PeanoImport`, `NaturalNumbersAdd`, `NaturalNumbersMul`, `NaturalNumbersSub`, `NaturalNumbersFactorial`, `PeanoNatLib.PeanoNatBinom` | ✅ Completo |
+| `NaturalNumbersMaxMin.lean` | `SetUniverse.NaturalNumbersMaxMin` | `NaturalNumbers`, `Infinity`, `PeanoImport`, `PeanoNatLib.PeanoNatMaxMin` | ✅ Completo |
+| `NaturalNumbersNewtonBinom.lean` | `SetUniverse.NaturalNumbersNewtonBinom` | `NaturalNumbers`, `Infinity`, `PeanoImport`, `NaturalNumbersAdd`, `NaturalNumbersMul`, `NaturalNumbersSub`, `NaturalNumbersPow`, `NaturalNumbersBinom`, `PeanoNatLib.PeanoNatNewtonBinom` | ✅ Completo |
+| `NaturalNumbersWellFounded.lean` | `SetUniverse.NaturalNumbersWellFounded` | `NaturalNumbers`, `Infinity`, `PeanoImport`, `PeanoNatLib.PeanoNatWellFounded` | ✅ Completo |
 
 ## 2. Axiomas ZFC Implementados
 
@@ -3778,6 +3781,104 @@ noncomputable def binomOf (n k : U) : U :=
 
 **Dependencias**: `fromPeano`, `toPeano`, `mem_Omega_is_Nat`, `Peano.Binom.binom`, `ω`
 **Computabilidad**: No computable
+
+### 3.33 NaturalNumbersMaxMin.lean
+
+**Módulo**: `ZfcSetTheory.NaturalNumbersMaxMin`
+**Namespace**: `SetUniverse.NaturalNumbersMaxMin`
+**Dependencias**: `NaturalNumbers`, `Infinity`, `PeanoImport`, `PeanoNatLib.PeanoNatMaxMin`
+**Estrategia**: Patrón B (bridge-only) — Máximo y mínimo levantados directamente del isomorfismo Peano.
+
+#### maxOf
+
+**Ubicación**: `NaturalNumbersMaxMin.lean`, §0
+**Orden**: 1ª definición pública
+
+**Enunciado Matemático**: max(n, m) en ω, levantado desde Peano vía el isomorfismo. Devuelve ∅ si n ∉ ω o m ∉ ω.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def maxOf (n m : U) : U :=
+  if hn : n ∈ (ω : U) then
+    if hm : m ∈ (ω : U) then
+      fromPeano (Peano.MaxMin.max
+        (toPeano n (mem_Omega_is_Nat n hn))
+        (toPeano m (mem_Omega_is_Nat m hm)))
+    else ∅
+  else ∅
+```
+
+**Dependencias**: `fromPeano`, `toPeano`, `mem_Omega_is_Nat`, `Peano.MaxMin.max`, `ω`
+**Computabilidad**: No computable
+
+#### minOf
+
+**Ubicación**: `NaturalNumbersMaxMin.lean`, §0
+**Orden**: 2ª definición pública
+
+**Enunciado Matemático**: min(n, m) en ω, levantado desde Peano vía el isomorfismo. Devuelve ∅ si n ∉ ω o m ∉ ω.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def minOf (n m : U) : U :=
+  if hn : n ∈ (ω : U) then
+    if hm : m ∈ (ω : U) then
+      fromPeano (Peano.MaxMin.min
+        (toPeano n (mem_Omega_is_Nat n hn))
+        (toPeano m (mem_Omega_is_Nat m hm)))
+    else ∅
+  else ∅
+```
+
+**Dependencias**: `fromPeano`, `toPeano`, `mem_Omega_is_Nat`, `Peano.MaxMin.min`, `ω`
+**Computabilidad**: No computable
+
+### 3.34 NaturalNumbersNewtonBinom.lean
+
+**Módulo**: `ZfcSetTheory.NaturalNumbersNewtonBinom`
+**Namespace**: `SetUniverse.NaturalNumbersNewtonBinom`
+**Dependencias**: `NaturalNumbersAdd`, `NaturalNumbersMul`, `NaturalNumbersSub`, `NaturalNumbersPow`, `NaturalNumbersBinom`, `PeanoNatLib.PeanoNatNewtonBinom`
+**Estrategia**: Patrón B (bridge-only) — Término binomial con 4 argumentos levantado del isomorfismo Peano. `finSum` no se transporta (función de orden superior); Newton's binomial theorem y sum=2^n se enuncian a nivel Peano con resultado transportado vía `fromPeano`.
+
+#### binomTermOf
+
+**Ubicación**: `NaturalNumbersNewtonBinom.lean`, §0
+**Orden**: 1ª definición pública
+
+**Enunciado Matemático**: C(n,k) · a^k · b^(n−k) en ω, levantado desde Peano vía el isomorfismo con 4 argumentos. Devuelve ∅ si algún argumento no está en ω.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def binomTermOf (a b n k : U) : U :=
+  if ha : a ∈ (ω : U) then
+    if hb : b ∈ (ω : U) then
+      if hn : n ∈ (ω : U) then
+        if hk : k ∈ (ω : U) then
+          fromPeano (Peano.NewtonBinom.binomTerm
+            (toPeano a (mem_Omega_is_Nat a ha))
+            (toPeano b (mem_Omega_is_Nat b hb))
+            (toPeano n (mem_Omega_is_Nat n hn))
+            (toPeano k (mem_Omega_is_Nat k hk)))
+        else ∅
+      else ∅
+    else ∅
+  else ∅
+```
+
+**Dependencias**: `fromPeano`, `toPeano`, `mem_Omega_is_Nat`, `Peano.NewtonBinom.binomTerm`, `ω`
+**Computabilidad**: No computable
+
+### 3.35 NaturalNumbersWellFounded.lean
+
+**Módulo**: `ZfcSetTheory.NaturalNumbersWellFounded`
+**Namespace**: `SetUniverse.NaturalNumbersWellFounded`
+**Dependencias**: `NaturalNumbers`, `Infinity`, `PeanoImport`, `PeanoNatLib.PeanoNatWellFounded`
+**Estrategia**: Patrón B (bridge-only) — Buen fundamento ya existe como `nat_mem_wf` en ZFC; este módulo añade el principio de buena ordenación transportado desde Peano.
+
+*(Este módulo no tiene definiciones públicas — solo teoremas.)*
 
 ---
 
@@ -8983,6 +9084,228 @@ theorem fromPeano_le_iff (p q : Peano.ℕ₀) :
 
 **Dependencias**: `fromPeano_surjective`, `fromPeano_binom`, `fromPeano_factorial`, `fromPeano_sub`, `fromPeano_mul`, `fromPeano_le_iff`, `Peano.Binom.binom_mul_factorials`
 
+### 4.29 NaturalNumbersMaxMin.lean
+
+**Módulo**: `ZfcSetTheory.NaturalNumbersMaxMin`
+**Namespace**: `SetUniverse.NaturalNumbersMaxMin`
+
+#### Sección 1: Clausura en ω
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `maxOf_in_Omega` | max(n, m) ∈ ω | `theorem maxOf_in_Omega (n m : U) (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U)) : maxOf n m ∈ (ω : U)` |
+| `minOf_in_Omega` | min(n, m) ∈ ω | `theorem minOf_in_Omega (n m : U) (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U)) : minOf n m ∈ (ω : U)` |
+
+**Dependencias**: `Nat_in_Omega`, `fromPeano_is_nat`
+
+#### Sección 2: Teoremas puente
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `fromPeano_max` | ΠZ(max(p, q)) = maxOf(ΠZ p, ΠZ q) | `theorem fromPeano_max (p q : Peano.ℕ₀) : (fromPeano (Peano.MaxMin.max p q) : U) = maxOf (fromPeano p) (fromPeano q)` |
+| `fromPeano_min` | ΠZ(min(p, q)) = minOf(ΠZ p, ΠZ q) | `theorem fromPeano_min (p q : Peano.ℕ₀) : (fromPeano (Peano.MaxMin.min p q) : U) = minOf (fromPeano p) (fromPeano q)` |
+
+**Patrón de demostración**: `simp only [maxOf/minOf, dif_pos ...]` + `congr 1; congr 1` + dos `toPeano_proof_irrel`/`toPeano_fromPeano` (patrón estándar Patrón B con dos argumentos).
+
+**Dependencias**: `toPeano_proof_irrel`, `toPeano_fromPeano`, `Nat_in_Omega`, `fromPeano_is_nat`, `mem_Omega_is_Nat`
+
+#### Sección 3: Idempotencia
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `maxOf_idem` | max(n, n) = n | `theorem maxOf_idem (n : U) (hn : n ∈ (ω : U)) : maxOf n n = n` |
+| `minOf_idem` | min(n, n) = n | `theorem minOf_idem (n : U) (hn : n ∈ (ω : U)) : minOf n n = n` |
+
+**Dependencias**: `fromPeano_surjective`, `fromPeano_max`, `fromPeano_min`, `Peano.MaxMin.max_idem`, `Peano.MaxMin.min_idem`
+
+#### Sección 4: Conmutatividad
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `maxOf_comm` | max(n, m) = max(m, n) | `theorem maxOf_comm (n m : U) (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U)) : maxOf n m = maxOf m n` |
+| `minOf_comm` | min(n, m) = min(m, n) | `theorem minOf_comm (n m : U) (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U)) : minOf n m = minOf m n` |
+
+**Dependencias**: `fromPeano_surjective`, `fromPeano_max`, `fromPeano_min`, `Peano.MaxMin.max_comm`, `Peano.MaxMin.min_comm`
+
+#### Sección 5: Asociatividad
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `maxOf_assoc` | max(max(n, m), k) = max(n, max(m, k)) | `theorem maxOf_assoc (n m k : U) (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U)) (hk : k ∈ (ω : U)) : maxOf (maxOf n m) k = maxOf n (maxOf m k)` |
+| `minOf_assoc` | min(min(n, m), k) = min(n, min(m, k)) | `theorem minOf_assoc (n m k : U) (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U)) (hk : k ∈ (ω : U)) : minOf (minOf n m) k = minOf n (minOf m k)` |
+
+**Patrón de demostración**: `fromPeano_surjective` para 3 variables → `← fromPeano_max/min` (×4) + `Peano.MaxMin.max_assoc`/`min_assoc`.
+
+**Dependencias**: `fromPeano_surjective`, `fromPeano_max`, `fromPeano_min`, `Peano.MaxMin.max_assoc`, `Peano.MaxMin.min_assoc`
+
+#### Sección 6: Identidad/Aniquilador con ∅
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `maxOf_zero_left` | max(∅, n) = n | `theorem maxOf_zero_left (n : U) (hn : n ∈ (ω : U)) : maxOf (∅ : U) n = n` |
+| `maxOf_zero_right` | max(n, ∅) = n | `theorem maxOf_zero_right (n : U) (hn : n ∈ (ω : U)) : maxOf n (∅ : U) = n` |
+| `minOf_zero_left` | min(∅, n) = ∅ | `theorem minOf_zero_left (n : U) (hn : n ∈ (ω : U)) : minOf (∅ : U) n = ∅` |
+| `minOf_zero_right` | min(n, ∅) = ∅ | `theorem minOf_zero_right (n : U) (hn : n ∈ (ω : U)) : minOf n (∅ : U) = ∅` |
+
+**Dependencias**: `fromPeano_surjective`, `fromPeano_max`, `fromPeano_min`, `Peano.MaxMin.max_not_0`, `Peano.MaxMin.max_0_not`, `Peano.MaxMin.min_abs_0`, `Peano.MaxMin.min_0_abs`
+
+#### Sección 7: Cotas superior/inferior
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `le_maxOf_left` | n ≤ max(n, m) | `theorem le_maxOf_left (n m : U) (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U)) : n ∈ maxOf n m ∨ n = maxOf n m` |
+| `le_maxOf_right` | m ≤ max(n, m) | `theorem le_maxOf_right (n m : U) (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U)) : m ∈ maxOf n m ∨ m = maxOf n m` |
+| `maxOf_le` | n ≤ k ∧ m ≤ k → max(n, m) ≤ k | `theorem maxOf_le (n m k : U) (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U)) (hk : k ∈ (ω : U)) (h_n_le_k : n ∈ k ∨ n = k) (h_m_le_k : m ∈ k ∨ m = k) : maxOf n m ∈ k ∨ maxOf n m = k` |
+| `minOf_le_left` | min(n, m) ≤ n | `theorem minOf_le_left (n m : U) (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U)) : minOf n m ∈ n ∨ minOf n m = n` |
+| `minOf_le_right` | min(n, m) ≤ m | `theorem minOf_le_right (n m : U) (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U)) : minOf n m ∈ m ∨ minOf n m = m` |
+| `le_minOf` | k ≤ n ∧ k ≤ m → k ≤ min(n, m) | `theorem le_minOf (k n m : U) (hk : k ∈ (ω : U)) (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U)) (h_k_le_n : k ∈ n ∨ k = n) (h_k_le_m : k ∈ m ∨ k = m) : k ∈ minOf n m ∨ k = minOf n m` |
+
+**Patrón de demostración**: `fromPeano_surjective` → `← fromPeano_max/min` → `fromPeano_le_iff` en ambas direcciones + lema Peano correspondiente.
+
+**Dependencias**: `fromPeano_surjective`, `fromPeano_max`, `fromPeano_min`, `fromPeano_le_iff`, `Peano.MaxMin.le_max_left`, `Peano.MaxMin.le_max_right`, `Peano.MaxMin.max_le`, `Peano.MaxMin.min_le_left`, `Peano.MaxMin.min_le_right`, `Peano.MaxMin.le_min`
+
+#### Sección 8: Caracterización vía ≤
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `maxOf_eq_right` | n ≤ m → max(n, m) = m | `theorem maxOf_eq_right (n m : U) (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U)) (h_le : n ∈ m ∨ n = m) : maxOf n m = m` |
+| `maxOf_eq_left` | m ≤ n → max(n, m) = n | `theorem maxOf_eq_left (n m : U) (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U)) (h_le : m ∈ n ∨ m = n) : maxOf n m = n` |
+| `minOf_eq_left` | n ≤ m → min(n, m) = n | `theorem minOf_eq_left (n m : U) (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U)) (h_le : n ∈ m ∨ n = m) : minOf n m = n` |
+| `minOf_eq_right` | m ≤ n → min(n, m) = m | `theorem minOf_eq_right (n m : U) (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U)) (h_le : m ∈ n ∨ m = n) : minOf n m = m` |
+
+**Patrón de demostración**: `fromPeano_surjective` → `← fromPeano_max/min` → `congrArg fromPeano (Peano.MaxMin.le_then_max/min_eq_... ...)`.
+
+**Dependencias**: `fromPeano_surjective`, `fromPeano_max`, `fromPeano_min`, `fromPeano_le_iff`, `Peano.MaxMin.le_then_max_eq_right`, `Peano.MaxMin.le_then_max_eq_left`, `Peano.MaxMin.le_then_min_eq_left`, `Peano.MaxMin.le_then_min_eq_right`
+
+#### Sección 9: max/min es uno de los argumentos
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `maxOf_is_any` | max(n, m) = n ∨ max(n, m) = m | `theorem maxOf_is_any (n m : U) (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U)) : maxOf n m = n ∨ maxOf n m = m` |
+| `minOf_is_any` | min(n, m) = n ∨ min(n, m) = m | `theorem minOf_is_any (n m : U) (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U)) : minOf n m = n ∨ minOf n m = m` |
+
+**Dependencias**: `fromPeano_surjective`, `fromPeano_max`, `fromPeano_min`, `Peano.MaxMin.max_is_any`, `Peano.MaxMin.min_is_any`
+
+#### Sección 10: max = min sii iguales
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `eq_iff_maxOf_eq_minOf` | n = m ↔ max(n, m) = min(n, m) | `theorem eq_iff_maxOf_eq_minOf (n m : U) (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U)) : n = m ↔ maxOf n m = minOf n m` |
+
+**Patrón de demostración**: `fromPeano_surjective` → `← fromPeano_max`, `← fromPeano_min` → `fromPeano_injective` en ambos sentidos + `Peano.MaxMin.eq_then_eq_max_min` / `Peano.MaxMin.eq_max_min_then_eq`.
+
+**Dependencias**: `fromPeano_surjective`, `fromPeano_max`, `fromPeano_min`, `fromPeano_injective`, `Peano.MaxMin.eq_then_eq_max_min`, `Peano.MaxMin.eq_max_min_then_eq`
+
+### 4.30 NaturalNumbersNewtonBinom.lean
+
+**Módulo**: `ZfcSetTheory.NaturalNumbersNewtonBinom`
+**Namespace**: `SetUniverse.NaturalNumbersNewtonBinom`
+
+#### Sección 1: Clausura en ω
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `binomTermOf_in_Omega` | C(n,k)·a^k·b^(n−k) ∈ ω | `theorem binomTermOf_in_Omega (a b n k : U) (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U)) (hn : n ∈ (ω : U)) (hk : k ∈ (ω : U)) : binomTermOf a b n k ∈ (ω : U)` |
+
+**Dependencias**: `Nat_in_Omega`, `fromPeano_is_nat`
+
+#### Sección 2: Teorema puente
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `fromPeano_binomTerm` | ΠZ(binomTerm(p,q,r,s)) = binomTermOf(ΠZ p, ΠZ q, ΠZ r, ΠZ s) | `theorem fromPeano_binomTerm (p q r s : Peano.ℕ₀) : (fromPeano (Peano.NewtonBinom.binomTerm p q r s) : U) = binomTermOf (fromPeano p) (fromPeano q) (fromPeano r) (fromPeano s)` |
+
+**Patrón de demostración**: `simp only [binomTermOf, dif_pos ...]` + `congr 1; congr 1; congr 1; congr 1` + cuatro `toPeano_proof_irrel`/`toPeano_fromPeano` (Patrón B con 4 argumentos).
+
+**Dependencias**: `toPeano_proof_irrel`, `toPeano_fromPeano`, `Nat_in_Omega`, `fromPeano_is_nat`, `mem_Omega_is_Nat`
+
+#### Sección 3: Valores concretos
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `binomTermOf_zero` | binomTerm(a, b, n, 0) = b^n | `theorem binomTermOf_zero (a b n : U) (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U)) (hn : n ∈ (ω : U)) : binomTermOf a b n ∅ = pow b n` |
+| `binomTermOf_self` | binomTerm(a, b, n, n) = a^n | `theorem binomTermOf_self (a b n : U) (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U)) (hn : n ∈ (ω : U)) : binomTermOf a b n n = pow a n` |
+
+**Dependencias**: `fromPeano_surjective`, `fromPeano_binomTerm`, `fromPeano_pow`, `Peano.NewtonBinom.binomTerm_zero`, `Peano.NewtonBinom.binomTerm_self`
+
+#### Sección 4: Expansión
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `binomTermOf_eq` | binomTerm(a,b,n,k) = C(n,k)·a^k·b^(n−k) | `theorem binomTermOf_eq (a b n k : U) (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U)) (hn : n ∈ (ω : U)) (hk : k ∈ (ω : U)) : binomTermOf a b n k = mul (mul (binomOf n k) (pow a k)) (pow b (sub n k))` |
+
+**Patrón de demostración**: `fromPeano_surjective` (×4) → `← fromPeano_binomTerm` → `show` explícito → cadena de `← fromPeano_binom`, `← fromPeano_pow`, `← fromPeano_sub`, `← fromPeano_mul` (×2) → `rfl`.
+
+**Dependencias**: `fromPeano_surjective`, `fromPeano_binomTerm`, `fromPeano_binom`, `fromPeano_pow`, `fromPeano_sub`, `fromPeano_mul`
+
+#### Sección 5: Separación de potencias
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `pow_add_split_Omega` | n^(m+k) = n^m · n^k | `theorem pow_add_split_Omega (n m k : U) (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U)) (hk : k ∈ (ω : U)) : pow n (add m k) = mul (pow n m) (pow n k)` |
+
+**Patrón de demostración**: `fromPeano_surjective` (×3) → cadena de `← fromPeano_add/pow/mul` → `congrArg fromPeano (Peano.NewtonBinom.pow_add_split ...)`.
+
+**Dependencias**: `fromPeano_surjective`, `fromPeano_add`, `fromPeano_pow`, `fromPeano_mul`, `Peano.NewtonBinom.pow_add_split`
+
+#### Sección 6: Teorema binomial de Newton (nivel Peano)
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `newton_binom_peano` | (a+b)^n = Σ_{k≤n} C(n,k)·a^k·b^(n−k) | `theorem newton_binom_peano (a b : Peano.ℕ₀) (n : Peano.ℕ₀) : pow (add (fromPeano a : U) (fromPeano b)) (fromPeano n) = (fromPeano (Peano.NewtonBinom.finSum (Peano.NewtonBinom.binomTerm a b n) n) : U)` |
+
+**Nota**: Teorema enunciado a nivel Peano con resultado transportado a ZFC vía `fromPeano`. `finSum` no se transporta directamente por ser una función de orden superior.
+
+**Dependencias**: `fromPeano_add`, `fromPeano_pow`, `Peano.NewtonBinom.newton_binom`
+
+#### Sección 7: Suma de coeficientes binomiales = 2^n
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `sum_binom_eq_pow_two_peano` | Σ_{k≤n} C(n,k) = 2^n | `theorem sum_binom_eq_pow_two_peano (n : Peano.ℕ₀) : (fromPeano (Peano.NewtonBinom.finSum (fun k => Peano.Binom.binom n k) n) : U) = pow (σ (σ (∅ : U))) (fromPeano n)` |
+
+**Nota**: Teorema enunciado a nivel Peano con resultado transportado a ZFC vía `fromPeano`. 2 se codifica como `σ (σ ∅)`.
+
+**Dependencias**: `fromPeano_pow`, `Peano.NewtonBinom.sum_binom_eq_pow_two`
+
+#### Sección 8: Comparación existencial de crecimiento
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `exists_nm_growth_Omega` | ∃ n m ∈ ω, ∀ k ≥ 1, (n+k)^m < n^(m+k) | `theorem exists_nm_growth_Omega : ∃ n m : U, n ∈ (ω : U) ∧ m ∈ (ω : U) ∧ ∀ k : U, k ∈ (ω : U) → (σ (∅ : U)) ∈ k ∨ σ (∅ : U) = k → pow (add n k) m ∈ pow n (add m k)` |
+
+**Patrón de demostración**: `Peano.NewtonBinom.exists_nm_growth` → testigos `fromPeano pn`, `fromPeano pm` → `fromPeano_surjective` para k → cadena de `← fromPeano_add/pow` → `fromPeano_lt_iff` + `fromPeano_le_iff`.
+
+**Dependencias**: `fromPeano_surjective`, `fromPeano_add`, `fromPeano_pow`, `fromPeano_lt_iff`, `fromPeano_le_iff`, `Peano.NewtonBinom.exists_nm_growth`
+
+### 4.31 NaturalNumbersWellFounded.lean
+
+**Módulo**: `ZfcSetTheory.NaturalNumbersWellFounded`
+**Namespace**: `SetUniverse.NaturalNumbersWellFounded`
+
+#### Sección 1: Buen fundamento
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `acc_lt_Omega` | Todo n ∈ ω es accesible bajo ∈ restringido a ω | `theorem acc_lt_Omega (n : U) (_hn : n ∈ (ω : U)) : Acc (fun a b : U => a ∈ ω ∧ b ∈ ω ∧ a ∈ b) n` |
+
+**Patrón de demostración**: Prueba en modo término delegando a `nat_mem_wf.apply n`.
+
+**Dependencias**: `nat_mem_wf`
+
+#### Sección 2: Principio de buena ordenación
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `well_ordering_Omega` | Todo subconjunto no vacío de ω tiene un mínimo único | `theorem well_ordering_Omega (P : U → Prop) (h_nonempty : ∃ k : U, k ∈ (ω : U) ∧ P k) : ∃ n : U, n ∈ (ω : U) ∧ P n ∧ (∀ m : U, m ∈ (ω : U) → P m → (n ∈ m ∨ n = m)) ∧ (∀ n' : U, n' ∈ (ω : U) → P n' → (∀ m : U, m ∈ (ω : U) → P m → (n' ∈ m ∨ n' = m)) → n' = n)` |
+| `well_ordering_Omega_exists` | Forma simplificada sin unicidad | `theorem well_ordering_Omega_exists (P : U → Prop) (h_nonempty : ∃ k : U, k ∈ (ω : U) ∧ P k) : ∃ n : U, n ∈ (ω : U) ∧ P n ∧ ∀ m : U, m ∈ (ω : U) → P m → (n ∈ m ∨ n = m)` |
+
+**Patrón de demostración** (`well_ordering_Omega`): Define `Q : Peano.ℕ₀ → Prop := fun p => P (fromPeano p)` → `fromPeano_surjective` para testigo → `Peano.WellFounded.well_ordering_principle Q` → transporta minimidad vía `fromPeano_le_iff` y unicidad vía `congrArg fromPeano`.
+
+**Patrón de demostración** (`well_ordering_Omega_exists`): Extrae los 4 componentes de `well_ordering_Omega` y descarta la unicidad.
+
+**Dependencias**: `fromPeano_surjective`, `fromPeano_le_iff`, `fromPeano_injective`, `Nat_in_Omega`, `fromPeano_is_nat`, `mem_Omega_is_Nat`, `Peano.WellFounded.well_ordering_principle`, `nat_mem_wf`
+
 ---
 
 ## 5. Notación y Sintaxis
@@ -10067,6 +10390,103 @@ export NaturalNumbersBinom (
 )
 ```
 
+### 6.30 NaturalNumbersMaxMin.lean
+
+**Namespace**: `SetUniverse.NaturalNumbersMaxMin` (exportado a `SetUniverse`)
+**Última modificación**: 2026-03-26
+**Dependencias**: `NaturalNumbers`, `Infinity`, `PeanoImport`, `PeanoNatLib.PeanoNatMaxMin`
+
+```lean
+export NaturalNumbersMaxMin (
+  -- §0: definitions
+  maxOf
+  minOf
+  -- §1: closure
+  maxOf_in_Omega
+  minOf_in_Omega
+  -- §2: bridge
+  fromPeano_max
+  fromPeano_min
+  -- §3: idempotence
+  maxOf_idem
+  minOf_idem
+  -- §4: commutativity
+  maxOf_comm
+  minOf_comm
+  -- §5: associativity
+  maxOf_assoc
+  minOf_assoc
+  -- §6: identity/annihilator with ∅
+  maxOf_zero_left
+  maxOf_zero_right
+  minOf_zero_left
+  minOf_zero_right
+  -- §7: upper/lower bound
+  le_maxOf_left
+  le_maxOf_right
+  maxOf_le
+  minOf_le_left
+  minOf_le_right
+  le_minOf
+  -- §8: characterization via ≤
+  maxOf_eq_right
+  maxOf_eq_left
+  minOf_eq_left
+  minOf_eq_right
+  -- §9: max/min is one of the arguments
+  maxOf_is_any
+  minOf_is_any
+  -- §10: max = min iff equal
+  eq_iff_maxOf_eq_minOf
+)
+```
+
+### 6.31 NaturalNumbersNewtonBinom.lean
+
+**Namespace**: `SetUniverse.NaturalNumbersNewtonBinom` (exportado a `SetUniverse`)
+**Última modificación**: 2026-03-26
+**Dependencias**: `NaturalNumbersAdd`, `NaturalNumbersMul`, `NaturalNumbersSub`, `NaturalNumbersPow`, `NaturalNumbersBinom`, `PeanoNatLib.PeanoNatNewtonBinom`
+
+```lean
+export NaturalNumbersNewtonBinom (
+  -- §0: definition
+  binomTermOf
+  -- §1: closure
+  binomTermOf_in_Omega
+  -- §2: bridge
+  fromPeano_binomTerm
+  -- §3: concrete values
+  binomTermOf_zero
+  binomTermOf_self
+  -- §4: expansion
+  binomTermOf_eq
+  -- §5: power splitting
+  pow_add_split_Omega
+  -- §6: Newton's binomial theorem
+  newton_binom_peano
+  -- §7: sum of binomial coefficients
+  sum_binom_eq_pow_two_peano
+  -- §8: growth comparison
+  exists_nm_growth_Omega
+)
+```
+
+### 6.32 NaturalNumbersWellFounded.lean
+
+**Namespace**: `SetUniverse.NaturalNumbersWellFounded` (exportado a `SetUniverse`)
+**Última modificación**: 2026-03-26
+**Dependencias**: `NaturalNumbers`, `Infinity`, `PeanoImport`, `PeanoNatLib.PeanoNatWellFounded`
+
+```lean
+export NaturalNumbersWellFounded (
+  -- §0: well-foundedness
+  acc_lt_Omega
+  -- §1: well-ordering principle
+  well_ordering_Omega
+  well_ordering_Omega_exists
+)
+```
+
 ## 7. Estado de Proyección por Módulo
 
 ### 7.1 Leyenda de Estados
@@ -10112,6 +10532,9 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `NaturalNumbersGcd.lean` - GCD y LCM en ω: GCD ZFC-nativo vía algoritmo euclídeo con RecursiveFn sobre ω ×ₛ ω, 2 definiciones (`gcd`, `lcm`), teoremas puente `gcd_eq_gcdOf`/`lcm_eq_lcmOf`, ecuaciones del algoritmo (caso base + paso), 4 propiedades de divisibilidad del GCD, 3 propiedades del LCM, 17 exports
 - `NaturalNumbersPrimes.lean` - Primalidad y TFA en ω: definición ZFC-nativa `isPrime`, teorema puente `fromPeano_prime` (Peano.Arith.Prime ↔ isPrime), propiedades básicas (∈ω, ≠∅, ≠σ∅, ≥2, divisores), existencia de divisor primo, TFA Existencia y Unicidad (Enfoque A: DList ℕ₀ en lado Peano), 11 exports
 - `NaturalNumbersBinom.lean` - Coeficientes binomiales en ω: Patrón B (bridge-only) vía isomorfismo Peano, 1 definición (`binomOf`), teorema puente `fromPeano_binom`, valores concretos (C(0,0), C(σn,0), C(0,σk)), regla de Pascal, propiedades algebraicas (C(n,0)=1, C(n,1)=n, C(n,n)=1, C(σn,n)=σn), anulación/positividad, conexión con factorial (C(n,k)·k!·(n-k)!=n!), 15 exports
+- `NaturalNumbersMaxMin.lean` - Máximo y mínimo en ω: Patrón B (bridge-only) vía isomorfismo Peano, 2 definiciones (`maxOf`, `minOf`), teoremas puente `fromPeano_max`/`fromPeano_min`, propiedades de retículo (idempotencia, conmutatividad, asociatividad, identidad/aniquilador con ∅), cotas superior/inferior, caracterización vía ≤, max/min es uno de los argumentos, max=min⇔iguales, 31 exports
+- `NaturalNumbersNewtonBinom.lean` - Término binomial y teorema de Newton en ω: Patrón B (bridge-only) con 4 argumentos, 1 definición (`binomTermOf`), teorema puente `fromPeano_binomTerm`, valores concretos (k=0, k=n), expansión C(n,k)·a^k·b^(n−k), separación de potencias n^(m+k)=n^m·n^k, teorema binomial de Newton (nivel Peano→ZFC), Σ C(n,k)=2^n, comparación de crecimiento existencial, 12 exports
+- `NaturalNumbersWellFounded.lean` - Buen fundamento y principio de buena ordenación en ω: accesibilidad vía `nat_mem_wf`, principio de buena ordenación con unicidad (transportado desde Peano), forma simplificada sin unicidad, 3 exports
 
 ### 7.3 Archivos Parcialmente Proyectados
 
@@ -10136,6 +10559,8 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 ---
 
 *Última actualización: 2026-03-24 — Proyección completa de NaturalNumbersGcd.lean (§3.30, §4.26, §6.27: 2 def + 13 teoremas + 17 exports, GCD ZFC-nativo vía algoritmo euclídeo + LCM vía bridge). Tabla §1.1 actualizada. Estado: ✅ 100% completo, 0 sorry.*
+
+*Última actualización: 2026-03-26 — Proyección completa de NaturalNumbersMaxMin.lean (§3.33, §4.29, §6.30: 2 def + 29 teoremas + 31 exports, Patrón B bridge-only, máximo y mínimo vía isomorfismo Peano), NaturalNumbersNewtonBinom.lean (§3.34, §4.30, §6.31: 1 def + 10 teoremas + 12 exports, Patrón B 4-arg, teorema binomial Newton→ZFC), NaturalNumbersWellFounded.lean (§3.35, §4.31, §6.32: 0 def + 3 teoremas + 3 exports, buena ordenación de ω). Tabla §1.1 y §7.2 actualizadas. Estado: ✅ 100% completo, 0 sorry.*
 
 *Última actualización: 2026-03-25 — Proyección completa de NaturalNumbersBinom.lean (§3.32, §4.28, §6.29: 1 def + 13 teoremas + 15 exports, Patrón B bridge-only, coeficientes binomiales vía isomorfismo Peano). Tabla §1.1 y §7.2 actualizadas. Estado: ✅ 100% completo, 0 sorry.*
 

@@ -39,3 +39,6 @@ import ZfcSetTheory.NaturalNumbersFactorial
 import ZfcSetTheory.NaturalNumbersGcd
 import ZfcSetTheory.NaturalNumbersPrimes
 import ZfcSetTheory.NaturalNumbersBinom
+import ZfcSetTheory.NaturalNumbersMaxMin
+import ZfcSetTheory.NaturalNumbersNewtonBinom
+import ZfcSetTheory.NaturalNumbersWellFounded

@@ -1,53 +1,61 @@
 # TODO - Revisión de Módulos ZfcSetTheory
 
 **Fecha de inicio:** 2026-03-16
-**Última actualización:** 2026-03-16 19:30
+**Última actualización:** 2026-03-26 14:00
 
 ## Estado de Revisión de Módulos
 
 ### ✅ Prelim.lean
+
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Verificación:** Correctamente proyectado
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-16
 
 ### ✅ Extension.lean
+
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Verificación:** Correctamente proyectado
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-16
 
 ### ✅ Existence.lean
+
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Verificación:** Correctamente proyectado
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-16
 
 ### ✅ Specification.lean
+
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Verificación:** Correctamente proyectado
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-16
 
 ### ✅ Union.lean
+
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Verificación:** Correctamente proyectado
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-16
 
 ### ✅ BooleanAlgebra.lean
+
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Verificación:** Correctamente proyectado
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-16
 
 ### ✅ BooleanRing.lean
+
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Verificación:** Correctamente proyectado
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-16
 
 ### ✅ Cardinality.lean
+
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Verificación:** Correctamente proyectado
 - **Proyección completada:** 2026-03-16 17:30
@@ -72,6 +80,7 @@
 - **Fecha de revisión:** 2026-03-24
 
 ### ✅ Pairing.lean
+
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Verificación:** Correctamente proyectado
 - **Proyección completada:** 2026-03-16 18:00
@@ -86,6 +95,7 @@
 - **Fecha de revisión:** 2026-03-16
 
 ### ✅ PowerSet.lean
+
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Verificación:** Correctamente proyectado
 - **Proyección completada:** 2026-03-16 15:30
@@ -100,6 +110,7 @@
 - **Fecha de revisión:** 2026-03-16
 
 ### ✅ PowerSetAlgebra.lean
+
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Verificación:** Correctamente proyectado
 - **Proyección completada:** 2026-03-16 16:00
@@ -111,6 +122,7 @@
 - **Fecha de revisión:** 2026-03-16
 
 ### ✅ OrderedPair.lean
+
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Verificación:** Correctamente proyectado
 - **Revisión detallada completada:** 2026-03-16
@@ -126,6 +138,7 @@
 - **Fecha de revisión:** 2026-03-16
 
 ### ✅ CartesianProduct.lean
+
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Verificación:** Correctamente proyectado
 - **Revisión detallada completada:** 2026-03-16
@@ -141,6 +154,7 @@
 - **Fecha de revisión:** 2026-03-16
 
 ### ✅ Relations.lean
+
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Verificación:** Correctamente proyectado
 - **Proyección completada:** 2026-03-16 16:30
@@ -152,6 +166,7 @@
 - **Fecha de revisión:** 2026-03-16
 
 ### ✅ Functions.lean
+
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Verificación:** Correctamente proyectado
 - **Proyección completada:** 2026-03-16 17:00
@@ -169,6 +184,7 @@
 ## Módulos Pendientes de Revisión
 
 ### ✅ NaturalNumbers.lean
+
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Verificación:** Correctamente proyectado
 - **Revisión detallada completada:** 2026-03-16 18:30
@@ -192,6 +208,7 @@
 - **Fecha de revisión:** 2026-03-16 18:30
 
 ### ✅ Infinity.lean
+
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Verificación:** Correctamente proyectado
 - **Proyección completa realizada:** 2026-03-16 19:30
@@ -326,6 +343,7 @@
 - **Fecha de revisión:** 2026-03-24
 
 ### ✅ NaturalNumbersPow.lean
+
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Proyección completada:** 2026-03-22 12:00
 - **Contenido proyectado:** §3.27 (2 def), §4.23 (13 teoremas), §6.23 (18 exports)
@@ -333,6 +351,7 @@
 - **Acciones necesarias:** Ninguna
 
 ### ✅ NaturalNumbersArith.lean
+
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Proyección completada:** 2026-03-22 12:00
 - **Contenido proyectado:** §3.28 (5 def), §4.24 (43 teoremas en 3 grupos), §6.24 (43 exports)
@@ -359,6 +378,43 @@
 - **Implementación completada:** 2026-03-25
 - **Patrón:** Bridge-only (Enfoque A); `isPrime` ZFC-nativo + TFA vía `fromPeano`/`toPeano`
 - **Acciones necesarias:** Ninguna
+
+### ✅ NaturalNumbersBinom.lean
+
+- **Estado en REFERENCE.md:** ✅ Completo
+- **Implementación completada:** 2026-03-25
+- **Patrón:** Patrón B (bridge-only) vía `Peano.Binom.binom`
+- **Contenido proyectado:** §3.32 (1 def), §4.28 (12 teoremas), §6.29 (15 exports)
+- **Acciones necesarias:** Ninguna
+- **Fecha de revisión:** 2026-03-26
+
+### ✅ NaturalNumbersMaxMin.lean
+
+- **Estado en REFERENCE.md:** ✅ Completo
+- **Implementación completada:** 2026-03-26
+- **Patrón:** Patrón B (bridge-only) vía `Peano.MaxMin.max`/`Peano.MaxMin.min`
+- **Contenido proyectado:** §3.33 (2 def: maxOf, minOf), §4.29 (29 teoremas en 10 secciones), §6.30 (31 exports)
+- **Acciones necesarias:** Ninguna
+- **Fecha de revisión:** 2026-03-26
+
+### ✅ NaturalNumbersNewtonBinom.lean
+
+- **Estado en REFERENCE.md:** ✅ Completo
+- **Implementación completada:** 2026-03-26
+- **Patrón:** Patrón B (bridge-only, 4 argumentos) vía `Peano.NewtonBinom.binomTerm`
+- **Contenido proyectado:** §3.34 (1 def: binomTermOf), §4.30 (10 teoremas en 8 secciones), §6.31 (12 exports)
+- **Nota:** `finSum` no se transporta (función de orden superior); teoremas Newton/sumBinom usan tipos Peano con `fromPeano`
+- **Acciones necesarias:** Ninguna
+- **Fecha de revisión:** 2026-03-26
+
+### ✅ NaturalNumbersWellFounded.lean
+
+- **Estado en REFERENCE.md:** ✅ Completo
+- **Implementación completada:** 2026-03-26
+- **Patrón:** Patrón B (bridge-only) vía `nat_mem_wf` y `Peano.WellFounded.well_ordering_principle`
+- **Contenido proyectado:** §3.35 (sin definiciones nuevas), §4.31 (3 teoremas en 2 secciones), §6.32 (3 exports)
+- **Acciones necesarias:** Ninguna
+- **Fecha de revisión:** 2026-03-26
 
 ---
 
