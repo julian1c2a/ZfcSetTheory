@@ -1,43 +1,50 @@
 # Diagrama de Dependencias - ZfcSetTheory
 
-**Última actualización:** 2026-03-22 12:00
+**Última actualización:** 2026-03-27 09:00
 **Autor**: Julián Calderón Almendros
 
 ## Estructura General del Proyecto
 
-```
+```text
 ZfcSetTheory/
-├── Prelim.lean                     # Definiciones preliminares
-├── Extension.lean                  # Axioma de Extensionalidad
-├── Existence.lean                  # Axioma de Existencia (conjunto vacío)
-├── Specification.lean              # Axioma de Especificación
-├── Pairing.lean                    # Axioma de Pares
-├── Union.lean                      # Axioma de Unión + Unión Binaria + Diferencia Simétrica
-├── PowerSet.lean                   # Axioma del Conjunto Potencia
-├── OrderedPair.lean                # Extensiones del Par Ordenado
-├── CartesianProduct.lean           # Producto Cartesiano A ×ₛ B
-├── Relations.lean                  # Relaciones: equivalencia, orden, clases, dominio, rango
-├── Functions.lean                  # Funciones, aplicación, composición, inversa
-├── Infinity.lean                   # Axioma del Infinito y conjunto ω (nat_mem_wf)
-├── NaturalNumbers.lean             # Números naturales como ordinales de von Neumann
-├── Recursion.lean                  # Teorema de Recursión sobre ℕ
-├── PeanoImport.lean                # Isomorfismo Von Neumann ↔ Peano (2026-03-04)
-├── NaturalNumbersAdd.lean          # Suma en ω vía Recursión + puentes Peano (nuevo 2026-03-08)
-├── NaturalNumbersMul.lean          # Multiplicación en ω vía Recursión + puentes Peano (nuevo 2026-03-08)
-├── NaturalNumbersSub.lean          # Sustracción saturada en ω vía Recursión (2026-03-21)
-├── NaturalNumbersDiv.lean          # División euclídea Patrón B (2026-03-21)
-├── NaturalNumbersPow.lean          # Potenciación en ω vía Recursión (2026-03-22)
-├── NaturalNumbersArith.lean        # Divisibilidad, GCD, LCM, Bézout (2026-03-22)
-├── BooleanAlgebra.lean             # Álgebra Booleana de conjuntos (teoremas)
-├── BooleanRing.lean                # Anillo Booleano con SymDiff
-├── PowerSetAlgebra.lean            # Álgebra del conjunto potencia (complemento, De Morgan)
-├── GeneralizedDeMorgan.lean        # Leyes de De Morgan generalizadas para familias
-├── GeneralizedDistributive.lean    # Leyes distributivas generalizadas
-├── AtomicBooleanAlgebra.lean       # Álgebra de Boole atómica
-├── SetOrder.lean                   # Orden parcial y retículos (completo)
-├── SetStrictOrder.lean             # Orden estricto (completo)
-├── Cardinality.lean                # Teoremas de Cantor y Cantor-Schröder-Bernstein
-└── ZfcSetTheory.lean               # Módulo principal (exporta todo)
+├── Prelim.lean                          # Definiciones preliminares
+├── Extension.lean                       # Axioma de Extensionalidad
+├── Existence.lean                       # Axioma de Existencia (conjunto vacío)
+├── Specification.lean                   # Axioma de Especificación
+├── Pairing.lean                         # Axioma de Pares
+├── Union.lean                           # Axioma de Unión + Unión Binaria + Diferencia Simétrica
+├── PowerSet.lean                        # Axioma del Conjunto Potencia
+├── OrderedPair.lean                     # Extensiones del Par Ordenado
+├── CartesianProduct.lean                # Producto Cartesiano A ×ₛ B
+├── Relations.lean                       # Relaciones: equivalencia, orden, clases, dominio, rango
+├── Functions.lean                       # Funciones, aplicación, composición, inversa
+├── Infinity.lean                        # Axioma del Infinito y conjunto ω (nat_mem_wf)
+├── NaturalNumbers.lean                  # Números naturales como ordinales de von Neumann
+├── Recursion.lean                       # Teorema de Recursión sobre ℕ
+├── PeanoImport.lean                     # Isomorfismo Von Neumann ↔ Peano
+├── NaturalNumbersAdd.lean               # Suma en ω vía RecursiveFn + puente Peano
+├── NaturalNumbersMul.lean               # Multiplicación en ω vía RecursiveFn + puente Peano
+├── NaturalNumbersSub.lean               # Sustracción saturada en ω vía RecursiveFn
+├── NaturalNumbersDiv.lean               # División euclídea Patrón B
+├── NaturalNumbersPow.lean               # Potenciación en ω vía RecursiveFn
+├── NaturalNumbersArith.lean             # Divisibilidad, GCD, LCM, Bézout
+├── NaturalNumbersFactorial.lean         # Factorial en ω Patrón B
+├── NaturalNumbersGcd.lean               # GCD/LCM ZFC-nativo (algoritmo euclídeo)
+├── NaturalNumbersPrimes.lean            # Primalidad ZFC-nativa + TFA
+├── NaturalNumbersBinom.lean             # Coeficientes binomiales Patrón B
+├── NaturalNumbersMaxMin.lean            # Máximo y mínimo en ω Patrón B
+├── NaturalNumbersNewtonBinom.lean       # Teorema binomial de Newton Patrón B
+├── NaturalNumbersWellFounded.lean       # Buen fundamento y buena ordenación de ω
+├── BooleanAlgebra.lean                  # Álgebra Booleana de conjuntos (teoremas)
+├── BooleanRing.lean                     # Anillo Booleano con SymDiff
+├── PowerSetAlgebra.lean                 # Álgebra del conjunto potencia (complemento, De Morgan)
+├── GeneralizedDeMorgan.lean             # Leyes de De Morgan generalizadas para familias
+├── GeneralizedDistributive.lean         # Leyes distributivas generalizadas
+├── AtomicBooleanAlgebra.lean            # Álgebra de Boole atómica
+├── SetOrder.lean                        # Orden parcial y retículos
+├── SetStrictOrder.lean                  # Orden estricto
+├── Cardinality.lean                     # Teoremas de Cantor y Cantor-Schröder-Bernstein
+└── ZfcSetTheory.lean                    # Módulo principal (exporta todo)
 ```
 
 ## Diagrama de Dependencias
@@ -94,7 +101,20 @@ graph TD
     PI --> NA[NaturalNumbersAdd.lean]
     Rec --> NA
     NA --> NM[NaturalNumbersMul.lean]
-    
+    NM --> NS[NaturalNumbersSub.lean]
+    NS --> ND[NaturalNumbersDiv.lean]
+    NM --> NP[NaturalNumbersPow.lean]
+    ND --> NAR[NaturalNumbersArith.lean]
+    NP --> NAR
+    NAR --> NF[NaturalNumbersFactorial.lean]
+    NAR --> NG[NaturalNumbersGcd.lean]
+    NG --> NPR[NaturalNumbersPrimes.lean]
+    NF --> NB[NaturalNumbersBinom.lean]
+    NB --> NNB[NaturalNumbersNewtonBinom.lean]
+    NP --> NNB
+    PI --> NMM[NaturalNumbersMaxMin.lean]
+    PI --> NWF[NaturalNumbersWellFounded.lean]
+
     %% Nivel 9: Álgebras y órdenes
     E --> SSO[SetStrictOrder.lean]
     Ex --> SO[SetOrder.lean]
@@ -146,6 +166,17 @@ graph TD
     PI --> Z
     NA --> Z
     NM --> Z
+    NS --> Z
+    ND --> Z
+    NP --> Z
+    NAR --> Z
+    NF --> Z
+    NG --> Z
+    NPR --> Z
+    NB --> Z
+    NMM --> Z
+    NNB --> Z
+    NWF --> Z
 
     %% Estilos
     classDef axiom fill:#e1f5fe,stroke:#01579b,stroke-width:2px
@@ -163,7 +194,7 @@ graph TD
     class SO,SSO order
     class OP,CP extension
     class Rel,Func relation
-    class Inf,Nat,Rec,PI,NA,NM natural
+    class Inf,Nat,Rec,PI,NA,NM,NS,ND,NP,NAR,NF,NG,NPR,NB,NMM,NNB,NWF natural
     class Z main
     class IC,P,PL external
 ```
@@ -444,8 +475,19 @@ namespace SetUniverse.Cardinality
 - `NaturalNumbers.lean` - Números naturales como ordinales de von Neumann, `predecessor`
 - `Recursion.lean` - Teorema de Recursión sobre ℕ (`RecursiveFn`, `RecursionTheoremWithStep`)
 - `PeanoImport.lean` - Isomorfismo Von Neumann ↔ Peano (depende de `peanolib`) *(2026-03-04)*
-- `NaturalNumbersAdd.lean` - Suma en ω vía Recursión, puente `fromPeano_add` *(nuevo 2026-03-08)*
-- `NaturalNumbersMul.lean` - Multiplicación en ω vía Recursión, puente `fromPeano_mul` *(nuevo 2026-03-08)*
+- `NaturalNumbersAdd.lean` - Suma en ω vía RecursiveFn, puente `fromPeano_add`
+- `NaturalNumbersMul.lean` - Multiplicación en ω vía RecursiveFn, puente `fromPeano_mul`
+- `NaturalNumbersSub.lean` - Sustracción saturada (monus) vía RecursiveFn, puente `fromPeano_sub`
+- `NaturalNumbersDiv.lean` - División euclídea Patrón B (`divOf`/`modOf`), puentes `fromPeano_div/mod`
+- `NaturalNumbersPow.lean` - Potenciación vía RecursiveFn + `mulFn`, puente `fromPeano_pow`
+- `NaturalNumbersArith.lean` - Divisibilidad ZFC-nativa, `gcdOf`/`lcmOf` Patrón B, Bézout, TFA
+- `NaturalNumbersFactorial.lean` - Factorial Patrón B, puente `fromPeano_factorial`
+- `NaturalNumbersGcd.lean` - GCD ZFC-nativo (algoritmo euclídeo), LCM, puentes `gcd_eq_gcdOf`/`lcm_eq_lcmOf`
+- `NaturalNumbersPrimes.lean` - Primalidad ZFC-nativa (`isPrime`), TFA Enfoque A, puente `fromPeano_prime`
+- `NaturalNumbersBinom.lean` - Coeficientes binomiales Patrón B (`binomOf`), regla de Pascal
+- `NaturalNumbersMaxMin.lean` - Máximo/mínimo Patrón B (`maxOf`/`minOf`), 27 teoremas
+- `NaturalNumbersNewtonBinom.lean` - Teorema binomial de Newton Patrón B 4-arg (`binomTermOf`)
+- `NaturalNumbersWellFounded.lean` - Buen fundamento (`acc_lt_Omega`), buena ordenación (`well_ordering_Omega`)
 
 ### **Nivel 9: Estructuras Algebraicas**
 
@@ -766,6 +808,152 @@ export SetUniverse.SetOrder (
 export SetUniverse.SetStrictOrder (
     strict_order_irreflexive, strict_order_asymmetric,
     strict_order_transitive, partial_to_strict_order
+)
+```
+
+### NaturalNumbersSub.lean
+
+```lean
+export SetUniverse.NaturalNumbersSub (
+    predecessorFn, subFn, sub,
+    sub_zero_Omega, zero_sub_Omega, sub_self_Omega,
+    sub_succ_succ_Omega, sub_k_add_k_Omega, add_k_sub_k_Omega,
+    sub_le_self_Omega, sub_pos_iff_lt_Omega,
+    sub_in_Omega, fromPeano_sub
+)
+```
+
+### NaturalNumbersDiv.lean
+
+```lean
+export SetUniverse.NaturalNumbersDiv (
+    divOf, modOf,
+    divOf_in_Omega, modOf_in_Omega,
+    fromPeano_div, fromPeano_mod,
+    divMod_eq_Omega, mod_lt_divisor_Omega,
+    div_of_lt_Omega, mod_of_lt_Omega, div_le_self_Omega
+)
+```
+
+### NaturalNumbersPow.lean
+
+```lean
+export SetUniverse.NaturalNumbersPow (
+    powFn, pow,
+    pow_zero, pow_succ, pow_eq, pow_in_Omega,
+    fromPeano_pow,
+    zero_pow_Omega, one_pow_Omega, pow_one_Omega,
+    pow_ne_zero_Omega, pow_two_Omega,
+    pow_add_eq_mul_pow_Omega, mul_pow_Omega, pow_pow_eq_pow_mul_Omega,
+    powFn_is_function
+)
+```
+
+### NaturalNumbersArith.lean
+
+```lean
+export SetUniverse.NaturalNumbersArith (
+    divides, div, mod,
+    div_eq_divOf, mod_eq_modOf,
+    gcdOf, lcmOf,
+    fromPeano_gcd, fromPeano_lcm,
+    divides_refl_Omega, divides_trans_Omega, divides_zero_Omega,
+    divides_one_Omega, one_divides_Omega,
+    divides_add_Omega, divides_mul_left_Omega, divides_mul_right_Omega,
+    gcd_divides_left_Omega, gcd_divides_right_Omega, gcd_greatest_Omega,
+    gcdOf_in_Omega, lcmOf_in_Omega, lcm_multiple_left_Omega,
+    lcm_multiple_right_Omega, lcm_least_Omega,
+    bezout_natform_Omega,
+    fundamental_theorem_arithmetic
+)
+```
+
+### NaturalNumbersFactorial.lean
+
+```lean
+export SetUniverse.NaturalNumbersFactorial (
+    factorialOf,
+    factorialOf_zero, factorialOf_one, factorialOf_two,
+    factorialOf_succ, factorialOf_pos, factorialOf_ne_zero,
+    factorialOf_ge_one, factorialOf_le_succ, factorialOf_le_mono,
+    factorialOf_in_Omega, fromPeano_factorial
+)
+```
+
+### NaturalNumbersGcd.lean
+
+```lean
+export SetUniverse.NaturalNumbersGcd (
+    gcd, lcm,
+    gcd_in_Omega, lcm_in_Omega,
+    gcd_zero, gcd_pos_step,
+    gcd_eq_gcdOf, lcm_eq_lcmOf,
+    gcd_divides_left_Omega, gcd_divides_right_Omega, gcd_greatest_Omega,
+    gcd_comm_Omega, lcm_multiple_left_Omega, lcm_multiple_right_Omega,
+    lcm_comm_Omega
+)
+```
+
+### NaturalNumbersPrimes.lean
+
+```lean
+export SetUniverse.NaturalNumbersPrimes (
+    isPrime, fromPeano_prime,
+    isPrime_in_Omega, isPrime_ne_zero, isPrime_ne_one,
+    isPrime_ge_two, isPrime_prime_divisors,
+    exists_prime_divisor_ZFC,
+    exists_prime_factorization_ZFC, unique_prime_factorization_ZFC
+)
+```
+
+### NaturalNumbersBinom.lean
+
+```lean
+export SetUniverse.NaturalNumbersBinom (
+    binomOf, fromPeano_binom,
+    binomOf_n_zero, binomOf_n_n, binomOf_n_one,
+    binomOf_one_succ, binomOf_pascal, binomOf_succ_n_by_n,
+    binomOf_comm, binomOf_zero_pos, binomOf_le_vanish,
+    binomOf_mul_factorials, binomOf_add_n_zero, binomOf_add_zero_n,
+    binomOf_in_Omega
+)
+```
+
+### NaturalNumbersMaxMin.lean
+
+```lean
+export SetUniverse.NaturalNumbersMaxMin (
+    maxOf, minOf, fromPeano_max, fromPeano_min,
+    maxOf_in_Omega, minOf_in_Omega,
+    maxOf_idem, minOf_idem,
+    maxOf_comm, minOf_comm,
+    maxOf_assoc, minOf_assoc,
+    maxOf_zero_l, maxOf_zero_r, minOf_zero_l, minOf_zero_r,
+    maxOf_le_left, maxOf_le_right, minOf_le_left, minOf_le_right,
+    le_maxOf_left, le_maxOf_right, minOf_le_maxOf,
+    maxOf_eq_left, maxOf_eq_right, minOf_eq_left, minOf_eq_right,
+    maxOf_eq_iff, minOf_eq_iff
+)
+```
+
+### NaturalNumbersNewtonBinom.lean
+
+```lean
+export SetUniverse.NaturalNumbersNewtonBinom (
+    binomTermOf, fromPeano_binomTerm,
+    binomTermOf_in_Omega,
+    binomTerm_k_zero, binomTerm_k_n,
+    pow_add_split, newton_binom_peano, sum_binom_eq_pow_two_peano,
+    binomTerm_pos, binomTerm_bound_exists,
+    binomTermOf_zero_zero
+)
+```
+
+### NaturalNumbersWellFounded.lean
+
+```lean
+export SetUniverse.NaturalNumbersWellFounded (
+    acc_lt_Omega, well_ordering_Omega, well_ordering_Omega_exists
 )
 ```
 

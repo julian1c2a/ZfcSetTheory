@@ -1,6 +1,12 @@
 # Plan de Importación de Peano → ZfcSetTheory
 
+> **⚠️ ARCHIVADO — 2026-03-27**
+> Este plan está **completamente ejecutado**. Todos los módulos bridge de peanolib
+> han sido implementados (37/37 módulos, 0 sorry). Ver CURRENT-STATUS-PROJECT.md
+> para el estado actual del proyecto.
+
 **Creado:** 2026-03-21
+**Archivado:** 2026-03-27
 **Autor:** Julián Calderón Almendros
 
 > Este documento describe el plan completo para importar las operaciones y resultados del
@@ -533,17 +539,20 @@ No hay obstáculo para definirla vía `toPeano`/`fromPeano` usando la inyectivid
 
 ## 8. Checklist de Implementación
 
-- [ ] `lake update` — actualizar paquete Peano
-- [ ] `NaturalNumbersSub.lean` — Sub (Patrón A)
-- [ ] `NaturalNumbersDiv.lean` — Div/Mod (Patrón B)
-- [ ] `NaturalNumbersPow.lean` — Pow (Patrón A) *(requiere lake update)*
-- [ ] `NaturalNumbersArith.lean` — divisibilidad, gcd, lcm (Patrón B)
-- [ ] `NaturalNumbersFactorial.lean` — factorial (Patrón B) *(requiere lake update)*
-- [ ] `NaturalNumbersBinom.lean` — coeficientes binomiales (Patrón B) *(requiere lake update)*
-- [ ] `NaturalNumbersNewtonBinom.lean` — Binomio de Newton (Patrón B) *(requiere lake update)*
-- [ ] `NaturalNumbersPrimes.lean` — TFA (OPCIONAL) *(requiere lake update)*
-- [ ] Actualizar `ZfcSetTheory.lean` con los nuevos imports
-- [ ] Actualizar `REFERENCE.md` con las nuevas secciones
+- [x] `lake update` — actualizar paquete Peano
+- [x] `NaturalNumbersSub.lean` — Sub (Patrón A) ✅ 2026-03-21
+- [x] `NaturalNumbersDiv.lean` — Div/Mod (Patrón B) ✅ 2026-03-21
+- [x] `NaturalNumbersPow.lean` — Pow (Patrón A) ✅ 2026-03-22
+- [x] `NaturalNumbersArith.lean` — divisibilidad, gcd, lcm (Patrón B) ✅ 2026-03-22
+- [x] `NaturalNumbersFactorial.lean` — factorial (Patrón B) ✅ 2026-03-22
+- [x] `NaturalNumbersGcd.lean` — GCD ZFC-nativo (Euclides) ✅ 2026-03-24
+- [x] `NaturalNumbersPrimes.lean` — TFA Enfoque A ✅ 2026-03-25
+- [x] `NaturalNumbersBinom.lean` — coeficientes binomiales (Patrón B) ✅ 2026-03-25
+- [x] `NaturalNumbersMaxMin.lean` — máximo/mínimo (Patrón B) ✅ 2026-03-26
+- [x] `NaturalNumbersNewtonBinom.lean` — Binomio de Newton (Patrón B 4-arg) ✅ 2026-03-26
+- [x] `NaturalNumbersWellFounded.lean` — buena ordenación de ω (Patrón B) ✅ 2026-03-26
+- [x] Actualizar `ZfcSetTheory.lean` con los nuevos imports
+- [x] Actualizar `REFERENCE.md` con las nuevas secciones (37 módulos proyectados)
 
 ---
 

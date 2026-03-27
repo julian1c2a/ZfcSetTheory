@@ -1,24 +1,49 @@
 # Current Status - ZfcSetTheory Project
 
-**Date**: 2026-03-25 15:00
+**Date**: 2026-03-27 09:00
 **Lean Version**: 4.23.0-rc2
 **Author**: Julián Calderón Almendros
 
 ## Executive Summary
 
-This project implements ZFC set theory in Lean 4, focusing on fundamental axioms, relations, functions, cardinality, and full arithmetic of the Von Neumann naturals. All proofs are complete with no `sorry` statements remaining. The `PeanoImport.lean` module establishes the formal isomorphism between Von Neumann and Peano natural numbers via the external `peanolib` library. Arithmetic modules (Add, Mul, Sub, Div, Pow, Arith, Factorial, Gcd, Primes, Binom) provide full arithmetic in ω via RecursiveFn and Pattern B bridge.
+This project implements ZFC set theory in Lean 4, focusing on fundamental axioms, relations, functions, cardinality, and full arithmetic of the Von Neumann naturals. All proofs are complete with no `sorry` statements remaining. The `PeanoImport.lean` module establishes the formal isomorphism between Von Neumann and Peano natural numbers via the external `peanolib` library. Arithmetic modules (Add, Mul, Sub, Div, Pow, Arith, Factorial, Gcd, Primes, Binom, MaxMin, NewtonBinom, WellFounded) provide full arithmetic in ω via RecursiveFn and Pattern B bridge.
 
 ### Statistics
 
-- **Total modules**: 34 (+ 1 external: peanolib)
-- **Compilation**: ✅ Successful (52/52 jobs)
+- **Total modules**: 37 (+ 1 external: peanolib)
+- **Compilation**: ✅ Successful (0 errors, 0 sorry)
 - **Complete proofs**: 100%
 - **Remaining `sorry`**: 0
-- **Documentation**: REFERENCE.md fully updated (all 34 modules projected)
+- **Documentation**: REFERENCE.md fully updated (all 37 modules projected)
 
 ## Recent Achievements
 
-### Latest Updates (March 25, 2026)
+### Latest Updates (March 26, 2026)
+
+#### 1. NaturalNumbersMaxMin.lean — Máximo y mínimo en ω (✅ Complete)
+
+- `maxOf (n m : U) : U` — máximo vía Patrón B: `fromPeano (Peano.MaxMin.max (toPeano n _) (toPeano m _))`
+- `minOf (n m : U) : U` — mínimo vía Patrón B: `fromPeano (Peano.MaxMin.min (toPeano n _) (toPeano m _))`
+- `fromPeano_max`, `fromPeano_min` — teoremas puente
+- 27 teoremas: idempotencia, conmutatividad, asociatividad, identidad/aniquilador, cotas sup/inf, caracterización vía ≤, max/min es uno de los argumentos, max=min⇔iguales
+- 31 exports totales; proyectado en REFERENCE.md §3.33, §4.29, §6.30
+
+#### 2. NaturalNumbersNewtonBinom.lean — Teorema binomial de Newton en ω (✅ Complete)
+
+- `binomTermOf (a b n k : U) : U` — término C(n,k)·a^k·b^(n−k) vía Patrón B (4 argumentos)
+- `fromPeano_binomTerm` — teorema puente con `congr 1` ×4
+- 9 teoremas: valores concretos (k=0, k=n), expansión, separación de potencias, Newton's binomial theorem, Σ C(n,k)=2^n, comparación de crecimiento existencial
+- Decisión de diseño: `finSum` no se transporta a ZFC; teoremas Newton/sumBinom usan tipos Peano con resultado aplicado vía `fromPeano`
+- 12 exports totales; proyectado en REFERENCE.md §3.34, §4.30, §6.31
+
+#### 3. NaturalNumbersWellFounded.lean — Buen fundamento y buena ordenación en ω (✅ Complete)
+
+- `acc_lt_Omega (n : U)` — accesibilidad bajo ∈ restringido a ω
+- `well_ordering_Omega (P : U → Prop)` — principio de buena ordenación con unicidad
+- `well_ordering_Omega_exists` — forma simplificada sin unicidad
+- 3 exports totales; proyectado en REFERENCE.md §3.35, §4.31, §6.32
+
+### Previous Updates (March 25, 2026)
 
 #### 1. NaturalNumbersBinom.lean — Coeficientes binomiales en ω (✅ Complete)
 
@@ -161,6 +186,9 @@ This project implements ZFC set theory in Lean 4, focusing on fundamental axioms
 32. **NaturalNumbersGcd.lean** — GCD/LCM in ω (RecursiveFn + Pattern B, multiple theorems)
 33. **NaturalNumbersPrimes.lean** — Primality and TFA in ω (ZFC-native isPrime, 11 exports)
 34. **NaturalNumbersBinom.lean** — Binomial coefficients in ω (Pattern B, 13 theorems, 15 exports)
+35. **NaturalNumbersMaxMin.lean** — Max and min in ω (Pattern B, 27 theorems, 31 exports)
+36. **NaturalNumbersNewtonBinom.lean** — Newton's binomial theorem in ω (Pattern B 4-arg, 9 theorems, 12 exports)
+37. **NaturalNumbersWellFounded.lean** — Well-foundedness and well-ordering of ω (Pattern B, 3 theorems, 3 exports)
 
 ## Project Architecture
 
@@ -193,7 +221,9 @@ NaturalNumbersDiv.lean → NaturalNumbersPow.lean → NaturalNumbersArith.lean
    ↓
 NaturalNumbersFactorial.lean → NaturalNumbersGcd.lean → NaturalNumbersPrimes.lean
    ↓
-NaturalNumbersBinom.lean
+NaturalNumbersBinom.lean → NaturalNumbersNewtonBinom.lean
+   ↓ (parallel)
+NaturalNumbersMaxMin.lean, NaturalNumbersWellFounded.lean
 ```
 
 ### Boolean Algebra Branch (Parallel)
@@ -257,9 +287,13 @@ ZFC naturals use saturated subtraction: `m - n = 0` when `m ≤ n`. This matches
 
 ## Suggested Next Steps
 
+### High Priority
+
+1. **Finite Sequences** (`FiniteSequences.lean`) — functions `f : n → ω` for `n ∈ ω`; needed for sequences, tuples, and combinatorics foundations
+
 ### Medium Priority
 
-1. **ZFC-native GCD/LCM** — implement via well-founded recursion (Euclidean algorithm) instead of Pattern B bridge; currently only Pattern B versions exist in NaturalNumbersArith
+1. **Integers ℤ in ZFC** — equivalence classes of pairs `(a, b) ∈ ω × ω` with `(a,b) ~ (c,d) ↔ a+d=b+c`
 
 2. **Axiom of Replacement** — not yet implemented; required for constructing functions with large codomains
 
@@ -267,9 +301,8 @@ ZFC naturals use saturated subtraction: `m - n = 0` when `m ≤ n`. This matches
 
 ### Low Priority
 
-1. **N-tuples** — ordered tuples via recursive pair construction
-2. **Proof optimization** — some proofs use verbose constructions; opportunities for simp lemmas
-3. **Custom tactics** — for common patterns in arithmetic proofs
+1. **Proof optimization** — some proofs use verbose constructions; opportunities for simp lemmas
+2. **Custom tactics** — for common patterns in arithmetic proofs
 
 ## Quality Metrics
 
@@ -281,12 +314,12 @@ ZFC naturals use saturated subtraction: `m - n = 0` when `m ≤ n`. This matches
 - **Cardinality**: 100% proven (Cantor + CSB)
 - **Recursion (3 variants)**: 100% proven
 - **Peano isomorphism**: 100% proven
-- **Arithmetic (Add, Mul, Sub, Div, Pow, Arith, Factorial, Gcd, Primes, Binom)**: 100% proven
+- **Arithmetic (Add, Mul, Sub, Div, Pow, Arith, Factorial, Gcd, Primes, Binom, MaxMin, NewtonBinom, WellFounded)**: 100% proven
 - **Boolean algebra (all modules)**: 100% proven
 
 ### Documentation
 
-- ✅ REFERENCE.md: 34 modules fully projected (mathematical descriptions + Lean 4 signatures)
+- ✅ REFERENCE.md: 37 modules fully projected (mathematical descriptions + Lean 4 signatures)
 - ✅ All exports documented with section references
 - ✅ AIDER-AI-GUIDE.md: complete development guide (14 requirements)
 - ✅ CHANGELOG.md, README.md, CURRENT-STATUS-PROJECT.md: up to date
@@ -310,9 +343,9 @@ At most ONE `.lean` file unlocked at a time. Pre-commit hook blocks commits touc
 
 ---
 
-**Last updated**: 2026-03-25 15:00
+**Last updated**: 2026-03-27 09:00
 **Author**: Julián Calderón Almendros
 **GitHub**: [@julian1c2a](https://github.com/julian1c2a)
 **License**: MIT License
 
-**Status**: ✅ **100% COMPLETE** — 34/34 modules, 0 sorry, full arithmetic in ω
+**Status**: ✅ **100% COMPLETE** — 37/37 modules, 0 sorry, full arithmetic in ω
