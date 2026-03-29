@@ -1,6 +1,6 @@
 # Next Steps — ZfcSetTheory Project
 
-**Last updated**: 2026-03-26
+**Last updated**: 2026-03-27
 
 This document outlines actionable next steps for the project, organized by priority and dependency.
 
@@ -54,15 +54,23 @@ Create a unified module (or small family of modules) for items 1–6. This requi
 
 ---
 
-## 5. Finite Sequences in ZFC — Lower Priority (enabler for full ZFC-TFA)
+## 5. Finite Sequences in ZFC — Partially Complete
 
-### 4.1 Motivation
+### 4.1 Status
 
-For a truly ZFC-native statement of TFA (approach B in §1), we need finite sequences modeled as functions `f : n → ω` where `n ∈ ω`. This is also a prerequisite for many future developments (polynomials, ordinal arithmetic, etc.).
+**Basic theory completed** (2026-03-27) in `FiniteSequences.lean`:
 
-### 4.2 Proposed Plan
+- ✅ `isFinSeq (f n A)` — predicate for finite sequences
+- ✅ `FinSeqSet (n A)` — set of all n-sequences in A
+- ✅ `appendElem (f n a)` — append element at index n
+- ✅ 15 theorems: core predicate (8), FinSeqSet (2), empty sequence (3), appendElem (5), decomposition/restriction (1)
+- ✅ 0 sorry, 0 errors, fully projected in REFERENCE.md
 
-1. Define `FinSeq n A` = `{ f ∈ (n ×ₛ A) | isFunctionFromTo f n A }` for n ∈ ω
+**Remaining work** (lower priority):
+
+### 4.2 Proposed Plan (Remaining Items)
+
+1. ~~Define `FinSeq n A` = `{ f ∈ (n ×ₛ A) | isFunctionFromTo f n A }` for n ∈ ω~~ ✅ Done (as `isFinSeq` + `FinSeqSet`)
 2. Define `concat`, `length`, `nth`, `product` for finite sequences
 3. Bridge to `DList ℕ₀` via the Peano isomorphism
 4. Restate TFA with ZFC-native sequences
@@ -101,8 +109,8 @@ Per ReflexionesParaLaIA.md [14]. Restructure into clear module hierarchies:
 | ~~**2**~~ | ~~Binomial coefficients bridge~~ | ~~`NaturalNumbersBinom.lean`~~ | ✅ Complete 2026-03-25 |
 | ~~**3**~~ | ~~MaxMin + NewtonBinom + WellFounded~~ | ~~3 modules~~ | ✅ Complete 2026-03-26 |
 | **4** | Complete atomic Boolean algebra + representation | Extension of `AtomicBooleanAlgebra.lean` or new module | `AtomicBooleanAlgebra`, `Cardinality` |
-| **5** | Finite sequences in ZFC | `FiniteSequences.lean` | `Functions`, `NaturalNumbers` |
+| **5** | Finite sequences in ZFC (remaining: concat, length, nth, product, DList bridge) | Extension of `FiniteSequences.lean` | `FiniteSequences`, `Functions`, `NaturalNumbers` |
 
 ---
 
-*Updated 2026-03-26. All peanolib bridge modules complete. Next focus: algebraic structure completion and finite sequences.*
+*Updated 2026-03-27. All peanolib bridge modules complete. FiniteSequences basic theory complete. Next focus: algebraic structure completion and finite sequence extensions (concat, length, product).*

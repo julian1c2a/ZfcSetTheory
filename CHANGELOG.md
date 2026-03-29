@@ -1,6 +1,6 @@
 # Changelog
 
-**Última actualización:** 2026-03-26 14:00
+**Última actualización:** 2026-03-27 10:00
 **Autor**: Julián Calderón Almendros
 
 Todos los cambios notables de este proyecto serán documentados en este archivo.
@@ -9,6 +9,27 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Añadido (2026-03-27 10:00)
+
+- **Nuevo módulo FiniteSequences.lean — Secuencias finitas en ZFC** (Patrón directo, sin bridge):
+  - ✅ `isFinSeq (f n A : U) : Prop` — predicado: n ∈ ω ∧ f : n → A
+  - ✅ `FinSeqSet (n A : U) : U` — conjunto de todas las n-secuencias en A (noncomputable)
+  - ✅ `appendElem (f n a : U) : U` — extensión f ∪ {⟨n, a⟩} (noncomputable)
+  - ✅ 8 teoremas del predicado central: `isFinSeq_in_Omega`, `isFinSeq_is_function`, `isFinSeq_domain`, `isFinSeq_subset`, `isFinSeq_unique_length`, `isFinSeq_apply_mem`, `isFinSeq_pair_mem`, `isFinSeq_ext`
+  - ✅ 2 teoremas de FinSeqSet: `mem_FinSeqSet_iff`, `isFinSeq_mem_FinSeqSet`
+  - ✅ 3 teoremas de secuencia vacía: `isFinSeq_empty`, `isFinSeq_zero_unique`, `FinSeqSet_zero`
+  - ✅ 5 teoremas de appendElem: `appendElem_is_specified`, `isFinSeq_appendElem`, `appendElem_apply_last`, `appendElem_apply_prev`, `appendElem_inj`
+  - ✅ 1 teorema de descomposición: `isFinSeq_restriction`
+  - ✅ Namespace `SetUniverse.FiniteSequences` (sin export a `SetUniverse`)
+  - ✅ Build limpio; 38/38 módulos compilados correctamente (0 sorry, 0 errores)
+
+- **REFERENCE.md — Proyección completa de FiniteSequences.lean**:
+  - ✅ §1.1: 1 fila añadida (FiniteSequences)
+  - ✅ §3.36: 3 definiciones (isFinSeq, FinSeqSet, appendElem)
+  - ✅ §4.32: 15 teoremas en 5 secciones
+  - ✅ §6.33: documentación de namespace (sin exports)
+  - ✅ §7.2: 1 entrada añadida a archivos completos
 
 ### Añadido (2026-03-26 14:00)
 

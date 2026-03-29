@@ -81,6 +81,7 @@ Este documento cumple con todos los requisitos especificados en [AIDER-AI-GUIDE.
 | `NaturalNumbersMaxMin.lean` | `SetUniverse.NaturalNumbersMaxMin` | `NaturalNumbers`, `Infinity`, `PeanoImport`, `PeanoNatLib.PeanoNatMaxMin` | ✅ Completo |
 | `NaturalNumbersNewtonBinom.lean` | `SetUniverse.NaturalNumbersNewtonBinom` | `NaturalNumbers`, `Infinity`, `PeanoImport`, `NaturalNumbersAdd`, `NaturalNumbersMul`, `NaturalNumbersSub`, `NaturalNumbersPow`, `NaturalNumbersBinom`, `PeanoNatLib.PeanoNatNewtonBinom` | ✅ Completo |
 | `NaturalNumbersWellFounded.lean` | `SetUniverse.NaturalNumbersWellFounded` | `NaturalNumbers`, `Infinity`, `PeanoImport`, `PeanoNatLib.PeanoNatWellFounded` | ✅ Completo |
+| `FiniteSequences.lean` | `SetUniverse.FiniteSequences` | `NaturalNumbersAdd` + anteriores | ✅ Completo |
 
 ## 2. Axiomas ZFC Implementados
 
@@ -3879,6 +3880,49 @@ noncomputable def binomTermOf (a b n k : U) : U :=
 **Estrategia**: Patrón B (bridge-only) — Buen fundamento ya existe como `nat_mem_wf` en ZFC; este módulo añade el principio de buena ordenación transportado desde Peano.
 
 *(Este módulo no tiene definiciones públicas — solo teoremas.)*
+
+---
+
+### 3.36 FiniteSequences.lean
+
+**Módulo**: `ZfcSetTheory.FiniteSequences`
+**Namespace**: `SetUniverse.FiniteSequences`
+**Dependencias**: `NaturalNumbersAdd` + anteriores (usa `Functions`, `NaturalNumbers`, `CartesianProduct`, `Infinity`, etc.)
+
+#### Definición: `isFinSeq`
+
+**Enunciado Matemático**: $\text{isFinSeq}(f, n, A) \iff n \in \omega \land f : n \to A$
+
+```lean
+def isFinSeq (f n A : U) : Prop :=
+  n ∈ ω ∧ isFunctionFromTo f n A
+```
+
+**Dependencias**: `isFunctionFromTo`, `ω`
+**Computabilidad**: Computable (predicado proposicional)
+
+#### Definición: `FinSeqSet`
+
+**Enunciado Matemático**: $\text{FinSeqSet}(n, A) = \{ f \in \mathcal{P}(n \times_s A) \mid n \in \omega \land f : n \to A \}$
+
+```lean
+noncomputable def FinSeqSet (n A : U) : U :=
+  SpecSet (𝒫(n ×ₛ A)) (fun f => n ∈ ω ∧ isFunctionFromTo f n A)
+```
+
+**Dependencias**: `SpecSet`, `𝒫`, `×ₛ`, `isFunctionFromTo`, `ω`
+**Computabilidad**: No computable
+
+#### Definición: `appendElem`
+
+**Enunciado Matemático**: $\text{appendElem}(f, n, a) = f \cup \{\langle n, a \rangle\}$
+
+```lean
+noncomputable def appendElem (f n a : U) : U := f ∪ {⟨n, a⟩}
+```
+
+**Dependencias**: `BinUnion`, `Singleton`, `OrderedPair`
+**Computabilidad**: No computable
 
 ---
 
@@ -9308,6 +9352,70 @@ theorem fromPeano_le_iff (p q : Peano.ℕ₀) :
 
 ---
 
+### 4.32 FiniteSequences.lean
+
+**Módulo**: `ZfcSetTheory.FiniteSequences`
+**Namespace**: `SetUniverse.FiniteSequences`
+**Dependencias del módulo**: `NaturalNumbersAdd` + anteriores
+
+#### Sección 1: Predicado central (isFinSeq)
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `isFinSeq_in_Omega` | $\text{isFinSeq}(f,n,A) \Rightarrow n \in \omega$ | `theorem isFinSeq_in_Omega {f n A : U} (h : isFinSeq f n A) : n ∈ ω` |
+| `isFinSeq_is_function` | $\text{isFinSeq}(f,n,A) \Rightarrow f : n \to A$ | `theorem isFinSeq_is_function {f n A : U} (h : isFinSeq f n A) : isFunctionFromTo f n A` |
+| `isFinSeq_domain` | $\text{isFinSeq}(f,n,A) \Rightarrow \text{dom}(f) = n$ | `theorem isFinSeq_domain {f n A : U} (h : isFinSeq f n A) : domain f = n` |
+| `isFinSeq_subset` | $\text{isFinSeq}(f,n,A) \Rightarrow f \subseteq n \times_s A$ | `theorem isFinSeq_subset {f n A : U} (h : isFinSeq f n A) : f ⊆ n ×ₛ A` |
+| `isFinSeq_unique_length` | $f : n \to A \land f : m \to A \Rightarrow n = m$ | `theorem isFinSeq_unique_length {f n m A : U} (hn : isFinSeq f n A) (hm : isFinSeq f m A) : n = m` |
+| `isFinSeq_apply_mem` | $\text{isFinSeq}(f,n,A) \land i \in n \Rightarrow f(i) \in A$ | `theorem isFinSeq_apply_mem {f n A i : U} (h : isFinSeq f n A) (hi : i ∈ n) : f⦅i⦆ ∈ A` |
+| `isFinSeq_pair_mem` | $\text{isFinSeq}(f,n,A) \land i \in n \Rightarrow \langle i, f(i) \rangle \in f$ | `theorem isFinSeq_pair_mem {f n A i : U} (h : isFinSeq f n A) (hi : i ∈ n) : ⟨i, f⦅i⦆⟩ ∈ f` |
+| `isFinSeq_ext` | $f,g : n \to A \land (\forall i \in n,\; f(i) = g(i)) \Rightarrow f = g$ | `theorem isFinSeq_ext {f g n A : U} (hf : isFinSeq f n A) (hg : isFinSeq g n A) (hval : ∀ i, i ∈ n → f⦅i⦆ = g⦅i⦆) : f = g` |
+
+**Dependencias**: `isFunctionFromTo`, `function_domain_eq`, `apply_mem`, `apply_eq`, `CartesianProduct_is_specified`, `OrderedPair_mem_CartesianProduct`, `ExtSet_wc`, `isOrderedPair_by_construction`, `ω`
+
+#### Sección 2: FinSeqSet
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `mem_FinSeqSet_iff` | $f \in \text{FinSeqSet}(n,A) \iff \text{isFinSeq}(f,n,A)$ | `theorem mem_FinSeqSet_iff {f n A : U} : f ∈ FinSeqSet n A ↔ isFinSeq f n A` |
+| `isFinSeq_mem_FinSeqSet` | $\text{isFinSeq}(f,n,A) \Rightarrow f \in \text{FinSeqSet}(n,A)$ | `theorem isFinSeq_mem_FinSeqSet {f n A : U} (h : isFinSeq f n A) : f ∈ FinSeqSet n A` |
+
+**Dependencias**: `SpecSet_is_specified`, `PowerSet_is_specified`, `isFinSeq`
+
+#### Sección 3: Secuencia vacía
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `isFinSeq_empty` | $\emptyset : \emptyset \to A$ es una 0-secuencia válida | `theorem isFinSeq_empty (A : U) : isFinSeq (∅ : U) (∅ : U) A` |
+| `isFinSeq_zero_unique` | $f : \emptyset \to A \Rightarrow f = \emptyset$ | `theorem isFinSeq_zero_unique {f A : U} (h : isFinSeq f ∅ A) : f = ∅` |
+| `FinSeqSet_zero` | $\text{FinSeqSet}(\emptyset, A) = \{\emptyset\}$ | `theorem FinSeqSet_zero (A : U) : FinSeqSet (∅ : U) A = {(∅ : U)}` |
+
+**Dependencias**: `zero_in_Omega`, `EmptySet_is_empty`, `CartesianProduct_empty_left`, `ExtSet_wc`, `ExtSet`, `Singleton_is_specified`, `mem_FinSeqSet_iff`
+
+#### Sección 4: appendElem
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `appendElem_is_specified` | $x \in \text{appendElem}(f,n,a) \iff x \in f \lor x = \langle n, a \rangle$ | `theorem appendElem_is_specified {f n a x : U} : x ∈ appendElem f n a ↔ x ∈ f ∨ x = ⟨n, a⟩` |
+| `isFinSeq_appendElem` | $f : n \to A \land a \in A \Rightarrow \text{appendElem}(f,n,a) : \sigma(n) \to A$ | `theorem isFinSeq_appendElem {f n A a : U} (hf : isFinSeq f n A) (ha : a ∈ A) : isFinSeq (appendElem f n a) (σ n) A` |
+| `appendElem_apply_last` | $(f \cup \{\langle n, a \rangle\})(n) = a$ | `theorem appendElem_apply_last {f n A a : U} (hf : isFinSeq f n A) : (appendElem f n a)⦅n⦆ = a` |
+| `appendElem_apply_prev` | $i \in n \Rightarrow (f \cup \{\langle n, a \rangle\})(i) = f(i)$ | `theorem appendElem_apply_prev {f n A a i : U} (hf : isFinSeq f n A) (hi : i ∈ n) : (appendElem f n a)⦅i⦆ = f⦅i⦆` |
+| `appendElem_inj` | $\text{appendElem}(f,n,a) = \text{appendElem}(f,n,b) \Rightarrow a = b$ | `theorem appendElem_inj {f n A a b : U} (hf : isFinSeq f n A) (h : appendElem f n a = appendElem f n b) : a = b` |
+
+**Dependencias**: `BinUnion_is_specified`, `Singleton_is_specified`, `successor_is_specified`, `mem_successor_self`, `nat_not_mem_self`, `mem_Omega_is_Nat`, `nat_successor_is_nat`, `Nat_in_Omega`, `CartesianProduct_is_specified`, `OrderedPair_mem_CartesianProduct`, `Eq_of_OrderedPairs_given_projections`, `apply_mem`, `apply_eq`, `mem_domain`, `isFinSeq_domain`
+
+#### Sección 5: Descomposición
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `isFinSeq_restriction` | $f : \sigma(n) \to A \Rightarrow f{\upharpoonright}_n : n \to A$ | `theorem isFinSeq_restriction {f n A : U} (h : isFinSeq f (σ n) A) : isFinSeq (f ↾ n) n A` |
+
+**Patrón de demostración**: Extrae `isNat (σ n)` de `h.1`, deduce `isNat n` por `nat_element_is_nat`, aplica `Restriction_is_function` con `n ⊆ σ n` (por `nat_subset_succ`).
+
+**Dependencias**: `mem_Omega_is_Nat`, `nat_element_is_nat`, `Nat_in_Omega`, `mem_successor_self`, `Restriction_is_function`, `nat_subset_succ`
+
+---
+
 ## 5. Notación y Sintaxis
 
 ### 5.1 Operadores Básicos
@@ -10487,6 +10595,22 @@ export NaturalNumbersWellFounded (
 )
 ```
 
+### 6.33 FiniteSequences.lean
+
+**Namespace**: `SetUniverse.FiniteSequences` (sin export a `SetUniverse`)
+**Última modificación**: 2026-03-27
+**Dependencias**: `NaturalNumbersAdd` + anteriores
+
+*(Este módulo no exporta al namespace `SetUniverse`. Todas las definiciones y teoremas se acceden vía `open SetUniverse.FiniteSequences` o con nombre cualificado `FiniteSequences.isFinSeq`, etc.)*
+
+**Contenido del namespace** (3 definiciones, 15 teoremas):
+- `isFinSeq`, `FinSeqSet`, `appendElem`
+- `isFinSeq_in_Omega`, `isFinSeq_is_function`, `isFinSeq_domain`, `isFinSeq_subset`, `isFinSeq_unique_length`, `isFinSeq_apply_mem`, `isFinSeq_pair_mem`, `isFinSeq_ext`
+- `mem_FinSeqSet_iff`, `isFinSeq_mem_FinSeqSet`
+- `isFinSeq_empty`, `isFinSeq_zero_unique`, `FinSeqSet_zero`
+- `appendElem_is_specified`, `isFinSeq_appendElem`, `appendElem_apply_last`, `appendElem_apply_prev`, `appendElem_inj`
+- `isFinSeq_restriction`
+
 ## 7. Estado de Proyección por Módulo
 
 ### 7.1 Leyenda de Estados
@@ -10535,6 +10659,7 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `NaturalNumbersMaxMin.lean` - Máximo y mínimo en ω: Patrón B (bridge-only) vía isomorfismo Peano, 2 definiciones (`maxOf`, `minOf`), teoremas puente `fromPeano_max`/`fromPeano_min`, propiedades de retículo (idempotencia, conmutatividad, asociatividad, identidad/aniquilador con ∅), cotas superior/inferior, caracterización vía ≤, max/min es uno de los argumentos, max=min⇔iguales, 31 exports
 - `NaturalNumbersNewtonBinom.lean` - Término binomial y teorema de Newton en ω: Patrón B (bridge-only) con 4 argumentos, 1 definición (`binomTermOf`), teorema puente `fromPeano_binomTerm`, valores concretos (k=0, k=n), expansión C(n,k)·a^k·b^(n−k), separación de potencias n^(m+k)=n^m·n^k, teorema binomial de Newton (nivel Peano→ZFC), Σ C(n,k)=2^n, comparación de crecimiento existencial, 12 exports
 - `NaturalNumbersWellFounded.lean` - Buen fundamento y principio de buena ordenación en ω: accesibilidad vía `nat_mem_wf`, principio de buena ordenación con unicidad (transportado desde Peano), forma simplificada sin unicidad, 3 exports
+- `FiniteSequences.lean` - Secuencias finitas en ZFC: functions f : n → A con n ∈ ω, 3 definiciones (`isFinSeq`, `FinSeqSet`, `appendElem`), 15 teoremas (predicado central, secuencia vacía, append, descomposición), sin exports a `SetUniverse`
 
 ### 7.3 Archivos Parcialmente Proyectados
 
