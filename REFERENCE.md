@@ -1,6 +1,6 @@
 # Referencia Técnica - ZfcSetTheory
 
-*Última actualización: 2026-03-25 10:00*
+*Última actualización: 2026-03-30 10:00*
 **Autor**: Julián Calderón Almendros
 
 ## 📋 Cumplimiento con AIDER-AI-GUIDE.md
@@ -83,6 +83,7 @@ Este documento cumple con todos los requisitos especificados en [AIDER-AI-GUIDE.
 | `NaturalNumbersWellFounded.lean` | `SetUniverse.NaturalNumbersWellFounded` | `NaturalNumbers`, `Infinity`, `PeanoImport`, `PeanoNatLib.PeanoNatWellFounded` | ✅ Completo |
 | `FiniteSequences.lean` | `SetUniverse.FiniteSequences` | `NaturalNumbersAdd` + anteriores | ✅ Completo |
 | `FiniteSets.lean` | `SetUniverse.FiniteSets` | `NaturalNumbers`, `Infinity` + anteriores | ✅ Completo |
+| `FiniteSequencesArith.lean` | `SetUniverse.FiniteSequencesArith` | `NaturalNumbersMul`, `FiniteSequences`, `FiniteSets` + anteriores | ✅ Completo |
 
 ## 2. Axiomas ZFC Implementados
 
@@ -3943,6 +3944,111 @@ def isFiniteSet (A : U) : Prop := ∃ n, n ∈ ω ∧ A ≃ₛ n
 
 **Dependencias**: `ω`, `isEquipotent` (≃ₛ)
 **Computabilidad**: Computable (predicado proposicional)
+
+---
+
+### 3.38 FiniteSequencesArith.lean
+
+**Módulo**: `ZfcSetTheory.FiniteSequencesArith`
+**Namespace**: `SetUniverse.FiniteSequencesArith` (exportado a `SetUniverse`)
+**Dependencias**: `NaturalNumbersMul`, `FiniteSequences`, `FiniteSets` + anteriores
+
+#### Definición: `sumStepFn`
+
+**Enunciado Matemático**: Función de paso para sumación: $\langle k, v \rangle \mapsto v + f(k)$, construida como subconjunto de $(\omega \times_s \omega) \times_s \omega$.
+
+```lean
+noncomputable def sumStepFn (f : U) : U :=
+  SpecSet ((ω ×ₛ ω) ×ₛ ω)
+    (fun p => ∃ k v, k ∈ (ω : U) ∧ v ∈ (ω : U) ∧
+      p = ⟨⟨k, v⟩, add v (f⦅k⦆)⟩)
+```
+
+**Dependencias**: `SpecSet`, `ω`, `add`, `apply`
+**Computabilidad**: Noncomputable
+
+#### Definición: `seqSumFn`
+
+**Enunciado Matemático**: Función de sumación: dado $f$, $\text{seqSumFn}(f)$ es la única $F : \omega \to \omega$ que satisface $F(\emptyset) = \emptyset$ y $F(\sigma k) = F(k) + f(k)$.
+
+```lean
+noncomputable def seqSumFn (f : U) (hf : isFinSeq f (domain f) ω) : U :=
+  Classical.choose (ExistsUnique.exists
+    (RecursionTheoremWithStep (ω : U) ∅ (sumStepFn f)
+      zero_in_Omega (sumStepFn_is_function hf)))
+```
+
+**Dependencias**: `RecursionTheoremWithStep`, `sumStepFn`, `isFinSeq`
+**Computabilidad**: Noncomputable
+
+#### Definición: `seqSum`
+
+**Enunciado Matemático**: Suma de una secuencia finita numérica: $\text{seqSum}(f, n) = \sum_{i<n} f(i)$.
+
+```lean
+noncomputable def seqSum (f n : U) : U :=
+  if h : isFinSeq f (domain f) ω then
+    apply (seqSumFn f h) n
+  else ∅
+```
+
+**Dependencias**: `seqSumFn`, `isFinSeq`, `apply`
+**Computabilidad**: Noncomputable
+
+#### Definición: `prodStepFn`
+
+**Enunciado Matemático**: Función de paso para producto: $\langle k, v \rangle \mapsto v \cdot f(k)$, construida como subconjunto de $(\omega \times_s \omega) \times_s \omega$.
+
+```lean
+noncomputable def prodStepFn (f : U) : U :=
+  SpecSet ((ω ×ₛ ω) ×ₛ ω)
+    (fun p => ∃ k v, k ∈ (ω : U) ∧ v ∈ (ω : U) ∧
+      p = ⟨⟨k, v⟩, mul v (f⦅k⦆)⟩)
+```
+
+**Dependencias**: `SpecSet`, `ω`, `mul`, `apply`
+**Computabilidad**: Noncomputable
+
+#### Definición: `seqProdFn`
+
+**Enunciado Matemático**: Función de producto: dado $f$, $\text{seqProdFn}(f)$ es la única $F : \omega \to \omega$ con $F(\emptyset) = \sigma\emptyset$ y $F(\sigma k) = F(k) \cdot f(k)$.
+
+```lean
+noncomputable def seqProdFn (f : U) (hf : isFinSeq f (domain f) ω) : U :=
+  Classical.choose (ExistsUnique.exists
+    (RecursionTheoremWithStep (ω : U) (σ ∅) (prodStepFn f)
+      (succ_in_Omega ∅ zero_in_Omega) (prodStepFn_is_function hf)))
+```
+
+**Dependencias**: `RecursionTheoremWithStep`, `prodStepFn`, `isFinSeq`
+**Computabilidad**: Noncomputable
+
+#### Definición: `seqProd`
+
+**Enunciado Matemático**: Producto de una secuencia finita numérica: $\text{seqProd}(f, n) = \prod_{i<n} f(i)$.
+
+```lean
+noncomputable def seqProd (f n : U) : U :=
+  if h : isFinSeq f (domain f) ω then
+    apply (seqProdFn f h) n
+  else ∅
+```
+
+**Dependencias**: `seqProdFn`, `isFinSeq`, `apply`
+**Computabilidad**: Noncomputable
+
+#### Definición: `familyProduct`
+
+**Enunciado Matemático**: Producto cartesiano de una familia $F : n \to \text{Sets}$: $\prod_{i<n} F(i) = \{g : n \to \bigcup(\text{range}\,F) \mid \forall i \in n,\; g(i) \in F(i)\}$.
+
+```lean
+noncomputable def familyProduct (F n : U) : U :=
+  SpecSet (FinSeqSet n (⋃ (ImageSet F n)))
+    (fun g => ∀ i, i ∈ n → g⦅i⦆ ∈ F⦅i⦆)
+```
+
+**Dependencias**: `SpecSet`, `FinSeqSet`, `ImageSet`, `apply`
+**Computabilidad**: Noncomputable
 
 ---
 
@@ -9517,6 +9623,79 @@ theorem fromPeano_le_iff (p q : Peano.ℕ₀) :
 
 ---
 
+### 4.34 FiniteSequencesArith.lean
+
+**Módulo**: `ZfcSetTheory.FiniteSequencesArith`
+**Namespace**: `SetUniverse.FiniteSequencesArith`
+**Dependencias del módulo**: `NaturalNumbersMul`, `FiniteSequences`, `FiniteSets` + anteriores
+
+#### Sección 1: Función de paso para sumación
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `mem_sumStepFn` | $p \in \text{sumStepFn}(f) \iff p \in (\omega \times_s \omega) \times_s \omega \land \exists k\,v \in \omega,\; p = \langle\langle k,v\rangle, v + f(k)\rangle$ | `theorem mem_sumStepFn {f p : U} : p ∈ sumStepFn f ↔ (p ∈ (ω ×ₛ ω) ×ₛ ω ∧ ∃ k v, k ∈ (ω : U) ∧ v ∈ (ω : U) ∧ p = ⟨⟨k, v⟩, add v (f⦅k⦆)⟩)` |
+| `sumStepFn_is_function` | $\text{sumStepFn}(f) : \omega \times_s \omega \to \omega$ | `theorem sumStepFn_is_function {f n : U} (hf : isFinSeq f n ω) : isFunctionFromTo (sumStepFn f) (ω ×ₛ ω) ω` |
+| `sumStepFn_apply` | $\text{sumStepFn}(f)(\langle k,v \rangle) = v + f(k)$ | `theorem sumStepFn_apply {f n k v : U} (hf : isFinSeq f n ω) (hk : k ∈ (ω : U)) (hv : v ∈ (ω : U)) : (sumStepFn f)⦅⟨k, v⟩⦆ = add v (f⦅k⦆)` |
+
+**Dependencias**: `SpecSet_is_specified`, `CartesianProduct_is_specified`, `add_in_Omega`, `apply_eq`
+
+#### Sección 2: Sumación de secuencias
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `seqSumFn_is_function` | $\text{seqSumFn}(f) : \omega \to \omega$ | `theorem seqSumFn_is_function {f : U} (hf : isFinSeq f (domain f) ω) : isFunctionFromTo (seqSumFn f hf) ω ω` |
+| `seqSum_zero` | $\text{seqSum}(f, \emptyset) = \emptyset$ (suma vacía = 0) | `theorem seqSum_zero {f : U} (hf : isFinSeq f ∅ ω) : seqSum f ∅ = ∅` |
+| `seqSum_succ` | $\text{seqSum}(f, \sigma k) = \text{seqSum}(f, k) + f(k)$ | `theorem seqSum_succ {f k : U} (hf : isFinSeq f (σ k) ω) (hk : k ∈ (ω : U)) : seqSum f (σ k) = add (seqSum f k) (f⦅k⦆)` |
+| `seqSum_in_Omega` | $\text{seqSum}(f, n) \in \omega$ | `theorem seqSum_in_Omega {f n : U} (hf : isFinSeq f n ω) : seqSum f n ∈ ω` |
+| `seqSum_singleton` | $\text{seqSum}(f, \sigma\emptyset) = f(\emptyset)$ | `theorem seqSum_singleton {f : U} (hf : isFinSeq f (σ ∅) ω) : seqSum f (σ ∅) = f⦅∅⦆` |
+
+**Dependencias**: `RecursionTheoremWithStep`, `sumStepFn_is_function`, `sumStepFn_apply`, `zero_add`
+
+#### Sección 3: Función de paso para producto
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `mem_prodStepFn` | $p \in \text{prodStepFn}(f) \iff p \in (\omega \times_s \omega) \times_s \omega \land \exists k\,v \in \omega,\; p = \langle\langle k,v\rangle, v \cdot f(k)\rangle$ | `theorem mem_prodStepFn {f p : U} : p ∈ prodStepFn f ↔ (p ∈ (ω ×ₛ ω) ×ₛ ω ∧ ∃ k v, k ∈ (ω : U) ∧ v ∈ (ω : U) ∧ p = ⟨⟨k, v⟩, mul v (f⦅k⦆)⟩)` |
+| `prodStepFn_is_function` | $\text{prodStepFn}(f) : \omega \times_s \omega \to \omega$ | `theorem prodStepFn_is_function {f n : U} (hf : isFinSeq f n ω) : isFunctionFromTo (prodStepFn f) (ω ×ₛ ω) ω` |
+| `prodStepFn_apply` | $\text{prodStepFn}(f)(\langle k,v \rangle) = v \cdot f(k)$ | `theorem prodStepFn_apply {f n k v : U} (hf : isFinSeq f n ω) (hk : k ∈ (ω : U)) (hv : v ∈ (ω : U)) : (prodStepFn f)⦅⟨k, v⟩⦆ = mul v (f⦅k⦆)` |
+
+**Dependencias**: `SpecSet_is_specified`, `CartesianProduct_is_specified`, `mul_in_Omega`, `apply_eq`
+
+#### Sección 4: Producto numérico de secuencias
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `seqProdFn_is_function` | $\text{seqProdFn}(f) : \omega \to \omega$ | `theorem seqProdFn_is_function {f : U} (hf : isFinSeq f (domain f) ω) : isFunctionFromTo (seqProdFn f hf) ω ω` |
+| `seqProd_zero` | $\text{seqProd}(f, \emptyset) = \sigma\emptyset$ (producto vacío = 1) | `theorem seqProd_zero {f : U} (hf : isFinSeq f ∅ ω) : seqProd f ∅ = (σ (∅ : U))` |
+| `seqProd_succ` | $\text{seqProd}(f, \sigma k) = \text{seqProd}(f, k) \cdot f(k)$ | `theorem seqProd_succ {f k : U} (hf : isFinSeq f (σ k) ω) (hk : k ∈ (ω : U)) : seqProd f (σ k) = mul (seqProd f k) (f⦅k⦆)` |
+| `seqProd_in_Omega` | $\text{seqProd}(f, n) \in \omega$ | `theorem seqProd_in_Omega {f n : U} (hf : isFinSeq f n ω) : seqProd f n ∈ ω` |
+| `seqProd_singleton` | $\text{seqProd}(f, \sigma\emptyset) = f(\emptyset)$ | `theorem seqProd_singleton {f : U} (hf : isFinSeq f (σ ∅) ω) : seqProd f (σ ∅) = f⦅∅⦆` |
+
+**Dependencias**: `RecursionTheoremWithStep`, `prodStepFn_is_function`, `prodStepFn_apply`, `one_mul_Omega`
+
+#### Sección 5: Producto cartesiano de una familia
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `mem_familyProduct` | $g \in \prod_{i<n} F(i) \iff g \in \text{FinSeqSet}(n, \bigcup\text{Im}(F,n)) \land \forall i \in n,\; g(i) \in F(i)$ | `theorem mem_familyProduct {F n g : U} : g ∈ familyProduct F n ↔ (g ∈ FinSeqSet n (⋃ (ImageSet F n)) ∧ ∀ i, i ∈ n → g⦅i⦆ ∈ F⦅i⦆)` |
+| `familyProduct_zero` | $\prod_{i<\emptyset} F(i) = \{\emptyset\}$ (producto vacío = singleton de función vacía) | `theorem familyProduct_zero (F : U) : familyProduct F (∅ : U) = ({∅} : U)` |
+| `familyProduct_succ_char` | $g \in \prod_{i<\sigma n} F(i) \Rightarrow (g{\upharpoonright}n) \in \prod_{i<n} F(i) \land g(n) \in F(n)$ | `theorem familyProduct_succ_char {F n : U} (hn : n ∈ (ω : U)) (hF : isFinSeq F (σ n) (⋃ (ImageSet F (σ n)))) : ∀ g, g ∈ familyProduct F (σ n) → (g ↾ n) ∈ familyProduct F n ∧ g⦅n⦆ ∈ F⦅n⦆` |
+
+**Dependencias**: `SpecSet_is_specified`, `FinSeqSet`, `isFinSeq_restriction`, `Restriction_apply`
+
+#### Sección 6: Teorema de cardinalidad del producto
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `card_product_two` | $A \simeq_s n \land B \simeq_s m \Rightarrow A \times_s B \simeq_s n \cdot m$ | `theorem card_product_two {A B n m : U} (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U)) (hA : A ≃ₛ n) (hB : B ≃ₛ m) : (A ×ₛ B) ≃ₛ mul n m` |
+| `card_familyProduct` | $\forall i \in n,\; F(i) \simeq_s c(i) \Rightarrow \prod_{i<n} F(i) \simeq_s \prod_{i<n} c(i)$ | `theorem card_familyProduct {F c n : U} (hn : n ∈ (ω : U)) (hF : isFinSeq F n (⋃ (ImageSet F n))) (hc : isFinSeq c n ω) (hcard : ∀ i, i ∈ n → F⦅i⦆ ≃ₛ c⦅i⦆) : familyProduct F n ≃ₛ seqProd c n` |
+
+**Patrón de demostración**: Inducción ZFC sobre $\omega$ (SpecSet + induction_principle). `card_product_two` usa doble inducción sobre $m$ con `disjoint_union_equip` y `product_singleton_equip` como lemas privados. `card_familyProduct` usa inducción simple con `familyProduct_succ_decomp` (biyección privada) y `card_product_two` en el paso inductivo.
+
+**Dependencias**: `induction_principle`, `equipotent_refl`, `equipotent_symm`, `equipotent_trans`, `CartesianProduct_distrib_union_right`, `isFinSeq_restriction`, `seqProd_restriction`, `familyProduct_restriction`
+
+---
+
 ## 5. Notación y Sintaxis
 
 ### 5.1 Operadores Básicos
@@ -10744,6 +10923,29 @@ export FiniteSets (
 )
 ```
 
+### 6.35 FiniteSequencesArith.lean
+
+**Namespace**: `SetUniverse.FiniteSequencesArith` (exportado a `SetUniverse`)
+**Última modificación**: 2026-03-30
+**Dependencias**: `NaturalNumbersMul`, `FiniteSequences`, `FiniteSets` + anteriores
+
+```lean
+export FiniteSequencesArith (
+  -- Section 1: Summation step function
+  sumStepFn mem_sumStepFn sumStepFn_is_function sumStepFn_apply
+  -- Section 2: Summation
+  seqSumFn seqSumFn_is_function seqSum seqSum_zero seqSum_succ seqSum_in_Omega seqSum_singleton
+  -- Section 3: Product step function
+  prodStepFn prodStepFn_is_function prodStepFn_apply
+  -- Section 4: Numeric product
+  seqProdFn seqProdFn_is_function seqProd seqProd_zero seqProd_succ seqProd_in_Omega seqProd_singleton
+  -- Section 5: Cartesian product of a family
+  familyProduct mem_familyProduct familyProduct_zero familyProduct_succ_char
+  -- Section 6: Cardinality product theorem
+  card_product_two card_familyProduct
+)
+```
+
 ## 7. Estado de Proyección por Módulo
 
 ### 7.1 Leyenda de Estados
@@ -10794,6 +10996,7 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `NaturalNumbersWellFounded.lean` - Buen fundamento y principio de buena ordenación en ω: accesibilidad vía `nat_mem_wf`, principio de buena ordenación con unicidad (transportado desde Peano), forma simplificada sin unicidad, 3 exports
 - `FiniteSequences.lean` - Secuencias finitas en ZFC: functions f : n → A con n ∈ ω, 3 definiciones (`isFinSeq`, `FinSeqSet`, `appendElem`), 15 teoremas (predicado central, secuencia vacía, append, descomposición), sin exports a `SetUniverse`
 - `FiniteSets.lean` - Conjuntos finitos en ZFC: definición `isFiniteSet` (∃ n ∈ ω, A ≃ₛ n), infraestructura de biyecciones (identidad, inversa, composición), equipotencia como relación de equivalencia (refl/symm/trans), 1 definición + 21 teoremas + 22 exports
+- `FiniteSequencesArith.lean` - Aritmética de secuencias finitas en ZFC: sumación/producto numérico (seqSum/seqProd), producto cartesiano de familias (familyProduct), teoremas de cardinalidad (card_product_two, card_familyProduct), 7 definiciones + 18 teoremas + 33 exports
 
 ### 7.3 Archivos Parcialmente Proyectados
 
@@ -10816,6 +11019,8 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 **Ninguno** - Todos los archivos completamente implementados ya han sido proyectados en este documento.
 
 ---
+
+*Última actualización: 2026-03-30 — Proyección completa de FiniteSequencesArith.lean (§3.38, §4.34, §6.35: 7 def + 18 teoremas + 33 exports, sumación/producto numérico seqSum/seqProd, producto cartesiano familyProduct, teoremas de cardinalidad card_product_two/card_familyProduct vía inducción ZFC). Tabla §1.1 y §7.2 actualizadas. Estado: ✅ 100% completo, 0 sorry.*
 
 *Última actualización: 2026-03-29 — Proyección completa de FiniteSets.lean (§3.37, §4.33, §6.34: 1 def + 21 teoremas + 22 exports, definición isFiniteSet, infraestructura de biyecciones id/inversa/composición, equipotencia refl/symm/trans, finitud de ∅/n/singleton/unión). Tabla §1.1 y §7.2 actualizadas. Estado: ✅ 100% completo, 0 sorry.*
 

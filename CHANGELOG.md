@@ -1,6 +1,6 @@
 # Changelog
 
-**Última actualización:** 2026-03-29
+**Última actualización:** 2026-03-30
 **Autor**: Julián Calderón Almendros
 
 Todos los cambios notables de este proyecto serán documentados en este archivo.
@@ -9,6 +9,28 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Añadido (2026-03-30)
+
+- **Nuevo módulo FiniteSequencesArith.lean — Aritmética de secuencias finitas en ZFC**:
+  - ✅ `sumStepFn (f : U) : U` — función de paso para sumación: ⟨k, v⟩ ↦ v + f(k)
+  - ✅ `seqSumFn`, `seqSum (f n : U) : U` — Σ_{i<n} f(i) vía recursión ZFC
+  - ✅ `prodStepFn (f : U) : U` — función de paso para producto: ⟨k, v⟩ ↦ v · f(k)
+  - ✅ `seqProdFn`, `seqProd (f n : U) : U` — Π_{i<n} f(i) vía recursión ZFC
+  - ✅ `familyProduct (F n : U) : U` — producto cartesiano Π_{i<n} F(i)
+  - ✅ 18 teoremas públicos en 6 secciones: sumStepFn (3), seqSum (5), prodStepFn (3), seqProd (5), familyProduct (3), cardinalidad (2)
+  - ✅ `card_product_two` — |A ×ₛ B| = |A| · |B| para conjuntos finitos
+  - ✅ `card_familyProduct` — |Π_{i<n} F(i)| = Π_{i<n} |F(i)| (inducción ZFC completa)
+  - ✅ 21 lemas privados auxiliares (no exportados)
+  - ✅ Namespace `SetUniverse.FiniteSequencesArith` (exportado a `SetUniverse`, 33 exports)
+  - ✅ Build limpio; 40/40 módulos compilados correctamente (0 sorry, 0 errores)
+
+- **REFERENCE.md — Proyección completa de FiniteSequencesArith.lean**:
+  - ✅ §1.1: 1 fila añadida (FiniteSequencesArith)
+  - ✅ §3.38: 7 definiciones (sumStepFn, seqSumFn, seqSum, prodStepFn, seqProdFn, seqProd, familyProduct)
+  - ✅ §4.34: 18 teoremas en 6 secciones
+  - ✅ §6.35: 33 exports
+  - ✅ §7.2: Añadido a archivos completamente proyectados
 
 ### Añadido (2026-03-29)
 

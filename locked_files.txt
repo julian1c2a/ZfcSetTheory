@@ -37,3 +37,4 @@ ZfcSetTheory/NaturalNumbersNewtonBinom.lean
 ZfcSetTheory/NaturalNumbersWellFounded.lean
 ZfcSetTheory/FiniteSequences.lean
 ZfcSetTheory/FiniteSets.lean
+ZfcSetTheory/FiniteSequencesArith.lean

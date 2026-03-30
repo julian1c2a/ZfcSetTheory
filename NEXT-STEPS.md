@@ -1,6 +1,6 @@
 # Next Steps — ZfcSetTheory Project
 
-**Last updated**: 2026-03-29
+**Last updated**: 2026-03-30
 
 This document outlines actionable next steps for the project, organized by priority and dependency.
 
@@ -66,6 +66,15 @@ Create a unified module (or small family of modules) for items 1–6. This requi
 - ✅ 15 theorems: core predicate (8), FinSeqSet (2), empty sequence (3), appendElem (5), decomposition/restriction (1)
 - ✅ 0 sorry, 0 errors, fully projected in REFERENCE.md
 
+**Arithmetic operations completed** (2026-03-30) in `FiniteSequencesArith.lean`:
+
+- ✅ `sumStepFn`, `seqSumFn`, `seqSum` — Σ_{i<n} f(i) vía recursión ZFC
+- ✅ `prodStepFn`, `seqProdFn`, `seqProd` — Π_{i<n} f(i) vía recursión ZFC
+- ✅ `familyProduct (F n)` — producto cartesiano Π_{i<n} F(i)
+- ✅ `card_product_two` — |A ×ₛ B| = |A| · |B|
+- ✅ `card_familyProduct` — |Π_{i<n} F(i)| = Π_{i<n} |F(i)| (inducción ZFC)
+- ✅ 7 definiciones + 18 teoremas + 33 exports, 0 sorry, 0 errors
+
 **Remaining work** (lower priority):
 
 ### 4.2 Proposed Plan (Remaining Items)
@@ -116,8 +125,8 @@ Per ReflexionesParaLaIA.md [14]. Restructure into clear module hierarchies:
 | ~~**3**~~ | ~~MaxMin + NewtonBinom + WellFounded~~ | ~~3 modules~~ | ✅ Complete 2026-03-26 |
 | **4** | Complete atomic Boolean algebra + representation | Extension of `AtomicBooleanAlgebra.lean` or new module | `AtomicBooleanAlgebra`, `Cardinality` |
 | ~~**5**~~ | ~~Finite sets in ZFC~~ | ~~`FiniteSets.lean`~~ | ✅ Complete 2026-03-29 |
-| **6** | Finite sequences in ZFC (remaining: concat, length, nth, product, DList bridge) | Extension of `FiniteSequences.lean` | `FiniteSequences`, `Functions`, `NaturalNumbers` |
+| **6** | Finite sequences in ZFC (remaining: concat, length, nth, DList bridge) | Extension of `FiniteSequences.lean` | `FiniteSequences`, `FiniteSequencesArith` |
 
 ---
 
-*Updated 2026-03-29. All peanolib bridge modules complete. FiniteSequences basic theory complete. FiniteSets complete (1 def + 21 theorems). Next focus: algebraic structure completion and finite sequence extensions (concat, length, product).*
+*Updated 2026-03-30. All peanolib bridge modules complete. FiniteSequences basic theory complete. FiniteSequencesArith complete (7 def + 18 theorems + 33 exports: seqSum, seqProd, familyProduct, card_familyProduct). FiniteSets complete (1 def + 21 theorems). Next focus: algebraic structure completion and finite sequence extensions (concat, length).*

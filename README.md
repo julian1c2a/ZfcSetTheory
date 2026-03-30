@@ -1,15 +1,15 @@
 # ZfcSetTheory
 
-[![Lean 4](https://img.shields.io/badge/Lean-v4.23.0--rc2-blue)](https://leanprover.github.io/)
+[![Lean 4](https://img.shields.io/badge/Lean-v4.28.0-blue)](https://leanprover.github.io/)
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](CURRENT-STATUS-PROJECT.md)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Coverage](https://img.shields.io/badge/proofs-100%25%20complete-brightgreen)](CURRENT-STATUS-PROJECT.md)
 
 > 📊 **Project Status**: See [CURRENT-STATUS-PROJECT.md](CURRENT-STATUS-PROJECT.md) for complete details
 >
-> ✅ **31/31 modules** compiling successfully (32/32 jobs with peanolib)
+> ✅ **40/40 modules** compiling successfully (41/41 jobs with peanolib)
 > ✅ **100% of theorems** completely proven
-> ✅ **0 `sorry`** in all 31 modules
+> ✅ **0 `sorry`** in all 40 modules
 
 Una implementación formal de la **Teoría de Conjuntos de Zermelo-Fraenkel (ZFC)** en Lean 4, sin dependencias de Mathlib.
 
@@ -49,6 +49,15 @@ Este proyecto desarrolla los axiomas fundamentales de ZFC de manera progresiva, 
 | **Potenciación en ℕ** | `NaturalNumbersPow.lean` | `pow` via RecursiveFn + mulFn, puente `fromPeano_pow` | ✅ Completo |
 | **Aritmética en ℕ (GCD, LCM, Bézout)** | `NaturalNumbersArith.lean` | `div`/`mod` nativo ZFC, `gcdOf`/`lcmOf` Patrón B, Bézout substractivo | ✅ Completo |
 | **Factorial en ℕ** | `NaturalNumbersFactorial.lean` | `factorial` via Patrón B (peanolib), 10 propiedades | ✅ Completo |
+| **GCD/LCM nativo ZFC** | `NaturalNumbersGcd.lean` | GCD vía algoritmo euclídeo, LCM, propiedades divisibilidad | ✅ Completo |
+| **Primalidad y TFA** | `NaturalNumbersPrimes.lean` | `isPrime` ZFC-nativo, TFA Existencia + Unicidad | ✅ Completo |
+| **Coeficientes binomiales** | `NaturalNumbersBinom.lean` | `binomOf` Patrón B, regla de Pascal, C(n,k)·k!·(n−k)!=n! | ✅ Completo |
+| **Máximo y mínimo** | `NaturalNumbersMaxMin.lean` | `maxOf`/`minOf` Patrón B, 29 teoremas de retículo | ✅ Completo |
+| **Teorema de Newton** | `NaturalNumbersNewtonBinom.lean` | `binomTermOf` Patrón B 4-arg, teorema binomial | ✅ Completo |
+| **Buen fundamento** | `NaturalNumbersWellFounded.lean` | Accesibilidad, buena ordenación de ω | ✅ Completo |
+| **Secuencias finitas** | `FiniteSequences.lean` | `isFinSeq`, `FinSeqSet`, `appendElem`, 15 teoremas | ✅ Completo |
+| **Conjuntos finitos** | `FiniteSets.lean` | `isFiniteSet`, biyecciones, equipotencia refl/symm/trans | ✅ Completo |
+| **Aritmética de secuencias** | `FiniteSequencesArith.lean` | `seqSum`, `seqProd`, `familyProduct`, `card_familyProduct` | ✅ Completo |
 | **Álgebra Booleana** | `BooleanAlgebra.lean` | Leyes fundamentales, idempotencia, absorción | ✅ Completo |
 | **Anillo Booleano** | `BooleanRing.lean` | Diferencia simétrica, propiedades de anillo | ✅ Completo |
 | **Álgebra de 𝒫(A)** | `PowerSetAlgebra.lean` | Complemento, De Morgan, distributividad | ✅ Completo |
@@ -59,7 +68,7 @@ Este proyecto desarrolla los axiomas fundamentales de ZFC de manera progresiva, 
 | **Orden Estricto** | `SetStrictOrder.lean` | Propiedades de orden estricto | ✅ Completo |
 | **Cardinalidad** | `Cardinality.lean` | Teorema de Cantor, CSB | ✅ Completo |
 
-### Total: 31 módulos — 31/31 con 0 sorry
+### Total: 40 módulos — 40/40 con 0 sorry
 
 ## ✨ Características Destacadas
 
@@ -123,6 +132,15 @@ ZfcSetTheory/
 ├── NaturalNumbersPow.lean       # Potenciación en ω vía RecursiveFn + mulFn
 ├── NaturalNumbersArith.lean     # Divisibilidad, GCD, LCM, Bézout (nativo ZFC + Patrón B)
 ├── NaturalNumbersFactorial.lean # Factorial en ω via Patrón B (peanolib)
+├── NaturalNumbersGcd.lean       # GCD/LCM ZFC-nativo (algoritmo euclídeo)
+├── NaturalNumbersPrimes.lean    # Primalidad ZFC-nativa + TFA
+├── NaturalNumbersBinom.lean     # Coeficientes binomiales Patrón B
+├── NaturalNumbersMaxMin.lean    # Máximo y mínimo en ω Patrón B
+├── NaturalNumbersNewtonBinom.lean # Teorema binomial de Newton
+├── NaturalNumbersWellFounded.lean # Buen fundamento de ω
+├── FiniteSequences.lean         # Secuencias finitas en ZFC
+├── FiniteSequencesArith.lean    # Aritmética de secuencias finitas
+├── FiniteSets.lean              # Conjuntos finitos en ZFC
 └── ZfcSetTheory.lean            # Módulo raíz
 ```
 
@@ -184,20 +202,20 @@ lake build
 
 ## 🔧 Requisitos
 
-- **Lean 4**: v4.23.0-rc2 o superior
+- **Lean 4**: v4.28.0 o superior
 - **Lake**: Incluido con Lean 4
 
 ## 📚 Additional Documentation
 
 ### Status and Development
 
-- **[CURRENT-STATUS-PROJECT.md](CURRENT-STATUS-PROJECT.md)** - ⭐ **Complete project status**  (updated 2026-02-12)
-  - Recent achievements (ExistsUnique, domain/range, documentation projection)
-  - Analysis of 4 pending `sorry` with difficulty levels
+- **[CURRENT-STATUS-PROJECT.md](CURRENT-STATUS-PROJECT.md)** - ⭐ **Complete project status**  (updated 2026-03-30)
+  - 40 modules, 100% proven, 0 sorry
+  - Recent achievements (FiniteSequencesArith: seqSum, seqProd, familyProduct, card_familyProduct)
   - Architecture and dependency hierarchies
-  - Next steps with time estimates
-- **[REFERENCE.md](REFERENCE.md)** - 📖 **Complete technical reference** (6000+ lines)
-  - 20 fully documented modules with mathematical descriptions
+  - Next steps
+- **[REFERENCE.md](REFERENCE.md)** - 📖 **Complete technical reference** (11000+ lines)
+  - 40 fully documented modules with mathematical descriptions
   - All definitions, theorems, and exports with Lean4 signatures
   - Dependency tracking and namespace organization
 - [CHANGELOG.md](CHANGELOG.md) - Detailed change history
@@ -242,4 +260,4 @@ Este proyecto se desarrolló basándose en las siguientes fuentes:
 ---
 
 **Autor**: Julián Calderón Almendros
-*Last updated: 2026-03-24 10:00*
+*Last updated: 2026-03-30 10:00*

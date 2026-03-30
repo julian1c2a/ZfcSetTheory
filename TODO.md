@@ -425,6 +425,24 @@
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-27
 
+### ✅ FiniteSets.lean
+
+- **Estado en REFERENCE.md:** ✅ Completo
+- **Implementación completada:** 2026-03-29
+- **Patrón:** Directo (sin bridge Peano) — conjuntos finitos: ∃ n ∈ ω, A ≃ₛ n
+- **Contenido proyectado:** §3.37 (1 definición: isFiniteSet), §4.33 (21 teoremas en 7 secciones), §6.34 (22 exports)
+- **Acciones necesarias:** Ninguna
+- **Fecha de revisión:** 2026-03-29
+
+### ✅ FiniteSequencesArith.lean
+
+- **Estado en REFERENCE.md:** ✅ Completo
+- **Implementación completada:** 2026-03-30
+- **Patrón:** Directo — aritmética de secuencias finitas vía RecursionTheoremWithStep + inducción ZFC
+- **Contenido proyectado:** §3.38 (7 definiciones), §4.34 (18 teoremas en 6 secciones), §6.35 (33 exports)
+- **Acciones necesarias:** Ninguna
+- **Fecha de revisión:** 2026-03-30
+
 ---
 
 ## Leyenda

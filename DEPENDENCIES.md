@@ -1,6 +1,6 @@
 # Diagrama de Dependencias - ZfcSetTheory
 
-**Última actualización:** 2026-03-29
+**Última actualización:** 2026-03-30
 **Autor**: Julián Calderón Almendros
 
 ## Estructura General del Proyecto
@@ -36,6 +36,7 @@ ZfcSetTheory/
 ├── NaturalNumbersNewtonBinom.lean       # Teorema binomial de Newton Patrón B
 ├── NaturalNumbersWellFounded.lean       # Buen fundamento y buena ordenación de ω
 ├── FiniteSequences.lean                 # Secuencias finitas en ZFC
+├── FiniteSequencesArith.lean            # Aritmética de secuencias finitas: seqSum, seqProd, familyProduct
 ├── FiniteSets.lean                      # Conjuntos finitos en ZFC
 ├── BooleanAlgebra.lean                  # Álgebra Booleana de conjuntos (teoremas)
 ├── BooleanRing.lean                     # Anillo Booleano con SymDiff
@@ -119,6 +120,9 @@ graph TD
     NA --> FSeq[FiniteSequences.lean]
     NN --> FSets[FiniteSets.lean]
     Inf --> FSets
+    NM --> FSA[FiniteSequencesArith.lean]
+    FSeq --> FSA
+    FSets --> FSA
 
     %% Nivel 9: Álgebras y órdenes
     E --> SSO[SetStrictOrder.lean]
@@ -182,6 +186,9 @@ graph TD
     NMM --> Z
     NNB --> Z
     NWF --> Z
+    FSeq --> Z
+    FSets --> Z
+    FSA --> Z
 
     %% Estilos
     classDef axiom fill:#e1f5fe,stroke:#01579b,stroke-width:2px
@@ -199,7 +206,7 @@ graph TD
     class SO,SSO order
     class OP,CP extension
     class Rel,Func relation
-    class Inf,Nat,Rec,PI,NA,NM,NS,ND,NP,NAR,NF,NG,NPR,NB,NMM,NNB,NWF natural
+    class Inf,Nat,Rec,PI,NA,NM,NS,ND,NP,NAR,NF,NG,NPR,NB,NMM,NNB,NWF,FSeq,FSets,FSA natural
     class Z main
     class IC,P,PL external
 ```
@@ -437,6 +444,18 @@ namespace SetUniverse.Cardinality
   -- Teorema de Cantor-Schröder-Bernstein: cantor_schroeder_bernstein
 ```
 
+### 24. **SetUniverse.FiniteSequencesArith**
+
+```lean
+namespace SetUniverse.FiniteSequencesArith
+  -- Aritmética de secuencias finitas en ZFC
+  -- Definiciones: sumStepFn, seqSumFn, seqSum, prodStepFn, seqProdFn, seqProd, familyProduct
+  -- Teoremas: seqSum_zero/succ/singleton, seqProd_zero/succ/singleton
+  --           familyProduct_zero, familyProduct_succ_char
+  --           card_product_two, card_familyProduct
+  -- Depende de: NaturalNumbersMul, FiniteSequences, FiniteSets
+```
+
 ## Dependencias por Nivel
 
 ### **Nivel 0: Fundamentos**
@@ -493,6 +512,9 @@ namespace SetUniverse.Cardinality
 - `NaturalNumbersMaxMin.lean` - Máximo/mínimo Patrón B (`maxOf`/`minOf`), 27 teoremas
 - `NaturalNumbersNewtonBinom.lean` - Teorema binomial de Newton Patrón B 4-arg (`binomTermOf`)
 - `NaturalNumbersWellFounded.lean` - Buen fundamento (`acc_lt_Omega`), buena ordenación (`well_ordering_Omega`)
+- `FiniteSequences.lean` - Secuencias finitas f : n → A con n ∈ ω (`isFinSeq`, `FinSeqSet`, `appendElem`)
+- `FiniteSets.lean` - Conjuntos finitos (`isFiniteSet`), biyecciones, equipotencia
+- `FiniteSequencesArith.lean` - Sumación/producto de secuencias (`seqSum`, `seqProd`), producto cartesiano de familias (`familyProduct`), teoremas de cardinalidad (`card_product_two`, `card_familyProduct`)
 
 ### **Nivel 9: Estructuras Algebraicas**
 
