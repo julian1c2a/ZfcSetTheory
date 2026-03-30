@@ -13,6 +13,8 @@ where n ∈ ω (Von Neumann naturals) and A is any set.
 * `isFinSeq f n A`   — f is a finite sequence of length n in A
 * `FinSeqSet n A`    — the set of all n-sequences in A
 * `appendElem f n a` — extend f : n → A to (σ n) → A by appending a at index n
+* `seqLength f`      — the length (= domain) of a finite sequence
+* `concatSeq f n g m A` — concatenation of f : n → A and g : m → A
 
 ## Main Theorems
 
@@ -21,6 +23,9 @@ where n ∈ ω (Von Neumann naturals) and A is any set.
 * `isFinSeq_restriction`   — restricting a (σ n)-sequence to n gives an n-sequence
 * `appendElem_apply_last`  — last element access
 * `appendElem_apply_prev`  — previous elements unchanged
+* `concatSeq_isFinSeq`     — concatenation yields a (n+m)-sequence
+* `concatSeq_left`         — accessing left part of concatenation
+* `concatSeq_right`        — accessing right part of concatenation
 -/
 
 import ZfcSetTheory.NaturalNumbersAdd
@@ -40,6 +45,7 @@ namespace SetUniverse
   open SetUniverse.Cardinality
   open SetUniverse.NaturalNumbers
   open SetUniverse.InfinityAxiom
+  open SetUniverse.NaturalNumbersAdd
   universe u
   variable {U : Type u}
 
@@ -280,6 +286,323 @@ namespace SetUniverse
       have hn_sub : n ⊆ σ n := nat_subset_succ n
       exact ⟨hn_omega, Restriction_is_function f (σ n) A n h.2 hn_sub⟩
 
+    /-! ============================================================ -/
+    /-! ### SECTION 6: LENGTH ### -/
+    /-! ============================================================ -/
+
+    /-- The length of a finite sequence is its domain. -/
+    noncomputable def seqLength (f : U) : U := domain f
+
+    /-- For a finite sequence f : n → A, seqLength f = n. -/
+    theorem seqLength_eq {f n A : U} (h : isFinSeq f n A) : seqLength f = n :=
+      isFinSeq_domain h
+
+    /-- The length of a finite sequence is in ω. -/
+    theorem seqLength_in_Omega {f n A : U} (h : isFinSeq f n A) : seqLength f ∈ ω :=
+      seqLength_eq h ▸ h.1
+
+    /-- The length of the empty sequence is ∅. -/
+    theorem seqLength_empty : seqLength (∅ : U) = (∅ : U) := by
+      unfold seqLength domain
+      apply ExtSet
+      intro x
+      rw [SpecSet_is_specified]
+      constructor
+      · intro h
+        obtain ⟨_, y, hy⟩ := h
+        exact absurd hy (EmptySet_is_empty ⟨x, y⟩)
+      · intro hx; exact absurd hx (EmptySet_is_empty x)
+
+    /-- After appending, the length is σ n. -/
+    theorem seqLength_appendElem {f n A a : U} (hf : isFinSeq f n A) (ha : a ∈ A) :
+        seqLength (appendElem f n a) = σ n :=
+      seqLength_eq (isFinSeq_appendElem hf ha)
+
+    /-! ============================================================ -/
+    /-! ### SECTION 7: AUXILIARY ADD-MEMBERSHIP LEMMAS ### -/
+    /-! ============================================================ -/
+
+    /-- add n j ∉ n for n, j ∈ ω. -/
+    theorem add_not_mem_left (n j : U) (hn : n ∈ (ω : U)) (hj : j ∈ (ω : U)) :
+        add n j ∉ n := by
+      intro h_mem
+      have hn_nat := mem_Omega_is_Nat n hn
+      by_cases hj_ne : j = ∅
+      · rw [hj_ne, add_zero n hn] at h_mem
+        exact nat_not_mem_self n hn_nat h_mem
+      · have h_n_in := add_pos_left_Omega j n hj hn hj_ne
+        have hn_trans : ∀ x, x ∈ n → x ⊆ n := hn_nat.1
+        have h_sub : (add n j) ⊆ n := hn_trans (add n j) h_mem
+        exact nat_not_mem_self n hn_nat (h_sub n h_n_in)
+
+    /-- i ∈ n → i ∈ add n m for n, m ∈ ω. -/
+    theorem mem_add_of_mem_left {i n m : U} (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U))
+        (hi : i ∈ n) : i ∈ add n m := by
+      -- Induction on m
+      let P : U → Prop := fun k => i ∈ add n k
+      let S := SpecSet (ω : U) P
+      suffices hS : S = ω by
+        have hm_S : m ∈ S := hS ▸ hm
+        exact ((SpecSet_is_specified (ω : U) m P).mp hm_S).2
+      apply induction_principle S
+      · exact fun x hx => ((SpecSet_is_specified (ω : U) x P).mp hx).1
+      · rw [SpecSet_is_specified]
+        exact ⟨zero_in_Omega, by simp only [P]; rw [add_zero n hn]; exact hi⟩
+      · intro k hk
+        rw [SpecSet_is_specified] at hk ⊢
+        obtain ⟨hk_omega, ih⟩ := hk
+        simp only [P] at ih ⊢
+        constructor
+        · exact succ_in_Omega k hk_omega
+        · rw [add_succ n k hn hk_omega]
+          exact mem_successor_of_mem i (add n k) ih
+
+    /-- Partition: i ∈ add n m → i ∈ n ∨ (∃ j ∈ m, i = add n j). -/
+    theorem add_partition {i n m : U} (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U))
+        (hi : i ∈ add n m) : i ∈ n ∨ (∃ j, j ∈ m ∧ i = add n j) := by
+      -- Induction on m
+      let P : U → Prop := fun k => ∀ x, x ∈ add n k →
+        x ∈ n ∨ (∃ j, j ∈ k ∧ x = add n j)
+      let S := SpecSet (ω : U) P
+      suffices hS : S = ω by
+        have hm_S : m ∈ S := hS ▸ hm
+        exact ((SpecSet_is_specified (ω : U) m P).mp hm_S).2 i hi
+      apply induction_principle S
+      · exact fun x hx => ((SpecSet_is_specified (ω : U) x P).mp hx).1
+      · rw [SpecSet_is_specified]
+        refine ⟨zero_in_Omega, ?_⟩
+        simp only [P]
+        intro x hx
+        rw [add_zero n hn] at hx
+        exact Or.inl hx
+      · intro k hk
+        rw [SpecSet_is_specified] at hk ⊢
+        obtain ⟨hk_omega, ih⟩ := hk
+        simp only [P] at ih ⊢
+        constructor
+        · exact succ_in_Omega k hk_omega
+        · intro x hx
+          rw [add_succ n k hn hk_omega, successor_is_specified] at hx
+          cases hx with
+          | inl hx_prev =>
+            cases ih x hx_prev with
+            | inl hx_n => exact Or.inl hx_n
+            | inr h_ex =>
+              obtain ⟨j, hj_k, hx_eq⟩ := h_ex
+              exact Or.inr ⟨j, mem_successor_of_mem j k hj_k, hx_eq⟩
+          | inr hx_eq =>
+            exact Or.inr ⟨k, mem_successor_self k, hx_eq⟩
+
+    /-! ============================================================ -/
+    /-! ### SECTION 8: CONCATENATION ### -/
+    /-! ============================================================ -/
+
+    /-- The shifted graph: {⟨add n j, g⦅j⦆⟩ | j ∈ m}. -/
+    noncomputable def shiftedGraph (n g m A : U) : U :=
+      SpecSet ((add n m) ×ₛ A) (fun p => ∃ j, j ∈ m ∧ p = ⟨add n j, g⦅j⦆⟩)
+
+    /-- Membership characterization for shiftedGraph. -/
+    theorem mem_shiftedGraph {n g m A p : U} :
+        p ∈ shiftedGraph n g m A ↔
+        (p ∈ (add n m) ×ₛ A ∧ ∃ j, j ∈ m ∧ p = ⟨add n j, g⦅j⦆⟩) := by
+      unfold shiftedGraph
+      rw [SpecSet_is_specified]
+
+    /-- Concatenation of f : n → A and g : m → A. -/
+    noncomputable def concatSeq (f n g m A : U) : U :=
+      f ∪ shiftedGraph n g m A
+
+    /-- Concatenation produces a valid (add n m)-sequence. -/
+    theorem concatSeq_isFinSeq {f n g m A : U}
+        (hf : isFinSeq f n A) (hg : isFinSeq g m A) :
+        isFinSeq (concatSeq f n g m A) (add n m) A := by
+      have hn := hf.1
+      have hm := hg.1
+      have hn_nat := mem_Omega_is_Nat n hn
+      have hnm := add_in_Omega n m hn hm
+      constructor
+      · exact hnm
+      · constructor
+        · -- concatSeq ⊆ (add n m) ×ₛ A
+          intro p hp
+          unfold concatSeq at hp
+          rw [BinUnion_is_specified] at hp
+          cases hp with
+          | inl hp_f =>
+            have h := hf.2.1 p hp_f
+            rw [CartesianProduct_is_specified] at h ⊢
+            exact ⟨h.1, mem_add_of_mem_left hn hm h.2.1, h.2.2⟩
+          | inr hp_g =>
+            rw [mem_shiftedGraph] at hp_g
+            exact hp_g.1
+        · -- ∀ i ∈ add n m, ∃! y, ⟨i, y⟩ ∈ concatSeq
+          intro i hi
+          cases add_partition hn hm hi with
+          | inl hi_n =>
+            -- i ∈ n: use f
+            obtain ⟨y, hy, hy_uniq⟩ := hf.2.2 i hi_n
+            apply ExistsUnique.intro y
+            · exact (BinUnion_is_specified f (shiftedGraph n g m A) ⟨i, y⟩).mpr (Or.inl hy)
+            · intro y' hy'
+              unfold concatSeq at hy'
+              rw [BinUnion_is_specified] at hy'
+              cases hy' with
+              | inl hy'_f => exact hy_uniq y' hy'_f
+              | inr hy'_sg =>
+                rw [mem_shiftedGraph] at hy'_sg
+                obtain ⟨_, j, hj, hpair_eq⟩ := hy'_sg
+                have h_fst := (Eq_of_OrderedPairs_given_projections i y' (add n j) (g⦅j⦆) hpair_eq).1
+                have hj_omega : j ∈ (ω : U) :=
+                  Nat_in_Omega j (nat_element_is_nat m j (mem_Omega_is_Nat m hm) hj)
+                exact absurd (h_fst ▸ hi_n) (add_not_mem_left n j hn hj_omega)
+          | inr h_ex =>
+            -- i = add n j with j ∈ m: use g
+            obtain ⟨j, hj, hi_eq⟩ := h_ex
+            have hj_omega : j ∈ (ω : U) :=
+              Nat_in_Omega j (nat_element_is_nat m j (mem_Omega_is_Nat m hm) hj)
+            obtain ⟨y, hy, hy_uniq⟩ := hg.2.2 j hj
+            apply ExistsUnique.intro y
+            · rw [hi_eq]
+              have h_apply_eq : y = g⦅j⦆ :=
+                (apply_eq g j y (hg.2.2 j hj) hy).symm
+              rw [h_apply_eq]
+              apply (BinUnion_is_specified f (shiftedGraph n g m A) ⟨add n j, g⦅j⦆⟩).mpr
+              exact Or.inr (mem_shiftedGraph.mpr
+                ⟨(OrderedPair_mem_CartesianProduct (add n j) (g⦅j⦆) (add n m) A).mpr
+                  ⟨add_lt_of_lt_Omega n j m hn hj_omega hm hj, isFinSeq_apply_mem hg hj⟩,
+                 j, hj, rfl⟩)
+            · intro y' hy'
+              rw [hi_eq] at hy'
+              unfold concatSeq at hy'
+              rw [BinUnion_is_specified] at hy'
+              cases hy' with
+              | inl hy'_f =>
+                -- ⟨add n j, y'⟩ ∈ f, but add n j ∉ n — contradiction
+                have h_cart := hf.2.1 _ hy'_f
+                rw [OrderedPair_mem_CartesianProduct] at h_cart
+                exact absurd h_cart.1 (add_not_mem_left n j hn hj_omega)
+              | inr hy'_sg =>
+                rw [mem_shiftedGraph] at hy'_sg
+                obtain ⟨_, j', hj', hpair_eq⟩ := hy'_sg
+                have hj'_omega : j' ∈ (ω : U) :=
+                  Nat_in_Omega j' (nat_element_is_nat m j' (mem_Omega_is_Nat m hm) hj')
+                obtain ⟨h_add_eq, h_y'_eq⟩ :=
+                  Eq_of_OrderedPairs_given_projections (add n j) y' (add n j') (g⦅j'⦆) hpair_eq
+                have hj_eq : j = j' := add_left_cancel_Omega n j j' hn hj_omega hj'_omega h_add_eq
+                subst hj_eq
+                rw [h_y'_eq]
+                exact apply_eq g j y (hg.2.2 j hj) hy
+
+    /-- Left part of concatenation: for i ∈ n, (concatSeq f n g m A)⦅i⦆ = f⦅i⦆. -/
+    theorem concatSeq_left {f n g m A i : U}
+        (hf : isFinSeq f n A) (hg : isFinSeq g m A) (hi : i ∈ n) :
+        (concatSeq f n g m A)⦅i⦆ = f⦅i⦆ := by
+      have hn := hf.1
+      have hm := hg.1
+      have h_concat := concatSeq_isFinSeq hf hg
+      have hi_add : i ∈ add n m := mem_add_of_mem_left hn hm hi
+      have h_pair : ⟨i, f⦅i⦆⟩ ∈ concatSeq f n g m A :=
+        (BinUnion_is_specified f (shiftedGraph n g m A) ⟨i, f⦅i⦆⟩).mpr
+          (Or.inl (isFinSeq_pair_mem hf hi))
+      exact apply_eq (concatSeq f n g m A) i (f⦅i⦆)
+        (h_concat.2.2 i hi_add) h_pair
+
+    /-- Right part of concatenation: for j ∈ m, (concatSeq f n g m A)⦅add n j⦆ = g⦅j⦆. -/
+    theorem concatSeq_right {f n g m A j : U}
+        (hf : isFinSeq f n A) (hg : isFinSeq g m A) (hj : j ∈ m) :
+        (concatSeq f n g m A)⦅add n j⦆ = g⦅j⦆ := by
+      have hn := hf.1
+      have hm := hg.1
+      have hj_omega : j ∈ (ω : U) :=
+        Nat_in_Omega j (nat_element_is_nat m j (mem_Omega_is_Nat m hm) hj)
+      have h_concat := concatSeq_isFinSeq hf hg
+      have hi_add : add n j ∈ add n m := add_lt_of_lt_Omega n j m hn hj_omega hm hj
+      have h_pair : ⟨add n j, g⦅j⦆⟩ ∈ concatSeq f n g m A :=
+        (BinUnion_is_specified f (shiftedGraph n g m A) ⟨add n j, g⦅j⦆⟩).mpr
+          (Or.inr (mem_shiftedGraph.mpr
+            ⟨(OrderedPair_mem_CartesianProduct (add n j) (g⦅j⦆) (add n m) A).mpr
+              ⟨hi_add, isFinSeq_apply_mem hg hj⟩,
+             j, hj, rfl⟩))
+      exact apply_eq (concatSeq f n g m A) (add n j) (g⦅j⦆)
+        (h_concat.2.2 (add n j) hi_add) h_pair
+
+    /-- Length of concatenation. -/
+    theorem concatSeq_length {f n g m A : U}
+        (hf : isFinSeq f n A) (hg : isFinSeq g m A) :
+        seqLength (concatSeq f n g m A) = add n m :=
+      seqLength_eq (concatSeq_isFinSeq hf hg)
+
+    /-- Concatenation with empty right sequence. -/
+    theorem concatSeq_empty_right {f n A : U} (_hf : isFinSeq f n A) :
+        concatSeq f n ∅ ∅ A = f := by
+      unfold concatSeq shiftedGraph
+      have h_sg_empty : SpecSet ((add n ∅) ×ₛ A)
+          (fun p => ∃ j, j ∈ (∅ : U) ∧ p = ⟨add n j, (∅ : U)⦅j⦆⟩) = ∅ := by
+        apply ExtSet
+        intro x
+        rw [SpecSet_is_specified]
+        constructor
+        · intro ⟨_, j, hj, _⟩; exact absurd hj (EmptySet_is_empty j)
+        · intro hx; exact absurd hx (EmptySet_is_empty x)
+      rw [h_sg_empty]
+      apply ExtSet
+      intro x
+      rw [BinUnion_is_specified]
+      constructor
+      · intro h; cases h with
+        | inl h => exact h
+        | inr h => exact absurd h (EmptySet_is_empty x)
+      · intro h; exact Or.inl h
+
   end FiniteSequences
+
+  export FiniteSequences (
+    -- Section 1: Core predicate
+    isFinSeq
+    isFinSeq_in_Omega
+    isFinSeq_is_function
+    isFinSeq_domain
+    isFinSeq_subset
+    isFinSeq_unique_length
+    isFinSeq_apply_mem
+    isFinSeq_pair_mem
+    isFinSeq_ext
+    -- Section 2: FinSeqSet
+    FinSeqSet
+    mem_FinSeqSet_iff
+    isFinSeq_mem_FinSeqSet
+    -- Section 3: Empty sequence
+    isFinSeq_empty
+    isFinSeq_zero_unique
+    FinSeqSet_zero
+    -- Section 4: appendElem
+    appendElem
+    appendElem_is_specified
+    isFinSeq_appendElem
+    appendElem_apply_last
+    appendElem_apply_prev
+    appendElem_inj
+    -- Section 5: Decomposition
+    isFinSeq_restriction
+    -- Section 6: Length
+    seqLength
+    seqLength_eq
+    seqLength_in_Omega
+    seqLength_empty
+    seqLength_appendElem
+    -- Section 7: Auxiliary add-membership lemmas
+    add_not_mem_left
+    mem_add_of_mem_left
+    add_partition
+    -- Section 8: Concatenation
+    shiftedGraph
+    mem_shiftedGraph
+    concatSeq
+    concatSeq_isFinSeq
+    concatSeq_left
+    concatSeq_right
+    concatSeq_length
+    concatSeq_empty_right
+  )
 
 end SetUniverse
