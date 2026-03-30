@@ -36,3 +36,4 @@ ZfcSetTheory/NaturalNumbersMaxMin.lean
 ZfcSetTheory/NaturalNumbersNewtonBinom.lean
 ZfcSetTheory/NaturalNumbersWellFounded.lean
 ZfcSetTheory/FiniteSequences.lean
+ZfcSetTheory/FiniteSets.lean

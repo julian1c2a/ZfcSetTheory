@@ -1,6 +1,6 @@
 # Diagrama de Dependencias - ZfcSetTheory
 
-**Última actualización:** 2026-03-27 09:00
+**Última actualización:** 2026-03-29
 **Autor**: Julián Calderón Almendros
 
 ## Estructura General del Proyecto
@@ -35,6 +35,8 @@ ZfcSetTheory/
 ├── NaturalNumbersMaxMin.lean            # Máximo y mínimo en ω Patrón B
 ├── NaturalNumbersNewtonBinom.lean       # Teorema binomial de Newton Patrón B
 ├── NaturalNumbersWellFounded.lean       # Buen fundamento y buena ordenación de ω
+├── FiniteSequences.lean                 # Secuencias finitas en ZFC
+├── FiniteSets.lean                      # Conjuntos finitos en ZFC
 ├── BooleanAlgebra.lean                  # Álgebra Booleana de conjuntos (teoremas)
 ├── BooleanRing.lean                     # Anillo Booleano con SymDiff
 ├── PowerSetAlgebra.lean                 # Álgebra del conjunto potencia (complemento, De Morgan)
@@ -114,6 +116,9 @@ graph TD
     NP --> NNB
     PI --> NMM[NaturalNumbersMaxMin.lean]
     PI --> NWF[NaturalNumbersWellFounded.lean]
+    NA --> FSeq[FiniteSequences.lean]
+    NN --> FSets[FiniteSets.lean]
+    Inf --> FSets
 
     %% Nivel 9: Álgebras y órdenes
     E --> SSO[SetStrictOrder.lean]

@@ -43,3 +43,4 @@ import ZfcSetTheory.NaturalNumbersMaxMin
 import ZfcSetTheory.NaturalNumbersNewtonBinom
 import ZfcSetTheory.NaturalNumbersWellFounded
 import ZfcSetTheory.FiniteSequences
+import ZfcSetTheory.FiniteSets

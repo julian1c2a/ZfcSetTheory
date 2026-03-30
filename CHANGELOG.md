@@ -1,6 +1,6 @@
 # Changelog
 
-**Última actualización:** 2026-03-27 10:00
+**Última actualización:** 2026-03-29
 **Autor**: Julián Calderón Almendros
 
 Todos los cambios notables de este proyecto serán documentados en este archivo.
@@ -9,6 +9,26 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Añadido (2026-03-29)
+
+- **Nuevo módulo FiniteSets.lean — Conjuntos finitos en ZFC**:
+  - ✅ `isFiniteSet (A : U) : Prop` — predicado: ∃ n ∈ ω, A ≃ₛ n
+  - ✅ Infraestructura de biyecciones (identidad, inversa, composición):
+    - `id_is_function`, `id_is_injective`, `id_is_surjective`, `id_is_bijection`
+    - `inverse_pair_iff`, `bijection_inverse_is_function`, `bijection_inverse_injective`, `bijection_inverse_surjective`, `bijection_inverse_is_bijection`
+    - `comp_injective`, `comp_surjective`, `comp_bijection`
+  - ✅ Equipotencia como relación de equivalencia: `equipotent_refl`, `equipotent_symm`, `equipotent_trans`
+  - ✅ Propiedades de finitud: `empty_is_finite`, `nat_is_finite`, `singleton_is_finite`, `finite_equipotent`, `finite_union_singleton`
+  - ✅ Namespace `SetUniverse.FiniteSets` (exportado a `SetUniverse`, 22 exports)
+  - ✅ Build limpio; 39/39 módulos compilados correctamente (0 sorry, 0 errores)
+
+- **REFERENCE.md — Proyección completa de FiniteSets.lean**:
+  - ✅ §1.1: 1 fila añadida (FiniteSets)
+  - ✅ §3.37: 1 definición (isFiniteSet)
+  - ✅ §4.33: 21 teoremas en 7 secciones
+  - ✅ §6.34: 22 exports
+  - ✅ §7.2: Añadido a archivos completamente proyectados
 
 ### Añadido (2026-03-27 10:00)
 

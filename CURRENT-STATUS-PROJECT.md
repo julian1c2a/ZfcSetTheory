@@ -1,24 +1,35 @@
 # Current Status - ZfcSetTheory Project
 
-**Date**: 2026-03-27 10:00
-**Lean Version**: 4.23.0-rc2
+**Date**: 2026-03-29
+**Lean Version**: 4.28.0
 **Author**: Julián Calderón Almendros
 
 ## Executive Summary
 
-This project implements ZFC set theory in Lean 4, focusing on fundamental axioms, relations, functions, cardinality, and full arithmetic of the Von Neumann naturals. All proofs are complete with no `sorry` statements remaining. The `PeanoImport.lean` module establishes the formal isomorphism between Von Neumann and Peano natural numbers via the external `peanolib` library. Arithmetic modules (Add, Mul, Sub, Div, Pow, Arith, Factorial, Gcd, Primes, Binom, MaxMin, NewtonBinom, WellFounded) provide full arithmetic in ω via RecursiveFn and Pattern B bridge.
+This project implements ZFC set theory in Lean 4, focusing on fundamental axioms, relations, functions, cardinality, and full arithmetic of the Von Neumann naturals. All proofs are complete with no `sorry` statements remaining. The `PeanoImport.lean` module establishes the formal isomorphism between Von Neumann and Peano natural numbers via the external `peanolib` library. Arithmetic modules (Add, Mul, Sub, Div, Pow, Arith, Factorial, Gcd, Primes, Binom, MaxMin, NewtonBinom, WellFounded) provide full arithmetic in ω via RecursiveFn and Pattern B bridge. FiniteSets.lean introduces the theory of finite sets, including bijection infrastructure and equipotence as an equivalence relation.
 
 ### Statistics
 
-- **Total modules**: 38 (+ 1 external: peanolib)
+- **Total modules**: 39 (+ 1 external: peanolib)
 - **Compilation**: ✅ Successful (0 errors, 0 sorry)
 - **Complete proofs**: 100%
 - **Remaining `sorry`**: 0
-- **Documentation**: REFERENCE.md fully updated (all 38 modules projected)
+- **Documentation**: REFERENCE.md fully updated (all 39 modules projected)
 
 ## Recent Achievements
 
-### Latest Updates (March 27, 2026)
+### Latest Updates (March 29, 2026)
+
+#### 1. FiniteSets.lean — Conjuntos finitos en ZFC (✅ Complete)
+
+- `isFiniteSet (A : U) : Prop` — predicado: ∃ n ∈ ω, A ≃ₛ n
+- Infraestructura de biyecciones: identidad (`id_is_bijection`), inversa (`bijection_inverse_is_bijection`), composición (`comp_bijection`)
+- Equipotencia como relación de equivalencia: `equipotent_refl`, `equipotent_symm`, `equipotent_trans`
+- Propiedades de finitud: `empty_is_finite`, `nat_is_finite`, `singleton_is_finite`, `finite_equipotent`, `finite_union_singleton`
+- 1 definición + 21 teoremas + 22 exports a `SetUniverse`
+- Proyectado en REFERENCE.md §3.37, §4.33, §6.34
+
+### Previous Updates (March 27, 2026)
 
 #### 1. FiniteSequences.lean — Secuencias finitas en ZFC (✅ Complete)
 

@@ -82,6 +82,7 @@ Este documento cumple con todos los requisitos especificados en [AIDER-AI-GUIDE.
 | `NaturalNumbersNewtonBinom.lean` | `SetUniverse.NaturalNumbersNewtonBinom` | `NaturalNumbers`, `Infinity`, `PeanoImport`, `NaturalNumbersAdd`, `NaturalNumbersMul`, `NaturalNumbersSub`, `NaturalNumbersPow`, `NaturalNumbersBinom`, `PeanoNatLib.PeanoNatNewtonBinom` | ✅ Completo |
 | `NaturalNumbersWellFounded.lean` | `SetUniverse.NaturalNumbersWellFounded` | `NaturalNumbers`, `Infinity`, `PeanoImport`, `PeanoNatLib.PeanoNatWellFounded` | ✅ Completo |
 | `FiniteSequences.lean` | `SetUniverse.FiniteSequences` | `NaturalNumbersAdd` + anteriores | ✅ Completo |
+| `FiniteSets.lean` | `SetUniverse.FiniteSets` | `NaturalNumbers`, `Infinity` + anteriores | ✅ Completo |
 
 ## 2. Axiomas ZFC Implementados
 
@@ -3923,6 +3924,25 @@ noncomputable def appendElem (f n a : U) : U := f ∪ {⟨n, a⟩}
 
 **Dependencias**: `BinUnion`, `Singleton`, `OrderedPair`
 **Computabilidad**: No computable
+
+---
+
+### 3.37 FiniteSets.lean
+
+**Módulo**: `ZfcSetTheory.FiniteSets`
+**Namespace**: `SetUniverse.FiniteSets` (exportado a `SetUniverse`)
+**Dependencias**: `NaturalNumbers`, `Infinity` + anteriores (usa `Functions`, `Cardinality`, `Relations`, `CartesianProduct`, etc.)
+
+#### Definición: `isFiniteSet`
+
+**Enunciado Matemático**: $\text{isFiniteSet}(A) \iff \exists n \in \omega,\; A \simeq_s n$
+
+```lean
+def isFiniteSet (A : U) : Prop := ∃ n, n ∈ ω ∧ A ≃ₛ n
+```
+
+**Dependencias**: `ω`, `isEquipotent` (≃ₛ)
+**Computabilidad**: Computable (predicado proposicional)
 
 ---
 
@@ -9416,6 +9436,87 @@ theorem fromPeano_le_iff (p q : Peano.ℕ₀) :
 
 ---
 
+### 4.33 FiniteSets.lean
+
+**Módulo**: `ZfcSetTheory.FiniteSets`
+**Namespace**: `SetUniverse.FiniteSets`
+**Dependencias del módulo**: `NaturalNumbers`, `Infinity` + anteriores
+
+#### Sección 1: Biyección identidad y equipotencia reflexiva
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `id_is_function` | $\mathbb{1}_A : A \to A$ | `theorem id_is_function (A : U) : isFunctionFromTo (IdFunction A) A A` |
+| `id_is_injective` | $\mathbb{1}_A$ es inyectiva | `theorem id_is_injective (A : U) : isInjective (IdFunction A)` |
+| `id_is_surjective` | $\mathbb{1}_A$ es suryectiva sobre $A$ | `theorem id_is_surjective (A : U) : isSurjectiveOnto (IdFunction A) A` |
+| `id_is_bijection` | $\mathbb{1}_A$ es biyección de $A$ a $A$ | `theorem id_is_bijection (A : U) : isBijection (IdFunction A) A A` |
+| `equipotent_refl` | $A \simeq_s A$ | `theorem equipotent_refl (A : U) : A ≃ₛ A` |
+
+**Dependencias**: `IdFunction`, `IdRel`, `mem_IdRel`, `SpecSet_is_specified`
+
+#### Sección 2: Propiedades básicas de finitud
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `empty_is_finite` | $\emptyset$ es finito | `theorem empty_is_finite : isFiniteSet (∅ : U)` |
+| `nat_is_finite` | $n \in \omega \Rightarrow n$ es finito | `theorem nat_is_finite {n : U} (hn : n ∈ ω) : isFiniteSet n` |
+
+**Dependencias**: `zero_in_Omega`, `equipotent_refl`
+
+#### Sección 3: Biyección inversa y equipotencia simétrica
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `inverse_pair_iff` | $\langle y,x \rangle \in f^{-1} \iff \langle x,y \rangle \in f$ | `theorem inverse_pair_iff (f x y : U) : ⟨y, x⟩ ∈ f⁻¹ ↔ ⟨x, y⟩ ∈ f` |
+| `bijection_inverse_is_function` | $f : A \xrightarrow{\sim} B \Rightarrow f^{-1} : B \to A$ | `theorem bijection_inverse_is_function {f A B : U} (hbij : isBijection f A B) : isFunctionFromTo (f⁻¹) B A` |
+| `bijection_inverse_injective` | $f$ biyección $\Rightarrow f^{-1}$ inyectiva | `theorem bijection_inverse_injective {f A B : U} (hbij : isBijection f A B) : isInjective (f⁻¹)` |
+| `bijection_inverse_surjective` | $f : A \xrightarrow{\sim} B \Rightarrow f^{-1}$ suryectiva sobre $A$ | `theorem bijection_inverse_surjective {f A B : U} (hbij : isBijection f A B) : isSurjectiveOnto (f⁻¹) A` |
+| `bijection_inverse_is_bijection` | $f : A \xrightarrow{\sim} B \Rightarrow f^{-1} : B \xrightarrow{\sim} A$ | `theorem bijection_inverse_is_bijection {f A B : U} (hbij : isBijection f A B) : isBijection (f⁻¹) B A` |
+| `equipotent_symm` | $A \simeq_s B \Rightarrow B \simeq_s A$ | `theorem equipotent_symm {A B : U} (h : A ≃ₛ B) : B ≃ₛ A` |
+
+**Dependencias**: `inverse_is_specified`, `isOrderedPair_by_construction`, `OrderedPair_mem_CartesianProduct`, `injective_inverse_single_valued`, `snd_of_ordered_pair`, `fst_of_ordered_pair`
+
+#### Sección 4: Composición y equipotencia transitiva
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `comp_injective` | $f,g$ inyectivas $\Rightarrow g \circ f$ inyectiva | `theorem comp_injective {f g : U} (hf_inj : isInjective f) (hg_inj : isInjective g) : isInjective (g ∘ f)` |
+| `comp_surjective` | $f : A \twoheadrightarrow B,\; g : B \twoheadrightarrow C \Rightarrow g \circ f$ suryectiva sobre $C$ | `theorem comp_surjective {f g A B C : U} (_hf : isFunctionFromTo f A B) (hg : isFunctionFromTo g B C) (hsurj_f : isSurjectiveOnto f B) (hsurj_g : isSurjectiveOnto g C) : isSurjectiveOnto (g ∘ f) C` |
+| `comp_bijection` | $f : A \xrightarrow{\sim} B,\; g : B \xrightarrow{\sim} C \Rightarrow g \circ f : A \xrightarrow{\sim} C$ | `theorem comp_bijection {f g A B C : U} (hf_bij : isBijection f A B) (hg_bij : isBijection g B C) : isBijection (g ∘ f) A C` |
+| `equipotent_trans` | $A \simeq_s B \land B \simeq_s C \Rightarrow A \simeq_s C$ | `theorem equipotent_trans {A B C : U} (hab : A ≃ₛ B) (hbc : B ≃ₛ C) : A ≃ₛ C` |
+
+**Dependencias**: `comp_is_specified`, `Eq_of_OrderedPairs_given_projections`, `comp_is_function`
+
+#### Sección 5: Clausura bajo equipotencia
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `finite_equipotent` | $A$ finito $\land A \simeq_s B \Rightarrow B$ finito | `theorem finite_equipotent {A B : U} (hA : isFiniteSet A) (hab : A ≃ₛ B) : isFiniteSet B` |
+
+**Dependencias**: `equipotent_symm`, `equipotent_trans`
+
+#### Sección 6: Singleton finito
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `singleton_is_finite` | $\{a\}$ es finito ($\{a\} \simeq_s \sigma\emptyset$) | `theorem singleton_is_finite (a : U) : isFiniteSet ({a} : U)` |
+
+**Patrón de demostración**: Construye la biyección explícita $f = \{\langle a, \emptyset \rangle\} : \{a\} \to \sigma\emptyset = \{∅\}$.
+
+**Dependencias**: `Nat_in_Omega`, `nat_successor_is_nat`, `zero_is_nat`, `Singleton_is_specified`, `mem_successor_self`, `Eq_of_OrderedPairs_given_projections`, `successor_is_specified`, `EmptySet_is_empty`
+
+#### Sección 7: Adjunción de elemento
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `finite_union_singleton` | $A$ finito $\land a \notin A \Rightarrow A \cup \{a\}$ finito | `theorem finite_union_singleton {A a : U} (hA : isFiniteSet A) (ha : a ∉ A) : isFiniteSet (A ∪ {a})` |
+
+**Patrón de demostración**: Si $f : A \xrightarrow{\sim} n$ con $n \in \omega$, construye $g = f \cup \{\langle a, n \rangle\} : A \cup \{a\} \xrightarrow{\sim} \sigma n$. Demuestra función, inyectividad (usando $a \notin A$ y $n \notin n$) y suryectividad por casos sobre $\sigma n$.
+
+**Dependencias**: `mem_Omega_is_Nat`, `nat_successor_is_nat`, `Nat_in_Omega`, `BinUnion_is_specified`, `Singleton_is_specified`, `CartesianProduct_is_specified`, `OrderedPair_mem_CartesianProduct`, `Eq_of_OrderedPairs_given_projections`, `successor_is_specified`, `nat_not_mem_self`, `mem_successor_self`
+
+---
+
 ## 5. Notación y Sintaxis
 
 ### 5.1 Operadores Básicos
@@ -10611,6 +10712,38 @@ export NaturalNumbersWellFounded (
 - `appendElem_is_specified`, `isFinSeq_appendElem`, `appendElem_apply_last`, `appendElem_apply_prev`, `appendElem_inj`
 - `isFinSeq_restriction`
 
+### 6.34 FiniteSets.lean
+
+**Namespace**: `SetUniverse.FiniteSets` (exportado a `SetUniverse`)
+**Última modificación**: 2026-03-29
+**Dependencias**: `NaturalNumbers`, `Infinity` + anteriores
+
+```lean
+export FiniteSets (
+  -- Identity bijection
+  id_is_function id_is_injective id_is_surjective id_is_bijection
+  equipotent_refl
+  -- Definition
+  isFiniteSet
+  -- Basic properties
+  empty_is_finite nat_is_finite
+  -- Inverse bijection
+  inverse_pair_iff
+  bijection_inverse_is_function bijection_inverse_injective
+  bijection_inverse_surjective bijection_inverse_is_bijection
+  equipotent_symm
+  -- Composition
+  comp_injective comp_surjective comp_bijection
+  equipotent_trans
+  -- Closure
+  finite_equipotent
+  -- Singleton
+  singleton_is_finite
+  -- Adding an element
+  finite_union_singleton
+)
+```
+
 ## 7. Estado de Proyección por Módulo
 
 ### 7.1 Leyenda de Estados
@@ -10660,6 +10793,7 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `NaturalNumbersNewtonBinom.lean` - Término binomial y teorema de Newton en ω: Patrón B (bridge-only) con 4 argumentos, 1 definición (`binomTermOf`), teorema puente `fromPeano_binomTerm`, valores concretos (k=0, k=n), expansión C(n,k)·a^k·b^(n−k), separación de potencias n^(m+k)=n^m·n^k, teorema binomial de Newton (nivel Peano→ZFC), Σ C(n,k)=2^n, comparación de crecimiento existencial, 12 exports
 - `NaturalNumbersWellFounded.lean` - Buen fundamento y principio de buena ordenación en ω: accesibilidad vía `nat_mem_wf`, principio de buena ordenación con unicidad (transportado desde Peano), forma simplificada sin unicidad, 3 exports
 - `FiniteSequences.lean` - Secuencias finitas en ZFC: functions f : n → A con n ∈ ω, 3 definiciones (`isFinSeq`, `FinSeqSet`, `appendElem`), 15 teoremas (predicado central, secuencia vacía, append, descomposición), sin exports a `SetUniverse`
+- `FiniteSets.lean` - Conjuntos finitos en ZFC: definición `isFiniteSet` (∃ n ∈ ω, A ≃ₛ n), infraestructura de biyecciones (identidad, inversa, composición), equipotencia como relación de equivalencia (refl/symm/trans), 1 definición + 21 teoremas + 22 exports
 
 ### 7.3 Archivos Parcialmente Proyectados
 
@@ -10682,6 +10816,8 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 **Ninguno** - Todos los archivos completamente implementados ya han sido proyectados en este documento.
 
 ---
+
+*Última actualización: 2026-03-29 — Proyección completa de FiniteSets.lean (§3.37, §4.33, §6.34: 1 def + 21 teoremas + 22 exports, definición isFiniteSet, infraestructura de biyecciones id/inversa/composición, equipotencia refl/symm/trans, finitud de ∅/n/singleton/unión). Tabla §1.1 y §7.2 actualizadas. Estado: ✅ 100% completo, 0 sorry.*
 
 *Última actualización: 2026-03-24 — Proyección completa de NaturalNumbersGcd.lean (§3.30, §4.26, §6.27: 2 def + 13 teoremas + 17 exports, GCD ZFC-nativo vía algoritmo euclídeo + LCM vía bridge). Tabla §1.1 actualizada. Estado: ✅ 100% completo, 0 sorry.*
 

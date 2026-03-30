@@ -1,6 +1,6 @@
 # Next Steps — ZfcSetTheory Project
 
-**Last updated**: 2026-03-27
+**Last updated**: 2026-03-29
 
 This document outlines actionable next steps for the project, organized by priority and dependency.
 
@@ -77,19 +77,25 @@ Create a unified module (or small family of modules) for items 1–6. This requi
 
 ---
 
-## 6. Integers (ℤ) in ZFC — Future
+## 6. ~~Finite Sets in ZFC~~ — ✅ COMPLETE
+
+Completed 2026-03-29 in `FiniteSets.lean`: `isFiniteSet` definition, bijection infrastructure (`id_is_bijection`, `bijection_inverse_is_bijection`, `comp_bijection`), equipotence equivalence relation (`equipotent_refl/symm/trans`), closure under equipotence, finiteness of ∅, ω-members, singletons, and union with singleton. 1 definition + 21 theorems, 22 exports.
+
+---
+
+## 7. Integers (ℤ) in ZFC — Future
 
 Per ReflexionesParaLaIA.md [15]. Define ℤ as equivalence classes of pairs (a, b) ∈ ω × ω under (a, b) ~ (c, d) ⟺ a + d = b + c. All arithmetic operations, ring structure.
 
 ---
 
-## 7. Gödel's Incompleteness Theorems — Future
+## 8. Gödel's Incompleteness Theorems — Future
 
 Per ReflexionesParaLaIA.md [5], [12]. Rosser's strengthened form. Requires encoding of syntax, Gödel numbering, representability of recursive functions in ZFC.
 
 ---
 
-## 8. Project Reorganization — Future
+## 9. Project Reorganization — Future
 
 Per ReflexionesParaLaIA.md [14]. Restructure into clear module hierarchies:
 
@@ -109,8 +115,9 @@ Per ReflexionesParaLaIA.md [14]. Restructure into clear module hierarchies:
 | ~~**2**~~ | ~~Binomial coefficients bridge~~ | ~~`NaturalNumbersBinom.lean`~~ | ✅ Complete 2026-03-25 |
 | ~~**3**~~ | ~~MaxMin + NewtonBinom + WellFounded~~ | ~~3 modules~~ | ✅ Complete 2026-03-26 |
 | **4** | Complete atomic Boolean algebra + representation | Extension of `AtomicBooleanAlgebra.lean` or new module | `AtomicBooleanAlgebra`, `Cardinality` |
-| **5** | Finite sequences in ZFC (remaining: concat, length, nth, product, DList bridge) | Extension of `FiniteSequences.lean` | `FiniteSequences`, `Functions`, `NaturalNumbers` |
+| ~~**5**~~ | ~~Finite sets in ZFC~~ | ~~`FiniteSets.lean`~~ | ✅ Complete 2026-03-29 |
+| **6** | Finite sequences in ZFC (remaining: concat, length, nth, product, DList bridge) | Extension of `FiniteSequences.lean` | `FiniteSequences`, `Functions`, `NaturalNumbers` |
 
 ---
 
-*Updated 2026-03-27. All peanolib bridge modules complete. FiniteSequences basic theory complete. Next focus: algebraic structure completion and finite sequence extensions (concat, length, product).*
+*Updated 2026-03-29. All peanolib bridge modules complete. FiniteSequences basic theory complete. FiniteSets complete (1 def + 21 theorems). Next focus: algebraic structure completion and finite sequence extensions (concat, length, product).*
