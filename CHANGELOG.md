@@ -1,6 +1,6 @@
 # Changelog
 
-**Última actualización:** 2026-03-30
+**Última actualización:** 2026-04-01
 **Autor**: Julián Calderón Almendros
 
 Todos los cambios notables de este proyecto serán documentados en este archivo.
@@ -9,6 +9,26 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Añadido (2026-04-01)
+
+- **Nuevo módulo FiniteSequencesBridge.lean — Puente DList ↔ ZFC y TFA nativo**:
+  - ✅ `nth (f n i : U) : U` — i-ésimo elemento de secuencia finita ZFC
+  - ✅ `dlistToSeq (xs : DList ℕ₀) : U` — conversión DList Peano → secuencia finita ZFC
+  - ✅ `dlistLen (xs : DList ℕ₀) : U` — longitud de DList como natural ZFC
+  - ✅ `isPrimeSeq (f n : U) : Prop` — predicado de secuencia de primos
+  - ✅ 15 teoremas públicos en 7 secciones: nth (5), seqProd recursion (3), seqProd extensionality (1), DList→ZFC bridge (4), seqProd correspondence (1), isPrimeSeq (1), TFA native (2)
+  - ✅ `tfa_exists_native` — ∀ n ≥ 2, ∃ secuencia ZFC de primos cuyo producto es n
+  - ✅ `tfa_unique_native` — unicidad de la factorización prima ZFC-nativa
+  - ✅ Namespace `SetUniverse.FiniteSequencesBridge` (exportado a `SetUniverse`, 23 exports)
+  - ✅ Build limpio; 41/41 módulos compilados correctamente (0 sorry, 0 errores)
+
+- **REFERENCE.md — Proyección completa de FiniteSequencesBridge.lean**:
+  - ✅ §1.1: 1 fila añadida (FiniteSequencesBridge)
+  - ✅ §3.39: 4 definiciones (nth, dlistToSeq, dlistLen, isPrimeSeq)
+  - ✅ §4.35: 15 teoremas en 7 secciones
+  - ✅ §6.36: 23 exports
+  - ✅ §7.2: Añadido a archivos completamente proyectados
 
 ### Añadido (2026-03-30)
 

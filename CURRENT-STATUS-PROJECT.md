@@ -1,24 +1,37 @@
 # Current Status - ZfcSetTheory Project
 
-**Date**: 2026-03-30
+**Date**: 2026-04-01
 **Lean Version**: 4.28.0
 **Author**: Julián Calderón Almendros
 
 ## Executive Summary
 
-This project implements ZFC set theory in Lean 4, focusing on fundamental axioms, relations, functions, cardinality, and full arithmetic of the Von Neumann naturals. All proofs are complete with no `sorry` statements remaining. The `PeanoImport.lean` module establishes the formal isomorphism between Von Neumann and Peano natural numbers via the external `peanolib` library. Arithmetic modules (Add, Mul, Sub, Div, Pow, Arith, Factorial, Gcd, Primes, Binom, MaxMin, NewtonBinom, WellFounded) provide full arithmetic in ω via RecursiveFn and Pattern B bridge. FiniteSequencesArith.lean provides summation/product of finite numeric sequences and cardinality theorems for finite Cartesian products via ZFC induction.
+This project implements ZFC set theory in Lean 4, focusing on fundamental axioms, relations, functions, cardinality, and full arithmetic of the Von Neumann naturals. All proofs are complete with no `sorry` statements remaining. The `PeanoImport.lean` module establishes the formal isomorphism between Von Neumann and Peano natural numbers via the external `peanolib` library. Arithmetic modules (Add, Mul, Sub, Div, Pow, Arith, Factorial, Gcd, Primes, Binom, MaxMin, NewtonBinom, WellFounded) provide full arithmetic in ω via RecursiveFn and Pattern B bridge. FiniteSequencesArith.lean provides summation/product of finite numeric sequences and cardinality theorems for finite Cartesian products via ZFC induction. FiniteSequencesBridge.lean bridges DList ℕ₀ ↔ ZFC finite sequences with nth, seqProd correspondence, and a ZFC-native restatement of TFA.
 
 ### Statistics
 
-- **Total modules**: 40 (+ 1 external: peanolib)
+- **Total modules**: 41 (+ 1 external: peanolib)
 - **Compilation**: ✅ Successful (0 errors, 0 sorry)
 - **Complete proofs**: 100%
 - **Remaining `sorry`**: 0
-- **Documentation**: REFERENCE.md fully updated (all 40 modules projected)
+- **Documentation**: REFERENCE.md fully updated (all 41 modules projected)
 
 ## Recent Achievements
 
-### Latest Updates (March 30, 2026)
+### Latest Updates (April 1, 2026)
+
+#### 1. FiniteSequencesBridge.lean — Puente DList ↔ ZFC y TFA nativo (✅ Complete)
+
+- `nth (f n i : U) : U` — i-ésimo elemento de secuencia finita ZFC
+- `dlistToSeq (xs : DList ℕ₀) : U` — convierte DList Peano a secuencia finita ZFC
+- `dlistLen (xs : DList ℕ₀) : U` — longitud de DList como natural ZFC
+- `isPrimeSeq (f n : U) : Prop` — predicado de secuencia de primos
+- 15 teoremas en 7 secciones: nth (5), seqProd recursion (3), seqProd extensionality (1), DList→ZFC bridge (4), seqProd correspondence (1), isPrimeSeq (1), TFA native (2)
+  - `tfa_exists_native` — TFA con secuencias ZFC-nativas
+  - `tfa_unique_native` — Unicidad TFA con secuencias ZFC-nativas
+- 23 exports a `SetUniverse`; proyectado en REFERENCE.md §3.39, §4.35, §6.36
+
+### Previous Updates (March 30, 2026)
 
 #### 1. FiniteSequencesArith.lean — Aritmética de secuencias finitas en ZFC (✅ Complete)
 
@@ -228,6 +241,7 @@ This project implements ZFC set theory in Lean 4, focusing on fundamental axioms
 38. **FiniteSequences.lean** — Finite sequences in ZFC (f : n → A, 3 definitions, 15 theorems)
 39. **FiniteSets.lean** — Finite sets in ZFC (isFiniteSet, bijection infrastructure, equipotence, 1 def + 21 theorems, 22 exports)
 40. **FiniteSequencesArith.lean** — Arithmetic of finite sequences (seqSum, seqProd, familyProduct, card_familyProduct, 7 def + 18 theorems, 33 exports)
+41. **FiniteSequencesBridge.lean** — DList ↔ ZFC bridge, nth, isPrimeSeq, TFA native (4 def + 15 theorems, 23 exports)
 
 ## Project Architecture
 
@@ -267,6 +281,8 @@ NaturalNumbersMaxMin.lean, NaturalNumbersWellFounded.lean
 NaturalNumbersAdd.lean → FiniteSequences.lean (finite sequences f : n → A)
 
 NaturalNumbersMul.lean, FiniteSequences.lean, FiniteSets.lean → FiniteSequencesArith.lean (seqSum, seqProd, familyProduct, cardinality)
+
+FiniteSequencesArith.lean, NaturalNumbersPrimes.lean → FiniteSequencesBridge.lean (nth, dlistToSeq, isPrimeSeq, TFA native)
 ```
 
 ### Boolean Algebra Branch (Parallel)
@@ -332,7 +348,7 @@ ZFC naturals use saturated subtraction: `m - n = 0` when `m ≤ n`. This matches
 
 ### High Priority
 
-1. **Finite Sequences** (`FiniteSequences.lean`) — functions `f : n → ω` for `n ∈ ω`; needed for sequences, tuples, and combinatorics foundations
+1. ~~**Finite Sequences** (`FiniteSequences.lean`)~~ — ✅ Complete (FiniteSequences + FiniteSequencesArith + FiniteSequencesBridge)
 
 ### Medium Priority
 
@@ -362,7 +378,7 @@ ZFC naturals use saturated subtraction: `m - n = 0` when `m ≤ n`. This matches
 
 ### Documentation
 
-- ✅ REFERENCE.md: 40 modules fully projected (mathematical descriptions + Lean 4 signatures)
+- ✅ REFERENCE.md: 41 modules fully projected (mathematical descriptions + Lean 4 signatures)
 - ✅ All exports documented with section references
 - ✅ AIDER-AI-GUIDE.md: complete development guide (14 requirements)
 - ✅ CHANGELOG.md, README.md, CURRENT-STATUS-PROJECT.md: up to date
@@ -386,9 +402,9 @@ At most ONE `.lean` file unlocked at a time. Pre-commit hook blocks commits touc
 
 ---
 
-**Last updated**: 2026-03-30 10:00
+**Last updated**: 2026-04-01
 **Author**: Julián Calderón Almendros
 **GitHub**: [@julian1c2a](https://github.com/julian1c2a)
 **License**: MIT License
 
-**Status**: ✅ **100% COMPLETE** — 37/37 modules, 0 sorry, full arithmetic in ω
+**Status**: ✅ **100% COMPLETE** — 41/41 modules, 0 sorry, full arithmetic in ω

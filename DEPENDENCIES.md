@@ -1,6 +1,6 @@
 # Diagrama de Dependencias - ZfcSetTheory
 
-**Última actualización:** 2026-03-30
+**Última actualización:** 2026-04-01
 **Autor**: Julián Calderón Almendros
 
 ## Estructura General del Proyecto
@@ -37,6 +37,7 @@ ZfcSetTheory/
 ├── NaturalNumbersWellFounded.lean       # Buen fundamento y buena ordenación de ω
 ├── FiniteSequences.lean                 # Secuencias finitas en ZFC
 ├── FiniteSequencesArith.lean            # Aritmética de secuencias finitas: seqSum, seqProd, familyProduct
+├── FiniteSequencesBridge.lean           # Puente DList ↔ ZFC, nth, isPrimeSeq, TFA nativo
 ├── FiniteSets.lean                      # Conjuntos finitos en ZFC
 ├── BooleanAlgebra.lean                  # Álgebra Booleana de conjuntos (teoremas)
 ├── BooleanRing.lean                     # Anillo Booleano con SymDiff
@@ -123,6 +124,8 @@ graph TD
     NM --> FSA[FiniteSequencesArith.lean]
     FSeq --> FSA
     FSets --> FSA
+    FSA --> FSB[FiniteSequencesBridge.lean]
+    NPR --> FSB
 
     %% Nivel 9: Álgebras y órdenes
     E --> SSO[SetStrictOrder.lean]
@@ -189,6 +192,7 @@ graph TD
     FSeq --> Z
     FSets --> Z
     FSA --> Z
+    FSB --> Z
 
     %% Estilos
     classDef axiom fill:#e1f5fe,stroke:#01579b,stroke-width:2px
@@ -206,7 +210,7 @@ graph TD
     class SO,SSO order
     class OP,CP extension
     class Rel,Func relation
-    class Inf,Nat,Rec,PI,NA,NM,NS,ND,NP,NAR,NF,NG,NPR,NB,NMM,NNB,NWF,FSeq,FSets,FSA natural
+    class Inf,Nat,Rec,PI,NA,NM,NS,ND,NP,NAR,NF,NG,NPR,NB,NMM,NNB,NWF,FSeq,FSets,FSA,FSB natural
     class Z main
     class IC,P,PL external
 ```
@@ -456,6 +460,18 @@ namespace SetUniverse.FiniteSequencesArith
   -- Depende de: NaturalNumbersMul, FiniteSequences, FiniteSets
 ```
 
+### 25. **SetUniverse.FiniteSequencesBridge**
+
+```lean
+namespace SetUniverse.FiniteSequencesBridge
+  -- Puente DList ℕ₀ ↔ ZFC secuencias finitas + TFA nativo
+  -- Definiciones: nth, dlistToSeq, dlistLen, isPrimeSeq
+  -- Teoremas: nth_apply, nth_in_codomain, nth_ext, seqProd general recursion/extensionality
+  --           dlistToSeq_isFinSeq, dlistToSeq_apply, dlistToSeq_seqProd
+  --           isPrimeSeq, tfa_exists_native, tfa_unique_native
+  -- Depende de: FiniteSequencesArith, NaturalNumbersPrimes
+```
+
 ## Dependencias por Nivel
 
 ### **Nivel 0: Fundamentos**
@@ -515,6 +531,7 @@ namespace SetUniverse.FiniteSequencesArith
 - `FiniteSequences.lean` - Secuencias finitas f : n → A con n ∈ ω (`isFinSeq`, `FinSeqSet`, `appendElem`)
 - `FiniteSets.lean` - Conjuntos finitos (`isFiniteSet`), biyecciones, equipotencia
 - `FiniteSequencesArith.lean` - Sumación/producto de secuencias (`seqSum`, `seqProd`), producto cartesiano de familias (`familyProduct`), teoremas de cardinalidad (`card_product_two`, `card_familyProduct`)
+- `FiniteSequencesBridge.lean` - Puente DList ↔ ZFC (`dlistToSeq`, `nth`), `isPrimeSeq`, TFA nativo (`tfa_exists_native`, `tfa_unique_native`)
 
 ### **Nivel 9: Estructuras Algebraicas**
 

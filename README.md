@@ -7,9 +7,9 @@
 
 > 📊 **Project Status**: See [CURRENT-STATUS-PROJECT.md](CURRENT-STATUS-PROJECT.md) for complete details
 >
-> ✅ **40/40 modules** compiling successfully (41/41 jobs with peanolib)
+> ✅ **41/41 modules** compiling successfully (42/42 jobs with peanolib)
 > ✅ **100% of theorems** completely proven
-> ✅ **0 `sorry`** in all 40 modules
+> ✅ **0 `sorry`** in all 41 modules
 
 Una implementación formal de la **Teoría de Conjuntos de Zermelo-Fraenkel (ZFC)** en Lean 4, sin dependencias de Mathlib.
 
@@ -58,6 +58,7 @@ Este proyecto desarrolla los axiomas fundamentales de ZFC de manera progresiva, 
 | **Secuencias finitas** | `FiniteSequences.lean` | `isFinSeq`, `FinSeqSet`, `appendElem`, 15 teoremas | ✅ Completo |
 | **Conjuntos finitos** | `FiniteSets.lean` | `isFiniteSet`, biyecciones, equipotencia refl/symm/trans | ✅ Completo |
 | **Aritmética de secuencias** | `FiniteSequencesArith.lean` | `seqSum`, `seqProd`, `familyProduct`, `card_familyProduct` | ✅ Completo |
+| **Puente DList ↔ ZFC** | `FiniteSequencesBridge.lean` | `nth`, `dlistToSeq`, `isPrimeSeq`, TFA nativo | ✅ Completo |
 | **Álgebra Booleana** | `BooleanAlgebra.lean` | Leyes fundamentales, idempotencia, absorción | ✅ Completo |
 | **Anillo Booleano** | `BooleanRing.lean` | Diferencia simétrica, propiedades de anillo | ✅ Completo |
 | **Álgebra de 𝒫(A)** | `PowerSetAlgebra.lean` | Complemento, De Morgan, distributividad | ✅ Completo |
@@ -68,7 +69,7 @@ Este proyecto desarrolla los axiomas fundamentales de ZFC de manera progresiva, 
 | **Orden Estricto** | `SetStrictOrder.lean` | Propiedades de orden estricto | ✅ Completo |
 | **Cardinalidad** | `Cardinality.lean` | Teorema de Cantor, CSB | ✅ Completo |
 
-### Total: 40 módulos — 40/40 con 0 sorry
+### Total: 41 módulos — 41/41 con 0 sorry
 
 ## ✨ Características Destacadas
 
@@ -140,6 +141,7 @@ ZfcSetTheory/
 ├── NaturalNumbersWellFounded.lean # Buen fundamento de ω
 ├── FiniteSequences.lean         # Secuencias finitas en ZFC
 ├── FiniteSequencesArith.lean    # Aritmética de secuencias finitas
+├── FiniteSequencesBridge.lean   # Puente DList ↔ ZFC, nth, TFA nativo
 ├── FiniteSets.lean              # Conjuntos finitos en ZFC
 └── ZfcSetTheory.lean            # Módulo raíz
 ```
@@ -209,13 +211,13 @@ lake build
 
 ### Status and Development
 
-- **[CURRENT-STATUS-PROJECT.md](CURRENT-STATUS-PROJECT.md)** - ⭐ **Complete project status**  (updated 2026-03-30)
-  - 40 modules, 100% proven, 0 sorry
-  - Recent achievements (FiniteSequencesArith: seqSum, seqProd, familyProduct, card_familyProduct)
+- **[CURRENT-STATUS-PROJECT.md](CURRENT-STATUS-PROJECT.md)** - ⭐ **Complete project status**  (updated 2026-04-01)
+  - 41 modules, 100% proven, 0 sorry
+  - Recent achievements (FiniteSequencesBridge: nth, dlistToSeq, isPrimeSeq, TFA native)
   - Architecture and dependency hierarchies
   - Next steps
 - **[REFERENCE.md](REFERENCE.md)** - 📖 **Complete technical reference** (11000+ lines)
-  - 40 fully documented modules with mathematical descriptions
+  - 41 fully documented modules with mathematical descriptions
   - All definitions, theorems, and exports with Lean4 signatures
   - Dependency tracking and namespace organization
 - [CHANGELOG.md](CHANGELOG.md) - Detailed change history
@@ -260,4 +262,4 @@ Este proyecto se desarrolló basándose en las siguientes fuentes:
 ---
 
 **Autor**: Julián Calderón Almendros
-*Last updated: 2026-03-30 10:00*
+*Last updated: 2026-04-01*
