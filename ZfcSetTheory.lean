@@ -24,6 +24,7 @@ import ZfcSetTheory.GeneralizedDistributive
 import ZfcSetTheory.SetOrder
 import ZfcSetTheory.SetStrictOrder
 import ZfcSetTheory.AtomicBooleanAlgebra
+import ZfcSetTheory.CompleteBooleanAlgebra
 import ZfcSetTheory.Functions
 import ZfcSetTheory.Cardinality
 import ZfcSetTheory.NaturalNumbers
