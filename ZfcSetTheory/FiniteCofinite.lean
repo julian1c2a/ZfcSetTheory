@@ -92,7 +92,9 @@ namespace SetUniverse
     /-! ============================================================ -/
 
     /-- If A ≃ₛ ∅, then A = ∅ -/
-    theorem equipotent_empty_is_empty {A : U} (h : A ≃ₛ (∅ : U)) : A = ∅ := by
+    theorem equipotent_empty_is_empty {A : U} (h : A ≃ₛ (∅ : U)) :
+      A = ∅
+        := by
       obtain ⟨f, hf_func, _, _⟩ := h
       apply ExtSet; intro z; constructor
       · intro hz
@@ -103,7 +105,9 @@ namespace SetUniverse
       · intro hz; exact absurd hz (EmptySet_is_empty z)
 
     /-- σ(k) \ {k} = k for k ∈ ω -/
-    theorem sigma_remove_self {k : U} (hk : k ∈ ω) : (σ k) \ {k} = k := by
+    theorem sigma_remove_self {k : U} (hk : k ∈ ω) :
+      (((σ k) \ {k}) = k)
+        := by
       have hk_nat := mem_Omega_is_Nat k hk
       apply ExtSet; intro z; constructor
       · intro hz
@@ -120,7 +124,7 @@ namespace SetUniverse
         intro hzk
         have := (Singleton_is_specified k z).mp hzk
         rw [this] at hz
-        exact nat_not_mem_self hk_nat hz
+        exact nat_not_mem_self k hk_nat hz
 
     /-- Core removal lemma: removing the preimage of k from a bijection A → σ(k)
         gives a bijection A\{a₀} → k -/
@@ -144,8 +148,7 @@ namespace SetUniverse
           rw [CartesianProduct_is_specified] at h_prod ⊢
           refine ⟨h_prod.1, ?_, ?_⟩
           · -- fst p ∈ A \ {a₀}
-            rw [Difference_is_specified]
-            exact ⟨h_prod.2.1, h_fst⟩
+            exact h_fst
           · -- snd p ∈ k
             have h_snd_sigma : snd p ∈ σ k := h_prod.2.2
             rw [successor_is_specified] at h_snd_sigma
@@ -177,11 +180,11 @@ namespace SetUniverse
           have hx_A := hx.1
           obtain ⟨y, hy, hy_unique⟩ := hf_func.2 x hx_A
           refine ⟨y, ?_, ?_⟩
-          · rw [Restriction_is_specified]
+          · show ⟨x, y⟩ ∈ f ↾ (A \ {a₀})
+            rw [Restriction_is_specified]
             refine ⟨hy, ?_⟩
             rw [fst_of_ordered_pair]
-            rw [Difference_is_specified]
-            exact hx
+            exact (Difference_is_specified A {a₀} x).mpr hx
           · intro y' hy'
             rw [Restriction_is_specified] at hy'
             exact hy_unique y' hy'.1
@@ -193,9 +196,9 @@ namespace SetUniverse
         -- x ≠ a₀ because f(x) = y ≠ k = f(a₀)
         have hx_ne : x ≠ a₀ := by
           intro heq; rw [heq] at hx
-          have := apply_eq f a₀ (hf_func.2 a₀ ha₀) hx
-          rw [hfa₀] at this; rw [this] at hy
-          exact nat_not_mem_self hk_nat hy
+          have := apply_eq f a₀ y (hf_func.2 a₀ ha₀) hx
+          rw [hfa₀] at this; rw [← this] at hy
+          exact nat_not_mem_self k hk_nat hy
         have hx_A : x ∈ A := by
           have := hf_func.1 _ hx
           rw [OrderedPair_mem_CartesianProduct] at this
@@ -226,7 +229,7 @@ namespace SetUniverse
         intro A' B' hA'_eq hB'_sub
         -- Handle zero case
         have hm_nat := mem_Omega_is_Nat m hm
-        rcases nat_is_zero_or_succ hm_nat with rfl | ⟨k, hk_nat, rfl⟩
+        rcases nat_is_zero_or_succ m hm_nat with rfl | ⟨k, rfl⟩
         · -- m = ∅: A' ≃ₛ ∅ → A' = ∅ → B' = ∅
           have := equipotent_empty_is_empty hA'_eq
           rw [this] at hB'_sub
@@ -236,6 +239,7 @@ namespace SetUniverse
             · intro hz; exact absurd hz (EmptySet_is_empty z)
           rw [this]; exact empty_is_finite
         · -- m = σ(k)
+          have hk_nat : isNat k := nat_element_is_nat (σ k) k hm_nat (mem_successor_self k)
           by_cases hB'_empty : B' = ∅
           · rw [hB'_empty]; exact empty_is_finite
           · -- B' ≠ ∅: pick b ∈ B'
@@ -250,10 +254,10 @@ namespace SetUniverse
               have := hf_bij.1.1 _ ha₀
               rw [OrderedPair_mem_CartesianProduct] at this; exact this.1
             have hfa₀ : apply f a₀ = k :=
-              apply_eq f a₀ (hf_bij.1.2 a₀ ha₀_A') ha₀
+              apply_eq f a₀ k (hf_bij.1.2 a₀ ha₀_A') ha₀
             -- f↾(A'\{a₀}) : A'\{a₀} → k bijection
             have h_rem_bij := remove_element_bijection hk hf_bij ha₀_A' hfa₀
-            have h_rem_eq : A' \ {a₀} ≃ₛ k := ⟨f ↾ (A' \ {a₀}), h_rem_bij⟩
+            have h_rem_eq : ((A' \ {a₀}) ≃ₛ k) := ⟨f ↾ (A' \ {a₀}), h_rem_bij⟩
             -- IH: k ∈ m = σ(k), so P(k) holds
             have hk_in_m : k ∈ σ k := mem_successor_self k
             have ih_k := ih k hk_in_m
@@ -261,16 +265,16 @@ namespace SetUniverse
             have ih_P := ih_k.2
             by_cases ha₀_B' : a₀ ∈ B'
             · -- a₀ ∈ B': B'\{a₀} ⊆ A'\{a₀}, finite by IH
-              have hB'_sub' : B' \ {a₀} ⊆ A' \ {a₀} := by
+              have hB'_sub' : ((B' \ {a₀}) ⊆ (A' \ {a₀})) := by
                 intro z hz
                 rw [Difference_is_specified] at hz ⊢
                 exact ⟨hB'_sub z hz.1, hz.2⟩
               have hB'_rem_fin := ih_P (A' \ {a₀}) (B' \ {a₀}) h_rem_eq hB'_sub'
               -- B' = (B'\{a₀}) ∪ {a₀} and a₀ ∉ B'\{a₀}
-              have ha₀_not : a₀ ∉ B' \ {a₀} := by
+              have ha₀_not : a₀ ∉ Difference B' {a₀} := by
                 intro h; rw [Difference_is_specified] at h
                 exact h.2 ((Singleton_is_specified a₀ a₀).mpr rfl)
-              have hB'_eq : B' = (B' \ {a₀}) ∪ {a₀} := by
+              have hB'_eq : B' = BinUnion (Difference B' {a₀}) {a₀} := by
                 apply ExtSet; intro z; constructor
                 · intro hz
                   rw [BinUnion_is_specified]
@@ -288,7 +292,7 @@ namespace SetUniverse
               rw [hB'_eq]
               exact finite_union_singleton hB'_rem_fin ha₀_not
             · -- a₀ ∉ B': B' ⊆ A'\{a₀}, finite by IH
-              have hB'_sub' : B' ⊆ A' \ {a₀} := by
+              have hB'_sub' : B' ⊆ Difference A' {a₀} := by
                 intro z hz
                 rw [Difference_is_specified]
                 refine ⟨hB'_sub z hz, ?_⟩
@@ -299,7 +303,7 @@ namespace SetUniverse
 
     /-- A ∪ B = (A ∪ (B\{b})) ∪ {b} when b ∈ B -/
     theorem union_with_remove {A B b : U} (hb : b ∈ B) :
-        A ∪ B = (A ∪ (B \ {b})) ∪ {b} := by
+        BinUnion A B = BinUnion (BinUnion A (Difference B {b})) {b} := by
       apply ExtSet; intro z; constructor
       · intro hz
         rw [BinUnion_is_specified] at hz ⊢
@@ -358,17 +362,17 @@ namespace SetUniverse
           have := hg_bij.1.1 _ hb₀
           rw [OrderedPair_mem_CartesianProduct] at this; exact this.1
         have hgb₀ : apply g b₀ = m :=
-          apply_eq g b₀ (hg_bij.1.2 b₀ hb₀_B') hb₀
+          apply_eq g b₀ m (hg_bij.1.2 b₀ hb₀_B') hb₀
         -- g↾(B'\{b₀}) : B'\{b₀} → m bijection
         have h_rem := remove_element_bijection hm_w hg_bij hb₀_B' hgb₀
-        have h_rem_eq : B' \ {b₀} ≃ₛ m := ⟨g ↾ (B' \ {b₀}), h_rem⟩
+        have h_rem_eq : Difference B' {b₀} ≃ₛ m := ⟨g ↾ (B' \ {b₀}), h_rem⟩
         -- By IH: A' ∪ (B'\{b₀}) is finite
         have h_union_fin := ih A' (B' \ {b₀}) hA' h_rem_eq
         -- A' ∪ B' = (A' ∪ (B'\{b₀})) ∪ {b₀}
         rw [union_with_remove hb₀_B']
-        by_cases hb₀_in : b₀ ∈ A' ∪ (B' \ {b₀})
+        by_cases hb₀_in : b₀ ∈ BinUnion A' (Difference B' {b₀})
         · -- b₀ already present
-          have : (A' ∪ (B' \ {b₀})) ∪ {b₀} = A' ∪ (B' \ {b₀}) := by
+          have : BinUnion (BinUnion A' (Difference B' {b₀})) {b₀} = BinUnion A' (Difference B' {b₀}) := by
             apply ExtSet; intro z; constructor
             · intro hz
               rw [BinUnion_is_specified] at hz
@@ -391,14 +395,14 @@ namespace SetUniverse
         rw [successor_is_specified] at hz
         cases hz with
         | inl h =>
-          have := mem_Omega_is_Nat n hn
-          exact Nat_in_Omega z (nat_element_is_nat this h)
+          have h_n_nat := mem_Omega_is_Nat n hn
+          exact Nat_in_Omega z (nat_element_is_nat n z h_n_nat h)
         | inr h => rw [h]; exact hn
       -- Restrict f to σ(n): injection σ(n) → n
       have h_sub : σ n ⊆ (ω : U) := hσn_sub
       have h_dom_sub : (σ n : U) ⊆ (ω : U) := hσn_sub
       have h_restr_func := Restriction_is_function f ω n (σ n) hf_bij.1 h_dom_sub
-      have h_restr_inj := restriction_is_injective hf_bij.2.1
+      have h_restr_inj : isInjective (f ↾ (σ n)) := restriction_is_injective hf_bij.2.1
       exact no_injection_succ_to_nat hn (f ↾ σ n) h_restr_func h_restr_inj
 
     /-! ============================================================ -/
@@ -443,20 +447,22 @@ namespace SetUniverse
         obtain ⟨hk_w, ih⟩ := hk
         refine ⟨succ_in_Omega k hk_w, fun j hj h => ?_⟩
         -- add (σ k) (σ k) = σ(σ(add k k))
-        rw [succ_succ_double_eq_double_succ hk_w] at h
+        rw [← succ_succ_double_eq_double_succ hk_w] at h
         -- h : σ(σ(add k k)) = σ(add j j)
         -- So σ(add k k) = add j j
-        have h1 := successor_injective h
+        have h1 := successor_injective _ _ (mem_Omega_is_Nat _ (succ_in_Omega _ (double_in_Omega hk_w))) (mem_Omega_is_Nat _ (double_in_Omega hj)) h
         -- j = ∅ or j = σ(j')
-        rcases nat_is_zero_or_succ (mem_Omega_is_Nat j hj) with rfl | ⟨j', hj'_nat, rfl⟩
+        rcases nat_is_zero_or_succ j (mem_Omega_is_Nat j hj) with rfl | ⟨j', rfl⟩
         · -- j = ∅: add ∅ ∅ = ∅, but σ(add k k) ≠ ∅
           rw [add_zero ∅ zero_in_Omega] at h1
-          exact successor_nonempty (add k k) h1.symm
+          exact successor_nonempty (add k k) h1
         · -- j = σ(j'): add (σ j') (σ j') = σ(σ(add j' j'))
-          have hj' : j' ∈ (ω : U) := Nat_in_Omega j' hj'_nat
-          rw [succ_succ_double_eq_double_succ hj'] at h1
+          have hj' : j' ∈ (ω : U) := by
+            have := mem_Omega_is_Nat (σ j') hj
+            exact Nat_in_Omega j' (nat_element_is_nat (σ j') j' this (mem_successor_self j'))
+          rw [← succ_succ_double_eq_double_succ hj'] at h1
           -- h1 : σ(add k k) = σ(σ(add j' j'))
-          have h2 := successor_injective h1
+          have h2 := successor_injective _ _ (mem_Omega_is_Nat _ (double_in_Omega hk_w)) (mem_Omega_is_Nat _ (succ_in_Omega _ (double_in_Omega hj'))) h1
           -- h2 : add k k = σ(add j' j')
           exact ih j' hj' h2
 
@@ -485,13 +491,52 @@ namespace SetUniverse
         | inl h =>
           -- m = add k k (even) → σ(m) = σ(add k k) (odd)
           obtain ⟨k, hk, hm_eq⟩ := h
-          exact Or.inr ⟨k, hk, congrArg σ hm_eq⟩
+          exact Or.inr ⟨k, hk, congrArg successor hm_eq⟩
         | inr h =>
           -- m = σ(add k k) (odd) → σ(m) = σ(σ(add k k)) = add (σk) (σk) (even)
           obtain ⟨k, hk, hm_eq⟩ := h
           rw [hm_eq]
           exact Or.inl ⟨σ k, succ_in_Omega k hk,
-            (succ_succ_double_eq_double_succ hk).symm⟩
+            succ_succ_double_eq_double_succ hk⟩
+
+    /-- Doubling is injective: add k k = add j j → k = j -/
+    theorem double_injective : ∀ k, k ∈ (ω : U) → ∀ j, j ∈ (ω : U) →
+        add k k = add j j → k = j := by
+      let P : U → Prop := fun k => ∀ j, j ∈ (ω : U) → add k k = add j j → k = j
+      let S := SpecSet (ω : U) P
+      suffices hS : S = ω by
+        intro k hk
+        have := (hS ▸ hk : k ∈ S)
+        exact ((SpecSet_is_specified (ω : U) k P).mp this).2
+      apply induction_principle S
+      · exact fun x hx => ((SpecSet_is_specified (ω : U) x P).mp hx).1
+      · -- Base: k = ∅
+        rw [SpecSet_is_specified]
+        refine ⟨zero_in_Omega, fun j hj h => ?_⟩
+        rw [add_zero ∅ zero_in_Omega] at h
+        rcases nat_is_zero_or_succ j (mem_Omega_is_Nat j hj) with rfl | ⟨j', rfl⟩
+        · rfl
+        · have hj' : j' ∈ (ω : U) := by
+            have := mem_Omega_is_Nat (σ j') hj
+            exact Nat_in_Omega j' (nat_element_is_nat (σ j') j' this (mem_successor_self j'))
+          rw [← succ_succ_double_eq_double_succ hj'] at h
+          exact absurd h.symm (successor_nonempty _)
+      · -- Step: P(k) → P(σk)
+        intro k hk
+        rw [SpecSet_is_specified] at hk ⊢
+        obtain ⟨hk_w, ih⟩ := hk
+        refine ⟨succ_in_Omega k hk_w, fun j hj h => ?_⟩
+        rw [← succ_succ_double_eq_double_succ hk_w] at h
+        rcases nat_is_zero_or_succ j (mem_Omega_is_Nat j hj) with rfl | ⟨j', rfl⟩
+        · rw [add_zero ∅ zero_in_Omega] at h
+          exact absurd h (successor_nonempty _)
+        · have hj' : j' ∈ (ω : U) := by
+            have := mem_Omega_is_Nat (σ j') hj
+            exact Nat_in_Omega j' (nat_element_is_nat (σ j') j' this (mem_successor_self j'))
+          rw [← succ_succ_double_eq_double_succ hj'] at h
+          have h_step1 := successor_injective _ _ (mem_Omega_is_Nat _ (succ_in_Omega _ (double_in_Omega hk_w))) (mem_Omega_is_Nat _ (succ_in_Omega _ (double_in_Omega hj'))) h
+          have h2 := successor_injective _ _ (mem_Omega_is_Nat _ (double_in_Omega hk_w)) (mem_Omega_is_Nat _ (double_in_Omega hj')) h_step1
+          exact congrArg successor (ih j' hj' h2)
 
     /-- The set of even naturals -/
     noncomputable def EvenSet : U :=
@@ -506,126 +551,117 @@ namespace SetUniverse
     theorem EvenSet_subset_Omega : (EvenSet : U) ⊆ ω := by
       intro n hn; exact (EvenSet_is_specified n).mp hn |>.1
 
+    /-- add k k ∈ EvenSet for k ∈ ω -/
+    theorem double_in_EvenSet {k : U} (hk : k ∈ ω) : add k k ∈ (EvenSet : U) := by
+      rw [EvenSet_is_specified]
+      exact ⟨double_in_Omega hk, k, hk, rfl⟩
+
     /-- σ(add k k) ∉ EvenSet for k ∈ ω -/
     theorem succ_double_not_even {k : U} (hk : k ∈ ω) :
         σ (add k k) ∉ (EvenSet : U) := by
       intro h
       rw [EvenSet_is_specified] at h
       obtain ⟨_, j, hj, h_eq⟩ := h
-      exact even_ne_odd j hj k hk h_eq
+      exact even_ne_odd j hj k hk h_eq.symm
+
+    /-- σ(add k k) ∈ ω \ EvenSet for k ∈ ω -/
+    theorem succ_double_in_OddSet {k : U} (hk : k ∈ ω) :
+        σ (add k k) ∈ Difference (ω : U) (EvenSet : U) := by
+      rw [Difference_is_specified]
+      exact ⟨succ_in_Omega (add k k) (double_in_Omega hk), succ_double_not_even hk⟩
+
+    /-- σ(m) ⊆ ω for m ∈ ω -/
+    private theorem sigma_sub_Omega {m : U} (hm : m ∈ ω) : σ m ⊆ (ω : U) := by
+      intro z hz
+      rw [successor_is_specified] at hz
+      cases hz with
+      | inl h => exact Nat_in_Omega z (nat_element_is_nat m z (mem_Omega_is_Nat m hm) h)
+      | inr h => rw [h]; exact hm
+
+    /-- Helper: build a ZFC function from a mapping φ on a domain A,
+        prove it is a function into B and injective -/
+    private theorem injection_from_mapping {A B : U}
+        (φ : U → U) (hφ : ∀ x, x ∈ A → φ x ∈ B)
+        (hφ_inj : ∀ x₁ x₂, x₁ ∈ A → x₂ ∈ A → φ x₁ = φ x₂ → x₁ = x₂) :
+        let f := SpecSet (A ×ₛ B) (fun p => ∃ x, x ∈ A ∧ p = ⟨x, φ x⟩)
+        isFunctionFromTo f A B ∧ isInjective f := by
+      intro f
+      constructor
+      · constructor
+        · intro p hp
+          rw [SpecSet_is_specified] at hp; exact hp.1
+        · intro x hx
+          refine ⟨φ x, ?_, ?_⟩
+          · show ⟨x, φ x⟩ ∈ f
+            rw [SpecSet_is_specified]
+            exact ⟨(OrderedPair_mem_CartesianProduct x (φ x) A B).mpr ⟨hx, hφ x hx⟩,
+                   x, hx, rfl⟩
+          · intro y' hy'
+            rw [SpecSet_is_specified] at hy'
+            obtain ⟨_, x', hx', h_eq⟩ := hy'
+            have heq := Eq_of_OrderedPairs_given_projections x y' x' (φ x') h_eq
+            rw [heq.2, ← heq.1]
+      · intro x₁ x₂ y h₁ h₂
+        rw [SpecSet_is_specified] at h₁ h₂
+        obtain ⟨_, j₁, hj₁, h_eq₁⟩ := h₁
+        obtain ⟨_, j₂, hj₂, h_eq₂⟩ := h₂
+        have heq₁ := Eq_of_OrderedPairs_given_projections x₁ y j₁ (φ j₁) h_eq₁
+        have heq₂ := Eq_of_OrderedPairs_given_projections x₂ y j₂ (φ j₂) h_eq₂
+        rw [heq₁.1, heq₂.1]
+        exact hφ_inj j₁ j₂ hj₁ hj₂ (heq₁.2.symm.trans heq₂.2)
 
     /-- EvenSet is not finite -/
     theorem EvenSet_infinite : ¬isFiniteSet (EvenSet : U) := by
       intro ⟨m, hm, h_eq⟩
-      -- There's an injection from ω into EvenSet: k ↦ add k k
-      -- Then ω ≼ₛ EvenSet ≃ₛ m, giving ω ≼ₛ m, contradiction
-      -- Build the injection: the set {⟨k, add k k⟩ | k ∈ ω}
-      have h_double_fn : isFunctionFromTo
-          (SpecSet (ω ×ₛ ω) (fun p => ∃ k, k ∈ (ω : U) ∧ p = ⟨k, add k k⟩))
-          (ω : U) (ω : U) := by
-        constructor
-        · intro p hp
-          rw [SpecSet_is_specified] at hp; exact hp.1
-        · intro k hk
-          refine ⟨add k k, ?_, ?_⟩
-          · rw [SpecSet_is_specified]
-            exact ⟨(OrderedPair_mem_CartesianProduct k (add k k) ω ω).mpr
-                    ⟨hk, double_in_Omega hk⟩, k, hk, rfl⟩
-          · intro y hy
-            rw [SpecSet_is_specified] at hy
-            obtain ⟨_, k', hk', h_eq⟩ := hy
-            have ⟨hk_eq, hy_eq⟩ := Eq_of_OrderedPairs_given_projections k y k' (add k' k') h_eq
-            rw [hy_eq, ← hk_eq]
-      have h_double_inj : isInjective
-          (SpecSet (ω ×ₛ ω) (fun p => ∃ k, k ∈ (ω : U) ∧ p = ⟨k, add k k⟩)) := by
-        intro x₁ x₂ y h₁ h₂
-        rw [SpecSet_is_specified] at h₁ h₂
-        obtain ⟨_, k₁, hk₁, h_eq₁⟩ := h₁
-        obtain ⟨_, k₂, hk₂, h_eq₂⟩ := h₂
-        have ⟨hx₁, hy₁⟩ := Eq_of_OrderedPairs_given_projections x₁ y k₁ (add k₁ k₁) h_eq₁
-        have ⟨hx₂, hy₂⟩ := Eq_of_OrderedPairs_given_projections x₂ y k₂ (add k₂ k₂) h_eq₂
-        rw [hx₁, hx₂]
-        have h_yy : add k₁ k₁ = add k₂ k₂ := hy₁.symm.trans hy₂
-        exact add_left_cancel_Omega k₁ k₁ k₂ hk₁ hk₁ hk₂ h_yy
-      -- Restrict to σ(m) ⊆ ω to get injection σ(m) → m via EvenSet ≃ₛ m
-      obtain ⟨g, hg_bij⟩ := h_eq
-      -- The doubling function maps ω to EvenSet (range is ⊆ EvenSet)
-      -- Compose: ω → EvenSet → m. Restrict to σ(m).
-      -- More directly: if EvenSet is finite, ω injects into EvenSet, hence into m.
-      -- From ω → m injection, restrict to σ(m) ⊆ ω to get σ(m) → m injection.
-      let df := SpecSet (ω ×ₛ ω) (fun p => ∃ k, k ∈ (ω : U) ∧ p = ⟨k, add k k⟩)
-      -- The range of df lands in EvenSet
-      -- But we need injection ω → m. Let's compose df (ω → ω mapping k to add k k)
-      -- with g (EvenSet → m extended to ω → m... wait, g is a bijection EvenSet → m).
-      -- Actually: for each k ∈ ω, add k k ∈ EvenSet. So the doubling map goes ω → EvenSet.
-      -- Compose with g: EvenSet → m. We get ω → m.
-      -- Build ω → EvenSet function
-      have h_double_to_even : ∀ k, k ∈ (ω : U) → add k k ∈ (EvenSet : U) := by
+      obtain ⟨g, hg_func, hg_inj, hg_surj⟩ := h_eq
+      have hσm_sub := sigma_sub_Omega hm
+      have hφ_cod : ∀ k, k ∈ σ m → apply g (add k k) ∈ m := by
         intro k hk
-        rw [EvenSet_is_specified]
-        exact ⟨double_in_Omega hk, k, hk, rfl⟩
-      -- The composition g ∘ df would go ω → ω → m. But df maps ω → ω (into EvenSet ⊆ ω).
-      -- We need g: EvenSet → m applied after df: ω → EvenSet.
-      -- Problem: df has codomain ω, not EvenSet. The function "from ω to EvenSet" is df
-      -- with tightened codomain.
-      -- Simpler: just do a direct pigeonhole argument. If EvenSet ≃ₛ m, and ω injects into
-      -- EvenSet (via doubling), then ω injects into m. Restricting to σ(m) contradicts pigeonhole.
-      -- ω ≼ₛ EvenSet: injection given by doubling map (df with codomain EvenSet)
-      -- EvenSet ≃ₛ m: given.
-      -- Compose: ω ≼ₛ m.
-      -- Direct approach: use the bijection g⁻¹: m → EvenSet. Then g: EvenSet → m.
-      -- For k ∈ σ(m) ⊆ ω: apply doubling to get add k k ∈ EvenSet, apply g to get g(add k k) ∈ m.
-      -- This gives an injection σ(m) → m, contradiction.
-      -- σ(m) ⊆ ω:
-      have hσm_sub : σ m ⊆ (ω : U) := by
-        intro z hz
-        rw [successor_is_specified] at hz
-        cases hz with
-        | inl h => exact Nat_in_Omega z (nat_element_is_nat (mem_Omega_is_Nat m hm) h)
-        | inr h => rw [h]; exact hm
-      -- Build composite injection σ(m) → m:
-      -- Step 1: restrict df to σ(m). df↾σ(m) maps σ(m) → ω, injective.
-      -- Step 2: for k ∈ σ(m), add k k ∈ EvenSet, so g(add k k) ∈ m.
-      -- This is g ∘ df↾σ(m) but df has codomain ω and g has domain EvenSet.
-      -- The clean way: build a function h: σ(m) → m by h(k) = apply g (add k k).
-      -- First show add k k ∈ EvenSet for k ∈ σ(m) (since k ∈ ω from σ(m) ⊆ ω).
-      -- Then apply g to the element in EvenSet.
-      -- Build composite as a ZFC set. Actually this is getting complex.
-      -- Let me use a cleaner approach: show ω is not finite directly.
-      -- If ω is finite, we already proved contradiction. And EvenSet ⊆ ω is finite
-      -- implies EvenSet is finite. But EvenSet infinite → ω must be infinite.
-      -- Wait, we proved Omega_not_finite separately. Can I use that?
-      -- If EvenSet ≃ₛ m and I have injection ω → EvenSet, I can get ω ≼ₛ m.
-      -- From ω ≼ₛ m with m ∈ ω, restriction to σ(m) gives σ(m) ≼ₛ m, contradiction.
-      -- But I need to formalize ω ≼ₛ EvenSet and EvenSet ≼ₛ m.
-      -- EvenSet ≼ₛ m: from bijection g, which is in particular an injection.
-      -- ω ≼ₛ EvenSet: from the doubling map (need to construct as function ω → EvenSet).
-      -- Compose: ω ≼ₛ m.
-      -- Then restrict to σ(m): σ(m) ≼ₛ m. Contradiction.
-      -- Actually, isDominatedBy is ∃ f, isFunctionFromTo f A B ∧ isInjective f.
-      -- Let me simplify the proof using Omega_not_finite instead.
-      -- Wait, actually, I've already proved Omega_not_finite. Let me use finite_subset instead:
-      -- EvenSet ⊆ ω and ω is finite ⟹ EvenSet is finite.
-      -- No wait, I want to prove EvenSet is INfinite. And ω is also infinite.
-      -- EvenSet ⊆ ω. If EvenSet is FINITE, then...
-      -- I need a separate argument. OK let me think about this differently.
-      -- Simplest approach: if EvenSet ≃ₛ m, construct injection σ(m) → m.
-      -- For k ∈ σ(m) ⊆ ω, define h(k) = apply g (add k k).
-      -- This requires: (1) add k k ∈ EvenSet (proved), (2) g(add k k) ∈ m (from g bijection).
-      -- h is injective: if h(k₁) = h(k₂), then g(add k₁ k₁) = g(add k₂ k₂).
-      -- Since g is injective: add k₁ k₁ = add k₂ k₂. By add_left_cancel: k₁ = k₂.
-      -- So I just need to build h as a ZFC function.
-      -- This is getting long. Let me use a more elegant approach via Omega_not_finite.
-      -- If EvenSet ≃ₛ m (m ∈ ω), then EvenSet is finite.
-      -- The doubling map k ↦ add k k is injection ω → EvenSet.
-      -- If EvenSet is finite, then by finite_subset + ... hmm, still complex.
-      -- Let me just do it via direct construction. Hmm, it's getting very long.
-      -- Let me use a shortcut: directly show that σ(m) injects into m.
-      sorry
+        have hk_w := hσm_sub k hk
+        have h_even := double_in_EvenSet hk_w
+        have h_pair := apply_mem g (add k k) (hg_func.2 (add k k) h_even)
+        have h_prod := hg_func.1 _ h_pair
+        rw [OrderedPair_mem_CartesianProduct] at h_prod
+        exact h_prod.2
+      have hφ_inj : ∀ k₁ k₂, k₁ ∈ σ m → k₂ ∈ σ m →
+          apply g (add k₁ k₁) = apply g (add k₂ k₂) → k₁ = k₂ := by
+        intro k₁ k₂ hk₁ hk₂ h
+        have hk₁_w := hσm_sub k₁ hk₁
+        have hk₂_w := hσm_sub k₂ hk₂
+        have h₁ := apply_mem g (add k₁ k₁) (hg_func.2 _ (double_in_EvenSet hk₁_w))
+        have h₂ := apply_mem g (add k₂ k₂) (hg_func.2 _ (double_in_EvenSet hk₂_w))
+        rw [h] at h₁
+        have := hg_inj _ _ _ h₁ h₂
+        exact double_injective k₁ hk₁_w k₂ hk₂_w this
+      have h_data := injection_from_mapping (fun k => apply g (add k k)) hφ_cod hφ_inj
+      exact no_injection_succ_to_nat hm _ h_data.1 h_data.2
 
     /-- ω \ EvenSet (the odd numbers) is not finite -/
-    theorem OddSet_infinite : ¬isFiniteSet ((ω : U) \ (EvenSet : U)) := by
-      sorry
+    theorem OddSet_infinite : ¬isFiniteSet (Difference (ω : U) (EvenSet : U)) := by
+      intro ⟨m, hm, h_eq⟩
+      obtain ⟨g, hg_func, hg_inj, hg_surj⟩ := h_eq
+      have hσm_sub := sigma_sub_Omega hm
+      have hφ_cod : ∀ k, k ∈ σ m → apply g (σ (add k k)) ∈ m := by
+        intro k hk
+        have hk_w := hσm_sub k hk
+        have h_odd := succ_double_in_OddSet hk_w
+        have h_pair := apply_mem g (σ (add k k)) (hg_func.2 _ h_odd)
+        have h_prod := hg_func.1 _ h_pair
+        rw [OrderedPair_mem_CartesianProduct] at h_prod
+        exact h_prod.2
+      have hφ_inj : ∀ k₁ k₂, k₁ ∈ σ m → k₂ ∈ σ m →
+          apply g (σ (add k₁ k₁)) = apply g (σ (add k₂ k₂)) → k₁ = k₂ := by
+        intro k₁ k₂ hk₁ hk₂ h
+        have hk₁_w := hσm_sub k₁ hk₁
+        have hk₂_w := hσm_sub k₂ hk₂
+        have h₁ := apply_mem g (σ (add k₁ k₁)) (hg_func.2 _ (succ_double_in_OddSet hk₁_w))
+        have h₂ := apply_mem g (σ (add k₂ k₂)) (hg_func.2 _ (succ_double_in_OddSet hk₂_w))
+        rw [h] at h₁
+        have h_eq_succ := hg_inj _ _ _ h₁ h₂
+        have h_eq_double := successor_injective _ _ (mem_Omega_is_Nat _ (double_in_Omega hk₁_w)) (mem_Omega_is_Nat _ (double_in_Omega hk₂_w)) h_eq_succ
+        exact double_injective k₁ hk₁_w k₂ hk₂_w h_eq_double
+      have h_data := injection_from_mapping (fun k => apply g (σ (add k k))) hφ_cod hφ_inj
+      exact no_injection_succ_to_nat hm _ h_data.1 h_data.2
 
     /-! ============================================================ -/
     /-! ### PART 3: FINITE/COFINITE ALGEBRA                        -/
@@ -659,9 +695,8 @@ namespace SetUniverse
     theorem FinCofAlg_universe (A : U) : A ∈ FinCofAlg A := by
       rw [FinCofAlg_is_specified]
       refine ⟨self_mem_PowerSet A, Or.inr ?_⟩
-      unfold isCofinite
-      have : A \ A = ∅ := Difference_self_empty A
-      rw [this]; exact empty_is_finite
+      show isFiniteSet (Difference A A)
+      rw [Difference_self_empty]; exact empty_is_finite
 
     /-- Complement swaps finite ↔ cofinite -/
     theorem FinCofAlg_complement (A X : U) (hX : X ∈ FinCofAlg A) :
@@ -672,12 +707,18 @@ namespace SetUniverse
       refine ⟨complement_mem_PowerSet A X hX_PA, ?_⟩
       cases hX_fc with
       | inl hfin =>
-        -- X finite → X^∁[A] cofinite (A \ X^∁[A] = X, finite)
-        right; unfold isCofinite
-        rw [PowerSet_double_complement A X hX_sub]
-        exact hfin
+        -- X finite → complement cofinite: A \ (X ^∁[A]) = X
+        right
+        show isFiniteSet (Difference A (X ^∁[ A ]))
+        suffices h : Difference A (X ^∁[ A ]) = X by rw [h]; exact hfin
+        apply ExtSet; intro z; constructor
+        · intro hz
+          rw [Difference_is_specified, Complement_is_specified] at hz
+          exact Classical.byContradiction (fun h => hz.2 ⟨hz.1, h⟩)
+        · intro hz
+          rw [Difference_is_specified, Complement_is_specified]
+          exact ⟨hX_sub z hz, fun h_abs => h_abs.2 hz⟩
       | inr hcofin =>
-        -- X cofinite → X^∁[A] = A\X is finite
         left; exact hcofin
 
     /-- Union preserves FinCofAlg -/
@@ -692,24 +733,21 @@ namespace SetUniverse
         cases hY_fc with
         | inl hY_fin => left; exact finite_union hX_fin hY_fin
         | inr hY_cof =>
-          -- X finite, Y cofinite: A\(X∪Y) = (A\X)∩(A\Y) ⊆ A\Y, finite
-          right; unfold isCofinite
-          have h_dm : A \ (X ∪ Y) = (A \ X) ∩ (A \ Y) := by
-            unfold Complement at *
-            exact PowerSet_DeMorgan_union A X Y
-          rw [h_dm]
-          have h_sub : (A \ X) ∩ (A \ Y) ⊆ A \ Y := by
-            intro z hz; exact (BinInter_is_specified (A \ X) (A \ Y) z).mp hz |>.2
+          right
+          show isFiniteSet (Difference A (X ∪ Y))
+          -- A \ (X ∪ Y) ⊆ A \ Y (finite by hY_cof)
+          have h_sub : Difference A (X ∪ Y) ⊆ Difference A Y := by
+            intro z hz
+            rw [Difference_is_specified] at hz ⊢
+            exact ⟨hz.1, fun h => hz.2 ((BinUnion_is_specified X Y z).mpr (Or.inr h))⟩
           exact finite_subset hY_cof h_sub
       | inr hX_cof =>
-        -- X cofinite: A\(X∪Y) ⊆ A\X, finite
-        right; unfold isCofinite
-        have h_dm : A \ (X ∪ Y) = (A \ X) ∩ (A \ Y) := by
-          unfold Complement at *
-          exact PowerSet_DeMorgan_union A X Y
-        rw [h_dm]
-        have h_sub : (A \ X) ∩ (A \ Y) ⊆ A \ X := by
-          intro z hz; exact (BinInter_is_specified (A \ X) (A \ Y) z).mp hz |>.1
+        right
+        show isFiniteSet (Difference A (X ∪ Y))
+        have h_sub : Difference A (X ∪ Y) ⊆ Difference A X := by
+          intro z hz
+          rw [Difference_is_specified] at hz ⊢
+          exact ⟨hz.1, fun h => hz.2 ((BinUnion_is_specified X Y z).mpr (Or.inl h))⟩
         exact finite_subset hX_cof h_sub
 
     /-- Intersection preserves FinCofAlg -/
@@ -721,27 +759,27 @@ namespace SetUniverse
       refine ⟨inter_mem_PowerSet A X Y hX_PA hY_PA, ?_⟩
       cases hX_fc with
       | inl hX_fin =>
-        -- X finite: X ∩ Y ⊆ X, finite
         left
-        have h_sub : X ∩ Y ⊆ X := fun z hz =>
-          (BinInter_is_specified X Y z).mp hz |>.1
-        exact finite_subset hX_fin h_sub
+        exact finite_subset hX_fin (fun z hz =>
+          (BinInter_is_specified X Y z).mp hz |>.1)
       | inr hX_cof =>
         cases hY_fc with
         | inl hY_fin =>
-          -- Y finite: X ∩ Y ⊆ Y, finite
           left
-          have h_sub : X ∩ Y ⊆ Y := fun z hz =>
-            (BinInter_is_specified X Y z).mp hz |>.2
-          exact finite_subset hY_fin h_sub
+          exact finite_subset hY_fin (fun z hz =>
+            (BinInter_is_specified X Y z).mp hz |>.2)
         | inr hY_cof =>
-          -- Both cofinite: A\(X∩Y) = (A\X)∪(A\Y), finite
-          right; unfold isCofinite
-          have h_dm : A \ (X ∩ Y) = (A \ X) ∪ (A \ Y) := by
-            unfold Complement at *
-            exact PowerSet_DeMorgan_inter A X Y
-          rw [h_dm]
-          exact finite_union hX_cof hY_cof
+          right
+          show isFiniteSet (Difference A (X ∩ Y))
+          -- A \ (X ∩ Y) ⊆ (A \ X) ∪ (A \ Y), both finite
+          suffices h : Difference A (BinInter X Y) ⊆ BinUnion (Difference A X) (Difference A Y) by
+            exact finite_subset (finite_union hX_cof hY_cof) h
+          intro z hz
+          rw [Difference_is_specified] at hz
+          rw [BinUnion_is_specified, Difference_is_specified, Difference_is_specified]
+          by_cases hzX : z ∈ X
+          · right; exact ⟨hz.1, fun h => hz.2 ((BinInter_is_specified X Y z).mpr ⟨hzX, h⟩)⟩
+          · left; exact ⟨hz.1, hzX⟩
 
     /-! ============================================================ -/
     /-! ### PART 4: NOT COMPLETE, NOT ISOMORPHIC TO ANY 𝒫(A)       -/
@@ -756,127 +794,88 @@ namespace SetUniverse
       | inl hfin => exact EvenSet_infinite hfin
       | inr hcofin => exact OddSet_infinite hcofin
 
-    /-- The singletons of elements of a set X form a family of finite sets in FinCofAlg -/
+    /-- Singletons of elements of X are in FinCofAlg(A) when X ⊆ A -/
     theorem singletons_in_FinCofAlg {A X x : U} (hX : X ⊆ A) (hx : x ∈ X) :
         ({x} : U) ∈ FinCofAlg A := by
       rw [FinCofAlg_is_specified]
       refine ⟨?_, Or.inl (singleton_is_finite x)⟩
       rw [PowerSet_is_specified]
-      intro z hz; exact hX x hx ▸ hX z (by rw [(Singleton_is_specified x z).mp hz]; exact hx)
+      intro z hz
+      have := (Singleton_is_specified x z).mp hz
+      rw [this]; exact hX x hx
 
     /-- FinCofAlg(ω) is NOT a complete lattice -/
     theorem FinCofAlg_not_complete :
         ¬isCompleteLattice (FinCofAlg (ω : U)) := by
       intro h_complete
-      -- Consider S = {{x} | x ∈ EvenSet} ⊆ FinCofAlg(ω)
-      -- Each {x} is finite hence in FinCofAlg(ω)
+      -- S = {{x} | x ∈ EvenSet} ⊆ FinCofAlg(ω)
       let Singletons := SpecSet (FinCofAlg (ω : U))
         (fun Y => ∃ x, x ∈ (EvenSet : U) ∧ Y = {x})
       have hS_sub : Singletons ⊆ FinCofAlg (ω : U) := by
         intro Y hY
         rw [SpecSet_is_specified] at hY; exact hY.1
       -- By completeness, S has a supremum Z ∈ FinCofAlg(ω)
-      have ⟨⟨Z, hZ_sup⟩, _⟩ := h_complete Singletons hS_sub
-      obtain ⟨hZ_mem, hZ_ub, hZ_lub⟩ := hZ_sup
-      -- Z ⊇ EvenSet: for each x ∈ EvenSet, {x} ∈ S and {x} ⊆ Z
+      obtain ⟨⟨Z, hZ_mem, hZ_ub, hZ_lub⟩, _⟩ := h_complete Singletons hS_sub
+      -- Z ⊇ EvenSet
       have hEven_sub_Z : (EvenSet : U) ⊆ Z := by
         intro x hx
-        have hx_w : x ∈ (ω : U) := EvenSet_subset_Omega hx
         have h_sing_in : ({x} : U) ∈ Singletons := by
           rw [SpecSet_is_specified]
           exact ⟨singletons_in_FinCofAlg EvenSet_subset_Omega hx, x, hx, rfl⟩
-        have h_sub := hZ_ub {x} h_sing_in
-        exact h_sub x ((Singleton_is_specified x x).mpr rfl)
-      -- Z ∈ FinCofAlg(ω), so Z ⊆ ω
-      have hZ_PA := (FinCofAlg_subset_PowerSet ω Z) hZ_mem
-      have hZ_sub_w : Z ⊆ (ω : U) := (PowerSet_is_specified ω Z).mp hZ_PA
-      -- Z is finite or cofinite
-      have hZ_fc := (FinCofAlg_is_specified ω Z).mp hZ_mem |>.2
-      -- EvenSet ⊆ Z and EvenSet infinite → Z infinite → Z must be cofinite
+        exact hZ_ub {x} h_sing_in x ((Singleton_is_specified x x).mpr rfl)
+      -- Z ⊆ ω
+      have hZ_sub_w : Z ⊆ (ω : U) :=
+        (PowerSet_is_specified ω Z).mp (FinCofAlg_subset_PowerSet ω Z hZ_mem)
+      -- Z must be cofinite (cannot be finite since EvenSet ⊆ Z and EvenSet is infinite)
       have hZ_cofin : isCofinite (ω : U) Z := by
-        cases hZ_fc with
-        | inl hfin =>
-          -- Z finite but EvenSet ⊆ Z, EvenSet infinite
-          exfalso; exact EvenSet_infinite (finite_subset hfin hEven_sub_Z)
+        cases (FinCofAlg_is_specified ω Z).mp hZ_mem |>.2 with
+        | inl hfin => exact absurd (finite_subset hfin hEven_sub_Z) EvenSet_infinite
         | inr hcof => exact hcof
       -- Z ≠ EvenSet (since EvenSet ∉ FinCofAlg)
-      -- So there exists z ∈ Z \ EvenSet
       have hZ_ne_Even : Z ≠ (EvenSet : U) := by
         intro h; rw [h] at hZ_mem
         exact EvenSet_not_in_FinCofAlg hZ_mem
-      -- Z ⊋ EvenSet (since EvenSet ⊆ Z and Z ≠ EvenSet)
+      -- ∃ z ∈ Z \ EvenSet
       have ⟨z, hz_Z, hz_not_Even⟩ : ∃ z, z ∈ Z ∧ z ∉ (EvenSet : U) := by
-        by_contra h_all
-        push_neg at h_all
-        exact hZ_ne_Even (ExtSet_wc hEven_sub_Z (fun x hx => h_all x hx))
-      -- Z' = Z \ {z} is cofinite (complement grows by 1, still finite)
+        apply Classical.byContradiction
+        intro h_all
+        apply hZ_ne_Even
+        apply ExtSet; intro x; constructor
+        · intro hx_Z
+          exact Classical.byContradiction fun hx_not => h_all ⟨x, hx_Z, hx_not⟩
+        · exact fun hx => hEven_sub_Z x hx
+      -- Z' = Z \ {z} is cofinite: complement ⊆ (ω\Z) ∪ {z} which is finite
       have hz_w : z ∈ (ω : U) := hZ_sub_w z hz_Z
-      have hZ'_cofin : isCofinite (ω : U) (Z \ {z}) := by
-        unfold isCofinite
-        -- ω \ (Z \ {z}) = (ω \ Z) ∪ {z}
-        have h_eq : (ω : U) \ (Z \ {z}) = ((ω : U) \ Z) ∪ {z} := by
-          apply ExtSet; intro w; constructor
-          · intro hw
-            rw [Difference_is_specified] at hw
-            rw [BinUnion_is_specified]
-            by_cases hwz : w = z
-            · right; exact (Singleton_is_specified z w).mpr hwz
-            · left; rw [Difference_is_specified]
-              refine ⟨hw.1, ?_⟩
-              intro hwZ
-              apply hw.2
-              rw [Difference_is_specified]
-              exact ⟨hwZ, fun h => hwz ((Singleton_is_specified z w).mp h)⟩
-          · intro hw
-            rw [Difference_is_specified]
-            rw [BinUnion_is_specified] at hw
-            cases hw with
-            | inl h =>
-              rw [Difference_is_specified] at h
-              constructor
-              · exact h.1
-              · intro h_in
-                rw [Difference_is_specified] at h_in
-                exact h.2 h_in.1
-            | inr h =>
-              have := (Singleton_is_specified z w).mp h
-              rw [this]
-              constructor
-              · exact hz_w
-              · intro h_in
-                rw [Difference_is_specified] at h_in
-                exact h_in.2 ((Singleton_is_specified z z).mpr rfl)
-        rw [h_eq]
-        exact finite_union hZ_cofin (singleton_is_finite z)
-      -- Z' ∈ FinCofAlg(ω)
-      have hZ'_mem : Z \ {z} ∈ FinCofAlg (ω : U) := by
-        rw [FinCofAlg_is_specified]
-        refine ⟨?_, Or.inr hZ'_cofin⟩
-        rw [PowerSet_is_specified]
+      have hZ'_cofin : isCofinite (ω : U) (Difference Z {z}) := by
+        show isFiniteSet (Difference (ω : U) (Difference Z {z}))
+        apply finite_subset (finite_union hZ_cofin (singleton_is_finite z))
         intro w hw
         rw [Difference_is_specified] at hw
-        exact hZ_sub_w w hw.1
-      -- Z' is an upper bound of S (since EvenSet ⊆ Z' because z ∉ EvenSet)
-      have hZ'_ub : ∀ Y, Y ∈ Singletons → Y ⊆ Z \ {z} := by
+        rw [BinUnion_is_specified]
+        by_cases hwz : w = z
+        · right; exact (Singleton_is_specified z w).mpr hwz
+        · left; rw [Difference_is_specified]
+          exact ⟨hw.1, fun hwZ => hw.2 ((Difference_is_specified Z {z} w).mpr
+            ⟨hwZ, fun h => hwz ((Singleton_is_specified z w).mp h)⟩)⟩
+      -- Z' ∈ FinCofAlg(ω)
+      have hZ'_mem : Difference Z {z} ∈ FinCofAlg (ω : U) := by
+        rw [FinCofAlg_is_specified]
+        exact ⟨(PowerSet_is_specified ω (Difference Z {z})).mpr
+          (fun w hw => hZ_sub_w w ((Difference_is_specified Z {z} w).mp hw).1),
+          Or.inr hZ'_cofin⟩
+      -- Z' is an upper bound of Singletons (z ∉ EvenSet so removing z doesn't remove any singleton)
+      have hZ'_ub : ∀ Y, Y ∈ Singletons → Y ⊆ Difference Z {z} := by
         intro Y hY
-        rw [SpecSet_is_specified] at hY
-        obtain ⟨_, x, hx_Even, hY_eq⟩ := hY
-        rw [hY_eq]
-        intro w hw
-        have hw_eq := (Singleton_is_specified x w).mp hw
-        rw [hw_eq, Difference_is_specified]
-        refine ⟨hEven_sub_Z x hx_Even, ?_⟩
-        intro h
-        have := (Singleton_is_specified z x).mp h
-        rw [this] at hx_Even
-        exact hz_not_Even hx_Even
-      -- Z is least upper bound, Z' is upper bound, so Z ⊆ Z'
-      have hZ_sub_Z' := hZ_lub (Z \ {z}) hZ'_mem hZ'_ub
-      -- But z ∈ Z and z ∉ Z' = Z \ {z}, contradiction
-      have hz_not_Z' : z ∉ Z \ {z} := by
-        intro h; rw [Difference_is_specified] at h
-        exact h.2 ((Singleton_is_specified z z).mpr rfl)
-      exact hz_not_Z' (hZ_sub_Z' z hz_Z)
+        obtain ⟨_, x, hx_Even, hY_eq⟩ := (SpecSet_is_specified _ Y _).mp hY
+        rw [hY_eq]; intro w hw
+        rw [(Singleton_is_specified x w).mp hw, Difference_is_specified]
+        exact ⟨hEven_sub_Z x hx_Even, fun h =>
+          hz_not_Even (((Singleton_is_specified z x).mp h) ▸ hx_Even)⟩
+      -- Z ⊆ Z' (since Z is least upper bound and Z' is upper bound)
+      have hZ_sub_Z' := hZ_lub (Difference Z {z}) hZ'_mem hZ'_ub
+      -- But z ∈ Z and z ∉ Z', contradiction
+      exact ((Difference_is_specified Z {z} z).mp (hZ_sub_Z' z hz_Z)).2
+        ((Singleton_is_specified z z).mpr rfl)
 
   end FiniteCofinite
 
@@ -885,6 +884,7 @@ namespace SetUniverse
     -- Finite set closure
     finite_subset finite_union Omega_not_finite
     -- Parity
+    double_injective
     EvenSet EvenSet_is_specified EvenSet_subset_Omega
     even_or_odd even_ne_odd
     EvenSet_infinite OddSet_infinite
