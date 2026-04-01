@@ -8,7 +8,12 @@
 No hay notas temporales pendientes. Todos los ítems anteriores han sido completados:
 
 - ~~Plan de demostración `card_familyProduct`~~ — ✅ Completado 2026-03-30
-- ~~Estado de compilación (39 módulos)~~ — ✅ Superado: 41/41 módulos, 0 sorry
+- ~~Estado de compilación (39 módulos)~~ — ✅ Superado: 43/43 módulos, 0 sorry
+- ~~CompleteBooleanAlgebra.lean + FiniteCofinite.lean~~ — ✅ Completados 2026-04-01
+
+## Nota pendiente
+
+- **CompleteBooleanAlgebra.lean**: Proyección en REFERENCE.md pendiente (§3, §4, §6 no creados aún)
 
 ## Próximos pasos sugeridos
 

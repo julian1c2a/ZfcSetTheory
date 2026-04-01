@@ -1,6 +1,6 @@
 # Next Steps — ZfcSetTheory Project
 
-**Last updated**: 2026-03-30
+**Last updated**: 2026-04-01
 
 This document outlines actionable next steps for the project, organized by priority and dependency.
 
@@ -36,10 +36,10 @@ Completed 2026-03-26:
 
 `AtomicBooleanAlgebra.lean` is complete (atoms, atomicity of 𝒫(A), decomposition into atoms). Remaining goals:
 
-1. **Complete Boolean Algebra**: Show 𝒫(A) is a complete atomic Boolean algebra (every subset has a supremum/infimum).
+1. ~~**Complete Boolean Algebra**: Show 𝒫(A) is a complete atomic Boolean algebra (every subset has a supremum/infimum).~~ ✅ COMPLETE (CompleteBooleanAlgebra.lean: `isCompleteLattice`, `PowerSet_is_complete_lattice`, `PowerSet_is_complete_atomic_BA`)
 2. **Representation theorem**: Every complete atomic Boolean algebra is isomorphic to some 𝒫(A).
 3. **Boolean Ring ↔ Boolean Algebra functor** ([7]): Formal biyection between Boolean rings and Boolean algebras.
-4. **Non-atomic Boolean algebra** ([8]): Construct the algebra of finite/cofinite subsets of an infinite set, show it is not atomic, hence not isomorphic to any 𝒫(A).
+4. ~~**Non-complete Boolean algebra counterexample** ([8]): Construct the algebra of finite/cofinite subsets of ω, show it is NOT a complete lattice, hence not isomorphic to any 𝒫(A).~~ ✅ COMPLETE (FiniteCofinite.lean: `FinCofAlg`, `FinCofAlg_not_complete`, `EvenSet_not_in_FinCofAlg`. Note: FinCofAlg(ω) IS atomic — atoms are singletons — but NOT complete.)
 5. **Finite power set cardinality** ([10]): |𝒫(F)| = 2^n when |F| = n.
 6. **Finite Boolean algebra theorem** ([11]): Every finite Boolean algebra has cardinality 2^n for some n ∈ ω.
 
@@ -135,10 +135,10 @@ Per ReflexionesParaLaIA.md [14]. Restructure into clear module hierarchies:
 | ~~**1**~~ | ~~TFA via Peano bridge~~ | ~~`NaturalNumbersPrimes.lean`~~ | ✅ Complete 2026-03-25 |
 | ~~**2**~~ | ~~Binomial coefficients bridge~~ | ~~`NaturalNumbersBinom.lean`~~ | ✅ Complete 2026-03-25 |
 | ~~**3**~~ | ~~MaxMin + NewtonBinom + WellFounded~~ | ~~3 modules~~ | ✅ Complete 2026-03-26 |
-| **4** | Complete atomic Boolean algebra + representation | Extension of `AtomicBooleanAlgebra.lean` or new module | `AtomicBooleanAlgebra`, `Cardinality` |
+| **4** | Complete atomic Boolean algebra + representation (2/6 done) | Extension of `AtomicBooleanAlgebra.lean` or new module | `AtomicBooleanAlgebra`, `Cardinality` |
 | ~~**5**~~ | ~~Finite sets in ZFC~~ | ~~`FiniteSets.lean`~~ | ✅ Complete 2026-03-29 |
 | **6** | Finite sequences in ZFC (remaining: concat, length, nth, DList bridge) | Extension of `FiniteSequences.lean` | `FiniteSequences`, `FiniteSequencesArith` |
 
 ---
 
-*Updated 2026-03-30. All peanolib bridge modules complete. FiniteSequences basic theory complete. FiniteSequencesArith complete (7 def + 18 theorems + 33 exports: seqSum, seqProd, familyProduct, card_familyProduct). FiniteSets complete (1 def + 21 theorems). Next focus: algebraic structure completion and finite sequence extensions (concat, length).*
+*Updated 2026-04-01. All peanolib bridge modules complete. FiniteSequences basic theory complete. FiniteSequencesArith complete (7 def + 18 theorems + 33 exports: seqSum, seqProd, familyProduct, card_familyProduct). FiniteSets complete (1 def + 21 theorems). CompleteBooleanAlgebra complete (𝒫(A) is complete atomic BA). FiniteCofinite complete (FinCofAlg(ω) is Boolean algebra but NOT complete lattice). Next focus: representation theorem, Boolean ring↔BA functor, finite power set cardinality.*

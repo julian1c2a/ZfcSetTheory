@@ -45,6 +45,8 @@ ZfcSetTheory/
 ├── GeneralizedDeMorgan.lean             # Leyes de De Morgan generalizadas para familias
 ├── GeneralizedDistributive.lean         # Leyes distributivas generalizadas
 ├── AtomicBooleanAlgebra.lean            # Álgebra de Boole atómica
+├── CompleteBooleanAlgebra.lean          # Álgebra booleana completa atómica (𝒫(A) retículo completo)
+├── FiniteCofinite.lean                  # Álgebra finita/cofinita, contraejemplo no completo
 ├── SetOrder.lean                        # Orden parcial y retículos
 ├── SetStrictOrder.lean                  # Orden estricto
 ├── Cardinality.lean                     # Teoremas de Cantor y Cantor-Schröder-Bernstein
@@ -143,6 +145,12 @@ graph TD
     U --> BR
     BA --> ABA[AtomicBooleanAlgebra.lean]
     Pot --> ABA
+    ABA --> CBA[CompleteBooleanAlgebra.lean]
+    Pot --> CBA
+    CBA --> FC[FiniteCofinite.lean]
+    FSets --> FC
+    NA --> FC
+    Card --> FC
     U --> GDM[GeneralizedDeMorgan.lean]
     Pot --> GDM
     U --> GDD[GeneralizedDistributive.lean]
@@ -170,6 +178,8 @@ graph TD
     PSA --> Z
     BR --> Z
     ABA --> Z
+    CBA --> Z
+    FC --> Z
     GDM --> Z
     GDD --> Z
     SO --> Z
@@ -206,7 +216,7 @@ graph TD
     classDef external fill:#fafafa,stroke:#424242,stroke-width:1px
     
     class E,Ex,S,Pa,U,Pot axiom
-    class BA,PSA,BR,ABA,GDM,GDD algebra
+    class BA,PSA,BR,ABA,CBA,FC,GDM,GDD algebra
     class SO,SSO order
     class OP,CP extension
     class Rel,Func relation
