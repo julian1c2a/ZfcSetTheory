@@ -1,6 +1,6 @@
 # Referencia Técnica - ZfcSetTheory
 
-*Última actualización: 2026-03-30 10:00*
+*Última actualización: 2026-03-30 18:00*
 **Autor**: Julián Calderón Almendros
 
 ## 📋 Cumplimiento con AIDER-AI-GUIDE.md
@@ -84,6 +84,7 @@ Este documento cumple con todos los requisitos especificados en [AIDER-AI-GUIDE.
 | `FiniteSequences.lean` | `SetUniverse.FiniteSequences` | `NaturalNumbersAdd` + anteriores | ✅ Completo |
 | `FiniteSets.lean` | `SetUniverse.FiniteSets` | `NaturalNumbers`, `Infinity` + anteriores | ✅ Completo |
 | `FiniteSequencesArith.lean` | `SetUniverse.FiniteSequencesArith` | `NaturalNumbersMul`, `FiniteSequences`, `FiniteSets` + anteriores | ✅ Completo |
+| `FiniteSequencesBridge.lean` | `SetUniverse.FiniteSequencesBridge` | `FiniteSequencesArith`, `NaturalNumbersPrimes` + anteriores | ✅ Completo |
 
 ## 2. Axiomas ZFC Implementados
 
@@ -4049,6 +4050,62 @@ noncomputable def familyProduct (F n : U) : U :=
 
 **Dependencias**: `SpecSet`, `FinSeqSet`, `ImageSet`, `apply`
 **Computabilidad**: Noncomputable
+
+### 3.39 FiniteSequencesBridge.lean
+
+**Módulo**: `ZfcSetTheory.FiniteSequencesBridge`
+**Namespace**: `SetUniverse.FiniteSequencesBridge` (exportado a `SetUniverse`)
+**Dependencias**: `FiniteSequencesArith`, `NaturalNumbersPrimes` + anteriores
+
+#### Definición: `nth`
+
+**Enunciado Matemático**: Acceso al elemento en el índice $i$ de una secuencia finita $f$. Wrapper nombrado para `apply f i` = `f⦅i⦆`.
+
+```lean
+noncomputable def nth (f i : U) : U := f⦅i⦆
+```
+
+**Dependencias**: `apply`
+**Computabilidad**: Noncomputable
+
+#### Definición: `dlistToSeq`
+
+**Enunciado Matemático**: Convierte una `DList ℕ₀` (lista de Peano) en una secuencia finita ZFC en $\omega$. Los elementos se colocan en orden inverso: la cabeza del DList va al último índice. Definición recursiva vía `appendElem`.
+
+```lean
+noncomputable def dlistToSeq : DList Peano.ℕ₀ → U
+  | .nil       => (∅ : U)
+  | .cons x xs =>
+      appendElem (dlistToSeq xs) (fromPeano (DList.length xs)) (fromPeano x)
+```
+
+**Dependencias**: `appendElem`, `fromPeano`, `DList`
+**Computabilidad**: Noncomputable
+
+#### Definición: `dlistLen`
+
+**Enunciado Matemático**: Longitud ZFC de un DList convertido: $\text{dlistLen}(ps) = \text{fromPeano}(\text{length}(ps))$.
+
+```lean
+noncomputable def dlistLen (ps : DList Peano.ℕ₀) : U :=
+  fromPeano (DList.length ps)
+```
+
+**Dependencias**: `fromPeano`, `DList.length`
+**Computabilidad**: Noncomputable
+
+#### Definición: `isPrimeSeq`
+
+**Enunciado Matemático**: Predicado: $f$ es una secuencia finita de primos de longitud $k$:
+$$\text{isPrimeSeq}(f, k) \iff \text{isFinSeq}(f, k, \omega) \land \forall i \in k,\; \text{isPrime}(f(i))$$
+
+```lean
+def isPrimeSeq (f k : U) : Prop :=
+  isFinSeq f k ω ∧ ∀ i, i ∈ k → isPrime (f⦅i⦆)
+```
+
+**Dependencias**: `isFinSeq`, `isPrime`, `apply`
+**Computabilidad**: Computable (es Prop)
 
 ---
 
@@ -9694,6 +9751,80 @@ theorem fromPeano_le_iff (p q : Peano.ℕ₀) :
 
 **Dependencias**: `induction_principle`, `equipotent_refl`, `equipotent_symm`, `equipotent_trans`, `CartesianProduct_distrib_union_right`, `isFinSeq_restriction`, `seqProd_restriction`, `familyProduct_restriction`
 
+### 4.35 FiniteSequencesBridge.lean
+
+**Módulo**: `ZfcSetTheory.FiniteSequencesBridge`
+**Namespace**: `SetUniverse.FiniteSequencesBridge`
+**Dependencias del módulo**: `FiniteSequencesArith`, `NaturalNumbersPrimes` + anteriores
+
+#### Sección 1: nth — Acceso a elementos
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `nth_eq_apply` | $\text{nth}(f, i) = f(i)$ | `theorem nth_eq_apply (f i : U) : nth f i = f⦅i⦆` |
+| `nth_mem` | $\text{isFinSeq}(f,n,A) \land i \in n \Rightarrow \text{nth}(f,i) \in A$ | `theorem nth_mem {f n A i : U} (h : isFinSeq f n A) (hi : i ∈ n) : nth f i ∈ A` |
+| `nth_appendElem_last` | $\text{nth}(\text{appendElem}(f,n,a), n) = a$ | `theorem nth_appendElem_last {f n A a : U} (hf : isFinSeq f n A) : nth (appendElem f n a) n = a` |
+| `nth_appendElem_prev` | $i \in n \Rightarrow \text{nth}(\text{appendElem}(f,n,a), i) = \text{nth}(f, i)$ | `theorem nth_appendElem_prev {f n A a i : U} (hf : isFinSeq f n A) (hi : i ∈ n) : nth (appendElem f n a) i = nth f i` |
+
+**Dependencias**: `apply`, `isFinSeq_apply_mem`, `appendElem_apply_last`, `appendElem_apply_prev`
+
+#### Sección 2: Recursión general de seqProd
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `seqProd_zero_gen` | $\text{seqProd}(f, \emptyset) = \sigma\emptyset$ (versión general) | `theorem seqProd_zero_gen {f : U} (hf : isFinSeq f (domain f) ω) : seqProd f ∅ = σ (∅ : U)` |
+| `seqProd_succ_gen` | $\text{seqProd}(f, \sigma k) = \text{seqProd}(f, k) \cdot f(k)$ (versión general) | `theorem seqProd_succ_gen {f : U} (hf : isFinSeq f (domain f) ω) (k : U) (hk : k ∈ (ω : U)) : seqProd f (σ k) = mul (seqProd f k) (f⦅k⦆)` |
+| `seqProd_in_Omega_gen` | $\text{seqProd}(f, k) \in \omega$ (versión general) | `theorem seqProd_in_Omega_gen {f : U} (hf : isFinSeq f (domain f) ω) (k : U) (hk : k ∈ (ω : U)) : seqProd f k ∈ (ω : U)` |
+
+**Dependencias**: `RecursionTheoremWithStep`, `seqProdFn`, `prodStepFn_apply`
+
+#### Sección 3: Extensionalidad de seqProd
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `seqProd_ext` | $(\forall i \in n,\; f(i) = g(i)) \Rightarrow \text{seqProd}(f,n) = \text{seqProd}(g,n)$ | `theorem seqProd_ext {f g : U} (hf : isFinSeq f (domain f) ω) (hg : isFinSeq g (domain g) ω) (n : U) (hn : n ∈ (ω : U)) (h_agree : ∀ i, i ∈ n → f⦅i⦆ = g⦅i⦆) : seqProd f n = seqProd g n` |
+
+**Patrón de demostración**: Inducción ZFC sobre $\omega$ (SpecSet + induction_principle). Usa `seqProd_zero_gen` y `seqProd_succ_gen` en los casos base e inductivo.
+
+#### Sección 4: DList → ZFC bridge
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `dlistToSeq_isFinSeq` | $\text{dlistToSeq}(ps)$ es secuencia finita en $\omega$ de longitud $\text{dlistLen}(ps)$ | `theorem dlistToSeq_isFinSeq : (ps : DList Peano.ℕ₀) → isFinSeq (dlistToSeq ps : U) (dlistLen ps) (ω : U)` |
+| `dlistToSeq_domain` | $\text{domain}(\text{dlistToSeq}(ps)) = \text{dlistLen}(ps)$ | `theorem dlistToSeq_domain (ps : DList Peano.ℕ₀) : domain (dlistToSeq ps : U) = dlistLen ps` |
+| `dlistToSeq_isFinSeq_domain` | $\text{isFinSeq}(\text{dlistToSeq}(ps), \text{domain}(\text{dlistToSeq}(ps)), \omega)$ | `theorem dlistToSeq_isFinSeq_domain (ps : DList Peano.ℕ₀) : isFinSeq (dlistToSeq ps : U) (domain (dlistToSeq ps)) (ω : U)` |
+| `dlistToSeq_seqLength` | $\text{seqLength}(\text{dlistToSeq}(ps)) = \text{dlistLen}(ps)$ | `theorem dlistToSeq_seqLength (ps : DList Peano.ℕ₀) : seqLength (dlistToSeq ps : U) = dlistLen ps` |
+| `dlistLen_in_Omega` | $\text{dlistLen}(ps) \in \omega$ | `theorem dlistLen_in_Omega (ps : DList Peano.ℕ₀) : (dlistLen ps : U) ∈ (ω : U)` |
+| `dlistToSeq_apply_last` | $(\text{dlistToSeq}(\text{cons}\;x\;xs))({\text{dlistLen}(xs)}) = \text{fromPeano}(x)$ | `theorem dlistToSeq_apply_last (x : Peano.ℕ₀) (xs : DList Peano.ℕ₀) : (dlistToSeq (.cons x xs) : U)⦅dlistLen xs⦆ = (fromPeano x : U)` |
+| `dlistToSeq_apply_prev` | $i \in \text{dlistLen}(xs) \Rightarrow (\text{dlistToSeq}(\text{cons}\;x\;xs))(i) = (\text{dlistToSeq}(xs))(i)$ | `theorem dlistToSeq_apply_prev (x : Peano.ℕ₀) (xs : DList Peano.ℕ₀) (i : U) (hi : i ∈ (dlistLen xs : U)) : (dlistToSeq (.cons x xs) : U)⦅i⦆ = (dlistToSeq xs : U)⦅i⦆` |
+
+**Dependencias**: `appendElem`, `appendElem_apply_last`, `appendElem_apply_prev`, `isFinSeq_appendElem`, `fromPeano_is_nat`, `seqLength_eq`
+
+#### Sección 5: Correspondencia de seqProd
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `dlistToSeq_seqProd` | $\text{seqProd}(\text{dlistToSeq}(ps), \text{dlistLen}(ps)) = \text{fromPeano}(\text{product\_list}(ps))$ | `theorem dlistToSeq_seqProd : (ps : DList Peano.ℕ₀) → seqProd (dlistToSeq ps : U) (dlistLen ps) = (fromPeano (product_list ps) : U)` |
+
+**Patrón de demostración**: Recursión sobre `DList`. Caso nil: `seqProd_zero` + axiomas de `product_list`. Caso cons: `seqProd_succ_gen` + `dlistToSeq_apply_last` + `seqProd_ext` + hipótesis inductiva + `product_cons` + `fromPeano_mul` + `mul_comm`.
+
+#### Sección 6: isPrimeSeq y conversión de DList
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `dlistToSeq_isPrimeSeq` | $\text{PrimeList}(ps) \Rightarrow \text{isPrimeSeq}(\text{dlistToSeq}(ps), \text{dlistLen}(ps))$ | `theorem dlistToSeq_isPrimeSeq : (ps : DList Peano.ℕ₀) → PrimeList ps → isPrimeSeq (dlistToSeq ps : U) (dlistLen ps)` |
+
+**Dependencias**: `dlistToSeq_isFinSeq`, `successor_is_specified`, `dlistToSeq_apply_last`, `dlistToSeq_apply_prev`, `fromPeano_prime`
+
+#### Sección 7: TFA con secuencias ZFC-nativas
+
+| Nombre | Descripción matemática | Firma Lean4 |
+|--------|----------------------|-------------|
+| `exists_prime_factorization_native` | $n \in \omega \land n \ge 2 \Rightarrow \exists f\,k,\; \text{isPrimeSeq}(f,k) \land \text{seqProd}(f,k) = n$ | `theorem exists_prime_factorization_native (n : U) (hn : n ∈ (ω : U)) (h_ge2 : σ (σ (∅ : U)) ∈ n ∨ σ (σ (∅ : U)) = n) : ∃ f k : U, isPrimeSeq f k ∧ seqProd f k = n` |
+| `unique_prime_factorization_native` | Unicidad: dos DList primos con mismo seqProd tienen misma multiplicidad por primo | `theorem unique_prime_factorization_native (ps qs : DList Peano.ℕ₀) (hps : PrimeList ps) (hqs : PrimeList qs) (h_prod : seqProd (dlistToSeq ps : U) (dlistLen ps) = seqProd (dlistToSeq qs : U) (dlistLen qs)) (p : Peano.ℕ₀) (hp : Peano.Arith.Prime p) : DList.length (DList.filter (fun q => decide (q = p)) ps) = DList.length (DList.filter (fun q => decide (q = p)) qs)` |
+
+**Dependencias**: `exists_prime_factorization_ZFC`, `unique_prime_factorization_ZFC`, `dlistToSeq_isPrimeSeq`, `dlistToSeq_seqProd`
+
 ---
 
 ## 5. Notación y Sintaxis
@@ -10946,6 +11077,47 @@ export FiniteSequencesArith (
 )
 ```
 
+### 6.36 FiniteSequencesBridge.lean
+
+**Namespace**: `SetUniverse.FiniteSequencesBridge` (exportado a `SetUniverse`)
+**Última modificación**: 2026-03-30
+**Dependencias**: `FiniteSequencesArith`, `NaturalNumbersPrimes` + anteriores
+
+```lean
+export FiniteSequencesBridge (
+    -- §1: nth
+    nth
+    nth_eq_apply
+    nth_mem
+    nth_appendElem_last
+    nth_appendElem_prev
+    -- §2: General seqProd recursion
+    seqProd_zero_gen
+    seqProd_succ_gen
+    seqProd_in_Omega_gen
+    -- §3: seqProd extensionality
+    seqProd_ext
+    -- §4: DList → ZFC bridge
+    dlistToSeq
+    dlistLen
+    dlistToSeq_isFinSeq
+    dlistToSeq_domain
+    dlistToSeq_isFinSeq_domain
+    dlistToSeq_seqLength
+    dlistLen_in_Omega
+    dlistToSeq_apply_last
+    dlistToSeq_apply_prev
+    -- §5: seqProd correspondence
+    dlistToSeq_seqProd
+    -- §6: isPrimeSeq
+    isPrimeSeq
+    dlistToSeq_isPrimeSeq
+    -- §7: TFA native
+    exists_prime_factorization_native
+    unique_prime_factorization_native
+)
+```
+
 ## 7. Estado de Proyección por Módulo
 
 ### 7.1 Leyenda de Estados
@@ -10997,6 +11169,7 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `FiniteSequences.lean` - Secuencias finitas en ZFC: functions f : n → A con n ∈ ω, 3 definiciones (`isFinSeq`, `FinSeqSet`, `appendElem`), 15 teoremas (predicado central, secuencia vacía, append, descomposición), sin exports a `SetUniverse`
 - `FiniteSets.lean` - Conjuntos finitos en ZFC: definición `isFiniteSet` (∃ n ∈ ω, A ≃ₛ n), infraestructura de biyecciones (identidad, inversa, composición), equipotencia como relación de equivalencia (refl/symm/trans), 1 definición + 21 teoremas + 22 exports
 - `FiniteSequencesArith.lean` - Aritmética de secuencias finitas en ZFC: sumación/producto numérico (seqSum/seqProd), producto cartesiano de familias (familyProduct), teoremas de cardinalidad (card_product_two, card_familyProduct), 7 definiciones + 18 teoremas + 33 exports
+- `FiniteSequencesBridge.lean` - Puente DList ↔ ZFC y TFA nativo: nth (acceso a elementos), seqProd generalizado (zero_gen, succ_gen, extensionalidad), dlistToSeq/dlistLen (conversión DList→ZFC), isPrimeSeq (secuencia de primos), TFA existencia/unicidad con secuencias ZFC-nativas, 4 definiciones + 15 teoremas + 23 exports
 
 ### 7.3 Archivos Parcialmente Proyectados
 

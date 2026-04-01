@@ -54,7 +54,7 @@ Create a unified module (or small family of modules) for items 1–6. This requi
 
 ---
 
-## 5. Finite Sequences in ZFC — Partially Complete
+## 5. ~~Finite Sequences in ZFC~~ — ✅ COMPLETE
 
 ### 4.1 Status
 
@@ -80,9 +80,21 @@ Create a unified module (or small family of modules) for items 1–6. This requi
 ### 4.2 Proposed Plan (Remaining Items)
 
 1. ~~Define `FinSeq n A` = `{ f ∈ (n ×ₛ A) | isFunctionFromTo f n A }` for n ∈ ω~~ ✅ Done (as `isFinSeq` + `FinSeqSet`)
-2. Define `concat`, `length`, `nth`, `product` for finite sequences
-3. Bridge to `DList ℕ₀` via the Peano isomorphism
-4. Restate TFA with ZFC-native sequences
+2. ~~Define `concat`, `length`, `nth`, `product` for finite sequences~~ ✅ `concatSeq`, `seqLength`, `seqProd` already in FiniteSequencesArith; `nth` added in FiniteSequencesBridge
+3. ~~Bridge to `DList ℕ₀` via the Peano isomorphism~~ ✅ Done in FiniteSequencesBridge
+4. ~~Restate TFA with ZFC-native sequences~~ ✅ Done in FiniteSequencesBridge
+
+**Bridge and TFA native completed** (2026-03-30) in `FiniteSequencesBridge.lean`:
+
+- ✅ `nth` — indexed element access wrapper
+- ✅ `seqProd_zero_gen`, `seqProd_succ_gen`, `seqProd_in_Omega_gen` — general seqProd recursion (relaxed domain)
+- ✅ `seqProd_ext` — seqProd extensionality (equal on domain ⇒ equal products)
+- ✅ `dlistToSeq`, `dlistLen` — DList ℕ₀ → ZFC finite sequence conversion
+- ✅ `dlistToSeq_isFinSeq`, `dlistToSeq_seqProd` — structure and product correspondence
+- ✅ `isPrimeSeq` — ZFC-native prime sequence predicate
+- ✅ `exists_prime_factorization_native` — TFA existence with ZFC-native sequences
+- ✅ `unique_prime_factorization_native` — TFA uniqueness with ZFC-native sequences
+- ✅ 4 definitions + 15 theorems + 23 exports, 0 sorry, 0 errors
 
 ---
 
