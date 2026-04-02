@@ -1,0 +1,590 @@
+/-
+Copyright (c) 2025. All rights reserved.
+Author: Julián Calderón Almendros
+License: MIT
+-/
+
+import Init.Classical
+import ZfcSetTheory.Core.Prelim
+import ZfcSetTheory.Axiom.Extension
+import ZfcSetTheory.Axiom.Existence
+import ZfcSetTheory.Axiom.Specification
+import ZfcSetTheory.Axiom.Pairing
+
+namespace SetUniverse
+  open Classical
+  open SetUniverse.ExtensionAxiom
+  open SetUniverse.ExistenceAxiom
+  open SetUniverse.SpecificationAxiom
+  open SetUniverse.PairingAxiom
+  universe u
+  variable {U : Type u}
+
+  namespace UnionAxiom
+
+    /-! ### Axioma de Unión ### -/
+    @[simp]
+    axiom UnionAxiom :
+      ∀ (C : U), ∃ (UC : U), ∀ (x : U), x ∈ UC ↔ ∃ (y : U), y ∈ C ∧ x ∈ y
+
+    /-! ### Teorema de Existencia Única para el Axioma de Unión ### -/
+    @[simp]
+    theorem UnionExistsUnique (C : U) :
+      ∃! UC, ∀ x : U, x ∈ UC ↔ ∃ y : U, y ∈ C ∧ x ∈ y
+        := by
+      obtain ⟨UC, hUC⟩ := UnionAxiom C
+      apply ExistsUnique.intro UC
+      · exact hUC
+      · -- proof of uniqueness
+        intros UC₁ h₁
+        apply ExtSet
+        intro x
+        constructor
+        · intro hx
+          have h_ex : ∃ y, y ∈ C ∧ x ∈ y := (h₁ x).mp hx
+          exact (hUC x).mpr h_ex
+        · intro hx
+          have h_ex : ∃ y, y ∈ C ∧ x ∈ y := (hUC x).mp hx
+          exact (h₁ x).mpr h_ex
+
+    @[simp]
+    theorem Union_is_specified (C x : U) :
+      x ∈ (choose (UnionAxiom C)) ↔ ∃ (S : U), S ∈ C ∧ x ∈ S
+        := by
+      have hUC := choose_spec (UnionAxiom C)
+      constructor
+      . intro h
+        exact (hUC x).mp h
+      . intro h
+        exact (hUC x).mpr h
+
+    @[simp]
+    noncomputable def UnionSet (C : U) : U :=
+      (UnionExistsUnique C).choose
+
+    notation " ⋃ " C:100 => UnionSet C
+
+    @[simp]
+    theorem UnionSet_is_specified (C x : U) :
+      x ∈ (UnionSet C) ↔ ∃ (S : U), S ∈ C ∧ x ∈ S
+        := by
+      unfold UnionSet
+      constructor
+      . intro h
+        exact ((UnionExistsUnique C).choose_spec x).mp h
+      . intro h
+        exact ((UnionExistsUnique C).choose_spec x).mpr h
+
+    @[simp]
+    theorem UnionSet_is_unique (C UC : U) :
+      ( ∀ (y : U), y ∈ UC ↔ ∃ (S : U), S ∈ C ∧ y ∈ S )
+      ↔ ( UC = (UnionSet C) )
+        := by
+      constructor
+      -- (→) direction
+      · intro h
+        apply ExtSet
+        intro y
+        rw [h, UnionSet_is_specified]
+      -- (←) direction
+      · intro h_eq
+        rw [h_eq]
+        intro y
+        rw [UnionSet_is_specified]
+
+    theorem Set_is_empty_1 (C : U) (hC_empty : C = (∅ : U)) :
+      (UnionSet C) = (∅ : U)
+        := by
+      rw [hC_empty]
+      apply ExtSet
+      intro y
+      constructor
+      . intro hy
+        have h_union_spec := (UnionSet_is_specified ∅ y).mp hy
+        cases h_union_spec with
+        | intro S hS =>
+          cases hS with
+          | intro hS_in_C hS_mem_y =>
+            -- S ∈ ∅ is impossible, so this case is vacuously true
+            exact False.elim (EmptySet_is_empty S hS_in_C)
+      . intro hy
+        exact False.elim (EmptySet_is_empty y hy)
+
+    @[simp]
+    theorem Set_is_empty_2 (C : U) (hC_empty : C = ({∅} : U)) :
+      (UnionSet C) = (∅ : U)
+        := by
+      rw [hC_empty]
+      apply ExtSet
+      intro y
+      constructor
+      . intro hy
+        have h_union_spec := (UnionSet_is_specified ({∅} : U) y).mp hy
+        cases h_union_spec with
+        | intro S hS =>
+          cases hS with
+          | intro hS_in_C hS_mem_y =>
+            -- S ∈ {∅} is impossible unless S = ∅, but then y ∈ ∅, contradiction
+            have hS_eq : S = ∅ := by
+              -- S ∈ {∅} means S = ∅ by definition of singleton
+              rw [Singleton_is_specified] at hS_in_C
+              cases hS_in_C with
+              | refl => exact rfl
+            rw [hS_eq] at hS_mem_y
+            exact False.elim (EmptySet_is_empty y hS_mem_y)
+      . intro hy
+        exact False.elim (EmptySet_is_empty y hy)
+
+    theorem Set_is_empty_3 (C : U)
+      (hC_not_empty : C ≠ (∅ : U))
+      (hC_not_singleton_empty : C ≠ ({∅} : U)) :
+        (UnionSet C) ≠ (∅ : U)
+          := by
+        -- Empezamos la prueba por reducción al absurdo asumiendo lo contrario.
+        -- h_union_empty : (UnionSet C) = ∅
+        intro h_union_empty
+        -- Nuestro objetivo es contradecir una de las hipótesis. Elegimos hC_not_singleton_empty.
+        -- Para ello, demostraremos que nuestra suposición implica C = {∅}.
+        apply hC_not_singleton_empty
+
+        -- Demostramos C = {∅} usando el Axioma de Extensionalidad.
+        apply ExtSet
+        intro x
+        constructor
+
+        -- Primera dirección: x ∈ C → x ∈ {∅}
+        · intro hx_in_C -- Asumimos que x es un elemento de C.
+          -- Para demostrar que x ∈ {∅}, por la definición de singulete, debemos probar que x = ∅.
+          rw [Singleton_is_specified]
+          -- Usamos de nuevo Extensionalidad para probar x = ∅.
+          apply ExtSet
+          intro y
+          constructor
+
+          -- Probamos que si y ∈ x, entonces y ∈ ∅ (lo cual es falso).
+          · intro hy_in_x
+            -- Por definición de la unión, si x ∈ C y y ∈ x, entonces y ∈ (UnionSet C).
+            have hy_in_union : y ∈ (UnionSet C) := (UnionSet_is_specified C y).mpr ⟨x, hx_in_C, hy_in_x⟩
+            -- Usamos nuestra suposición inicial de que (UnionSet C) = ∅.
+            rw [h_union_empty] at hy_in_union
+            -- Ahora tenemos y ∈ ∅, que es lo que queríamos probar.
+            exact hy_in_union
+
+          -- La otra dirección (y ∈ ∅ → y ∈ x) es trivialmente cierta.
+          · intro hy_in_empty
+            exact False.elim (EmptySet_is_empty y hy_in_empty)
+
+        -- Segunda dirección: x ∈ {∅} → x ∈ C
+        · intro hx_in_singleton -- Asumimos x ∈ {∅}, lo que implica x = ∅.
+          rw [Singleton_is_specified] at hx_in_singleton
+          -- Sustituimos x por ∅. El objetivo ahora es demostrar ∅ ∈ C.
+          subst hx_in_singleton
+
+          -- Sabemos por la hipótesis hC_not_empty que C no es vacío, por lo que existe al menos un elemento en C.
+          have h_exists_mem_C : ∃ y, y ∈ C := by
+            -- Esto se demuestra por contradicción. Si no existiera tal y, C sería ∅.
+            apply Classical.byContradiction
+            intro h_not_exists_mem
+            apply hC_not_empty
+            apply ExtSet
+            intro z
+            constructor
+            · intro hz_in_C
+              exact False.elim (h_not_exists_mem ⟨z, hz_in_C⟩)
+            · intro hz_in_empty
+              exact False.elim (EmptySet_is_empty z hz_in_empty)
+
+          -- Obtenemos ese elemento, al que llamamos 'y'.
+          obtain ⟨y, hy_in_C⟩ := h_exists_mem_C
+
+          -- Ahora demostramos que este elemento 'y' tiene que ser ∅.
+          -- La lógica es idéntica a la usada en la primera dirección de la prueba principal.
+          have hy_is_empty : y = (∅ : U) := by
+            apply ExtSet
+            intro z
+            constructor
+            · intro hz_in_y
+              have hz_in_union : z ∈ (UnionSet C) := (UnionSet_is_specified C z).mpr ⟨y, hy_in_C, hz_in_y⟩
+              rw [h_union_empty] at hz_in_union
+              exact hz_in_union
+            · intro hz_in_empty
+              exact False.elim (EmptySet_is_empty z hz_in_empty)
+
+          -- Como y ∈ C y hemos demostrado que y = ∅, podemos concluir que ∅ ∈ C.
+          rw [←hy_is_empty]
+          exact hy_in_C
+
+    theorem UnionSet_is_empty' (C : U) :
+      (UnionSet C) = (∅ : U) ↔ (C = (∅ : U)) ∨ (∀ (S : U), S ∈ C → S = (∅ : U))
+        := by
+      constructor
+      . intro h_union_empty
+        by_cases hC_empty : C = (∅ : U)
+        . left
+          exact hC_empty
+        . right
+          intro S hS_in_C
+          apply ExtSet
+          intro x
+          constructor
+          . intro hx_in_S
+            have h_union_spec := (UnionSet_is_specified C x).mpr ⟨S, hS_in_C, hx_in_S⟩
+            rw [h_union_empty] at h_union_spec
+            exact False.elim (EmptySet_is_empty x h_union_spec)
+          . intro hx_in_empty
+            exact False.elim (EmptySet_is_empty x hx_in_empty)
+      . intro h_or
+        cases h_or with
+        | inl hC_empty =>
+          exact Set_is_empty_1 C hC_empty
+        | inr h_all_empty =>
+          apply ExtSet
+          intro x
+          constructor
+          . intro hx_in_union
+            have h_union_spec := (UnionSet_is_specified C x).mp hx_in_union
+            cases h_union_spec with
+            | intro S hS =>
+              cases hS with
+              | intro hS_in_C hx_in_S =>
+                have hS_empty := h_all_empty S hS_in_C
+                rw [hS_empty] at hx_in_S
+                exact hx_in_S
+          . intro hx_in_empty
+            exact False.elim (EmptySet_is_empty x hx_in_empty)
+
+    @[simp]
+    theorem UnionSet_is_empty (C : U) :
+      (UnionSet C) = (∅ : U) ↔ (∀ (S : U), S ∈ C → S = (∅ : U))
+        := by
+      constructor
+      . intro h_union_empty
+        intro S hS_in_C
+        apply ExtSet
+        intro x
+        constructor
+        . intro hx_in_S
+          have h_union_spec := (UnionSet_is_specified C x).mpr ⟨S, hS_in_C, hx_in_S⟩
+          rw [h_union_empty] at h_union_spec
+          exact False.elim (EmptySet_is_empty x h_union_spec)
+        . intro hx_in_empty
+          exact False.elim (EmptySet_is_empty x hx_in_empty)
+      . intro h_all_empty
+        apply ExtSet
+        intro x
+        constructor
+        . intro hx_in_union
+          have h_union_spec := (UnionSet_is_specified C x).mp hx_in_union
+          cases h_union_spec with
+          | intro S hS =>
+            cases hS with
+            | intro hS_in_C hx_in_S =>
+              have hS_empty := h_all_empty S hS_in_C
+              rw [hS_empty] at hx_in_S
+              exact hx_in_S
+        . intro hx_in_empty
+          exact False.elim (EmptySet_is_empty x hx_in_empty)
+
+    theorem UnionSetIsEmpty_SetNonEmpty_SingletonEmptySet
+      (C : U)
+      (hC_non_empty : C ≠ (∅ : U)) :
+        (UnionSet C) = ∅ ↔ C = ({ ∅ }: U)
+          := by
+      constructor
+      · -- Forward direction: (UnionSet C) = ∅ → C = {∅}
+        intro h_union_empty
+        apply ExtSet
+        intro x
+        constructor
+        · -- x ∈ C → x ∈ {∅}, i.e., x = ∅
+          intro hx_in_C
+          rw [Singleton_is_specified]
+          apply ExtSet
+          intro z
+          constructor
+          · intro hz_in_x
+            have hz_in_union : z ∈ (UnionSet C) := (UnionSet_is_specified C z).mpr ⟨x, hx_in_C, hz_in_x⟩
+            rw [h_union_empty] at hz_in_union
+            exact False.elim (EmptySet_is_empty z hz_in_union)
+          · intro hz_in_empty
+            exact False.elim (EmptySet_is_empty z hz_in_empty)
+        · -- x ∈ {∅} → x ∈ C, i.e., x = ∅ → x ∈ C
+          intro hx_in_singleton
+          rw [Singleton_is_specified] at hx_in_singleton
+          subst hx_in_singleton
+          -- Need to show ∅ ∈ C
+          -- Since C ≠ ∅, there exists some element in C
+          have h_nonempty_C : ∃ y, y ∈ C := by
+            -- Proof by contradiction using absurd
+            by_cases h : ∃ y, y ∈ C
+            case pos => exact h
+            case neg =>
+              exfalso
+              apply hC_non_empty
+              apply ExtSet
+              intro z
+              constructor
+              · intro hz_in_C
+                exfalso
+                exact h ⟨z, hz_in_C⟩
+              · intro hz_in_empty
+                exact False.elim (EmptySet_is_empty z hz_in_empty)
+          obtain ⟨y, hy_in_C⟩ := h_nonempty_C
+          -- Every element of C must be ∅ (since UnionSet C = ∅)
+          have y_eq_empty : y = ∅ := by
+            apply ExtSet
+            intro z
+            constructor
+            · intro hz_in_y
+              have hz_in_union : z ∈ (UnionSet C) := (UnionSet_is_specified C z).mpr ⟨y, hy_in_C, hz_in_y⟩
+              rw [h_union_empty] at hz_in_union
+              exact hz_in_union
+            · intro hz_in_empty
+              exact False.elim (EmptySet_is_empty z hz_in_empty)
+          rw [←y_eq_empty]
+          exact hy_in_C
+      · -- Backward direction: C = {∅} → (UnionSet C) = ∅
+        intro hC_is_singleton
+        rw [hC_is_singleton]
+        apply ExtSet
+        intro x
+        constructor
+        · intro hx_in_union
+          have : ∃ S, S ∈ ({ ∅ }: U) ∧ x ∈ S := (UnionSet_is_specified ({ ∅ }: U) x).mp hx_in_union
+          obtain ⟨S, hS_in_singleton, hx_in_S⟩ := this
+          rw [Singleton_is_specified] at hS_in_singleton
+          rw [hS_in_singleton] at hx_in_S
+          exact False.elim (EmptySet_is_empty x hx_in_S)
+        · intro hx_in_empty
+          exact False.elim (EmptySet_is_empty x hx_in_empty)
+
+    /-! ### Unión Binaria ### -/
+    noncomputable def BinUnion (A B : U) : U :=
+      UnionSet (PairSet A B)
+
+    notation:50 lhs:51 " ∪ " rhs:51 => BinUnion lhs rhs
+
+
+
+    theorem BinUnion_is_specified (A B x : U) :
+      x ∈ (A ∪ B) ↔ x ∈ A ∨ x ∈ B := by
+      unfold BinUnion
+      simp only [UnionSet_is_specified, PairSet_is_specified]
+      constructor
+      · intro ⟨S, h, hx⟩
+        rcases h with rfl | rfl
+        · left; exact hx
+        · right; exact hx
+      · intro h
+        rcases h with hx | hx
+        · exact ⟨A, Or.inl rfl, hx⟩
+        · exact ⟨B, Or.inr rfl, hx⟩
+
+    /-! ### Propiedades Algebraicas de la Unión Binaria ### -/
+
+    theorem BinUnion_comm (A B : U) :
+      (A ∪ B) = (B ∪ A) := by
+      apply ExtSet
+      intro x
+      simp only [BinUnion_is_specified, or_comm]
+
+    theorem BinUnion_empty_left (A : U) :
+      (∅ ∪ A) = A := by
+      apply ExtSet
+      intro x
+      simp only [BinUnion_is_specified]
+      exact ⟨fun h => h.resolve_left (EmptySet_is_empty x), Or.inr⟩
+
+    theorem BinUnion_empty_right (A : U) :
+      (A ∪ ∅) = A := by
+      rw [BinUnion_comm, BinUnion_empty_left]
+
+    theorem BinUnion_idem (A : U) :
+      (A ∪ A) = A := by
+      apply ExtSet
+      intro x
+      simp only [BinUnion_is_specified]
+      constructor
+      · intro h
+        cases h with
+        | inl hx => exact hx
+        | inr hx => exact hx
+      · intro hx
+        exact Or.inl hx
+
+    theorem BinUnion_assoc (A B C : U) :
+      ((A ∪ B) ∪ C) = (A ∪ (B ∪ C)) := by
+      apply ExtSet
+      intro x
+      simp only [BinUnion_is_specified]
+      constructor
+      · intro h
+        cases h with
+        | inl hAB =>
+          cases hAB with
+          | inl hA => exact Or.inl hA
+          | inr hB => exact Or.inr (Or.inl hB)
+        | inr hC => exact Or.inr (Or.inr hC)
+      · intro h
+        cases h with
+        | inl hA => exact Or.inl (Or.inl hA)
+        | inr hBC =>
+          cases hBC with
+          | inl hB => exact Or.inl (Or.inr hB)
+          | inr hC => exact Or.inr hC
+
+    theorem Union_of_singleton (A : U) : UnionSet {A} = A := by
+      apply ExtSet
+      intro x
+      rw [UnionSet_is_specified]
+      constructor
+      · intro h
+        obtain ⟨y, hy, hx_in_y⟩ := h
+        rw [Singleton_is_specified] at hy
+        rw [hy] at hx_in_y
+        exact hx_in_y
+      · intro h
+        exists A
+        constructor
+        · rw [Singleton_is_specified]
+        · exact h
+
+    theorem Union_of_union (A B : U) : UnionSet (A ∪ B) = ((UnionSet A) ∪ (UnionSet B)) := by
+      apply ExtSet
+      intro x
+      simp only [UnionSet_is_specified, BinUnion_is_specified]
+      constructor
+      · rintro ⟨S, hS | hS, hxS⟩
+        · exact Or.inl ⟨S, hS, hxS⟩
+        · exact Or.inr ⟨S, hS, hxS⟩
+      · rintro (⟨S, hSA, hxS⟩ | ⟨S, hSB, hxS⟩)
+        · exact ⟨S, Or.inl hSA, hxS⟩
+        · exact ⟨S, Or.inr hSB, hxS⟩
+
+theorem BinUnion_absorb_inter (A B : U) :
+      ( BinUnion A (BinInter A B) ) = A := by
+      apply ExtSet
+      intro x
+      simp only [BinUnion_is_specified, BinInter_is_specified]
+      constructor
+      · intro h
+        cases h with
+        | inl hx => exact hx
+        | inr hAB => exact hAB.1
+      · intro hx
+        exact Or.inl hx
+
+    /-! ### Diferencia Simétrica ### -/
+    noncomputable def SymDiff (A B : U) : U :=
+      BinUnion (Difference A B) (Difference B A)
+
+    notation:50 lhs:51 " △ " rhs:51 => SymDiff lhs rhs
+
+    theorem SymDiff_is_specified (A B x : U) :
+      x ∈ (A △ B) ↔ (x ∈ A ∧ x ∉ B) ∨ (x ∈ B ∧ x ∉ A) := by
+      unfold SymDiff
+      simp only [BinUnion_is_specified, Difference_is_specified]
+
+    theorem SymDiff_comm (A B : U) :
+      (A △ B) = (B △ A) := by
+      apply ExtSet
+      intro x
+      simp only [SymDiff_is_specified]
+      constructor
+      · intro h
+        cases h with
+        | inl hx => exact Or.inr hx
+        | inr hx => exact Or.inl hx
+      · intro h
+        cases h with
+        | inl hx => exact Or.inr hx
+        | inr hx => exact Or.inl hx
+
+    theorem SymDiff_empty_left (A : U) :
+      (∅ △ A) = A := by
+      apply ExtSet
+      intro x
+      simp only [SymDiff_is_specified]
+      constructor
+      · intro h
+        cases h with
+        | inl hx => exact False.elim (EmptySet_is_empty x hx.1)
+        | inr hx => exact hx.1
+      · intro hx
+        exact Or.inr ⟨hx, fun h => EmptySet_is_empty x h⟩
+
+    theorem SymDiff_self (A : U) :
+      (A △ A) = ∅ := by
+      apply ExtSet
+      intro x
+      simp only [SymDiff_is_specified]
+      constructor
+      · intro h
+        cases h with
+        | inl hx =>
+          -- hx: x ∈ A ∧ x ∉ A, contradicción
+          have h_in : x ∈ A := hx.1
+          have h_notin : x ∉ A := hx.2
+          exact False.elim (h_notin h_in)
+        | inr hx =>
+          -- hx: x ∈ A ∧ x ∉ A, contradicción
+          have h_in : x ∈ A := hx.1
+          have h_notin : x ∉ A := hx.2
+          exact False.elim (h_notin h_in)
+      · intro hx
+        exact False.elim (EmptySet_is_empty x hx)
+
+
+  end UnionAxiom
+end SetUniverse
+
+export SetUniverse.UnionAxiom (
+  UnionAxiom
+  UnionExistsUnique
+  Union_is_specified
+  UnionSet
+  UnionSet_is_empty
+  UnionSet_is_empty'
+  UnionSet_is_specified
+  UnionSet_is_unique
+  Set_is_empty_1
+  Set_is_empty_2
+  Set_is_empty_3
+  UnionSetIsEmpty_SetNonEmpty_SingletonEmptySet
+  BinUnion
+  BinUnion_is_specified
+  BinUnion_comm
+  BinUnion_empty_left
+  BinUnion_empty_right
+  BinUnion_idem
+  BinUnion_assoc
+  Union_of_singleton
+  Union_of_union
+  BinUnion_absorb_inter
+  SymDiff
+  SymDiff_is_specified
+  SymDiff_comm
+  SymDiff_empty_left
+  SymDiff_self
+)
+
+/-!
+## UNION Axiom
+# Example of Union Axiom
+    C = { {x}, {y} , {z} }
+    U = UnionSet C
+    U = { x, y, z }
+
+# This means that the union set of C is the set of all elements of every element of C.
+
+## Define the Union Set of Two Sets
+
+# The union set of two sets A and B is the set of all elements that are in A, in B, or in both.
+# This is often denoted as A BinUnion B.
+# Example of Union Set
+    A = { 1, 2 }
+    B = { a, b }
+    BinUnion A B = { 1, 2, a, b }
+
+
+-/

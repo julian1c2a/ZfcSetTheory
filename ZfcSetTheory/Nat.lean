@@ -1,0 +1,14 @@
+import ZfcSetTheory.Nat.Basic
+import ZfcSetTheory.Nat.Add
+import ZfcSetTheory.Nat.Mul
+import ZfcSetTheory.Nat.Sub
+import ZfcSetTheory.Nat.Div
+import ZfcSetTheory.Nat.Pow
+import ZfcSetTheory.Nat.Arith
+import ZfcSetTheory.Nat.Factorial
+import ZfcSetTheory.Nat.Gcd
+import ZfcSetTheory.Nat.Primes
+import ZfcSetTheory.Nat.Binom
+import ZfcSetTheory.Nat.MaxMin
+import ZfcSetTheory.Nat.NewtonBinom
+import ZfcSetTheory.Nat.WellFounded
