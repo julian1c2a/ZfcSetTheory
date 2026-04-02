@@ -1,6 +1,6 @@
 # Next Steps — ZfcSetTheory Project
 
-**Last updated**: 2026-04-02
+**Last updated**: 2026-04-03
 
 This document outlines actionable next steps for the project, organized by priority and dependency.
 
@@ -40,7 +40,7 @@ Completed 2026-03-26:
 2. ~~**Representation theorem**: Every complete atomic Boolean algebra is isomorphic to some 𝒫(A).~~ ✅ COMPLETE (BoolAlg.Representation.lean: `atomsBelowMap_is_bijection`, `representation_theorem`, `A_equipotent_Atoms`)
 3. **Boolean Ring ↔ Boolean Algebra functor** ([7]): Formal biyection between Boolean rings and Boolean algebras.
 4. ~~**Non-complete Boolean algebra counterexample** ([8]): Construct the algebra of finite/cofinite subsets of ω, show it is NOT a complete lattice, hence not isomorphic to any 𝒫(A).~~ ✅ COMPLETE (BoolAlg.FiniteCofinite.lean: `FinCofAlg`, `FinCofAlg_not_complete`, `EvenSet_not_in_FinCofAlg`. Note: FinCofAlg(ω) IS atomic — atoms are singletons — but NOT complete.)
-5. **Finite power set cardinality** ([10]): |𝒫(F)| = 2^n when |F| = n.
+5. ~~**Finite power set cardinality** ([10]): |𝒫(F)| = 2^n when |F| = n.~~ ✅ COMPLETE (Cardinal.FinitePowerSet.lean: `powerset_cardinality`, plus `equipotent_union_singleton`, `disjoint_union_equipotent`, `removeElemMap_is_bijection`, `mul_two_eq_double`, 15 exports)
 6. **Finite Boolean algebra theorem** ([11]): Every finite Boolean algebra has cardinality 2^n for some n ∈ ω.
 
 ### 3.2 Proposed Approach

@@ -69,6 +69,57 @@
 *[5.]* Todo lo anterior podría quedar en dos grupos temáticos, Álgebras de Boole y Retículos (estructuras de orden sobre conjuntos) por un lado, y Grupos, Anillos y Módulos (operaciones que cumplen determinadas propiedades sobre uno o varios conjuntos) como Álgebra Abstracta por otro lado.
 *[6.]* Para usar ya en los conjuntos numéricos que vayamos creando, podemos definir el espacio vectorial como un afinamiento de un módulo, y luego definir los espacios vectoriales concretos sobre los números racionales, reales, etc. Esto es algo que se puede hacer sin problemas y que hará que la definición de espacio vectorial sea más clara y más fácil de entender.
 
+*[7.]* Para el functor entre álgebras de Boole y anillos booleanos, tendremos que definir la estructura de Álgebra de Boole:
+
+```math
+<<R, +\_B, \cdot\_B, \b0\_B, \b1B>> es un álgebra de boole si cumple:
+1. `<<R, +\_B, \b0\_B>>` es una operación interna conmutativa con identidad \b0\_B
+2. `<<R, \cdot\_B, \b1\_B>>` es una operación interna conmutativa con identidad \b1\_B
+3. La operación `\cdot\_B` distribuye sobre `+\_B`
+4. La operación `+\_B` distribuye sobre `\cdot\_B`
+5. Para cada elemento `a ∈ R` existe un elemento `\neg_B a` tal que `a +_B \neg_B a = \b1\_B` y `a \cdot_B \neg_B a = \b0\_B`
+```
+
+*[7.1.]* Habrá que añadirle la propiedad de ser completa.
+*[7.2.]* Habrá que añadirle la propiedad de ser atómica.
+
+Dada un Álgebra de Boole, definiremos la siguiente función:
+
+```math
+Si el álgebra de Boole es <<\bB, +\_\bB, \cdot\_\bB, \b0\_\bB, \b1\_\bB>>, entonces definimos la función `\circle{+}\_bB : \bB × \bB → \bB` como `a \circle{+}\_bB b := a\cdot\neg_\bB b +\_\bB \neg\_\bB a \cdot\_\bB b`, y definiremos `\circle\cdot\_\bB : \bB × \bB → \bB` como `a \circle\cdot\_\bB b := a\cdot\_\bB b`. Entonces, con estas operaciones, `<<\bB, \circle{+}\_bB, \circle\cdot\_\bB, \b0\_\bB, \b1\_\bB>>` es un anillo booleano.
+Además el functor asignará a \b0\_\bB el elemento \b0\_R, y a \b1\_\bB el elemento \b1\_R.
+```
+
+*[8.]* Para el functor entre álgebras de Boole y anillos booleanos, tendremos que definir la estructura de grupo y de anillo:
+
+```math
+<<G, +\_G, 0\_G>> es un grupo si cumple:
+1. `+\_G` es una operación interna asociativa con identidad `0\_G`
+2. Para cada elemento de `x ∈ G` existe un elemento `y ∈ G` tal que `x +\_G y = 0\_G` y `y +\_G x = 0\_G`
+```
+
+La estructura de anillo es un refinamiento de la estructura de grupo, añadiendo una operación de multiplicación que cumple las siguientes propiedades:
+
+```math
+<<R, +\_R, \cdot\_R, \b0\_R, \b1\_R>> es un anillo booleano si cumple:
+1. `<<R, +\_R, \b0\_R>>` es un grupo
+2. `<<R, \cdot\_R, \b1\_R>>` es una operación asociativa con identidad \b1\_R
+3. La operación `\cdot\_R` distribuye sobre `+\_R`
+```
+
+Para que sea un anillo booleano, además de lo anterior, debe cumplir la propiedad de ser idempotente:
+
+```math
+4. Para cada elemento `a ∈ R` se cumple que `a \cdot\_R a = a`
+```
+
+Dado un anillo booleano, definiremos las siguientes funciones:
+
+```math
+Si el anillo booleano es <<\bR, +\_\bR, \cdot\_\bR, \b0\_\bR, \b1\_\bR>>, entonces definimos la función `+\_\bB : \bR × \bR → \bR` como `a +\_\bR b := a +\_\bR b +\_\bR (a \cdot\_\bR b)`, y definimos `\circle\cdot\_\bR : \bR × \bR → \bR` como `a \circle{\cdot}\_\bB b := a\cdot\_\bR b`. Entonces, con estas operaciones, `<<\bR, \circle{+}\_\bB, \circle\cdot\_\bB, \b0\_\bR, \b1\_\bR>>` es un álgebra de boole.
+Además el functor asignará a \b0\_\bR el elemento \b0\_\bB, y a \b1\_\bR el elemento \b1\_\bB.
+```
+
 **NOVÍSIMOS:**
 *[1.]* Hay que quitar los warnings de lean, de forma que aparezcan solo los errores, y finalmente la salida sea completamente limpia. Esto es algo que se puede hacer con un poco de trabajo y que hará que el proyecto sea mucho más fácil de seguir y de entender, ya que no habrá ruido visual de warnings que no aportan nada.
 *[2.]* Haría falta hacer todo lo anteripr también en el proyecto Peano.
@@ -80,7 +131,7 @@
 **UNA IDEA DE IMPLEMENTACIÓN DE LOS NOVÍSIMOS**
 
 0. El sistema de puentes entre sistemas axiomáticos
-   
+
    0.1. El sistema de Aczel debe probar como teoremas los axiomas de ZF (sin infinitud y sin regularidad, por supuesto que sin elección).
    0.2. El sistema de Peano debe probar que puede reproducido dentro del sistema de Aczel.
    0.3. El sistema ZF (debidamente recortado) debe probar que los axiomas de Aczael se pueden demostrar como teoremas dentro de ZF.
@@ -118,13 +169,13 @@ instance : Naturals PeanoNat where
 
 De este modo, cuando escribas el teorema fundamental, su firma será algo como: theorem fundamental_arithmetic {N : Type} [Naturals N] : .... Lean se encargará de inyectar los axiomas correctos ya sea que uses Peano o Von Neumann.
 
-2. Isomorfismos y el paso de teoremas (Equiv)
+1. Isomorfismos y el paso de teoremas (Equiv)
 
 Para tus "puentes" entre Peano y Von Neumann, no reinventes la rueda: usa (o replica si estás evitando Mathlib) las equivalencias. Una equivalencia en Lean (≃) es una biyección con su inversa demostrada.
 
 Si demuestras que PeanoNat ≃ VonNeumannNat, puedes usar técnicas de transferencia. Lean tiene mecanismos (o puedes escribir una pequeña macro/táctica gracias al sistema de metaprogramación de Lean 4) para que si tienes un teorema demostrado en PeanoNat, la táctica lo transporte a través del isomorfismo (Equiv) para generar automáticamente la demostración en VonNeumannNat. Esto mantendrá tu código base extremadamente limpio.
 
-3. Manejando Morse-Kelley vs ZFC: Universos de Tipos
+1. Manejando Morse-Kelley vs ZFC: Universos de Tipos
 
 Lean 4 está basado en la Teoría de Tipos (Cálculo de Construcciones Inductivas), no en Teoría de Conjuntos. Hacer Teoría de Conjuntos axiomática dentro de Lean requiere crear un modelo. Aquí es donde Morse-Kelley (MK) brilla en Lean si usas los Universos de Tipos (Type u).
 
