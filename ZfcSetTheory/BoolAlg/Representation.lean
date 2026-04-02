@@ -525,19 +525,30 @@ namespace ZFC
 
   -- Export key definitions and theorems
   export BoolAlg.Representation (
-    atomsSingletonMap atomsSingletonMap_spec
-    atomsSingletonMap_is_function atomsSingletonMap_is_injective
-    atomsSingletonMap_is_surjective atomsSingletonMap_is_bijection
+    atomsSingletonMap
+    atomsSingletonMap_spec
+    atomsSingletonMap_is_function
+    atomsSingletonMap_is_injective
+    atomsSingletonMap_is_surjective
+    atomsSingletonMap_is_bijection
     A_equipotent_Atoms
-    atomsBelow mem_atomsBelow_iff
-    atomsBelow_mem_powerset_Atoms atomsBelow_eq_singletons_in
+    atomsBelow
+    mem_atomsBelow_iff
+    atomsBelow_mem_powerset_Atoms
+    atomsBelow_eq_singletons_in
     atomsBelowMap atomsBelowMap_spec
-    atomsBelowMap_is_function atomsBelowMap_is_injective
-    atomsBelowMap_is_surjective atomsBelowMap_is_bijection
+    atomsBelowMap_is_function
+    atomsBelowMap_is_injective
+    atomsBelowMap_is_surjective
+    atomsBelowMap_is_bijection
     representation_equipotent
-    union_atomsBelow_eq atomsBelow_of_union union_atoms_mem_powerset
-    atomsBelowMap_preserves_empty atomsBelowMap_preserves_universe
-    atomsBelowMap_preserves_union atomsBelowMap_preserves_inter
+    union_atomsBelow_eq
+    atomsBelow_of_union
+    union_atoms_mem_powerset
+    atomsBelowMap_preserves_empty
+    atomsBelowMap_preserves_universe
+    atomsBelowMap_preserves_union
+    atomsBelowMap_preserves_inter
     atomsBelowMap_preserves_complement
     representation_theorem
   )

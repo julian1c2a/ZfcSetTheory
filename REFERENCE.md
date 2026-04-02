@@ -137,8 +137,8 @@ Este documento cumple con todos los requisitos especificados en [AI-GUIDE.md](AI
 | `Peano.FiniteSequencesBridge.lean` | `ZFC.Peano.FiniteSequencesBridge` | `Peano.FiniteSequencesArith`, `Nat.Primes` + anteriores | ✅ Completo |
 | `BoolAlg.Complete.lean` | `ZFC.BoolAlg.Complete` | `BoolAlg.PowerSetAlgebra`, `BoolAlg.GenDeMorgan`, `SetOps.SetOrder`, `BoolAlg.Atomic` + anteriores | ✅ Completo |
 | `BoolAlg.FiniteCofinite.lean` | `ZFC.BoolAlg.FiniteCofinite` | `BoolAlg.Complete`, `SetOps.FiniteSets`, `Nat.Add`, `Cardinality` + anteriores | ✅ Completo |
-| `BoolAlg.Representation.lean` | `ZFC.BoolAlg.Representation` | `BoolAlg.Complete`, `BoolAlg.Atomic`, `Cardinal.Basic` + anteriores | ❌ Pendiente |
-| `Cardinal.FinitePowerSet.lean` | `ZFC.Cardinal.FinitePowerSet` | `Cardinal.Basic`, `SetOps.FiniteSets`, `Nat.Mul`, `Nat.Pow` + anteriores | ❌ Pendiente |
+| `BoolAlg.Representation.lean` | `ZFC.BoolAlg.Representation` | `BoolAlg.Complete`, `BoolAlg.Atomic`, `Cardinal.Basic` + anteriores | ✅ Completo |
+| `Cardinal.FinitePowerSet.lean` | `ZFC.Cardinal.FinitePowerSet` | `Cardinal.Basic`, `SetOps.FiniteSets`, `Nat.Mul`, `Nat.Pow` + anteriores | ✅ Completo |
 | `BoolAlg.FiniteBA.lean` | `ZFC.BoolAlg.FiniteBA` | `Cardinal.FinitePowerSet`, `BoolAlg.Representation` + anteriores | ✅ Completo |
 | `BoolAlg.BoolRingBA.lean` | `ZFC.BoolAlg.BoolRingBA` | `BoolAlg.Ring` + anteriores | ✅ Completo |
 
@@ -4316,6 +4316,82 @@ def isCompleteAtomicBA (A : U) : Prop :=
 **Estrategia**: Establece la correspondencia formal (functor) entre el anillo booleano (△, ∩) y el álgebra booleana (∪, ∩, ^∁) sobre 𝒫(A), con round-trip theorems.
 
 *(Este módulo no tiene definiciones públicas — solo teoremas.)*
+
+---
+
+### 3.44 BoolAlg.Representation.lean
+
+**Módulo**: `ZfcSetTheory.BoolAlg.Representation`
+**Namespace**: `ZFC.BoolAlg.Representation`
+**Dependencias**: `BoolAlg.Complete`, `BoolAlg.Atomic`, `BoolAlg.GenDeMorgan`, `BoolAlg.GenDistributive`, `Cardinal.Basic`, `SetOps.Functions`
+**Estrategia**: Prueba el teorema de representación de Stone (forma concreta): toda BA completa atómica sobre 𝒫(A) es canónicamente isomorfa a 𝒫(Atoms A) vía el mapa X ↦ {Y ∈ Atoms(A) | Y ⊆ X}. Demuestra que a ↦ {a} es una biyección A ↔ Atoms(A) y que el mapa levantado preserva ∪, ∩ y complemento.
+
+#### atomsSingletonMap (atomsSingletonMap)
+
+**Ubicación**: `BoolAlg.Representation.lean`, línea 99
+**Orden**: 1ª definición
+
+**Descripción Matemática**: Mapa singleton restringido al codominio Atoms(A): $a \mapsto \{a\}$, definido como $\{⟨a, \{a\}⟩ \mid a \in A\} \subseteq A \times_s \text{Atoms}(A)$.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def atomsSingletonMap (A : U) : U :=
+  sep (A ×ₛ Atoms A) (fun p => ∃ x, x ∈ A ∧ p = ⟨x, ({x} : U)⟩)
+```
+
+#### atomsBelow (atomsBelow)
+
+**Ubicación**: `BoolAlg.Representation.lean`, línea 177
+**Orden**: 2ª definición
+
+**Descripción Matemática**: La familia de átomos por debajo de un subconjunto $X \subseteq A$: $\text{atomsBelow}(A, X) = \{Y \in \text{Atoms}(A) \mid Y \subseteq X\}$.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def atomsBelow (A X : U) : U :=
+  sep (Atoms A) (fun Y => Y ⊆ X)
+```
+
+#### atomsBelowMap (atomsBelowMap)
+
+**Ubicación**: `BoolAlg.Representation.lean`, línea 215
+**Orden**: 3ª definición
+
+**Descripción Matemática**: Función ZFC $X \mapsto \text{atomsBelow}(A, X)$ de $\mathcal{P}(A)$ a $\mathcal{P}(\text{Atoms}(A))$, definida como $\{⟨X, \text{atomsBelow}(A,X)⟩ \mid X \in \mathcal{P}(A)\}$.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def atomsBelowMap (A : U) : U :=
+  sep (𝒫 A ×ₛ 𝒫 (Atoms A)) (fun p =>
+    ∃ W, W ∈ 𝒫 A ∧ p = ⟨W, atomsBelow A W⟩)
+```
+
+---
+
+### 3.45 Cardinal.FinitePowerSet.lean
+
+**Módulo**: `ZfcSetTheory.Cardinal.FinitePowerSet`
+**Namespace**: `ZFC.Cardinal.FinitePowerSet`
+**Dependencias**: `SetOps.FiniteSets`, `Nat.Pow`, `BoolAlg.FiniteCofinite`
+**Estrategia**: Demuestra que para conjuntos finitos, la cardinalidad del conjunto potencia es una potencia de 2: si $|F| = n$ entonces $|\mathcal{P}(F)| = 2^n$. Descompone $\mathcal{P}(B \cup \{a\})$ en dos mitades disjuntas equipotentes a $\mathcal{P}(B)$.
+
+#### removeElemMap (removeElemMap)
+
+**Ubicación**: `Cardinal.FinitePowerSet.lean`, línea 298
+**Orden**: 1ª definición
+
+**Descripción Matemática**: Función ZFC $S \mapsto S \setminus \{a\}$ desde $\{S \in \mathcal{P}(A) \mid a \in S\}$ hacia $\mathcal{P}(A \setminus \{a\})$.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def removeElemMap (A a : U) : U :=
+  sep (sep (𝒫 A) (fun S => a ∈ S) ×ₛ 𝒫 (sdiff A {a}))
+    (fun p => ∃ S, S ∈ 𝒫 A ∧ a ∈ S ∧ p = ⟨S, sdiff S {a}⟩)
+```
 
 ---
 
@@ -10629,6 +10705,599 @@ theorem ring_add_complement_eq_universe {A X : U} (hX : X ⊆ A) :
 
 ---
 
+### 4.40 BoolAlg.Representation.lean
+
+#### Especificación de atomsSingletonMap (atomsSingletonMap_spec)
+
+**Ubicación**: `BoolAlg.Representation.lean`, línea 103
+**Orden**: 1º teorema
+
+**Enunciado Matemático**: $⟨a, Y⟩ \in \text{atomsSingletonMap}(A) \iff a \in A \land Y = \{a\}$.
+
+**Firma Lean4**:
+
+```lean
+theorem atomsSingletonMap_spec (A a Y : U) :
+    ⟨a, Y⟩ ∈ atomsSingletonMap A ↔ a ∈ A ∧ Y = ({a} : U)
+```
+
+**Dependencias**: `atomsSingletonMap`, `mem_sep_iff`, `Eq_of_OrderedPairs_given_projections`
+
+#### atomsSingletonMap es función (atomsSingletonMap_is_function)
+
+**Ubicación**: `BoolAlg.Representation.lean`, línea 125
+**Orden**: 2º teorema
+
+**Enunciado Matemático**: $\text{atomsSingletonMap}(A)$ es una función de $A$ a $\text{Atoms}(A)$.
+
+**Firma Lean4**:
+
+```lean
+theorem atomsSingletonMap_is_function (A : U) :
+    IsFunction (atomsSingletonMap A) A (Atoms A)
+```
+
+**Dependencias**: `atomsSingletonMap`, `atomsSingletonMap_spec`
+
+#### atomsSingletonMap es inyectiva (atomsSingletonMap_is_injective)
+
+**Ubicación**: `BoolAlg.Representation.lean`, línea 142
+**Orden**: 3º teorema
+
+**Enunciado Matemático**: Si $\{a_1\} = \{a_2\}$ entonces $a_1 = a_2$; es decir, $a \mapsto \{a\}$ es inyectiva.
+
+**Firma Lean4**:
+
+```lean
+theorem atomsSingletonMap_is_injective (A : U) :
+    isInjective (atomsSingletonMap A)
+```
+
+**Dependencias**: `atomsSingletonMap_spec`, `Singleton_is_specified`
+
+#### atomsSingletonMap es suryectiva (atomsSingletonMap_is_surjective)
+
+**Ubicación**: `BoolAlg.Representation.lean`, línea 153
+**Orden**: 4º teorema
+
+**Enunciado Matemático**: Todo átomo $Y \in \text{Atoms}(A)$ es de la forma $\{a\}$ para algún $a \in A$.
+
+**Firma Lean4**:
+
+```lean
+theorem atomsSingletonMap_is_surjective (A : U) :
+    isSurjectiveOnto (atomsSingletonMap A) (Atoms A)
+```
+
+**Dependencias**: `Atoms_eq_singletons`, `atomsSingletonMap_spec`
+
+#### atomsSingletonMap es biyección (atomsSingletonMap_is_bijection)
+
+**Ubicación**: `BoolAlg.Representation.lean`, línea 162
+**Orden**: 5º teorema
+
+**Enunciado Matemático**: $a \mapsto \{a\}$ es una biyección $A \leftrightarrow \text{Atoms}(A)$.
+
+**Firma Lean4**:
+
+```lean
+theorem atomsSingletonMap_is_bijection (A : U) :
+    isBijection (atomsSingletonMap A) A (Atoms A)
+```
+
+**Dependencias**: `atomsSingletonMap_is_function`, `atomsSingletonMap_is_injective`, `atomsSingletonMap_is_surjective`
+
+#### A equipotente a Atoms(A) (A_equipotent_Atoms)
+
+**Ubicación**: `BoolAlg.Representation.lean`, línea 169
+**Orden**: 6º teorema
+
+**Enunciado Matemático**: $A \simeq_s \text{Atoms}(A)$.
+
+**Firma Lean4**:
+
+```lean
+theorem A_equipotent_Atoms (A : U) : isEquipotent A (Atoms A)
+```
+
+**Dependencias**: `atomsSingletonMap`, `atomsSingletonMap_is_bijection`
+
+#### Especificación de atomsBelow (mem_atomsBelow_iff)
+
+**Ubicación**: `BoolAlg.Representation.lean`, línea 181
+**Orden**: 7º teorema
+
+**Enunciado Matemático**: $Y \in \text{atomsBelow}(A, X) \iff Y \in \text{Atoms}(A) \land Y \subseteq X$.
+
+**Firma Lean4**:
+
+```lean
+theorem mem_atomsBelow_iff (A X Y : U) :
+    Y ∈ atomsBelow A X ↔ Y ∈ Atoms A ∧ Y ⊆ X
+```
+
+**Dependencias**: `atomsBelow`, `mem_sep_iff`
+
+#### atomsBelow pertenece a 𝒫(Atoms A) (atomsBelow_mem_powerset_Atoms)
+
+**Ubicación**: `BoolAlg.Representation.lean`, línea 187
+**Orden**: 8º teorema
+
+**Enunciado Matemático**: $\text{atomsBelow}(A, X) \in \mathcal{P}(\text{Atoms}(A))$.
+
+**Firma Lean4**:
+
+```lean
+theorem atomsBelow_mem_powerset_Atoms (A X : U) :
+    atomsBelow A X ∈ 𝒫 (Atoms A)
+```
+
+**Dependencias**: `mem_atomsBelow_iff`, `mem_powerset_iff`
+
+#### Caracterización de atomsBelow como singletons (atomsBelow_eq_singletons_in)
+
+**Ubicación**: `BoolAlg.Representation.lean`, línea 194
+**Orden**: 9º teorema
+
+**Enunciado Matemático**: Si $X \in \mathcal{P}(A)$, entonces $Y \in \text{atomsBelow}(A, X) \iff \exists a \in X,\; Y = \{a\}$.
+
+**Firma Lean4**:
+
+```lean
+theorem atomsBelow_eq_singletons_in (A X : U) (hX : X ∈ 𝒫 A) :
+    ∀ Y, Y ∈ atomsBelow A X ↔ ∃ a, a ∈ X ∧ Y = ({a} : U)
+```
+
+**Dependencias**: `mem_atomsBelow_iff`, `Atoms_eq_singletons`, `mem_powerset_iff`
+
+#### Especificación de atomsBelowMap (atomsBelowMap_spec)
+
+**Ubicación**: `BoolAlg.Representation.lean`, línea 223
+**Orden**: 10º teorema
+
+**Enunciado Matemático**: $⟨X, F⟩ \in \text{atomsBelowMap}(A) \iff X \in \mathcal{P}(A) \land F = \text{atomsBelow}(A, X)$.
+
+**Firma Lean4**:
+
+```lean
+theorem atomsBelowMap_spec (A X F : U) :
+    ⟨X, F⟩ ∈ atomsBelowMap A ↔ X ∈ 𝒫 A ∧ F = atomsBelow A X
+```
+
+**Dependencias**: `atomsBelowMap`, `mem_sep_iff`, `Eq_of_OrderedPairs_given_projections`
+
+#### atomsBelowMap es función (atomsBelowMap_is_function)
+
+**Ubicación**: `BoolAlg.Representation.lean`, línea 240
+**Orden**: 11º teorema
+
+**Enunciado Matemático**: $\text{atomsBelowMap}(A)$ es una función $\mathcal{P}(A) \to \mathcal{P}(\text{Atoms}(A))$.
+
+**Firma Lean4**:
+
+```lean
+theorem atomsBelowMap_is_function (A : U) :
+    IsFunction (atomsBelowMap A) (𝒫 A) (𝒫 (Atoms A))
+```
+
+**Dependencias**: `atomsBelowMap`, `atomsBelowMap_spec`, `atomsBelow_mem_powerset_Atoms`
+
+#### Lema clave: unión reconstruye X (union_atomsBelow_eq)
+
+**Ubicación**: `BoolAlg.Representation.lean`, línea 259
+**Orden**: 12º teorema
+
+**Enunciado Matemático**: Si $X \in \mathcal{P}(A)$, entonces $\bigcup \text{atomsBelow}(A, X) = X$.
+
+**Firma Lean4**:
+
+```lean
+theorem union_atomsBelow_eq (A X : U) (hX : X ∈ 𝒫 A) :
+    ⋃ (atomsBelow A X) = X
+```
+
+**Dependencias**: `element_is_union_of_atoms`
+
+#### atomsBelowMap es inyectiva (atomsBelowMap_is_injective)
+
+**Ubicación**: `BoolAlg.Representation.lean`, línea 263
+**Orden**: 13º teorema
+
+**Enunciado Matemático**: El mapa $X \mapsto \text{atomsBelow}(A, X)$ es inyectivo.
+
+**Firma Lean4**:
+
+```lean
+theorem atomsBelowMap_is_injective (A : U) :
+    isInjective (atomsBelowMap A)
+```
+
+**Dependencias**: `atomsBelowMap_spec`, `union_atomsBelow_eq`
+
+#### Inversa de atomsBelow vía unión (atomsBelow_of_union)
+
+**Ubicación**: `BoolAlg.Representation.lean`, línea 279
+**Orden**: 14º teorema
+
+**Enunciado Matemático**: Si $F \subseteq \text{Atoms}(A)$, entonces $\text{atomsBelow}(A, \bigcup F) = F$.
+
+**Firma Lean4**:
+
+```lean
+theorem atomsBelow_of_union (A F : U) (hF : F ⊆ Atoms A) :
+    atomsBelow A (⋃ F) = F
+```
+
+**Dependencias**: `mem_atomsBelow_iff`, `Atoms_eq_singletons`, `mem_sUnion_iff`
+
+#### Unión de átomos en 𝒫(A) (union_atoms_mem_powerset)
+
+**Ubicación**: `BoolAlg.Representation.lean`, línea 312
+**Orden**: 15º teorema
+
+**Enunciado Matemático**: Si $F \subseteq \text{Atoms}(A)$, entonces $\bigcup F \in \mathcal{P}(A)$.
+
+**Firma Lean4**:
+
+```lean
+theorem union_atoms_mem_powerset (A F : U) (hF : F ⊆ Atoms A) :
+    ⋃ F ∈ 𝒫 A
+```
+
+**Dependencias**: `mem_sUnion_iff`, `Atoms_is_specified`, `mem_powerset_iff`
+
+#### atomsBelowMap es suryectiva (atomsBelowMap_is_surjective)
+
+**Ubicación**: `BoolAlg.Representation.lean`, línea 323
+**Orden**: 16º teorema
+
+**Enunciado Matemático**: El mapa $X \mapsto \text{atomsBelow}(A, X)$ es suryectivo sobre $\mathcal{P}(\text{Atoms}(A))$.
+
+**Firma Lean4**:
+
+```lean
+theorem atomsBelowMap_is_surjective (A : U) :
+    isSurjectiveOnto (atomsBelowMap A) (𝒫 (Atoms A))
+```
+
+**Dependencias**: `union_atoms_mem_powerset`, `atomsBelowMap_spec`, `atomsBelow_of_union`
+
+#### Teorema de Representación — biyección (atomsBelowMap_is_bijection)
+
+**Ubicación**: `BoolAlg.Representation.lean`, línea 337
+**Orden**: 17º teorema
+
+**Enunciado Matemático**: $\text{atomsBelowMap}(A)$ es una biyección $\mathcal{P}(A) \leftrightarrow \mathcal{P}(\text{Atoms}(A))$.
+
+**Firma Lean4**:
+
+```lean
+theorem atomsBelowMap_is_bijection (A : U) :
+    isBijection (atomsBelowMap A) (𝒫 A) (𝒫 (Atoms A))
+```
+
+**Dependencias**: `atomsBelowMap_is_function`, `atomsBelowMap_is_injective`, `atomsBelowMap_is_surjective`
+
+#### Teorema de Representación — equipotencia (representation_equipotent)
+
+**Ubicación**: `BoolAlg.Representation.lean`, línea 344
+**Orden**: 18º teorema
+
+**Enunciado Matemático**: $\mathcal{P}(A) \simeq_s \mathcal{P}(\text{Atoms}(A))$.
+
+**Firma Lean4**:
+
+```lean
+theorem representation_equipotent (A : U) :
+    isEquipotent (𝒫 A) (𝒫 (Atoms A))
+```
+
+**Dependencias**: `atomsBelowMap`, `atomsBelowMap_is_bijection`
+
+#### Φ preserva vacío (atomsBelowMap_preserves_empty)
+
+**Ubicación**: `BoolAlg.Representation.lean`, línea 352
+**Orden**: 19º teorema
+
+**Enunciado Matemático**: $\Phi(\emptyset) = \emptyset$: el mapa envía el elemento mínimo al elemento mínimo.
+
+**Firma Lean4**:
+
+```lean
+theorem atomsBelowMap_preserves_empty (A : U) :
+    atomsBelow A ∅ = ∅
+```
+
+**Dependencias**: `mem_atomsBelow_iff`, `Atoms_eq_singletons`, `EmptySet_is_empty`
+
+#### Φ preserva universo (atomsBelowMap_preserves_universe)
+
+**Ubicación**: `BoolAlg.Representation.lean`, línea 371
+**Orden**: 20º teorema
+
+**Enunciado Matemático**: $\Phi(A) = \text{Atoms}(A)$: el mapa envía el elemento máximo al elemento máximo.
+
+**Firma Lean4**:
+
+```lean
+theorem atomsBelowMap_preserves_universe (A : U) :
+    atomsBelow A A = Atoms A
+```
+
+**Dependencias**: `mem_atomsBelow_iff`, `Atoms_eq_singletons`
+
+#### Φ preserva unión (atomsBelowMap_preserves_union)
+
+**Ubicación**: `BoolAlg.Representation.lean`, línea 390
+**Orden**: 21º teorema
+
+**Enunciado Matemático**: $\Phi(X \cup Y) = \Phi(X) \cup \Phi(Y)$.
+
+**Firma Lean4**:
+
+```lean
+theorem atomsBelowMap_preserves_union (A X Y : U) (_hX : X ∈ 𝒫 A) (_hY : Y ∈ 𝒫 A) :
+    atomsBelow A (union X Y) = union (atomsBelow A X) (atomsBelow A Y)
+```
+
+**Dependencias**: `mem_atomsBelow_iff`, `Atoms_eq_singletons`, `mem_union_iff`
+
+#### Φ preserva intersección (atomsBelowMap_preserves_inter)
+
+**Ubicación**: `BoolAlg.Representation.lean`, línea 424
+**Orden**: 22º teorema
+
+**Enunciado Matemático**: $\Phi(X \cap Y) = \Phi(X) \cap \Phi(Y)$.
+
+**Firma Lean4**:
+
+```lean
+theorem atomsBelowMap_preserves_inter (A X Y : U) (_hX : X ∈ 𝒫 A) (_hY : Y ∈ 𝒫 A) :
+    atomsBelow A (inter X Y) = inter (atomsBelow A X) (atomsBelow A Y)
+```
+
+**Dependencias**: `mem_atomsBelow_iff`, `mem_inter_iff`
+
+#### Φ preserva complemento (atomsBelowMap_preserves_complement)
+
+**Ubicación**: `BoolAlg.Representation.lean`, línea 446
+**Orden**: 23º teorema
+
+**Enunciado Matemático**: $\Phi(X^{\complement[A]}) = \Phi(X)^{\complement[\text{Atoms}(A)]}$.
+
+**Firma Lean4**:
+
+```lean
+theorem atomsBelowMap_preserves_complement (A X : U) (_hX : X ∈ 𝒫 A) :
+    atomsBelow A (Complement A X) = Complement (Atoms A) (atomsBelow A X)
+```
+
+**Dependencias**: `mem_atomsBelow_iff`, `Atoms_eq_singletons`, `Complement_is_specified`
+
+#### Teorema de Representación Completo (representation_theorem)
+
+**Ubicación**: `BoolAlg.Representation.lean`, línea 497
+**Orden**: 24º teorema (RESULTADO PRINCIPAL)
+
+**Enunciado Matemático**: Para todo conjunto $A$, el álgebra booleana completa atómica $\mathcal{P}(A)$ es isomorfa (como álgebra booleana) a $\mathcal{P}(\text{Atoms}(A))$ vía la biyección $\text{atomsBelowMap}$, que preserva $\cup$, $\cap$ y complemento.
+
+**Firma Lean4**:
+
+```lean
+theorem representation_theorem (A : U) :
+    isBijection (atomsBelowMap A) (𝒫 A) (𝒫 (Atoms A)) ∧
+    (∀ X Y, X ∈ 𝒫 A → Y ∈ 𝒫 A →
+      atomsBelow A (union X Y) = union (atomsBelow A X) (atomsBelow A Y)) ∧
+    (∀ X Y, X ∈ 𝒫 A → Y ∈ 𝒫 A →
+      atomsBelow A (inter X Y) = inter (atomsBelow A X) (atomsBelow A Y)) ∧
+    (∀ X, X ∈ 𝒫 A →
+      atomsBelow A (Complement A X) = Complement (Atoms A) (atomsBelow A X))
+```
+
+**Dependencias**: `atomsBelowMap_is_bijection`, `atomsBelowMap_preserves_union`, `atomsBelowMap_preserves_inter`, `atomsBelowMap_preserves_complement`
+
+---
+
+### 4.41 Cardinal.FinitePowerSet.lean
+
+#### Extensión de biyección por un elemento (equipotent_union_singleton)
+
+**Ubicación**: `Cardinal.FinitePowerSet.lean`, línea 59
+**Orden**: 1º teorema
+
+**Enunciado Matemático**: Si $A \simeq_s n$ con $n \in \omega$ y $a \notin A$, entonces $A \cup \{a\} \simeq_s \sigma(n)$.
+
+**Firma Lean4**:
+
+```lean
+theorem equipotent_union_singleton {A a n : U} (hn : n ∈ ω)
+    (hAn : A ≃ₛ n) (ha : a ∉ A) : (union A {a}) ≃ₛ σ n
+```
+
+**Dependencias**: `mem_succ_iff`, `mem_succ_self`, `not_mem_self`
+
+#### Reconstrucción A \ {a} ∪ {a} = A (sdiff_singleton_union)
+
+**Ubicación**: `Cardinal.FinitePowerSet.lean`, línea 172
+**Orden**: 2º teorema
+
+**Enunciado Matemático**: Si $a \in A$, entonces $(A \setminus \{a\}) \cup \{a\} = A$.
+
+**Firma Lean4**:
+
+```lean
+theorem sdiff_singleton_union {A a : U} (ha : a ∈ A) :
+    union (sdiff A {a}) {a} = A
+```
+
+**Dependencias**: `mem_union_iff`, `mem_sdiff_iff`, `Singleton_is_specified`, `ExtSet`
+
+#### Cancelación de unión-diferencia (union_sdiff_cancel)
+
+**Ubicación**: `Cardinal.FinitePowerSet.lean`, línea 185
+**Orden**: 3º teorema
+
+**Enunciado Matemático**: Si $a \notin B$, entonces $(B \cup \{a\}) \setminus \{a\} = B$.
+
+**Firma Lean4**:
+
+```lean
+theorem union_sdiff_cancel {B a : U} (ha : a ∉ B) :
+    sdiff (union B {a}) {a} = B
+```
+
+**Dependencias**: `mem_sdiff_iff`, `mem_union_iff`, `Singleton_is_specified`, `ExtSet`
+
+#### Cancelación unión-singleton-diferencia (union_singleton_sdiff_cancel)
+
+**Ubicación**: `Cardinal.FinitePowerSet.lean`, línea 199
+**Orden**: 4º teorema
+
+**Enunciado Matemático**: Si $a \notin T$, entonces $(T \cup \{a\}) \setminus \{a\} = T$.
+
+**Firma Lean4**:
+
+```lean
+theorem union_singleton_sdiff_cancel {T a : U} (ha : a ∉ T) :
+    sdiff (union T {a}) {a} = T
+```
+
+**Dependencias**: `union_sdiff_cancel`
+
+#### Cardinalidad de unión disjunta (disjoint_union_equipotent)
+
+**Ubicación**: `Cardinal.FinitePowerSet.lean`, línea 208
+**Orden**: 5º teorema
+
+**Enunciado Matemático**: Si $A \simeq_s m$, $B \simeq_s n$, $m, n \in \omega$ y $A \cap B = \emptyset$, entonces $A \cup B \simeq_s \text{add}(m, n)$.
+
+**Firma Lean4**:
+
+```lean
+theorem disjoint_union_equipotent {A B m n : U} (hm : m ∈ ω) (hn : n ∈ ω)
+    (hAm : A ≃ₛ m) (hBn : B ≃ₛ n) (hdisj : ∀ x, x ∈ A → x ∉ B) :
+    (union A B) ≃ₛ add m n
+```
+
+**Dependencias**: `equipotent_union_singleton`, `induction_principle`, `add_zero`, `add_succ`, `remove_element_bijection`, `union_with_remove`
+
+#### Especificación de removeElemMap (removeElemMap_is_specified)
+
+**Ubicación**: `Cardinal.FinitePowerSet.lean`, línea 303
+**Orden**: 6º teorema
+
+**Enunciado Matemático**: $⟨S, T⟩ \in \text{removeElemMap}(A, a) \iff S \in \mathcal{P}(A) \land a \in S \land T = S \setminus \{a\}$.
+
+**Firma Lean4**:
+
+```lean
+theorem removeElemMap_is_specified (A a S T : U) :
+    ⟨S, T⟩ ∈ removeElemMap A a ↔
+    S ∈ 𝒫 A ∧ a ∈ S ∧ T = sdiff S {a}
+```
+
+**Dependencias**: `removeElemMap`, `mem_sep_iff`, `Eq_of_OrderedPairs_given_projections`
+
+#### removeElemMap es biyección (removeElemMap_is_bijection)
+
+**Ubicación**: `Cardinal.FinitePowerSet.lean`, línea 326
+**Orden**: 7º teorema
+
+**Enunciado Matemático**: Si $a \in A$, $\text{removeElemMap}(A, a)$ es una biyección $\{S \in \mathcal{P}(A) \mid a \in S\} \leftrightarrow \mathcal{P}(A \setminus \{a\})$.
+
+**Firma Lean4**:
+
+```lean
+theorem removeElemMap_is_bijection (A a : U) (ha : a ∈ A) :
+    isBijection (removeElemMap A a)
+      (sep (𝒫 A) (fun S => a ∈ S)) (𝒫 (sdiff A {a}))
+```
+
+**Dependencias**: `removeElemMap_is_specified`, `sdiff_singleton_union`, `union_singleton_sdiff_cancel`
+
+#### Mitad "sin a" del powerset (powerset_without_elem)
+
+**Ubicación**: `Cardinal.FinitePowerSet.lean`, línea 263
+**Orden**: 8º teorema
+
+**Enunciado Matemático**: Si $a \notin B$, entonces $\{S \in \mathcal{P}(B \cup \{a\}) \mid a \notin S\} = \mathcal{P}(B)$.
+
+**Firma Lean4**:
+
+```lean
+theorem powerset_without_elem {B a : U} (ha : a ∉ B) :
+    sep (𝒫 (union B {a})) (fun S => a ∉ S) = 𝒫 B
+```
+
+**Dependencias**: `mem_sep_iff`, `mem_powerset_iff`, `mem_union_iff`, `Singleton_is_specified`
+
+#### Mitades del powerset son disjuntas (powerset_halves_disjoint)
+
+**Ubicación**: `Cardinal.FinitePowerSet.lean`, línea 284
+**Orden**: 9º teorema
+
+**Enunciado Matemático**: Las mitades de $\mathcal{P}(A)$ divididas por un elemento $a$ son disjuntas.
+
+**Firma Lean4**:
+
+```lean
+theorem powerset_halves_disjoint (A a : U) :
+    ∀ S, S ∈ sep (𝒫 A) (fun S => a ∉ S) →
+    S ∉ sep (𝒫 A) (fun S => a ∈ S)
+```
+
+**Dependencias**: `mem_sep_iff`
+
+#### Mitades del powerset cubren (powerset_halves_union)
+
+**Ubicación**: `Cardinal.FinitePowerSet.lean`, línea 291
+**Orden**: 10º teorema
+
+**Enunciado Matemático**: Las mitades de $\mathcal{P}(A)$ divididas por un elemento $a$ cubren todo $\mathcal{P}(A)$.
+
+**Firma Lean4**:
+
+```lean
+theorem powerset_halves_union (A a : U) :
+    union (sep (𝒫 A) (fun S => a ∉ S)) (sep (𝒫 A) (fun S => a ∈ S)) = 𝒫 A
+```
+
+**Dependencias**: `mem_union_iff`, `mem_sep_iff`, `ExtSet`
+
+#### Identidad aritmética mul 2 m = add m m (mul_two_eq_double)
+
+**Ubicación**: `Cardinal.FinitePowerSet.lean`, línea 418
+**Orden**: 11º teorema
+
+**Enunciado Matemático**: $\text{mul}(\sigma(\sigma(\emptyset)), m) = \text{add}(m, m)$ para $m \in \omega$.
+
+**Firma Lean4**:
+
+```lean
+theorem mul_two_eq_double (m : U) (hm : m ∈ ω) :
+    mul (σ (σ (∅ : U))) m = add m m
+```
+
+**Dependencias**: `mul_comm_Omega`, `mul_succ`, `mul_zero`, `add_zero`
+
+#### Cardinalidad del conjunto potencia finito (powerset_cardinality)
+
+**Ubicación**: `Cardinal.FinitePowerSet.lean`, línea 431
+**Orden**: 12º teorema (RESULTADO PRINCIPAL)
+
+**Enunciado Matemático**: Si $A \simeq_s n$ con $n \in \omega$, entonces $\mathcal{P}(A) \simeq_s 2^n$ (donde $2 = \sigma(\sigma(\emptyset))$).
+
+**Firma Lean4**:
+
+```lean
+theorem powerset_cardinality {A n : U} (hn : n ∈ ω) (hAn : A ≃ₛ n) :
+    𝒫 A ≃ₛ pow (σ (σ (∅ : U))) n
+```
+
+**Dependencias**: `induction_principle`, `equipotent_empty_is_empty`, `pow_zero`, `pow_succ`, `remove_element_bijection`, `powerset_without_elem`, `removeElemMap_is_bijection`, `powerset_halves_disjoint`, `powerset_halves_union`, `disjoint_union_equipotent`, `mul_two_eq_double`, `equipotent_trans`
+
+---
+
 ## 5. Notación y Sintaxis
 
 ### 5.1 Operadores Básicos
@@ -12018,6 +12687,68 @@ export BoolAlg.BoolRingBA (
 )
 ```
 
+### 6.41 BoolAlg.Representation.lean
+
+**Namespace**: `ZFC.BoolAlg.Representation` (exportado a `ZFC`)
+**Última modificación**: 2026-04-02
+**Dependencias**: `BoolAlg.Complete`, `BoolAlg.Atomic`, `BoolAlg.GenDeMorgan`, `BoolAlg.GenDistributive`, `Cardinal.Basic`, `SetOps.Functions` + anteriores
+
+```lean
+export BoolAlg.Representation (
+    atomsSingletonMap
+    atomsSingletonMap_spec
+    atomsSingletonMap_is_function
+    atomsSingletonMap_is_injective
+    atomsSingletonMap_is_surjective
+    atomsSingletonMap_is_bijection
+    A_equipotent_Atoms
+    atomsBelow
+    mem_atomsBelow_iff
+    atomsBelow_mem_powerset_Atoms
+    atomsBelow_eq_singletons_in
+    atomsBelowMap
+    atomsBelowMap_spec
+    atomsBelowMap_is_function
+    atomsBelowMap_is_injective
+    atomsBelowMap_is_surjective
+    atomsBelowMap_is_bijection
+    representation_equipotent
+    union_atomsBelow_eq
+    atomsBelow_of_union
+    union_atoms_mem_powerset
+    atomsBelowMap_preserves_empty
+    atomsBelowMap_preserves_universe
+    atomsBelowMap_preserves_union
+    atomsBelowMap_preserves_inter
+    atomsBelowMap_preserves_complement
+    representation_theorem
+)
+```
+
+### 6.42 Cardinal.FinitePowerSet.lean
+
+**Namespace**: `ZFC.Cardinal.FinitePowerSet` (exportado a `ZFC`)
+**Última modificación**: 2026-04-02
+**Dependencias**: `SetOps.FiniteSets`, `Nat.Pow`, `BoolAlg.FiniteCofinite` + anteriores
+
+```lean
+export Cardinal.FinitePowerSet (
+    equipotent_union_singleton
+    sdiff_singleton_union
+    union_sdiff_cancel
+    union_singleton_sdiff_cancel
+    disjoint_union_equipotent
+    removeElemMap
+    removeElemMap_is_specified
+    removeElemMap_is_bijection
+    powerset_without_elem
+    powerset_halves_disjoint
+    powerset_halves_union
+    mul_two_eq_double
+    powerset_cardinality
+)
+```
+
 ## 7. Estado de Proyección por Módulo
 
 ### 7.1 Leyenda de Estados
@@ -12074,6 +12805,8 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `BoolAlg.Complete.lean` - Álgebra booleana completa atómica en conjuntos potencia: definiciones `isSupremumIn`, `isInfimumIn`, `isCompleteLattice`, `isCompleteAtomicBA`; supremo/ínfimo en 𝒫(A) vía ⋃/⋂; unicidad; `powerset_is_complete_lattice`; `powerset_is_complete_atomic_BA`. 4 definiciones + 11 teoremas + 15 exports
 - `BoolAlg.FiniteBA.lean` - Cardinalidad de BA finita: equipotencia de átomos con base, finiteness bidireccional átomos↔base, cardinalidad vía átomos (representación), |𝒫(A)|=2^n para A finito, BA finita es completa atómica. 0 definiciones + 8 teoremas + 8 exports
 - `BoolAlg.BoolRingBA.lean` - Correspondencia Anillo Booleano ↔ Álgebra Booleana: X△Y△(X∩Y)=X∪Y, A△X=X^∁[A], (X∩Y^∁)∪(X^∁∩Y)=X△Y, round-trip BA→BR→BA (join/complement/meet), round-trip BR→BA→BR (add/mul), char 2, idempotencia, involución, X△X^∁=A. 0 definiciones + 13 teoremas + 13 exports
+- `BoolAlg.Representation.lean` - Teorema de Representación de Stone (forma concreta): biyección A↔Atoms(A) vía singletons, biyección 𝒫(A)↔𝒫(Atoms A) vía atomsBelowMap, preservación de ∪/∩/complemento. 3 definiciones + 24 teoremas + 27 exports
+- `Cardinal.FinitePowerSet.lean` - Cardinalidad del conjunto potencia finito: |𝒫(F)|=2^n, extensión de biyecciones, unión disjunta aditiva, descomposición en mitades, removeElemMap. 1 definición + 12 teoremas + 13 exports
 
 ### 7.3 Archivos Parcialmente Proyectados
 
@@ -12093,12 +12826,11 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 
 ### 7.5 Archivos Completos Pendientes de Proyectar
 
-- `BoolAlg.Representation.lean` — Teorema de Representación de Stone: toda BA completa atómica ≅ algún 𝒫(A)
-- `Cardinal.FinitePowerSet.lean` — Cardinalidad del conjunto potencia finito: |𝒫(F)| = 2^n
-
-(45/47 módulos completamente proyectados, 2 pendientes)
+(47/47 módulos completamente proyectados, 0 pendientes)
 
 ---
+
+*Última actualización: 2026-04-09 — Proyección completa de BoolAlg.Representation.lean (§3.44, §4.40, §6.41: 3 def + 24 teoremas + 27 exports, teorema de representación de Stone forma concreta, biyección A↔Atoms(A) vía singletons, biyección 𝒫(A)↔𝒫(Atoms A) vía atomsBelowMap, preservación ∪/∩/complemento/∅/universo) y Cardinal.FinitePowerSet.lean (§3.45, §4.41, §6.42: 1 def + 12 teoremas + 13 exports, |𝒫(F)|=2^n, extensión de biyecciones por un elemento, unión disjunta aditiva, descomposición en mitades disjuntas, removeElemMap). Tabla §1.1 y §7.2 actualizadas. §7.5: 47/47 módulos proyectados. Estado: ✅ 100% completo, 0 sorry.*
 
 *Última actualización: 2026-04-08 — Proyección completa de BoolAlg.FiniteBA.lean (§3.42, §4.38, §6.39: 0 def + 8 teoremas + 8 exports, cardinalidad de BA finita |𝒫(A)|=2^n, equipotencia átomos↔base, finiteness bidireccional, representación vía átomos, BA finita es completa atómica) y BoolAlg.BoolRingBA.lean (§3.43, §4.39, §6.40: 0 def + 13 teoremas + 13 exports, correspondencia BR↔BA, X△Y△(X∩Y)=X∪Y, A△X=X^∁[A], round-trips BA→BR→BA y BR→BA→BR, char 2, idempotencia, involución complemento). Tabla §1.1 y §7.2 actualizadas. §7.5: 45/45 módulos proyectados. Estado: ✅ 100% completo, 0 sorry.*
 

@@ -43,4 +43,3 @@ ZfcSetTheory/BoolAlg/FiniteCofinite.lean
 ZfcSetTheory/Peano/FiniteSequencesBridge.lean
 ZfcSetTheory/BoolAlg.lean
 ZfcSetTheory/BoolAlg/BoolRingBA.lean
-ZfcSetTheory/BoolAlg/Representation.lean

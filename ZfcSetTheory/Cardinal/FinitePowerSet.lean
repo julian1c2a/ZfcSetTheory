@@ -520,9 +520,12 @@ namespace ZFC
     union_sdiff_cancel
     union_singleton_sdiff_cancel
     disjoint_union_equipotent
-    removeElemMap removeElemMap_is_specified removeElemMap_is_bijection
+    removeElemMap
+    removeElemMap_is_specified
+    removeElemMap_is_bijection
     powerset_without_elem
-    powerset_halves_disjoint powerset_halves_union
+    powerset_halves_disjoint
+    powerset_halves_union
     mul_two_eq_double
     powerset_cardinality
   )
