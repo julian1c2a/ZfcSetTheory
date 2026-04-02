@@ -9,10 +9,10 @@ import ZfcSetTheory.Core.Prelim
 import ZfcSetTheory.Axiom.Extension
 import ZfcSetTheory.SetOps.SetOrder
 
-namespace SetUniverse
+namespace ZFC
   open Classical
-  open SetUniverse.ExtensionAxiom
-  open SetUniverse.SetOrder
+  open ZFC.ExtensionAxiom
+  open ZFC.SetOrder
   universe u
   variable {U : Type u}
 
@@ -150,9 +150,9 @@ namespace SetUniverse
 
   end SetStrictOrder
 
-end SetUniverse
+end ZFC
 
-export SetUniverse.SetStrictOrder (
+export ZFC.SetStrictOrder (
     subset_subseteq subseteq_subset_or_eq
     strict_order_irreflexive strict_order_asymmetric strict_order_transitive
     subset_transitive_mixed_left subset_transitive_mixed_right

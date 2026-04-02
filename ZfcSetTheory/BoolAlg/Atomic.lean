@@ -34,17 +34,17 @@ and that the atoms are exactly the singletons.
 * `PowerSet_is_atomic` - 𝒫(A) is an atomic Boolean algebra
 -/
 
-namespace SetUniverse
+namespace ZFC
   open Classical
-  open SetUniverse.ExtensionAxiom
-  open SetUniverse.ExistenceAxiom
-  open SetUniverse.SpecificationAxiom
-  open SetUniverse.PairingAxiom
-  open SetUniverse.UnionAxiom
-  open SetUniverse.PowerSetAxiom
-  open SetUniverse.PowerSetAlgebra
-  open SetUniverse.SetOrder
-  open SetUniverse.SetStrictOrder
+  open ZFC.ExtensionAxiom
+  open ZFC.ExistenceAxiom
+  open ZFC.SpecificationAxiom
+  open ZFC.PairingAxiom
+  open ZFC.UnionAxiom
+  open ZFC.PowerSetAxiom
+  open ZFC.PowerSetAlgebra
+  open ZFC.SetOrder
+  open ZFC.SetStrictOrder
   universe u
   variable {U : Type u}
 
@@ -301,4 +301,4 @@ namespace SetUniverse
     atom_iff_singleton Atoms Atoms_is_specified Atoms_eq_singletons
     isAtomic PowerSet_is_atomic element_is_union_of_atoms atomBelow singleton_below_iff)
 
-end SetUniverse
+end ZFC

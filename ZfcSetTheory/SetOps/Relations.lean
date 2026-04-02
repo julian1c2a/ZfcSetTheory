@@ -42,16 +42,16 @@ and strict orders.
 * `IdRel_is_Equivalence` - The identity relation is an equivalence relation
 -/
 
-namespace SetUniverse
+namespace ZFC
   open Classical
-  open SetUniverse.ExtensionAxiom
-  open SetUniverse.ExistenceAxiom
-  open SetUniverse.SpecificationAxiom
-  open SetUniverse.PairingAxiom
-  open SetUniverse.UnionAxiom
-  open SetUniverse.PowerSetAxiom
-  open SetUniverse.OrderedPairExtensions
-  open SetUniverse.CartesianProduct
+  open ZFC.ExtensionAxiom
+  open ZFC.ExistenceAxiom
+  open ZFC.SpecificationAxiom
+  open ZFC.PairingAxiom
+  open ZFC.UnionAxiom
+  open ZFC.PowerSetAxiom
+  open ZFC.OrderedPairExtensions
+  open ZFC.CartesianProduct
   universe u
   variable {U : Type u}
 
@@ -522,9 +522,9 @@ namespace SetUniverse
 
   end Relations
 
-end SetUniverse
+end ZFC
 
-export SetUniverse.Relations (
+export ZFC.Relations (
     isRelationOn
     isRelationFrom
     Related

@@ -21,7 +21,7 @@ import ZfcSetTheory.Nat.Sub
 import ZfcSetTheory.Nat.Div
 import ZfcSetTheory.Nat.Arith
 
-namespace SetUniverse
+namespace ZFC
   open Classical
 
   universe u
@@ -522,4 +522,4 @@ namespace SetUniverse
     lcm_comm_Omega
   )
 
-end SetUniverse
+end ZFC

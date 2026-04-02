@@ -40,18 +40,18 @@ including composition, identity, inverse, image, and preimage.
 * `Restriction_apply` - (f ↾ C)(x) = f(x) for x ∈ C
 -/
 
-namespace SetUniverse
+namespace ZFC
   open Classical
   open ExistsUnique
-  open SetUniverse.ExtensionAxiom
-  open SetUniverse.ExistenceAxiom
-  open SetUniverse.SpecificationAxiom
-  open SetUniverse.PairingAxiom
-  open SetUniverse.UnionAxiom
-  open SetUniverse.PowerSetAxiom
-  open SetUniverse.OrderedPairExtensions
-  open SetUniverse.CartesianProduct
-  open SetUniverse.Relations
+  open ZFC.ExtensionAxiom
+  open ZFC.ExistenceAxiom
+  open ZFC.SpecificationAxiom
+  open ZFC.PairingAxiom
+  open ZFC.UnionAxiom
+  open ZFC.PowerSetAxiom
+  open ZFC.OrderedPairExtensions
+  open ZFC.CartesianProduct
+  open ZFC.Relations
   universe u
   variable {U : Type u}
 
@@ -397,4 +397,4 @@ namespace SetUniverse
     injective_inverse_single_valued
   )
 
-end SetUniverse
+end ZFC

@@ -30,15 +30,15 @@ For a family F of subsets of A:
 * `union_complement_eq_complement_inter` - ⋃(A∖∖F) = A \ ⋂F (for F ≠ ∅)
 -/
 
-namespace SetUniverse
+namespace ZFC
   open Classical
-  open SetUniverse.ExtensionAxiom
-  open SetUniverse.ExistenceAxiom
-  open SetUniverse.SpecificationAxiom
-  open SetUniverse.PairingAxiom
-  open SetUniverse.UnionAxiom
-  open SetUniverse.PowerSetAxiom
-  open SetUniverse.PowerSetAlgebra
+  open ZFC.ExtensionAxiom
+  open ZFC.ExistenceAxiom
+  open ZFC.SpecificationAxiom
+  open ZFC.PairingAxiom
+  open ZFC.UnionAxiom
+  open ZFC.PowerSetAxiom
+  open ZFC.PowerSetAlgebra
   universe u
   variable {U : Type u}
 
@@ -258,4 +258,4 @@ namespace SetUniverse
     inter_complement_eq_complement_union union_complement_eq_complement_inter
     complement_inter_complement_eq_union complement_union_complement_eq_inter)
 
-end SetUniverse
+end ZFC

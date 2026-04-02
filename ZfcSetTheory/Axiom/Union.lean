@@ -11,12 +11,12 @@ import ZfcSetTheory.Axiom.Existence
 import ZfcSetTheory.Axiom.Specification
 import ZfcSetTheory.Axiom.Pairing
 
-namespace SetUniverse
+namespace ZFC
   open Classical
-  open SetUniverse.ExtensionAxiom
-  open SetUniverse.ExistenceAxiom
-  open SetUniverse.SpecificationAxiom
-  open SetUniverse.PairingAxiom
+  open ZFC.ExtensionAxiom
+  open ZFC.ExistenceAxiom
+  open ZFC.SpecificationAxiom
+  open ZFC.PairingAxiom
   universe u
   variable {U : Type u}
 
@@ -536,9 +536,9 @@ theorem BinUnion_absorb_inter (A B : U) :
 
 
   end UnionAxiom
-end SetUniverse
+end ZFC
 
-export SetUniverse.UnionAxiom (
+export ZFC.UnionAxiom (
   UnionAxiom
   UnionExistsUnique
   Union_is_specified

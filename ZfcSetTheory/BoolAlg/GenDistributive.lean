@@ -31,16 +31,16 @@ This file establishes the generalized distributive laws for arbitrary families o
 * `union_distrib_inter` - A ∪ (⋂F) = ⋂{A ∪ X | X ∈ F} (for F ≠ ∅)
 -/
 
-namespace SetUniverse
+namespace ZFC
   open Classical
-  open SetUniverse.ExtensionAxiom
-  open SetUniverse.ExistenceAxiom
-  open SetUniverse.SpecificationAxiom
-  open SetUniverse.PairingAxiom
-  open SetUniverse.UnionAxiom
-  open SetUniverse.PowerSetAxiom
-  open SetUniverse.PowerSetAlgebra
-  open SetUniverse.GeneralizedDeMorgan
+  open ZFC.ExtensionAxiom
+  open ZFC.ExistenceAxiom
+  open ZFC.SpecificationAxiom
+  open ZFC.PairingAxiom
+  open ZFC.UnionAxiom
+  open ZFC.PowerSetAxiom
+  open ZFC.PowerSetAlgebra
+  open ZFC.GeneralizedDeMorgan
   universe u
   variable {U : Type u}
 
@@ -225,4 +225,4 @@ namespace SetUniverse
     union_mem_UnionFamily IntersectFamily_nonempty UnionFamily_nonempty
     inter_distrib_union union_distrib_inter union_inter_distrib inter_union_distrib)
 
-end SetUniverse
+end ZFC

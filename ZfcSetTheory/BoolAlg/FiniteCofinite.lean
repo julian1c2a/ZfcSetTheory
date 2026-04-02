@@ -64,24 +64,24 @@ algebra 𝒫(A).
 * `FinCofAlg_not_complete` — FinCofAlg(ω) is not a complete lattice
 -/
 
-namespace SetUniverse
+namespace ZFC
   open Classical
-  open SetUniverse.ExtensionAxiom
-  open SetUniverse.ExistenceAxiom
-  open SetUniverse.SpecificationAxiom
-  open SetUniverse.PairingAxiom
-  open SetUniverse.UnionAxiom
-  open SetUniverse.PowerSetAxiom
-  open SetUniverse.PowerSetAlgebra
-  open SetUniverse.BooleanAlgebra
-  open SetUniverse.SetOrder
-  open SetUniverse.NaturalNumbers
-  open SetUniverse.InfinityAxiom
-  open SetUniverse.FiniteSets
-  open SetUniverse.NaturalNumbersAdd
-  open SetUniverse.Functions
-  open SetUniverse.Cardinality
-  open SetUniverse.CompleteBooleanAlgebra
+  open ZFC.ExtensionAxiom
+  open ZFC.ExistenceAxiom
+  open ZFC.SpecificationAxiom
+  open ZFC.PairingAxiom
+  open ZFC.UnionAxiom
+  open ZFC.PowerSetAxiom
+  open ZFC.PowerSetAlgebra
+  open ZFC.BooleanAlgebra
+  open ZFC.SetOrder
+  open ZFC.NaturalNumbers
+  open ZFC.InfinityAxiom
+  open ZFC.FiniteSets
+  open ZFC.NaturalNumbersAdd
+  open ZFC.Functions
+  open ZFC.Cardinality
+  open ZFC.CompleteBooleanAlgebra
   universe u
   variable {U : Type u}
 
@@ -899,4 +899,4 @@ namespace SetUniverse
     FinCofAlg_not_complete
   )
 
-end SetUniverse
+end ZFC

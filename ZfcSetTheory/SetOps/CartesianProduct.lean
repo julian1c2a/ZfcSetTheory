@@ -14,15 +14,15 @@ import ZfcSetTheory.Axiom.Union
 import ZfcSetTheory.Axiom.PowerSet
 import ZfcSetTheory.SetOps.OrderedPair
 
-namespace SetUniverse
+namespace ZFC
   open Classical
-  open SetUniverse.ExtensionAxiom
-  open SetUniverse.ExistenceAxiom
-  open SetUniverse.SpecificationAxiom
-  open SetUniverse.PairingAxiom
-  open SetUniverse.UnionAxiom
-  open SetUniverse.PowerSetAxiom
-  open SetUniverse.OrderedPairExtensions
+  open ZFC.ExtensionAxiom
+  open ZFC.ExistenceAxiom
+  open ZFC.SpecificationAxiom
+  open ZFC.PairingAxiom
+  open ZFC.UnionAxiom
+  open ZFC.PowerSetAxiom
+  open ZFC.OrderedPairExtensions
   universe u
   variable {U : Type u}
 
@@ -260,9 +260,9 @@ namespace SetUniverse
             exact ⟨hpAB.2.2, hpAC.2.2⟩
 
   end CartesianProduct
-end SetUniverse
+end ZFC
 
-export SetUniverse.CartesianProduct (
+export ZFC.CartesianProduct (
   CartesianProduct
   CartesianProduct_is_specified
   OrderedPair_mem_CartesianProduct

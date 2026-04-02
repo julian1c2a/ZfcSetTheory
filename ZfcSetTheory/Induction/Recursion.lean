@@ -35,20 +35,20 @@ import ZfcSetTheory.SetOps.Functions
 import ZfcSetTheory.Nat.Basic
 import ZfcSetTheory.Axiom.Infinity
 
-namespace SetUniverse
+namespace ZFC
   open Classical
-  open SetUniverse.ExtensionAxiom
-  open SetUniverse.ExistenceAxiom
-  open SetUniverse.SpecificationAxiom
-  open SetUniverse.PairingAxiom
-  open SetUniverse.UnionAxiom
-  open SetUniverse.PowerSetAxiom
-  open SetUniverse.OrderedPairExtensions
-  open SetUniverse.Functions
-  open SetUniverse.NaturalNumbers
-  open SetUniverse.InfinityAxiom
-  open SetUniverse.Relations
-  open SetUniverse.CartesianProduct
+  open ZFC.ExtensionAxiom
+  open ZFC.ExistenceAxiom
+  open ZFC.SpecificationAxiom
+  open ZFC.PairingAxiom
+  open ZFC.UnionAxiom
+  open ZFC.PowerSetAxiom
+  open ZFC.OrderedPairExtensions
+  open ZFC.Functions
+  open ZFC.NaturalNumbers
+  open ZFC.InfinityAxiom
+  open ZFC.Relations
+  open ZFC.CartesianProduct
 
   universe u
   variable {U : Type u}
@@ -1718,9 +1718,9 @@ namespace SetUniverse
     RecursiveFn_unique
   )
 
-end SetUniverse
+end ZFC
 
-export SetUniverse.Recursion (
+export ZFC.Recursion (
   isComputation
   computation_uniqueness
   areCompatible

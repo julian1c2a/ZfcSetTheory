@@ -9,10 +9,10 @@ import ZfcSetTheory.Core.Prelim
 import ZfcSetTheory.Axiom.Extension
 import ZfcSetTheory.Axiom.Existence
 
-namespace SetUniverse
+namespace ZFC
   open Classical
-  open SetUniverse.ExistenceAxiom
-  open SetUniverse.ExtensionAxiom
+  open ZFC.ExistenceAxiom
+  open ZFC.ExtensionAxiom
   universe u
   variable {U : Type u}
 
@@ -467,9 +467,9 @@ namespace SetUniverse
       exact Difference_subseteq A B h_subseteq
 
   end SpecificationAxiom
-end SetUniverse
+end ZFC
 
-export SetUniverse.SpecificationAxiom (
+export ZFC.SpecificationAxiom (
     Specification SpecificationUnique SpecSet SpecSet_is_specified
     BinInter BinInter_is_specified BinInterUniqueSet
     BinInter_subset BinInter_empty BinInter_empty_left_wc

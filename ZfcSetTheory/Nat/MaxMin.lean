@@ -37,7 +37,7 @@ import ZfcSetTheory.Axiom.Infinity
 import ZfcSetTheory.Peano.Import
 import PeanoNatLib.PeanoNatMaxMin
 
-namespace SetUniverse
+namespace ZFC
   open Classical
 
   universe u
@@ -438,4 +438,4 @@ namespace SetUniverse
     eq_iff_maxOf_eq_minOf
   )
 
-end SetUniverse
+end ZFC

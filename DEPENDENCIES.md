@@ -227,90 +227,90 @@ graph TD
 
 ## Jerarquía de Espacios de Nombres
 
-### 1. **SetUniverse** (Namespace raíz)
+### 1. **ZFC** (Namespace raíz)
 
 ```lean
-namespace SetUniverse
+namespace ZFC
   -- Definición axiomática de pertenencia
   axiom mem (x y : U) : Prop
   notation:50 lhs:51 " ∈ " rhs:51 => mem lhs rhs
 ```
 
-### 2. **SetUniverse.ExtensionAxiom**
+### 2. **ZFC.ExtensionAxiom**
 
 ```lean
-namespace SetUniverse.ExtensionAxiom
+namespace ZFC.ExtensionAxiom
   -- Axioma de Extensionalidad
   -- Definiciones: subseteq (⊆), subset (⊂), disjoint (⟂)
   -- Teoremas: orden parcial, igualdad de conjuntos
 ```
 
-### 3. **SetUniverse.ExistenceAxiom**
+### 3. **ZFC.ExistenceAxiom**
 
 ```lean
-namespace SetUniverse.ExistenceAxiom
+namespace ZFC.ExistenceAxiom
   -- Axioma de Existencia del conjunto vacío
   -- Definiciones: EmptySet (∅)
   -- Teoremas: unicidad del vacío, propiedades básicas
 ```
 
-### 4. **SetUniverse.SpecificationAxiom**
+### 4. **ZFC.SpecificationAxiom**
 
 ```lean
-namespace SetUniverse.SpecificationAxiom
+namespace ZFC.SpecificationAxiom
   -- Axioma de Especificación/Separación
   -- Definiciones: SpecSet, BinInter (∩), Difference (\)
   -- Teoremas: propiedades de intersección y diferencia
 ```
 
-### 5. **SetUniverse.PairingAxiom**
+### 5. **ZFC.PairingAxiom**
 
 ```lean
-namespace SetUniverse.PairingAxiom
+namespace ZFC.PairingAxiom
   -- Axioma de Pares
   -- Definiciones: PairSet {a,b}, Singleton {a}, OrderedPair ⟨a,b⟩
   -- Teoremas: pares ordenados, relaciones, funciones
 ```
 
-### 6. **SetUniverse.UnionAxiom**
+### 6. **ZFC.UnionAxiom**
 
 ```lean
-namespace SetUniverse.UnionAxiom
+namespace ZFC.UnionAxiom
   -- Axioma de Unión
   -- Definiciones: UnionSet (⋃), BinUnion (∪), SymDiff (△)
   -- Teoremas: propiedades de unión de familias y binaria
 ```
 
-### 7. **SetUniverse.PowerSetAxiom**
+### 7. **ZFC.PowerSetAxiom**
 
 ```lean
-namespace SetUniverse.PowerSetAxiom
+namespace ZFC.PowerSetAxiom
   -- Axioma del Conjunto Potencia
   -- Definiciones: PowerSetOf (𝒫)
   -- Teoremas: caracterización, monotonía, propiedades con ∩ y ∪
 ```
 
-### 8. **SetUniverse.OrderedPairExtensions**
+### 8. **ZFC.OrderedPairExtensions**
 
 ```lean
-namespace SetUniverse.OrderedPairExtensions
+namespace ZFC.OrderedPairExtensions
   -- Extensiones del Par Ordenado
   -- Teoremas: OrderedPair_eq_of, OrderedPair_eq_iff, OrderedPair_in_PowerSet
 ```
 
-### 9. **SetUniverse.CartesianProduct**
+### 9. **ZFC.CartesianProduct**
 
 ```lean
-namespace SetUniverse.CartesianProduct
+namespace ZFC.CartesianProduct
   -- Producto Cartesiano
   -- Definiciones: CartesianProduct (A ×ₛ B)
   -- Teoremas: caracterización, vacío, monotonía, distributividad
 ```
 
-### 10. **SetUniverse.Relations**
+### 10. **ZFC.Relations**
 
 ```lean
-namespace SetUniverse.Relations
+namespace ZFC.Relations
   -- Relaciones sobre conjuntos
   -- Definiciones: isRelationOn, isReflexiveOn, isSymmetricOn, etc.
   -- Tipos: equivalencia, preorden, orden parcial, orden lineal, orden estricto
@@ -319,37 +319,37 @@ namespace SetUniverse.Relations
   -- Teoremas: propiedades de relaciones, clases de equivalencia, dominio y rango
 ```
 
-### 11. **SetUniverse.Functions**
+### 11. **ZFC.Functions**
 
 ```lean
-namespace SetUniverse.Functions
+namespace ZFC.Functions
   -- Funciones y aplicaciones
   -- Definiciones: isFunctionFromTo, apply (⦅⦆), composition, inverse
   -- Teoremas: propiedades de funciones, composición, aplicación
 ```
 
-### 12. **SetUniverse.InfinityAxiom**
+### 12. **ZFC.InfinityAxiom**
 
 ```lean
-namespace SetUniverse.InfinityAxiom
+namespace ZFC.InfinityAxiom
   -- Axioma del Infinito
   -- Definiciones: isInductive, InfSet (conjunto infinito)
   -- Teoremas: existencia de conjunto inductivo infinito
 ```
 
-### 13. **SetUniverse.NaturalNumbers**
+### 13. **ZFC.NaturalNumbers**
 
 ```lean
-namespace SetUniverse.NaturalNumbers
+namespace ZFC.NaturalNumbers
   -- Números naturales como ordinales de von Neumann
   -- Definiciones: isNatural, ℕ (conjunto omega), successor
   -- Teoremas: propiedades de números naturales, inducción
 ```
 
-### 14. **SetUniverse.NaturalNumbersAdd**
+### 14. **ZFC.NaturalNumbersAdd**
 
 ```lean
-namespace SetUniverse.NaturalNumbersAdd
+namespace ZFC.NaturalNumbersAdd
   -- Suma de naturales de von Neumann vía Recursión
   -- Definiciones: successorFn, addFn, add
   -- Teoremas: semianillo conmutativo (add_zero, zero_add, add_succ, add_comm, add_assoc,
@@ -358,10 +358,10 @@ namespace SetUniverse.NaturalNumbersAdd
   -- Depende de: PeanoImport, Recursion
 ```
 
-### 14b. **SetUniverse.NaturalNumbersMul**
+### 14b. **ZFC.NaturalNumbersMul**
 
 ```lean
-namespace SetUniverse.NaturalNumbersMul
+namespace ZFC.NaturalNumbersMul
   -- Multiplicación de naturales de von Neumann vía Recursión
   -- Definiciones: mulFn, mul
   -- Teoremas: anillo conmutativo (mul_zero, zero_mul, mul_succ, mul_comm,
@@ -369,99 +369,99 @@ namespace SetUniverse.NaturalNumbersMul
   -- Depende de: NaturalNumbersAdd, PeanoImport, Recursion
 ```
 
-### 15. **SetUniverse.Recursion**
+### 15. **ZFC.Recursion**
 
 ```lean
-namespace SetUniverse.Recursion
+namespace ZFC.Recursion
   -- Teorema de Recursión sobre ℕ
   -- Teoremas: recursión, unicidad de funciones recursivas
 ```
 
-### 15. **SetUniverse.BooleanAlgebra**
+### 15. **ZFC.BooleanAlgebra**
 
 ```lean
-namespace SetUniverse.BooleanAlgebra
+namespace ZFC.BooleanAlgebra
   -- Álgebra Booleana de conjuntos
   -- Teoremas: leyes booleanas, distributividad, idempotencia
 ```
 
-### 16. **SetUniverse.PowerSetAlgebra**
+### 16. **ZFC.PowerSetAlgebra**
 
 ```lean
-namespace SetUniverse.PowerSetAlgebra
+namespace ZFC.PowerSetAlgebra
   -- Álgebra del conjunto potencia
   -- Definiciones: Complement (X^∁[ A ]), ComplementFamily
   -- Teoremas: double_complement, DeMorgan_union_family, DeMorgan_inter_family
 ```
 
-### 17. **SetUniverse.BooleanRing**
+### 17. **ZFC.BooleanRing**
 
 ```lean
-namespace SetUniverse.BooleanRing
+namespace ZFC.BooleanRing
   -- Anillo Booleano con SymDiff
   -- Teoremas: SymDiff como suma, intersección como producto
   --           asociatividad, distributividad, conmutatividad
 ```
 
-### 18. **SetUniverse.GeneralizedDeMorgan**
+### 18. **ZFC.GeneralizedDeMorgan**
 
 ```lean
-namespace SetUniverse.GeneralizedDeMorgan
+namespace ZFC.GeneralizedDeMorgan
   -- Leyes de De Morgan generalizadas
   -- Teoremas: complement_union_eq_inter_complement, complement_inter_eq_union_complement
 ```
 
-### 19. **SetUniverse.GeneralizedDistributive**
+### 19. **ZFC.GeneralizedDistributive**
 
 ```lean
-namespace SetUniverse.GeneralizedDistributive
+namespace ZFC.GeneralizedDistributive
   -- Leyes distributivas generalizadas
   -- Definiciones: DistribSet
   -- Teoremas: inter_union_distrib, union_inter_distrib
 ```
 
-### 20. **SetUniverse.AtomicBooleanAlgebra**
+### 20. **ZFC.AtomicBooleanAlgebra**
 
 ```lean
-namespace SetUniverse.AtomicBooleanAlgebra
+namespace ZFC.AtomicBooleanAlgebra
   -- Álgebra de Boole atómica
   -- Definiciones: isAtom, Atoms, isAtomic, atomBelow
   -- Teoremas: singleton_is_atom, atom_is_singleton, atom_iff_singleton
   --           PowerSet_is_atomic, element_is_union_of_atoms
 ```
 
-### 21. **SetUniverse.SetOrder**
+### 21. **ZFC.SetOrder**
 
 ```lean
-namespace SetUniverse.SetOrder
+namespace ZFC.SetOrder
   -- Orden parcial y estructura de retículo
   -- Definiciones: isUpperBound, isLowerBound, isSupremum, isInfimum
   -- Teoremas: propiedades de orden, cotas, supremos/ínfimos
 ```
 
-### 22. **SetUniverse.SetStrictOrder**
+### 22. **ZFC.SetStrictOrder**
 
 ```lean
-namespace SetUniverse.SetStrictOrder
+namespace ZFC.SetStrictOrder
   -- Orden estricto
   -- Teoremas: irreflexividad, asimetría, transitividad
   -- Relaciones entre orden parcial y estricto
 ```
 
-### 23. **SetUniverse.Cardinality**
+### 23. **ZFC.Cardinality**
 
 ```lean
-namespace SetUniverse.Cardinality
+namespace ZFC.Cardinality
   -- Teoría de Cardinalidad
   -- Definiciones: DiagonalSet, SetDiff, singletonMap, CSB_core, CSB_bijection
   -- Teoremas de Cantor: cantor_no_surjection, cantor_no_bijection
   -- Teorema de Cantor-Schröder-Bernstein: cantor_schroeder_bernstein
 ```
 
-### 24. **SetUniverse.FiniteSequencesArith**
+### 24. **ZFC.FiniteSequencesArith**
 
 ```lean
-namespace SetUniverse.FiniteSequencesArith
+namespace ZFC.FiniteSequencesArith
   -- Aritmética de secuencias finitas en ZFC
   -- Definiciones: sumStepFn, seqSumFn, seqSum, prodStepFn, seqProdFn, seqProd, familyProduct
   -- Teoremas: seqSum_zero/succ/singleton, seqProd_zero/succ/singleton
@@ -470,10 +470,10 @@ namespace SetUniverse.FiniteSequencesArith
   -- Depende de: NaturalNumbersMul, FiniteSequences, FiniteSets
 ```
 
-### 25. **SetUniverse.FiniteSequencesBridge**
+### 25. **ZFC.FiniteSequencesBridge**
 
 ```lean
-namespace SetUniverse.FiniteSequencesBridge
+namespace ZFC.FiniteSequencesBridge
   -- Puente DList ℕ₀ ↔ ZFC secuencias finitas + TFA nativo
   -- Definiciones: nth, dlistToSeq, dlistLen, isPrimeSeq
   -- Teoremas: nth_apply, nth_in_codomain, nth_ext, seqProd general recursion/extensionality
@@ -567,8 +567,8 @@ namespace SetUniverse.FiniteSequencesBridge
 ### Extension.lean
 
 ```lean
-export SetUniverse (mem)
-export SetUniverse.ExtensionAxiom (
+export ZFC (mem)
+export ZFC.ExtensionAxiom (
     ExtSet, subseteq, subset, disjoint,
     subseteq_reflexive, subseteq_transitive, subseteq_antisymmetric,
     subset_irreflexive, subset_asymmetric, subset_transitive
@@ -578,7 +578,7 @@ export SetUniverse.ExtensionAxiom (
 ### Existence.lean
 
 ```lean
-export SetUniverse.ExistenceAxiom (
+export ZFC.ExistenceAxiom (
     ExistsAnEmptySet, ExistsUniqueEmptySet, EmptySet,
     EmptySet_is_empty, EmptySet_is_same, EmptySet_subseteq_any
 )
@@ -587,7 +587,7 @@ export SetUniverse.ExistenceAxiom (
 ### Specification.lean
 
 ```lean
-export SetUniverse.SpecificationAxiom (
+export ZFC.SpecificationAxiom (
     Specification, SpecSet, SpecSet_is_specified,
     BinInter, BinInter_is_specified, BinInter_commutative,
     BinInter_associative, BinInter_absorbent_elem, BinInter_idempotent,
@@ -600,7 +600,7 @@ export SetUniverse.SpecificationAxiom (
 ### Pairing.lean
 
 ```lean
-export SetUniverse.PairingAxiom (
+export ZFC.PairingAxiom (
     Pairing, PairingUniqueSet, PairSet, PairSet_is_specified,
     Singleton, Singleton_is_specified, nonempty_iff_exists_mem,
     member_inter, interSet, interSet_of_singleton,
@@ -620,7 +620,7 @@ export SetUniverse.PairingAxiom (
 ### Union.lean
 
 ```lean
-export SetUniverse.UnionAxiom (
+export ZFC.UnionAxiom (
   Union, UnionExistsUnique, Union_is_specified,
   UnionSet, UnionSet_is_empty, UnionSet_is_empty',
   UnionSet_is_specified, UnionSet_is_unique,
@@ -636,7 +636,7 @@ export SetUniverse.UnionAxiom (
 ### PowerSet.lean
 
 ```lean
-export SetUniverse.PowerSetAxiom (
+export ZFC.PowerSetAxiom (
   PowerSet, PowerSetExistsUnique, PowerSetOf,
   PowerSet_is_specified, PowerSet_is_unique,
   empty_mem_PowerSet, self_mem_PowerSet, PowerSet_nonempty, PowerSet_empty,
@@ -648,7 +648,7 @@ export SetUniverse.PowerSetAxiom (
 ### OrderedPair.lean
 
 ```lean
-export SetUniverse.OrderedPairExtensions (
+export ZFC.OrderedPairExtensions (
   OrderedPair_eq_of, OrderedPair_eq_iff, OrderedPair_in_PowerSet
 )
 ```
@@ -656,7 +656,7 @@ export SetUniverse.OrderedPairExtensions (
 ### CartesianProduct.lean
 
 ```lean
-export SetUniverse.CartesianProduct (
+export ZFC.CartesianProduct (
   CartesianProduct,
   CartesianProduct_is_specified,
   OrderedPair_mem_CartesianProduct,
@@ -673,7 +673,7 @@ export SetUniverse.CartesianProduct (
 ### Relations.lean
 
 ```lean
-export SetUniverse.Relations (
+export ZFC.Relations (
     isRelationOn, isRelationFrom, Related,
     isReflexiveOn, isIrreflexiveOn, isSymmetricOn, isAntiSymmetricOn, isAsymmetricOn,
     isTransitiveOn, isConnectedOn, isStronglyConnectedOn, isTrichotomousOn,
@@ -698,7 +698,7 @@ export SetUniverse.Relations (
 ### Functions.lean
 
 ```lean
-export SetUniverse.Functions (
+export ZFC.Functions (
     isFunctionFromTo, apply, composition, inverse,
     function_iff, apply_mem, apply_eq, apply_unique,
     composition_assoc, inverse_involutive
@@ -708,7 +708,7 @@ export SetUniverse.Functions (
 ### Infinity.lean
 
 ```lean
-export SetUniverse.InfinityAxiom (
+export ZFC.InfinityAxiom (
     InfinityAxiom, isInductive, InfSet,
     InfSet_is_inductive, zero_in_InfSet, successor_in_InfSet,
     nat_mem_wf  -- añadido 2026-03-04
@@ -718,7 +718,7 @@ export SetUniverse.InfinityAxiom (
 ### NaturalNumbers.lean
 
 ```lean
-export SetUniverse.NaturalNumbers (
+export ZFC.NaturalNumbers (
     isNatural, ℕ, successor, zero_is_natural,
     successor_is_natural, nat_induction,
     -- Añadidos 2026-03-04:
@@ -729,7 +729,7 @@ export SetUniverse.NaturalNumbers (
 ### PeanoImport.lean
 
 ```lean
--- Namespace: SetUniverse (no sub-namespace propio)
+-- Namespace: ZFC (no sub-namespace propio)
 -- Depende de: NaturalNumbers, Infinity, PeanoNatLib.PeanoNatAxioms
 -- Definiciones:
 noncomputable def fromPeano : Peano.ℕ₀ → U
@@ -741,7 +741,7 @@ noncomputable def toPeano (n : U) (hn : isNat n) : Peano.ℕ₀
 ### NaturalNumbersAdd.lean
 
 ```lean
-export SetUniverse.NaturalNumbersAdd (
+export ZFC.NaturalNumbersAdd (
     successorFn, addFn, add,
     add_zero_Omega, zero_add_Omega, add_succ_Omega, succ_add_Omega,
     add_comm_Omega, add_assoc_Omega,
@@ -757,7 +757,7 @@ export SetUniverse.NaturalNumbersAdd (
 ### NaturalNumbersMul.lean
 
 ```lean
-export SetUniverse.NaturalNumbersMul (
+export ZFC.NaturalNumbersMul (
     mulFn, mul,
     mul_zero_Omega, zero_mul_Omega, mul_succ,
     mul_comm_Omega, succ_mul_Omega,
@@ -771,7 +771,7 @@ export SetUniverse.NaturalNumbersMul (
 ### Recursion.lean
 
 ```lean
-export SetUniverse.Recursion (
+export ZFC.Recursion (
     recursion_theorem, recursion_unique
 )
 ```
@@ -779,7 +779,7 @@ export SetUniverse.Recursion (
 ### BooleanAlgebra.lean
 
 ```lean
-export SetUniverse.BooleanAlgebra (
+export ZFC.BooleanAlgebra (
     BinUnion_comm_ba, BinUnion_empty_left_ba, BinUnion_empty_right_ba,
     BinUnion_idem_ba, BinInter_idem_ba, BinInter_empty,
     BinInter_comm_ba, Subseteq_trans_ba, Subseteq_reflexive_ba,
@@ -790,7 +790,7 @@ export SetUniverse.BooleanAlgebra (
 ### BooleanRing.lean
 
 ```lean
-export SetUniverse.BooleanRing (
+export ZFC.BooleanRing (
     SymDiff_is_comm, SymDiff_empty_identity, SymDiff_self_eq_empty,
     SymDiff_assoc, SymDiff_inter_distrib_left, SymDiff_inter_distrib_right,
     SymDiff_eq_union_diff, SymDiff_eq_self_iff_empty,
@@ -802,7 +802,7 @@ export SetUniverse.BooleanRing (
 ### PowerSetAlgebra.lean
 
 ```lean
-export SetUniverse.PowerSetAlgebra (
+export ZFC.PowerSetAlgebra (
     Complement, ComplementFamily,
     PowerSet_Complement_subset, PowerSet_double_complement,
     PowerSet_complement_union, PowerSet_complement_inter,
@@ -818,7 +818,7 @@ export SetUniverse.PowerSetAlgebra (
 ### GeneralizedDeMorgan.lean
 
 ```lean
-export SetUniverse.GeneralizedDeMorgan (
+export ZFC.GeneralizedDeMorgan (
     complement_union_eq_inter_complement, complement_inter_eq_union_complement,
     inter_complement_eq_complement_union, union_complement_eq_complement_inter
 )
@@ -827,7 +827,7 @@ export SetUniverse.GeneralizedDeMorgan (
 ### GeneralizedDistributive.lean
 
 ```lean
-export SetUniverse.GeneralizedDistributive (
+export ZFC.GeneralizedDistributive (
     DistribSet, DistribSet_is_specified,
     inter_union_distrib, union_inter_distrib,
     inter_union_distrib', union_inter_distrib'
@@ -837,7 +837,7 @@ export SetUniverse.GeneralizedDistributive (
 ### AtomicBooleanAlgebra.lean
 
 ```lean
-export SetUniverse.AtomicBooleanAlgebra (
+export ZFC.AtomicBooleanAlgebra (
     isAtom, Atoms, isAtomic, atomBelow,
     singleton_is_atom, atom_is_singleton, atom_iff_singleton,
     PowerSet_is_atomic, element_is_union_of_atoms
@@ -847,7 +847,7 @@ export SetUniverse.AtomicBooleanAlgebra (
 ### SetOrder.lean
 
 ```lean
-export SetUniverse.SetOrder (
+export ZFC.SetOrder (
     isUpperBound, isLowerBound, isSupremum, isInfimum,
     empty_is_minimum, any_family_bounded_below,
     inter_is_glb, union_is_lub,
@@ -859,7 +859,7 @@ export SetUniverse.SetOrder (
 ### SetStrictOrder.lean
 
 ```lean
-export SetUniverse.SetStrictOrder (
+export ZFC.SetStrictOrder (
     strict_order_irreflexive, strict_order_asymmetric,
     strict_order_transitive, partial_to_strict_order
 )
@@ -868,7 +868,7 @@ export SetUniverse.SetStrictOrder (
 ### NaturalNumbersSub.lean
 
 ```lean
-export SetUniverse.NaturalNumbersSub (
+export ZFC.NaturalNumbersSub (
     predecessorFn, subFn, sub,
     sub_zero_Omega, zero_sub_Omega, sub_self_Omega,
     sub_succ_succ_Omega, sub_k_add_k_Omega, add_k_sub_k_Omega,
@@ -880,7 +880,7 @@ export SetUniverse.NaturalNumbersSub (
 ### NaturalNumbersDiv.lean
 
 ```lean
-export SetUniverse.NaturalNumbersDiv (
+export ZFC.NaturalNumbersDiv (
     divOf, modOf,
     divOf_in_Omega, modOf_in_Omega,
     fromPeano_div, fromPeano_mod,
@@ -892,7 +892,7 @@ export SetUniverse.NaturalNumbersDiv (
 ### NaturalNumbersPow.lean
 
 ```lean
-export SetUniverse.NaturalNumbersPow (
+export ZFC.NaturalNumbersPow (
     powFn, pow,
     pow_zero, pow_succ, pow_eq, pow_in_Omega,
     fromPeano_pow,
@@ -906,7 +906,7 @@ export SetUniverse.NaturalNumbersPow (
 ### NaturalNumbersArith.lean
 
 ```lean
-export SetUniverse.NaturalNumbersArith (
+export ZFC.NaturalNumbersArith (
     divides, div, mod,
     div_eq_divOf, mod_eq_modOf,
     gcdOf, lcmOf,
@@ -925,7 +925,7 @@ export SetUniverse.NaturalNumbersArith (
 ### NaturalNumbersFactorial.lean
 
 ```lean
-export SetUniverse.NaturalNumbersFactorial (
+export ZFC.NaturalNumbersFactorial (
     factorialOf,
     factorialOf_zero, factorialOf_one, factorialOf_two,
     factorialOf_succ, factorialOf_pos, factorialOf_ne_zero,
@@ -937,7 +937,7 @@ export SetUniverse.NaturalNumbersFactorial (
 ### NaturalNumbersGcd.lean
 
 ```lean
-export SetUniverse.NaturalNumbersGcd (
+export ZFC.NaturalNumbersGcd (
     gcd, lcm,
     gcd_in_Omega, lcm_in_Omega,
     gcd_zero, gcd_pos_step,
@@ -951,7 +951,7 @@ export SetUniverse.NaturalNumbersGcd (
 ### NaturalNumbersPrimes.lean
 
 ```lean
-export SetUniverse.NaturalNumbersPrimes (
+export ZFC.NaturalNumbersPrimes (
     isPrime, fromPeano_prime,
     isPrime_in_Omega, isPrime_ne_zero, isPrime_ne_one,
     isPrime_ge_two, isPrime_prime_divisors,
@@ -963,7 +963,7 @@ export SetUniverse.NaturalNumbersPrimes (
 ### NaturalNumbersBinom.lean
 
 ```lean
-export SetUniverse.NaturalNumbersBinom (
+export ZFC.NaturalNumbersBinom (
     binomOf, fromPeano_binom,
     binomOf_n_zero, binomOf_n_n, binomOf_n_one,
     binomOf_one_succ, binomOf_pascal, binomOf_succ_n_by_n,
@@ -976,7 +976,7 @@ export SetUniverse.NaturalNumbersBinom (
 ### NaturalNumbersMaxMin.lean
 
 ```lean
-export SetUniverse.NaturalNumbersMaxMin (
+export ZFC.NaturalNumbersMaxMin (
     maxOf, minOf, fromPeano_max, fromPeano_min,
     maxOf_in_Omega, minOf_in_Omega,
     maxOf_idem, minOf_idem,
@@ -993,7 +993,7 @@ export SetUniverse.NaturalNumbersMaxMin (
 ### NaturalNumbersNewtonBinom.lean
 
 ```lean
-export SetUniverse.NaturalNumbersNewtonBinom (
+export ZFC.NaturalNumbersNewtonBinom (
     binomTermOf, fromPeano_binomTerm,
     binomTermOf_in_Omega,
     binomTerm_k_zero, binomTerm_k_n,
@@ -1006,7 +1006,7 @@ export SetUniverse.NaturalNumbersNewtonBinom (
 ### NaturalNumbersWellFounded.lean
 
 ```lean
-export SetUniverse.NaturalNumbersWellFounded (
+export ZFC.NaturalNumbersWellFounded (
     acc_lt_Omega, well_ordering_Omega, well_ordering_Omega_exists
 )
 ```
@@ -1014,7 +1014,7 @@ export SetUniverse.NaturalNumbersWellFounded (
 ### Cardinality.lean
 
 ```lean
-export SetUniverse.Cardinality (
+export ZFC.Cardinality (
     -- Teorema de Cantor
     DiagonalSet, DiagonalSet_is_specified, DiagonalSet_not_in_range,
     cantor_no_surjection, cantor_no_bijection,

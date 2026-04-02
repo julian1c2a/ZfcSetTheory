@@ -48,26 +48,26 @@ ZFC terms: ∃ f k, isFinSeq f k ω ∧ allPrime ∧ seqProd f k = n.
 import ZfcSetTheory.Peano.FiniteSequencesArith
 import ZfcSetTheory.Nat.Primes
 
-namespace SetUniverse
+namespace ZFC
   open Classical
-  open SetUniverse.ExtensionAxiom
-  open SetUniverse.ExistenceAxiom
-  open SetUniverse.SpecificationAxiom
-  open SetUniverse.PairingAxiom
-  open SetUniverse.UnionAxiom
-  open SetUniverse.PowerSetAxiom
-  open SetUniverse.OrderedPairExtensions
-  open SetUniverse.CartesianProduct
-  open SetUniverse.Relations
-  open SetUniverse.Functions
-  open SetUniverse.Cardinality
-  open SetUniverse.NaturalNumbers
-  open SetUniverse.InfinityAxiom
-  open SetUniverse.NaturalNumbersAdd
-  open SetUniverse.NaturalNumbersMul
-  open SetUniverse.FiniteSequences
-  open SetUniverse.FiniteSequencesArith
-  open SetUniverse.NaturalNumbersPrimes
+  open ZFC.ExtensionAxiom
+  open ZFC.ExistenceAxiom
+  open ZFC.SpecificationAxiom
+  open ZFC.PairingAxiom
+  open ZFC.UnionAxiom
+  open ZFC.PowerSetAxiom
+  open ZFC.OrderedPairExtensions
+  open ZFC.CartesianProduct
+  open ZFC.Relations
+  open ZFC.Functions
+  open ZFC.Cardinality
+  open ZFC.NaturalNumbers
+  open ZFC.InfinityAxiom
+  open ZFC.NaturalNumbersAdd
+  open ZFC.NaturalNumbersMul
+  open ZFC.FiniteSequences
+  open ZFC.FiniteSequencesArith
+  open ZFC.NaturalNumbersPrimes
 
   universe u
   variable {U : Type u}
@@ -425,4 +425,4 @@ namespace SetUniverse
     unique_prime_factorization_native
   )
 
-end SetUniverse
+end ZFC

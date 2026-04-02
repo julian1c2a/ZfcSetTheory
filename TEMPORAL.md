@@ -27,14 +27,14 @@ Reorganización profunda del proyecto en curso (ver `/memories/session/plan.md`)
 
 Fases pendientes (plan aprobado 2026-04-07):
 
-1. **Fase 1**: Estructura de directorios — mover archivos a subdirectorios temáticos
-2. **Fase 2**: Migración de namespace `SetUniverse` → `ZFC`
+1. ✅ **Fase 1**: Estructura de directorios — 43 archivos movidos a 8 subdirectorios temáticos
+2. ✅ **Fase 2**: Migración de namespace `SetUniverse` → `ZFC` completada
 3. **Fase 3**: Renombrado de identificadores según convenciones Mathlib
 4. **Fase 4**: Sistema de anotaciones (@importance, @axiom_system)
 
 ## Próximos pasos sugeridos
 
-1. **Fase 1 del plan** — Crear subdirectorios y mover archivos por lotes de dependencia
+1. **Fase 3 del plan** — Renombrar identificadores según convenciones Mathlib
 2. **Enteros ℤ en ZFC** — clases de equivalencia de pares (a, b) ∈ ω × ω (post-reorganización)
 3. **Axioma de Reemplazo** — requerido para funciones con codominios grandes
 4. **Axioma de Fundación** — para función rango y estratificación del universo

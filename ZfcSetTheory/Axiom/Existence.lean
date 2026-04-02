@@ -8,9 +8,9 @@ import Init.Classical
 import ZfcSetTheory.Core.Prelim
 import ZfcSetTheory.Axiom.Extension
 
-namespace SetUniverse
+namespace ZFC
   open Classical
-  open SetUniverse.ExtensionAxiom
+  open ZFC.ExtensionAxiom
   universe u
   variable {U : Type u}
 
@@ -78,9 +78,9 @@ namespace SetUniverse
       exact EmptySet_is_empty y hy_in_empty
 
   end ExistenceAxiom
-end SetUniverse
+end ZFC
 
-export SetUniverse.ExistenceAxiom (
+export ZFC.ExistenceAxiom (
     ExistsAnEmptySet ExistsUniqueEmptySet EmptySet EmptySet_is_empty EmptySet_unique
     EmptySet_subseteq_any
 )

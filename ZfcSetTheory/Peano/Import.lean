@@ -15,27 +15,27 @@ License: MIT
   defined in this project and the Peano natural numbers from the `peanolib` library.
 
   Predecessor theorems (predecessorPos, predecessor_zero, successor_predecessorPos)
-  live in `SetUniverse.NaturalNumbers` (NaturalNumbers.lean).
+  live in `ZFC.NaturalNumbers` (NaturalNumbers.lean).
 
   Order on ω (≺, ≼, natLt_*, natLe_*, Omega_has_min) lives in
-  `SetUniverse.InfinityAxiom` (Infinity.lean).
+  `ZFC.InfinityAxiom` (Infinity.lean).
 -/
 
-namespace SetUniverse
+namespace ZFC
   open Classical
-  open SetUniverse.ExtensionAxiom
-  open SetUniverse.ExistenceAxiom
-  open SetUniverse.SpecificationAxiom
-  open SetUniverse.PairingAxiom
-  open SetUniverse.UnionAxiom
-  open SetUniverse.PowerSetAxiom
-  open SetUniverse.OrderedPairExtensions
-  open SetUniverse.CartesianProduct
-  open SetUniverse.Relations
-  open SetUniverse.Functions
-  open SetUniverse.Cardinality
-  open SetUniverse.NaturalNumbers
-  open SetUniverse.InfinityAxiom
+  open ZFC.ExtensionAxiom
+  open ZFC.ExistenceAxiom
+  open ZFC.SpecificationAxiom
+  open ZFC.PairingAxiom
+  open ZFC.UnionAxiom
+  open ZFC.PowerSetAxiom
+  open ZFC.OrderedPairExtensions
+  open ZFC.CartesianProduct
+  open ZFC.Relations
+  open ZFC.Functions
+  open ZFC.Cardinality
+  open ZFC.NaturalNumbers
+  open ZFC.InfinityAxiom
 
   universe u
   variable {U : Type u}
@@ -319,7 +319,7 @@ namespace SetUniverse
 
   end PeanoIsomorphism
 
-  -- Notations re-exported at SetUniverse level (require open SetUniverse)
+  -- Notations re-exported at ZFC level (require open ZFC)
   scoped notation "ΠZ" => PeanoIsomorphism.fromPeano
   scoped notation "ZΠ" => PeanoIsomorphism.toPeano
 
@@ -349,4 +349,4 @@ namespace SetUniverse
     fromPeano_le_iff
   )
 
-end SetUniverse
+end ZFC

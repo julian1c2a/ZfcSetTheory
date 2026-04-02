@@ -12,13 +12,13 @@ import ZfcSetTheory.Axiom.Specification
 import ZfcSetTheory.Axiom.Pairing
 import ZfcSetTheory.Axiom.Union
 
-namespace SetUniverse
+namespace ZFC
   open Classical
-  open SetUniverse.ExtensionAxiom
-  open SetUniverse.ExistenceAxiom
-  open SetUniverse.SpecificationAxiom
-  open SetUniverse.PairingAxiom
-  open SetUniverse.UnionAxiom
+  open ZFC.ExtensionAxiom
+  open ZFC.ExistenceAxiom
+  open ZFC.SpecificationAxiom
+  open ZFC.PairingAxiom
+  open ZFC.UnionAxiom
   universe u
   variable {U : Type u}
 
@@ -184,9 +184,9 @@ namespace SetUniverse
 
   end BooleanAlgebra
 
-end SetUniverse
+end ZFC
 
-export SetUniverse.BooleanAlgebra (
+export ZFC.BooleanAlgebra (
   BinUnion_absorb_inter
   BinInter_absorb_union
   BinUnion_distrib_inter

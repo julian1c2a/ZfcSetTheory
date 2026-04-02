@@ -38,15 +38,15 @@ This file establishes that the power set forms a Boolean ring with:
 * `SymDiff_as_complement` - SymDiff using complement (for subsets)
 -/
 
-namespace SetUniverse
+namespace ZFC
   open Classical
-  open SetUniverse.ExtensionAxiom
-  open SetUniverse.ExistenceAxiom
-  open SetUniverse.SpecificationAxiom
-  open SetUniverse.PairingAxiom
-  open SetUniverse.UnionAxiom
-  open SetUniverse.PowerSetAxiom
-  open SetUniverse.PowerSetAlgebra
+  open ZFC.ExtensionAxiom
+  open ZFC.ExistenceAxiom
+  open ZFC.SpecificationAxiom
+  open ZFC.PairingAxiom
+  open ZFC.UnionAxiom
+  open ZFC.PowerSetAxiom
+  open ZFC.PowerSetAlgebra
   universe u
   variable {U : Type u}
 
@@ -333,9 +333,9 @@ namespace SetUniverse
 
   end BooleanRing
 
-end SetUniverse
+end ZFC
 
-export SetUniverse.BooleanRing (
+export ZFC.BooleanRing (
     SymDiff_is_comm
     SymDiff_empty_identity
     SymDiff_identity_empty

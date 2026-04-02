@@ -10,7 +10,7 @@
 **Autor:** Julián Calderón Almendros
 
 > Este documento describe el plan completo para importar las operaciones y resultados del
-> proyecto Peano al universo ZFC de `SetUniverse`, aprovechando el isomorfismo
+> proyecto Peano al universo ZFC de `ZFC`, aprovechando el isomorfismo
 > `fromPeano` / `toPeano` definido en `PeanoImport.lean`.
 
 ---
@@ -483,7 +483,7 @@ import ZfcSetTheory.NaturalNumbersNewtonBinom
 ## 6. Actualizaciones a `REFERENCE.md`
 
 Tras completar cada módulo, añadir una sección a `REFERENCE.md` bajo
-`SetUniverse.NaturalNumbersXxx` con:
+`ZFC.NaturalNumbersXxx` con:
 - Definiciones exportadas (`def`, `noncomputable def`)
 - Teoremas exportados
 - Notaciones (si aplica)

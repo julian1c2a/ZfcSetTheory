@@ -28,7 +28,7 @@ import ZfcSetTheory.Axiom.Infinity
 import ZfcSetTheory.Peano.Import
 import PeanoNatLib.PeanoNatWellFounded
 
-namespace SetUniverse
+namespace ZFC
   open Classical
 
   universe u
@@ -106,4 +106,4 @@ namespace SetUniverse
     well_ordering_Omega_exists
   )
 
-end SetUniverse
+end ZFC

@@ -46,15 +46,15 @@ This file establishes that the power set forms a Boolean algebra.
 * `PowerSet_double_complement` - (X^∁[A])^∁[A] = X (for X ⊆ A)
 -/
 
-namespace SetUniverse
+namespace ZFC
   open Classical
-  open SetUniverse.ExtensionAxiom
-  open SetUniverse.ExistenceAxiom
-  open SetUniverse.SpecificationAxiom
-  open SetUniverse.PairingAxiom
-  open SetUniverse.UnionAxiom
-  open SetUniverse.PowerSetAxiom
-  open SetUniverse.BooleanAlgebra
+  open ZFC.ExtensionAxiom
+  open ZFC.ExistenceAxiom
+  open ZFC.SpecificationAxiom
+  open ZFC.PairingAxiom
+  open ZFC.UnionAxiom
+  open ZFC.PowerSetAxiom
+  open ZFC.BooleanAlgebra
   universe u
   variable {U : Type u}
 
@@ -421,9 +421,9 @@ namespace SetUniverse
 
   end PowerSetAlgebra
 
-end SetUniverse
+end ZFC
 
-export SetUniverse.PowerSetAlgebra (
+export ZFC.PowerSetAlgebra (
     Complement
     Complement_is_specified
     union_mem_PowerSet

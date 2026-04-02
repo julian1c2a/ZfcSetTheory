@@ -42,7 +42,7 @@ import ZfcSetTheory.Nat.Sub
 import ZfcSetTheory.Nat.Factorial
 import PeanoNatLib.PeanoNatBinom
 
-namespace SetUniverse
+namespace ZFC
   open Classical
 
   universe u
@@ -275,4 +275,4 @@ namespace SetUniverse
     binomOf_mul_factorials
   )
 
-end SetUniverse
+end ZFC

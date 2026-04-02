@@ -53,18 +53,18 @@ full structure theorem: 𝒫(A) is a complete atomic Boolean algebra.
 * `PowerSet_is_complete_atomic_BA` - 𝒫(A) is a complete atomic Boolean algebra
 -/
 
-namespace SetUniverse
+namespace ZFC
   open Classical
-  open SetUniverse.ExtensionAxiom
-  open SetUniverse.ExistenceAxiom
-  open SetUniverse.SpecificationAxiom
-  open SetUniverse.PairingAxiom
-  open SetUniverse.UnionAxiom
-  open SetUniverse.PowerSetAxiom
-  open SetUniverse.PowerSetAlgebra
-  open SetUniverse.GeneralizedDeMorgan
-  open SetUniverse.SetOrder
-  open SetUniverse.AtomicBooleanAlgebra
+  open ZFC.ExtensionAxiom
+  open ZFC.ExistenceAxiom
+  open ZFC.SpecificationAxiom
+  open ZFC.PairingAxiom
+  open ZFC.UnionAxiom
+  open ZFC.PowerSetAxiom
+  open ZFC.PowerSetAlgebra
+  open ZFC.GeneralizedDeMorgan
+  open ZFC.SetOrder
+  open ZFC.AtomicBooleanAlgebra
   universe u
   variable {U : Type u}
 
@@ -220,4 +220,4 @@ namespace SetUniverse
     isCompleteAtomicBA PowerSet_is_complete_atomic_BA
   )
 
-end SetUniverse
+end ZFC

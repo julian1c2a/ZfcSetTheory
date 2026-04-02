@@ -10,11 +10,11 @@ import ZfcSetTheory.Axiom.Extension
 import ZfcSetTheory.Axiom.Existence
 import ZfcSetTheory.Axiom.Specification
 
-namespace SetUniverse
+namespace ZFC
   open Classical
-  open SetUniverse.ExtensionAxiom
-  open SetUniverse.ExistenceAxiom
-  open SetUniverse.SpecificationAxiom
+  open ZFC.ExtensionAxiom
+  open ZFC.ExistenceAxiom
+  open ZFC.SpecificationAxiom
   universe u
   variable {U : Type u}
 
@@ -681,9 +681,9 @@ namespace SetUniverse
       isFunction A R ∧ isInyective R ∧ isSurjectiveFunction A B R
 
   end PairingAxiom
-end SetUniverse
+end ZFC
 
-export SetUniverse.PairingAxiom (
+export ZFC.PairingAxiom (
     Pairing
     PairingUniqueSet
     PairSet

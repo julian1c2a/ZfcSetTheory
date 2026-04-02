@@ -10,6 +10,15 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ## [Unreleased]
 
+### Cambiado (2026-04-02)
+
+- **Fase 2: Migración de namespace `SetUniverse` → `ZFC`**:
+  - ✅ Renombrado `namespace SetUniverse` → `namespace ZFC` en 43 archivos .lean
+  - ✅ Renombrado `end SetUniverse` → `end ZFC` en todos los archivos
+  - ✅ Actualizadas todas las referencias `open ZFC.SubNamespace` y `export ZFC.SubNamespace`
+  - ✅ Actualizada documentación: REFERENCE.md, DEPENDENCIES.md, CHANGELOG.md, CURRENT-STATUS-PROJECT.md, NAMING-CONVENTIONS.md, PLAN_IMPORT_PEANO.md, TEMPORAL.md
+  - ✅ Build limpio: 71 jobs, 0 errores, 0 sorry
+
 ### Añadido (2026-04-01)
 
 - **Nuevo módulo CompleteBooleanAlgebra.lean — Álgebra booleana completa atómica**:
@@ -18,7 +27,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
   - ✅ `isCompleteLattice (L : U) : Prop` — todo subconjunto de L tiene supremo e ínfimo en L
   - ✅ `isCompleteAtomicBA (A : U) : Prop` — 𝒫(A) es retículo completo y atómico
   - ✅ 11 teoremas: `supremumIn_unique`, `infimumIn_unique`, `UnionSet_subset_of_family`, `UnionSet_mem_PowerSet_of_family`, `UnionSet_is_supremumIn_PowerSet`, `interSet_subset_of_family`, `interSet_mem_PowerSet_of_family`, `interSet_is_infimumIn_PowerSet`, `universe_is_infimumIn_PowerSet_empty`, `PowerSet_is_complete_lattice`, `PowerSet_is_complete_atomic_BA`
-  - ✅ Namespace `SetUniverse.CompleteBooleanAlgebra` (exportado a `SetUniverse`, 15 exports)
+  - ✅ Namespace `ZFC.CompleteBooleanAlgebra` (exportado a `ZFC`, 15 exports)
   - ✅ Build limpio; 42/43 módulos compilados (módulo añadido antes de FiniteCofinite)
   - ⚠️ Proyección en REFERENCE.md: ❌ Pendiente
 
@@ -32,7 +41,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
     - Paridad (7): `double_injective`, `even_or_odd`, `even_ne_odd`, `EvenSet_is_specified`, `EvenSet_subset_Omega`, `EvenSet_infinite`, `OddSet_infinite`
     - Estructura de álgebra booleana (7): `FinCofAlg_is_specified`, `FinCofAlg_subset_PowerSet`, `FinCofAlg_empty`, `FinCofAlg_universe`, `FinCofAlg_complement`, `FinCofAlg_union`, `FinCofAlg_inter`
     - No completitud (2): `EvenSet_not_in_FinCofAlg`, `FinCofAlg_not_complete`
-  - ✅ Namespace `SetUniverse.FiniteCofinite` (exportado a `SetUniverse`, 22 exports)
+  - ✅ Namespace `ZFC.FiniteCofinite` (exportado a `ZFC`, 22 exports)
   - ✅ Build limpio; 43/43 módulos compilados correctamente (0 sorry, 0 errores)
   - ✅ Proyectado en REFERENCE.md §3.40, §4.36, §6.37
 
@@ -52,7 +61,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
   - ✅ 15 teoremas públicos en 7 secciones: nth (5), seqProd recursion (3), seqProd extensionality (1), DList→ZFC bridge (4), seqProd correspondence (1), isPrimeSeq (1), TFA native (2)
   - ✅ `tfa_exists_native` — ∀ n ≥ 2, ∃ secuencia ZFC de primos cuyo producto es n
   - ✅ `tfa_unique_native` — unicidad de la factorización prima ZFC-nativa
-  - ✅ Namespace `SetUniverse.FiniteSequencesBridge` (exportado a `SetUniverse`, 23 exports)
+  - ✅ Namespace `ZFC.FiniteSequencesBridge` (exportado a `ZFC`, 23 exports)
   - ✅ Build limpio; 41/41 módulos compilados correctamente (0 sorry, 0 errores)
 
 - **REFERENCE.md — Proyección completa de FiniteSequencesBridge.lean**:
@@ -74,7 +83,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
   - ✅ `card_product_two` — |A ×ₛ B| = |A| · |B| para conjuntos finitos
   - ✅ `card_familyProduct` — |Π_{i<n} F(i)| = Π_{i<n} |F(i)| (inducción ZFC completa)
   - ✅ 21 lemas privados auxiliares (no exportados)
-  - ✅ Namespace `SetUniverse.FiniteSequencesArith` (exportado a `SetUniverse`, 33 exports)
+  - ✅ Namespace `ZFC.FiniteSequencesArith` (exportado a `ZFC`, 33 exports)
   - ✅ Build limpio; 40/40 módulos compilados correctamente (0 sorry, 0 errores)
 
 - **REFERENCE.md — Proyección completa de FiniteSequencesArith.lean**:
@@ -94,7 +103,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
     - `comp_injective`, `comp_surjective`, `comp_bijection`
   - ✅ Equipotencia como relación de equivalencia: `equipotent_refl`, `equipotent_symm`, `equipotent_trans`
   - ✅ Propiedades de finitud: `empty_is_finite`, `nat_is_finite`, `singleton_is_finite`, `finite_equipotent`, `finite_union_singleton`
-  - ✅ Namespace `SetUniverse.FiniteSets` (exportado a `SetUniverse`, 22 exports)
+  - ✅ Namespace `ZFC.FiniteSets` (exportado a `ZFC`, 22 exports)
   - ✅ Build limpio; 39/39 módulos compilados correctamente (0 sorry, 0 errores)
 
 - **REFERENCE.md — Proyección completa de FiniteSets.lean**:
@@ -115,7 +124,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
   - ✅ 3 teoremas de secuencia vacía: `isFinSeq_empty`, `isFinSeq_zero_unique`, `FinSeqSet_zero`
   - ✅ 5 teoremas de appendElem: `appendElem_is_specified`, `isFinSeq_appendElem`, `appendElem_apply_last`, `appendElem_apply_prev`, `appendElem_inj`
   - ✅ 1 teorema de descomposición: `isFinSeq_restriction`
-  - ✅ Namespace `SetUniverse.FiniteSequences` (sin export a `SetUniverse`)
+  - ✅ Namespace `ZFC.FiniteSequences` (sin export a `ZFC`)
   - ✅ Build limpio; 38/38 módulos compilados correctamente (0 sorry, 0 errores)
 
 - **REFERENCE.md — Proyección completa de FiniteSequences.lean**:
@@ -132,7 +141,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
   - ✅ `minOf (n m : U) : U` — mínimo vía `fromPeano (Peano.MaxMin.min (toPeano n _) (toPeano m _))`
   - ✅ `fromPeano_max`, `fromPeano_min` — teoremas puente
   - ✅ 27 teoremas: idempotencia, conmutatividad, asociatividad, identidad/aniquilador con ∅, cotas sup/inf, caracterización vía ≤, max/min es uno de los argumentos, max=min⇔iguales
-  - ✅ 31 exports al namespace `SetUniverse`
+  - ✅ 31 exports al namespace `ZFC`
   - ✅ Build limpio; 37/37 módulos compilados correctamente
 
 - **Nuevo módulo NaturalNumbersNewtonBinom.lean — Teorema binomial de Newton en ω** (Patrón B, bridge-only, 4 argumentos):
@@ -140,13 +149,13 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
   - ✅ `fromPeano_binomTerm` — teorema puente con 4 argumentos (`congr 1` ×4)
   - ✅ 9 teoremas: valores concretos (k=0, k=n), expansión, separación de potencias n^(m+k)=n^m·n^k, Newton's binomial theorem (Peano→ZFC), Σ C(n,k)=2^n (Peano→ZFC), comparación de crecimiento existencial
   - ✅ **Decisión de diseño**: `finSum` (función de orden superior) no se transporta a ZFC; `newton_binom_peano` y `sum_binom_eq_pow_two_peano` usan tipos Peano con resultado aplicado vía `fromPeano`
-  - ✅ 12 exports al namespace `SetUniverse`
+  - ✅ 12 exports al namespace `ZFC`
 
 - **Nuevo módulo NaturalNumbersWellFounded.lean — Buen fundamento y buena ordenación en ω** (Patrón B, bridge-only):
   - ✅ `acc_lt_Omega (n : U)` — accesibilidad bajo ∈ restringido a ω, delegando a `nat_mem_wf.apply n`
   - ✅ `well_ordering_Omega (P : U → Prop)` — principio de buena ordenación con unicidad: todo subconjunto no vacío de ω tiene un mínimo único, transportado desde `Peano.WellFounded.well_ordering_principle`
   - ✅ `well_ordering_Omega_exists` — forma simplificada sin unicidad
-  - ✅ 3 exports al namespace `SetUniverse`
+  - ✅ 3 exports al namespace `ZFC`
 
 - **REFERENCE.md — Proyección completa de 3 módulos**:
   - ✅ §1.1: 3 filas añadidas (MaxMin, NewtonBinom, WellFounded)

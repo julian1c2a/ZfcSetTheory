@@ -7,7 +7,7 @@ License: MIT
 import Init.Classical
 import ZfcSetTheory.Core.Prelim
 
-namespace SetUniverse
+namespace ZFC
   open Classical
   universe u
   variable {U : Type u}
@@ -233,10 +233,10 @@ namespace SetUniverse
       ∀ (z: U), z ∈ X ↔ ∀ (y: U), y ∈ x → z ∈ y
 
   end ExtensionAxiom
-end SetUniverse
+end ZFC
 
-export SetUniverse (mem)
-export SetUniverse.ExtensionAxiom (
+export ZFC (mem)
+export ZFC.ExtensionAxiom (
     ExtSet ExtSetReverse ExtSet_wc EqualityOfSubset
     subseteq subseteq_reflexive subseteq_transitive subseteq_antisymmetric
     disjoint disjoint_symm disjoint_is_empty disjoint_is_empty_wc

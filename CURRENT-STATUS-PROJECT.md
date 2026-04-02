@@ -27,7 +27,7 @@ This project implements ZFC set theory in Lean 4, focusing on fundamental axioms
 - `UnionSet_is_supremumIn_PowerSet`, `interSet_is_infimumIn_PowerSet` — ⋃ es sup e ⋂ es inf en 𝒫(A)
 - `PowerSet_is_complete_lattice` — 𝒫(A) es retículo completo
 - `PowerSet_is_complete_atomic_BA` — 𝒫(A) es álgebra booleana completa atómica
-- 4 definiciones + 11 teoremas + 15 exports a `SetUniverse`
+- 4 definiciones + 11 teoremas + 15 exports a `ZFC`
 - Proyección en REFERENCE.md: ❌ Pendiente
 
 #### 2. FiniteCofinite.lean — Álgebra finita/cofinita, contraejemplo no completo (✅ Complete)
@@ -37,7 +37,7 @@ This project implements ZFC set theory in Lean 4, focusing on fundamental axioms
 - `even_or_odd`, `even_ne_odd`, `EvenSet_infinite`, `OddSet_infinite` — paridad en ω
 - `FinCofAlg_empty`, `FinCofAlg_universe`, `FinCofAlg_complement`, `FinCofAlg_union`, `FinCofAlg_inter` — estructura de álgebra booleana
 - `EvenSet_not_in_FinCofAlg`, `FinCofAlg_not_complete` — FinCofAlg(ω) NO es retículo completo
-- 4 definiciones + 19 teoremas + 22 exports a `SetUniverse`
+- 4 definiciones + 19 teoremas + 22 exports a `ZFC`
 - Proyectado en REFERENCE.md §3.40, §4.36, §6.37
 
 #### 3. FiniteSequencesBridge.lean — Puente DList ↔ ZFC y TFA nativo (✅ Complete)
@@ -49,7 +49,7 @@ This project implements ZFC set theory in Lean 4, focusing on fundamental axioms
 - 15 teoremas en 7 secciones: nth (5), seqProd recursion (3), seqProd extensionality (1), DList→ZFC bridge (4), seqProd correspondence (1), isPrimeSeq (1), TFA native (2)
   - `tfa_exists_native` — TFA con secuencias ZFC-nativas
   - `tfa_unique_native` — Unicidad TFA con secuencias ZFC-nativas
-- 23 exports a `SetUniverse`; proyectado en REFERENCE.md §3.39, §4.35, §6.36
+- 23 exports a `ZFC`; proyectado en REFERENCE.md §3.39, §4.35, §6.36
 
 ### Previous Updates (March 30, 2026)
 
@@ -62,7 +62,7 @@ This project implements ZFC set theory in Lean 4, focusing on fundamental axioms
 - `familyProduct (F n : U) : U` — producto cartesiano Π_{i<n} F(i)
 - `card_product_two` — |A ×ₛ B| = |A| · |B| para conjuntos finitos
 - `card_familyProduct` — |Π_{i<n} F(i)| = Π_{i<n} |F(i)| (inducción ZFC completa)
-- 7 definiciones + 18 teoremas + 33 exports a `SetUniverse`
+- 7 definiciones + 18 teoremas + 33 exports a `ZFC`
 - Proyectado en REFERENCE.md §3.38, §4.34, §6.35
 
 ### Previous Updates (March 29, 2026)
@@ -73,7 +73,7 @@ This project implements ZFC set theory in Lean 4, focusing on fundamental axioms
 - Infraestructura de biyecciones: identidad (`id_is_bijection`), inversa (`bijection_inverse_is_bijection`), composición (`comp_bijection`)
 - Equipotencia como relación de equivalencia: `equipotent_refl`, `equipotent_symm`, `equipotent_trans`
 - Propiedades de finitud: `empty_is_finite`, `nat_is_finite`, `singleton_is_finite`, `finite_equipotent`, `finite_union_singleton`
-- 1 definición + 21 teoremas + 22 exports a `SetUniverse`
+- 1 definición + 21 teoremas + 22 exports a `ZFC`
 - Proyectado en REFERENCE.md §3.37, §4.33, §6.34
 
 ### Previous Updates (March 27, 2026)
@@ -84,7 +84,7 @@ This project implements ZFC set theory in Lean 4, focusing on fundamental axioms
 - `FinSeqSet (n A : U) : U` — conjunto de todas las n-secuencias en A
 - `appendElem (f n a : U) : U` — extensión f ∪ {⟨n, a⟩}
 - 15 teoremas: predicado central (8), FinSeqSet (2), secuencia vacía (3), appendElem (5), descomposición (1)
-- Namespace `SetUniverse.FiniteSequences` (sin export a `SetUniverse`)
+- Namespace `ZFC.FiniteSequences` (sin export a `ZFC`)
 - Proyectado en REFERENCE.md §3.36, §4.32, §6.33
 
 ### Previous Updates (March 26, 2026)

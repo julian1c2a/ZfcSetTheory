@@ -537,7 +537,7 @@ El patrón `X_is_specified` se reemplaza por `mem_X_iff` (describe el contenido)
 
 ## 5. Nota sobre la Transición
 
-Durante la migración (`SetUniverse` → `ZFC`), los nombres actuales se renombrarán progresivamente
+Durante la migración (`ZFC` → `ZFC`), los nombres actuales se renombrarán progresivamente
 siguiendo estas convenciones. El orden de prioridad es:
 
 1. Módulos base (axiomas): `Extension`, `Specification`, `Union`, `PowerSet`

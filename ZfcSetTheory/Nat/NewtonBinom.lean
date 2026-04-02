@@ -40,7 +40,7 @@ import ZfcSetTheory.Nat.Pow
 import ZfcSetTheory.Nat.Binom
 import PeanoNatLib.PeanoNatNewtonBinom
 
-namespace SetUniverse
+namespace ZFC
   open Classical
 
   universe u
@@ -270,4 +270,4 @@ namespace SetUniverse
     exists_nm_growth_Omega
   )
 
-end SetUniverse
+end ZFC

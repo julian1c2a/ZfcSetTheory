@@ -43,7 +43,7 @@ import ZfcSetTheory.Nat.Arith
 import ZfcSetTheory.Nat.Gcd
 import PeanoNatLib.PeanoNatPrimes
 
-namespace SetUniverse
+namespace ZFC
   open Classical
 
   universe u
@@ -236,4 +236,4 @@ namespace SetUniverse
     unique_prime_factorization_ZFC
   )
 
-end SetUniverse
+end ZFC

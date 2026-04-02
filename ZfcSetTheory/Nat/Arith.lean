@@ -37,21 +37,21 @@ import ZfcSetTheory.Nat.Sub
 import ZfcSetTheory.Nat.Div
 import PeanoNatLib.PeanoNatArith
 
-namespace SetUniverse
+namespace ZFC
   open Classical
-  open SetUniverse.ExtensionAxiom
-  open SetUniverse.ExistenceAxiom
-  open SetUniverse.SpecificationAxiom
-  open SetUniverse.PairingAxiom
-  open SetUniverse.UnionAxiom
-  open SetUniverse.PowerSetAxiom
-  open SetUniverse.OrderedPairExtensions
-  open SetUniverse.CartesianProduct
-  open SetUniverse.Relations
-  open SetUniverse.Functions
-  open SetUniverse.Cardinality
-  open SetUniverse.NaturalNumbers
-  open SetUniverse.InfinityAxiom
+  open ZFC.ExtensionAxiom
+  open ZFC.ExistenceAxiom
+  open ZFC.SpecificationAxiom
+  open ZFC.PairingAxiom
+  open ZFC.UnionAxiom
+  open ZFC.PowerSetAxiom
+  open ZFC.OrderedPairExtensions
+  open ZFC.CartesianProduct
+  open ZFC.Relations
+  open ZFC.Functions
+  open ZFC.Cardinality
+  open ZFC.NaturalNumbers
+  open ZFC.InfinityAxiom
   -- Note: PeanoIsomorphism is NOT opened here to avoid ΠZ notation ambiguity.
 
   universe u
@@ -856,4 +856,4 @@ namespace SetUniverse
     bezout_natform_Omega
   )
 
-end SetUniverse
+end ZFC

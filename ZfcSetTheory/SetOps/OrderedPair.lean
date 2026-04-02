@@ -13,14 +13,14 @@ import ZfcSetTheory.Axiom.Pairing
 import ZfcSetTheory.Axiom.Union
 import ZfcSetTheory.Axiom.PowerSet
 
-namespace SetUniverse
+namespace ZFC
   open Classical
-  open SetUniverse.ExtensionAxiom
-  open SetUniverse.ExistenceAxiom
-  open SetUniverse.SpecificationAxiom
-  open SetUniverse.PairingAxiom
-  open SetUniverse.UnionAxiom
-  open SetUniverse.PowerSetAxiom
+  open ZFC.ExtensionAxiom
+  open ZFC.ExistenceAxiom
+  open ZFC.SpecificationAxiom
+  open ZFC.PairingAxiom
+  open ZFC.UnionAxiom
+  open ZFC.PowerSetAxiom
   universe u
   variable {U : Type u}
 
@@ -92,9 +92,9 @@ namespace SetUniverse
         | inr hw_eq_b => rw [hw_eq_b]; exact Or.inr hb
 
   end OrderedPairExtensions
-end SetUniverse
+end ZFC
 
-export SetUniverse.OrderedPairExtensions (
+export ZFC.OrderedPairExtensions (
   OrderedPair_eq_of
   OrderedPair_eq_iff
   OrderedPair_in_PowerSet

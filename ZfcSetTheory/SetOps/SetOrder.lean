@@ -12,13 +12,13 @@ import ZfcSetTheory.Axiom.Specification
 import ZfcSetTheory.Axiom.Pairing
 import ZfcSetTheory.Axiom.Union
 
-namespace SetUniverse
+namespace ZFC
   open Classical
-  open SetUniverse.ExtensionAxiom
-  open SetUniverse.ExistenceAxiom
-  open SetUniverse.SpecificationAxiom
-  open SetUniverse.PairingAxiom
-  open SetUniverse.UnionAxiom
+  open ZFC.ExtensionAxiom
+  open ZFC.ExistenceAxiom
+  open ZFC.SpecificationAxiom
+  open ZFC.PairingAxiom
+  open ZFC.UnionAxiom
   universe u
   variable {U : Type u}
 
@@ -164,9 +164,9 @@ namespace SetUniverse
 
   end SetOrder
 
-end SetUniverse
+end ZFC
 
-export SetUniverse.SetOrder (
+export ZFC.SetOrder (
     empty_is_minimum empty_is_unique_minimum
     isUpperBound isLowerBound isSupremum isInfimum
     isBoundedAbove isBoundedBelow any_family_bounded_below

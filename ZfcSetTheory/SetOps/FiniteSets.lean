@@ -32,21 +32,21 @@ This module also develops infrastructure for bijections and equipotence:
 import ZfcSetTheory.Nat.Basic
 import ZfcSetTheory.Axiom.Infinity
 
-namespace SetUniverse
+namespace ZFC
   open Classical
-  open SetUniverse.ExtensionAxiom
-  open SetUniverse.ExistenceAxiom
-  open SetUniverse.SpecificationAxiom
-  open SetUniverse.PairingAxiom
-  open SetUniverse.UnionAxiom
-  open SetUniverse.PowerSetAxiom
-  open SetUniverse.OrderedPairExtensions
-  open SetUniverse.CartesianProduct
-  open SetUniverse.Relations
-  open SetUniverse.Functions
-  open SetUniverse.Cardinality
-  open SetUniverse.NaturalNumbers
-  open SetUniverse.InfinityAxiom
+  open ZFC.ExtensionAxiom
+  open ZFC.ExistenceAxiom
+  open ZFC.SpecificationAxiom
+  open ZFC.PairingAxiom
+  open ZFC.UnionAxiom
+  open ZFC.PowerSetAxiom
+  open ZFC.OrderedPairExtensions
+  open ZFC.CartesianProduct
+  open ZFC.Relations
+  open ZFC.Functions
+  open ZFC.Cardinality
+  open ZFC.NaturalNumbers
+  open ZFC.InfinityAxiom
   universe u
   variable {U : Type u}
 
@@ -755,4 +755,4 @@ namespace SetUniverse
     finite_cardinality_unique
   )
 
-end SetUniverse
+end ZFC
