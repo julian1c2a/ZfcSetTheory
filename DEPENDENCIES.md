@@ -1,7 +1,9 @@
 # Diagrama de Dependencias - ZfcSetTheory
 
-**Última actualización:** 2026-04-01
+**Última actualización:** 2026-04-02
 **Autor**: Julián Calderón Almendros
+
+> **Nota (Fase 3, 2026-04-02):** Los identificadores del proyecto han sido renombrados según convenciones Mathlib. Los nombres en las secciones "Exports por Módulo" pueden reflejar nombres anteriores; consultar REFERENCE.md §0 para la tabla completa de renombramientos.
 
 ## Estructura General del Proyecto
 
@@ -10,16 +12,16 @@ ZfcSetTheory/
 ├── Prelim.lean                          # Definiciones preliminares
 ├── Extension.lean                       # Axioma de Extensionalidad
 ├── Existence.lean                       # Axioma de Existencia (conjunto vacío)
-├── Specification.lean                   # Axioma de Especificación
+├── Specification.lean                   # Axioma de Especificación (sep, inter, sdiff)
 ├── Pairing.lean                         # Axioma de Pares
-├── Union.lean                           # Axioma de Unión + Unión Binaria + Diferencia Simétrica
+├── Union.lean                           # Axioma de Unión + union (∪) + symmDiff (△)
 ├── PowerSet.lean                        # Axioma del Conjunto Potencia
 ├── OrderedPair.lean                     # Extensiones del Par Ordenado
 ├── SetOps.CartesianProduct.lean                # Producto Cartesiano A ×ₛ B
 ├── Relations.lean                       # Relaciones: equivalencia, orden, clases, dominio, rango
 ├── Functions.lean                       # Funciones, aplicación, composición, inversa
 ├── Infinity.lean                        # Axioma del Infinito y conjunto ω (nat_mem_wf)
-├── Nat.Basic.lean                  # Números naturales como ordinales de von Neumann
+├── Nat.Basic.lean                  # Números naturales (IsNat, succ, pred)
 ├── Recursion.lean                       # Teorema de Recursión sobre ℕ
 ├── PeanoImport.lean                     # Isomorfismo Von Neumann ↔ Peano
 ├── Nat.Add.lean               # Suma en ω vía RecursiveFn + puente Peano
@@ -40,8 +42,8 @@ ZfcSetTheory/
 ├── Peano.FiniteSequencesBridge.lean           # Puente DList ↔ ZFC, nth, isPrimeSeq, TFA nativo
 ├── SetOps.FiniteSets.lean                      # Conjuntos finitos en ZFC
 ├── BoolAlg.Basic.lean                  # Álgebra Booleana de conjuntos (teoremas)
-├── BoolAlg.Ring.lean                     # Anillo Booleano con SymDiff
-├── BoolAlg.PowerSetAlgebra.lean                 # Álgebra del conjunto potencia (complemento, De Morgan)
+├── BoolAlg.Ring.lean                     # Anillo Booleano con symmDiff
+├── BoolAlg.PowerSetAlgebra.lean                 # Álgebra del conjunto potencia (complemento, compl_*)
 ├── BoolAlg.GenDeMorgan.lean             # Leyes de De Morgan generalizadas para familias
 ├── BoolAlg.GenDistributive.lean         # Leyes distributivas generalizadas
 ├── BoolAlg.Atomic.lean            # Álgebra de Boole atómica
@@ -259,7 +261,7 @@ namespace ZFC.Axiom.Existence
 ```lean
 namespace ZFC.Axiom.Specification
   -- Axioma de Especificación/Separación
-  -- Definiciones: SpecSet, BinInter (∩), Difference (\)
+  -- Definiciones: sep, inter (∩), sdiff (\)
   -- Teoremas: propiedades de intersección y diferencia
 ```
 
@@ -277,7 +279,7 @@ namespace ZFC.Axiom.Pairing
 ```lean
 namespace ZFC.Axiom.Union
   -- Axioma de Unión
-  -- Definiciones: UnionSet (⋃), BinUnion (∪), SymDiff (△)
+  -- Definiciones: sUnion (⋃), union (∪), symmDiff (△)
   -- Teoremas: propiedades de unión de familias y binaria
 ```
 
@@ -286,7 +288,7 @@ namespace ZFC.Axiom.Union
 ```lean
 namespace ZFC.Axiom.PowerSet
   -- Axioma del Conjunto Potencia
-  -- Definiciones: PowerSetOf (𝒫)
+  -- Definiciones: powerset (𝒫)
   -- Teoremas: caracterización, monotonía, propiedades con ∩ y ∪
 ```
 
@@ -342,7 +344,7 @@ namespace ZFC.Axiom.Infinity
 ```lean
 namespace ZFC.Nat.Basic
   -- Números naturales como ordinales de von Neumann
-  -- Definiciones: isNatural, ℕ (conjunto omega), successor
+  -- Definiciones: IsNat, ℕ (conjunto omega), succ
   -- Teoremas: propiedades de números naturales, inducción
 ```
 
@@ -391,7 +393,7 @@ namespace ZFC.BoolAlg.Basic
 namespace ZFC.BoolAlg.PowerSetAlgebra
   -- Álgebra del conjunto potencia
   -- Definiciones: Complement (X^∁[ A ]), ComplementFamily
-  -- Teoremas: double_complement, DeMorgan_union_family, DeMorgan_inter_family
+  -- Teoremas: compl_compl, compl_union_family, compl_inter_family
 ```
 
 ### 17. **ZFC.BoolAlg.Ring**

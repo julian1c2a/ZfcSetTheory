@@ -1,6 +1,6 @@
 # Next Steps — ZfcSetTheory Project
 
-**Last updated**: 2026-04-01
+**Last updated**: 2026-04-02
 
 This document outlines actionable next steps for the project, organized by priority and dependency.
 
@@ -116,15 +116,19 @@ Per ReflexionesParaLaIA.md [5], [12]. Rosser's strengthened form. Requires encod
 
 ---
 
-## 9. Project Reorganization — Future
+## 9. Project Reorganization — Partially Complete
 
-Per ReflexionesParaLaIA.md [14]. Restructure into clear module hierarchies:
+Phases 1–3 completed (April 2026):
 
-- `ZfcSetTheory.Core` (axioms, basic set operations)
-- `ZfcSetTheory.Algebra` (Boolean algebras, rings, lattices)
-- `ZfcSetTheory.Arithmetic` (ω, operations, TFA)
-- `ZfcSetTheory.NumberSystems` (ℤ, ℚ, ℝ)
-- `ZfcSetTheory.Ordinals` (ordinal arithmetic, transfinite recursion)
+- ✅ **Phase 1**: Directory structure — 43 files moved to 8 thematic subdirectories
+- ✅ **Phase 2**: Namespace `SetUniverse` → `ZFC` + sub-namespaces aligned with directories
+- ✅ **Phase 3**: Identifier renaming per Mathlib conventions (185 renames across 40 files)
+
+Remaining:
+
+- **Phase 4**: Annotation system (@importance, @axiom_system)
+
+All identifiers now follow Mathlib naming conventions: `sep`, `inter`, `union`, `sdiff`, `sUnion`, `symmDiff`, `powerset`, `succ`, `comp`, `subset` (⊆), `ssubset` (⊂), `IsNat`, `IsInductive`, `IsFunction`, `_comm`, `_assoc`, `mem_X_iff`, etc.
 
 ---
 
@@ -137,8 +141,11 @@ Per ReflexionesParaLaIA.md [14]. Restructure into clear module hierarchies:
 | ~~**3**~~ | ~~MaxMin + NewtonBinom + WellFounded~~ | ~~3 modules~~ | ✅ Complete 2026-03-26 |
 | **4** | Complete atomic Boolean algebra + representation (2/6 done) | Extension of `BoolAlg.Atomic.lean` or new module | `BoolAlg.Atomic`, `Cardinality` |
 | ~~**5**~~ | ~~Finite sets in ZFC~~ | ~~`SetOps.FiniteSets.lean`~~ | ✅ Complete 2026-03-29 |
-| **6** | Finite sequences in ZFC (remaining: concat, length, nth, DList bridge) | Extension of `Peano.FiniteSequences.lean` | `Peano.FiniteSequences`, `Peano.FiniteSequencesArith` |
+| ~~**6**~~ | ~~Finite sequences in ZFC~~ | ~~3 modules~~ | ✅ Complete 2026-03-30 |
+| ~~**7**~~ | ~~Project reorganization (Phases 1–3)~~ | ~~40 files renamed~~ | ✅ Complete 2026-04-02 |
+| **8** | Representation theorem (complete atomic BA ≅ 𝒫(A)) | New module | `BoolAlg.Atomic`, `Cardinality` |
+| **9** | Phase 4: annotation system | All modules | — |
 
 ---
 
-*Updated 2026-04-01. All peanolib bridge modules complete. Peano.FiniteSequences basic theory complete. Peano.FiniteSequencesArith complete (7 def + 18 theorems + 33 exports: seqSum, seqProd, familyProduct, card_familyProduct). SetOps.FiniteSets complete (1 def + 21 theorems). BoolAlg.Complete complete (𝒫(A) is complete atomic BA). BoolAlg.FiniteCofinite complete (FinCofAlg(ω) is Boolean algebra but NOT complete lattice). Next focus: representation theorem, Boolean ring↔BA functor, finite power set cardinality.*
+*Updated 2026-04-02. All peanolib bridge modules complete. Peano.FiniteSequences basic theory complete. Peano.FiniteSequencesArith complete (7 def + 18 theorems + 33 exports: seqSum, seqProd, familyProduct, card_familyProduct). SetOps.FiniteSets complete (1 def + 21 theorems). BoolAlg.Complete complete (𝒫(A) is complete atomic BA). BoolAlg.FiniteCofinite complete (FinCofAlg(ω) is Boolean algebra but NOT complete lattice). Project reorganization Phases 1–3 complete (directory structure, namespaces, Mathlib naming conventions — 185 identifiers renamed). REFERENCE.md fully updated (43/43 modules projected, all identifiers renamed). Next focus: representation theorem, Boolean ring↔BA functor, finite power set cardinality, Phase 4 annotations.*

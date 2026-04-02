@@ -1,6 +1,6 @@
 # Current Status - ZfcSetTheory Project
 
-**Date**: 2026-04-01
+**Date**: 2026-04-02
 **Lean Version**: 4.28.0
 **Author**: Julián Calderón Almendros
 
@@ -14,7 +14,7 @@ This project implements ZFC set theory in Lean 4, focusing on fundamental axioms
 - **Compilation**: ✅ Successful (0 errors, 0 sorry)
 - **Complete proofs**: 100%
 - **Remaining `sorry`**: 0
-- **Documentation**: REFERENCE.md actualizado (42/43 módulos proyectados; BoolAlg.Complete.lean pendiente)
+- **Documentation**: REFERENCE.md actualizado (43/43 módulos proyectados, 185 identificadores renombrados según convención Mathlib)
 
 ## Recent Achievements
 
@@ -27,8 +27,7 @@ This project implements ZFC set theory in Lean 4, focusing on fundamental axioms
 - **Predicados → UpperCamelCase**: `isNat` → `IsNat`, `isInductive` → `IsInductive`, `isFunctionFromTo` → `IsFunction`, etc.
 - **Teoremas**: `_is_specified` → `mem_X_iff`, `_commutative` → `_comm`, `DeMorgan_*` → `compl_*`, etc.
 - Build limpio: 71 jobs, 0 errores
-
-### Previous Updates (April 1, 2026)
+- **Propagación a REFERENCE.md**: ✅ 185 identificadores actualizados, §0.5 marcado como completado
 
 #### 1. BoolAlg.Complete.lean — Álgebra booleana completa atómica (✅ Complete)
 
@@ -38,7 +37,7 @@ This project implements ZFC set theory in Lean 4, focusing on fundamental axioms
 - `PowerSet_is_complete_lattice` — 𝒫(A) es retículo completo
 - `PowerSet_is_complete_atomic_BA` — 𝒫(A) es álgebra booleana completa atómica
 - 4 definiciones + 11 teoremas + 15 exports a `ZFC`
-- Proyección en REFERENCE.md: ❌ Pendiente
+- Proyección en REFERENCE.md: ✅ Completado (§3.41, §4.37, §6.38)
 
 #### 2. BoolAlg.FiniteCofinite.lean — Álgebra finita/cofinita, contraejemplo no completo (✅ Complete)
 
@@ -234,7 +233,7 @@ This project implements ZFC set theory in Lean 4, focusing on fundamental axioms
 1. **Prelim.lean** — Base infrastructure (ExistsUnique)
 2. **Existence.lean** — Axiom of existence (∅)
 3. **Extension.lean** — Axiom of extensionality (⊆, ⊂, ⟂)
-4. **Specification.lean** — Axiom of specification (SpecSet, ∩, \)
+4. **Specification.lean** — Axiom of specification (sep, ∩, \)
 5. **Pairing.lean** — Axiom of pairing (pairs, OrderedPair, fst, snd, relations, functions)
 6. **Union.lean** — Axiom of union (⋃, ∪, △)
 7. **PowerSet.lean** — Axiom of power set (𝒫)
@@ -272,6 +271,8 @@ This project implements ZFC set theory in Lean 4, focusing on fundamental axioms
 39. **SetOps.FiniteSets.lean** — Finite sets in ZFC (isFiniteSet, bijection infrastructure, equipotence, 1 def + 21 theorems, 22 exports)
 40. **Peano.FiniteSequencesArith.lean** — Arithmetic of finite sequences (seqSum, seqProd, familyProduct, card_familyProduct, 7 def + 18 theorems, 33 exports)
 41. **Peano.FiniteSequencesBridge.lean** — DList ↔ ZFC bridge, nth, isPrimeSeq, TFA native (4 def + 15 theorems, 23 exports)
+42. **BoolAlg.Complete.lean** — Complete atomic Boolean algebra (𝒫(A) is complete lattice, 4 def + 11 theorems, 15 exports)
+43. **BoolAlg.FiniteCofinite.lean** — Finite/cofinite algebra counterexample (FinCofAlg(ω) NOT complete, 4 def + 19 theorems, 22 exports)
 
 ## Project Architecture
 
@@ -408,9 +409,9 @@ ZFC naturals use saturated subtraction: `m - n = 0` when `m ≤ n`. This matches
 
 ### Documentation
 
-- ✅ REFERENCE.md: 41 modules fully projected (mathematical descriptions + Lean 4 signatures)
+- ✅ REFERENCE.md: 43 modules fully projected (mathematical descriptions + Lean 4 signatures, Mathlib naming)
 - ✅ All exports documented with section references
-- ✅ AIDER-AI-GUIDE.md: complete development guide (14 requirements)
+- ✅ AIDER-AI-GUIDE.md: complete development guide (14 requirements + §23 naming conventions)
 - ✅ CHANGELOG.md, README.md, CURRENT-STATUS-PROJECT.md: up to date
 
 ## Tools and Workflow
@@ -432,9 +433,9 @@ At most ONE `.lean` file unlocked at a time. Pre-commit hook blocks commits touc
 
 ---
 
-**Last updated**: 2026-04-01
+**Last updated**: 2026-04-02
 **Author**: Julián Calderón Almendros
 **GitHub**: [@julian1c2a](https://github.com/julian1c2a)
 **License**: MIT License
 
-**Status**: ✅ **100% COMPLETE** — 41/41 modules, 0 sorry, full arithmetic in ω
+**Status**: ✅ **100% COMPLETE** — 43/43 modules, 0 sorry, full arithmetic in ω, Mathlib naming conventions
