@@ -66,7 +66,7 @@ namespace ZFC
 
     /-- `powFn m hm` is the ZFC function ω → ω that computes `m ^ ·`.
         Constructed via the Recursion Theorem with base `σ (∅:U)` (= 1 in ZFC) and
-        step `mulFn m hm` (so each successor step left-multiplies by `m`). -/
+        step `mulFn m hm` (so each succ step left-multiplies by `m`). -/
     noncomputable def powFn (m : U) (hm : m ∈ (ω : U)) : U :=
       RecursiveFn ω (σ (∅ : U)) (mulFn m hm)
         (succ_in_Omega (∅ : U) zero_in_Omega)
@@ -74,7 +74,7 @@ namespace ZFC
 
     /-- `powFn m hm` is a function from ω to ω. -/
     theorem powFn_is_function (m : U) (hm : m ∈ (ω : U)) :
-        isFunctionFromTo (powFn m hm) ω ω :=
+        IsFunction (powFn m hm) ω ω :=
       RecursiveFn_is_function ω (σ (∅ : U)) (mulFn m hm)
         (succ_in_Omega (∅ : U) zero_in_Omega)
         (mulFn_is_function m hm)
@@ -145,9 +145,9 @@ namespace ZFC
         -- Goal: mul (fromPeano (pow p q')) (fromPeano p) = pow (fromPeano p) (fromPeano (σ q'))
         rw [ih]
         -- Goal: mul (pow (fromPeano p) (fromPeano q')) (fromPeano p) =
-        --       pow (fromPeano p) (successor (fromPeano q'))
+        --       pow (fromPeano p) (succ (fromPeano q'))
         show mul (pow (fromPeano p : U) (fromPeano q' : U)) (fromPeano p : U) =
-             pow (fromPeano p : U) (successor (fromPeano q' : U))
+             pow (fromPeano p : U) (succ (fromPeano q' : U))
         rw [pow_succ (fromPeano p : U) (fromPeano q' : U)
                      (Nat_in_Omega _ (fromPeano_is_nat p))
                      (Nat_in_Omega _ (fromPeano_is_nat q'))]

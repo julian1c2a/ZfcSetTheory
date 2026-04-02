@@ -49,8 +49,8 @@ namespace ZFC
     -- Private helpers
     -- =========================================================================
 
-    /-- `toPeano n` gives the same value for any two proofs of `isNat n`. -/
-    private theorem toPeano_proof_irrel (n : U) (h1 h2 : isNat n) :
+    /-- `toPeano n` gives the same value for any two proofs of `IsNat n`. -/
+    private theorem toPeano_proof_irrel (n : U) (h1 h2 : IsNat n) :
         toPeano n h1 = toPeano n h2 :=
       fromPeano_injective ((fromPeano_toPeano n h1).trans (fromPeano_toPeano n h2).symm)
 

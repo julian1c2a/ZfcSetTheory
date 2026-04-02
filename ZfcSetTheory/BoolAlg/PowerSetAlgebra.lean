@@ -27,23 +27,23 @@ This file establishes that the power set forms a Boolean algebra.
 ## Main Theorems
 
 ### Identity Laws
-* `PowerSet_union_empty` - X ∪ ∅ = X
-* `PowerSet_inter_universe` - X ∩ A = X (for X ⊆ A)
+* `powerset_union_empty` - X ∪ ∅ = X
+* `powerset_inter_universe` - X ∩ A = X (for X ⊆ A)
 
 ### Complement Laws
-* `PowerSet_union_complement` - X ∪ X^∁[A] = A (for X ⊆ A)
-* `PowerSet_inter_complement` - X ∩ X^∁[A] = ∅
+* `powerset_union_complement` - X ∪ X^∁[A] = A (for X ⊆ A)
+* `powerset_inter_complement` - X ∩ X^∁[A] = ∅
 
 ### Distributive Laws
-* `PowerSet_union_distrib_inter` - X ∪ (Y ∩ Z) = (X ∪ Y) ∩ (X ∪ Z)
-* `PowerSet_inter_distrib_union` - X ∩ (Y ∪ Z) = (X ∩ Y) ∪ (X ∩ Z)
+* `powerset_union_distrib_inter` - X ∪ (Y ∩ Z) = (X ∪ Y) ∩ (X ∪ Z)
+* `powerset_inter_distrib_union` - X ∩ (Y ∪ Z) = (X ∩ Y) ∪ (X ∩ Z)
 
 ### De Morgan Laws
-* `PowerSet_DeMorgan_union` - (X ∪ Y)^∁[A] = X^∁[A] ∩ Y^∁[A]
-* `PowerSet_DeMorgan_inter` - (X ∩ Y)^∁[A] = X^∁[A] ∪ Y^∁[A]
+* `powerset_compl_union` - (X ∪ Y)^∁[A] = X^∁[A] ∩ Y^∁[A]
+* `powerset_compl_inter` - (X ∩ Y)^∁[A] = X^∁[A] ∪ Y^∁[A]
 
 ### Double Complement
-* `PowerSet_double_complement` - (X^∁[A])^∁[A] = X (for X ⊆ A)
+* `powerset_double_complement` - (X^∁[A])^∁[A] = X (for X ⊆ A)
 -/
 
 namespace ZFC
@@ -71,83 +71,83 @@ namespace ZFC
     /-- Specification for complement -/
     theorem Complement_is_specified (A X z : U) : z ∈ (X ^∁[ A ]) ↔ z ∈ A ∧ z ∉ X := by
       unfold Complement
-      rw [Difference_is_specified]
+      rw [mem_sdiff_iff]
 
     /-! ### Closure Properties -/
 
     /-- Union of subsets is a subset -/
-    theorem union_mem_PowerSet (A X Y : U) (hX : X ∈ 𝒫 A) (hY : Y ∈ 𝒫 A) :
-        BinUnion X Y ∈ 𝒫 A := by
-      rw [PowerSet_is_specified] at hX hY ⊢
+    theorem union_mem_powerset (A X Y : U) (hX : X ∈ 𝒫 A) (hY : Y ∈ 𝒫 A) :
+        union X Y ∈ 𝒫 A := by
+      rw [mem_powerset_iff] at hX hY ⊢
       intro z hz
-      rw [BinUnion_is_specified] at hz
+      rw [mem_union_iff] at hz
       cases hz with
       | inl hzX => exact hX z hzX
       | inr hzY => exact hY z hzY
 
     /-- Intersection of subsets is a subset -/
-    theorem inter_mem_PowerSet (A X Y : U) (hX : X ∈ 𝒫 A) (_hY : Y ∈ 𝒫 A) :
-        BinInter X Y ∈ 𝒫 A := by
-      rw [PowerSet_is_specified] at hX ⊢
+    theorem inter_mem_powerset (A X Y : U) (hX : X ∈ 𝒫 A) (_hY : Y ∈ 𝒫 A) :
+        inter X Y ∈ 𝒫 A := by
+      rw [mem_powerset_iff] at hX ⊢
       intro z hz
-      rw [BinInter_is_specified] at hz
+      rw [mem_inter_iff] at hz
       exact hX z hz.1
 
     /-- Complement of a subset is a subset -/
-    theorem complement_mem_PowerSet (A X : U) (_hX : X ∈ 𝒫 A) :
+    theorem complement_mem_powerset (A X : U) (_hX : X ∈ 𝒫 A) :
         (X ^∁[ A ]) ∈ 𝒫 A := by
-      rw [PowerSet_is_specified]
+      rw [mem_powerset_iff]
       intro z hz
       rw [Complement_is_specified] at hz
       exact hz.1
 
     /-- Empty set is in power set -/
-    theorem empty_in_PowerSet (A : U) : ∅ ∈ 𝒫 A := empty_mem_PowerSet A
+    theorem empty_in_powerset (A : U) : ∅ ∈ 𝒫 A := empty_mem_powerset A
 
     /-- Universe is in its own power set -/
-    theorem universe_in_PowerSet (A : U) : A ∈ 𝒫 A := self_mem_PowerSet A
+    theorem universe_in_powerset (A : U) : A ∈ 𝒫 A := self_mem_powerset A
 
     /-! ### Identity Laws -/
 
     /-- Union identity: X ∪ ∅ = X -/
-    theorem PowerSet_union_empty (X : U) : BinUnion X ∅ = X := BinUnion_empty_right X
+    theorem powerset_union_empty (X : U) : union X ∅ = X := union_empty X
 
     /-- Union identity: ∅ ∪ X = X -/
-    theorem PowerSet_empty_union (X : U) : BinUnion ∅ X = X := BinUnion_empty_left X
+    theorem powerset_empty_union (X : U) : union ∅ X = X := empty_union X
 
     /-- Intersection with universe: X ∩ A = X for X ⊆ A -/
-    theorem PowerSet_inter_universe (A X : U) (hX : X ⊆ A) : BinInter X A = X := by
+    theorem powerset_inter_universe (A X : U) (hX : X ⊆ A) : inter X A = X := by
       apply ExtSet
       intro z
       constructor
       · intro hz
-        rw [BinInter_is_specified] at hz
+        rw [mem_inter_iff] at hz
         exact hz.1
       · intro hz
-        rw [BinInter_is_specified]
+        rw [mem_inter_iff]
         exact ⟨hz, hX z hz⟩
 
     /-- Intersection with universe: A ∩ X = X for X ⊆ A -/
-    theorem PowerSet_universe_inter (A X : U) (hX : X ⊆ A) : BinInter A X = X := by
-      rw [BinInter_commutative]
-      exact PowerSet_inter_universe A X hX
+    theorem powerset_universe_inter (A X : U) (hX : X ⊆ A) : inter A X = X := by
+      rw [inter_comm]
+      exact powerset_inter_universe A X hX
 
     /-! ### Complement Laws -/
 
     /-- Union complement: X ∪ X^∁[A] = A for X ⊆ A -/
-    theorem PowerSet_union_complement (A X : U) (hX : X ⊆ A) : BinUnion X (X ^∁[ A ]) = A := by
+    theorem powerset_union_complement (A X : U) (hX : X ⊆ A) : union X (X ^∁[ A ]) = A := by
       apply ExtSet
       intro z
       constructor
       · intro hz
-        rw [BinUnion_is_specified] at hz
+        rw [mem_union_iff] at hz
         cases hz with
         | inl hzX => exact hX z hzX
         | inr hzComp =>
           rw [Complement_is_specified] at hzComp
           exact hzComp.1
       · intro hzA
-        rw [BinUnion_is_specified]
+        rw [mem_union_iff]
         by_cases hzX : z ∈ X
         · left; exact hzX
         · right
@@ -155,12 +155,12 @@ namespace ZFC
           exact ⟨hzA, hzX⟩
 
     /-- Intersection complement: X ∩ X^∁[A] = ∅ -/
-    theorem PowerSet_inter_complement (A X : U) : BinInter X (X ^∁[ A ]) = ∅ := by
+    theorem powerset_inter_complement (A X : U) : inter X (X ^∁[ A ]) = ∅ := by
       apply ExtSet
       intro z
       constructor
       · intro hz
-        rw [BinInter_is_specified] at hz
+        rw [mem_inter_iff] at hz
         rw [Complement_is_specified] at hz
         exact absurd hz.1 hz.2.2
       · intro hz
@@ -169,86 +169,86 @@ namespace ZFC
     /-! ### Distributive Laws -/
 
     /-- Distributive: X ∪ (Y ∩ Z) = (X ∪ Y) ∩ (X ∪ Z) -/
-    theorem PowerSet_union_distrib_inter (X Y Z : U) :
-        BinUnion X (BinInter Y Z) = BinInter (BinUnion X Y) (BinUnion X Z) := by
+    theorem powerset_union_distrib_inter (X Y Z : U) :
+        union X (inter Y Z) = inter (union X Y) (union X Z) := by
       apply ExtSet
       intro w
       constructor
       · intro hw
-        rw [BinUnion_is_specified] at hw
-        rw [BinInter_is_specified]
+        rw [mem_union_iff] at hw
+        rw [mem_inter_iff]
         cases hw with
         | inl hwX =>
           constructor
-          · rw [BinUnion_is_specified]; left; exact hwX
-          · rw [BinUnion_is_specified]; left; exact hwX
+          · rw [mem_union_iff]; left; exact hwX
+          · rw [mem_union_iff]; left; exact hwX
         | inr hwYZ =>
-          rw [BinInter_is_specified] at hwYZ
+          rw [mem_inter_iff] at hwYZ
           constructor
-          · rw [BinUnion_is_specified]; right; exact hwYZ.1
-          · rw [BinUnion_is_specified]; right; exact hwYZ.2
+          · rw [mem_union_iff]; right; exact hwYZ.1
+          · rw [mem_union_iff]; right; exact hwYZ.2
       · intro hw
-        rw [BinInter_is_specified] at hw
-        rw [BinUnion_is_specified] at hw
-        rw [BinUnion_is_specified]
+        rw [mem_inter_iff] at hw
+        rw [mem_union_iff] at hw
+        rw [mem_union_iff]
         cases hw.1 with
         | inl hwX => left; exact hwX
         | inr hwY =>
-          rw [BinUnion_is_specified] at hw
+          rw [mem_union_iff] at hw
           cases hw.2 with
           | inl hwX => left; exact hwX
           | inr hwZ =>
             right
-            rw [BinInter_is_specified]
+            rw [mem_inter_iff]
             exact ⟨hwY, hwZ⟩
 
     /-- Distributive: X ∩ (Y ∪ Z) = (X ∩ Y) ∪ (X ∩ Z) -/
-    theorem PowerSet_inter_distrib_union (X Y Z : U) :
-        BinInter X (BinUnion Y Z) = BinUnion (BinInter X Y) (BinInter X Z) := by
+    theorem powerset_inter_distrib_union (X Y Z : U) :
+        inter X (union Y Z) = union (inter X Y) (inter X Z) := by
       apply ExtSet
       intro w
       constructor
       · intro hw
-        rw [BinInter_is_specified] at hw
-        rw [BinUnion_is_specified] at hw
-        rw [BinUnion_is_specified]
+        rw [mem_inter_iff] at hw
+        rw [mem_union_iff] at hw
+        rw [mem_union_iff]
         cases hw.2 with
         | inl hwY =>
           left
-          rw [BinInter_is_specified]
+          rw [mem_inter_iff]
           exact ⟨hw.1, hwY⟩
         | inr hwZ =>
           right
-          rw [BinInter_is_specified]
+          rw [mem_inter_iff]
           exact ⟨hw.1, hwZ⟩
       · intro hw
-        rw [BinUnion_is_specified] at hw
-        rw [BinInter_is_specified]
+        rw [mem_union_iff] at hw
+        rw [mem_inter_iff]
         cases hw with
         | inl hwXY =>
-          rw [BinInter_is_specified] at hwXY
+          rw [mem_inter_iff] at hwXY
           constructor
           · exact hwXY.1
-          · rw [BinUnion_is_specified]; left; exact hwXY.2
+          · rw [mem_union_iff]; left; exact hwXY.2
         | inr hwXZ =>
-          rw [BinInter_is_specified] at hwXZ
+          rw [mem_inter_iff] at hwXZ
           constructor
           · exact hwXZ.1
-          · rw [BinUnion_is_specified]; right; exact hwXZ.2
+          · rw [mem_union_iff]; right; exact hwXZ.2
 
     /-! ### De Morgan Laws -/
 
     /-- De Morgan: (X ∪ Y)^∁[A] = X^∁[A] ∩ Y^∁[A] -/
-    theorem PowerSet_DeMorgan_union (A X Y : U) :
-        (BinUnion X Y) ^∁[ A ] = BinInter (X ^∁[ A ]) (Y ^∁[ A ]) := by
+    theorem powerset_compl_union (A X Y : U) :
+        (union X Y) ^∁[ A ] = inter (X ^∁[ A ]) (Y ^∁[ A ]) := by
       apply ExtSet
       intro z
       constructor
       · intro hz
         rw [Complement_is_specified] at hz
-        rw [BinInter_is_specified]
+        rw [mem_inter_iff]
         have hzNotUnion := hz.2
-        rw [BinUnion_is_specified] at hzNotUnion
+        rw [mem_union_iff] at hzNotUnion
         -- Manually handle push_neg: ¬(z ∈ X ∨ z ∈ Y) ↔ z ∉ X ∧ z ∉ Y
         have hzNotX : z ∉ X := fun hzX => hzNotUnion (Or.inl hzX)
         have hzNotY : z ∉ Y := fun hzY => hzNotUnion (Or.inr hzY)
@@ -258,7 +258,7 @@ namespace ZFC
         · rw [Complement_is_specified]
           exact ⟨hz.1, hzNotY⟩
       · intro hz
-        rw [BinInter_is_specified] at hz
+        rw [mem_inter_iff] at hz
         -- hz : z ∈ (X ^∁[ A ]) ∧ z ∈ (Y ^∁[ A ])
         have hzAX := (Complement_is_specified A X z).mp hz.1
         have hzAY := (Complement_is_specified A Y z).mp hz.2
@@ -266,22 +266,22 @@ namespace ZFC
         constructor
         · exact hzAX.1
         · intro hzUnion
-          rw [BinUnion_is_specified] at hzUnion
+          rw [mem_union_iff] at hzUnion
           cases hzUnion with
           | inl hzX => exact hzAX.2 hzX
           | inr hzY => exact hzAY.2 hzY
 
     /-- De Morgan: (X ∩ Y)^∁[A] = X^∁[A] ∪ Y^∁[A] -/
-    theorem PowerSet_DeMorgan_inter (A X Y : U) :
-        (BinInter X Y) ^∁[ A ] = BinUnion (X ^∁[ A ]) (Y ^∁[ A ]) := by
+    theorem powerset_compl_inter (A X Y : U) :
+        (inter X Y) ^∁[ A ] = union (X ^∁[ A ]) (Y ^∁[ A ]) := by
       apply ExtSet
       intro z
       constructor
       · intro hz
         rw [Complement_is_specified] at hz
-        rw [BinUnion_is_specified]
+        rw [mem_union_iff]
         have hzNotInter := hz.2
-        rw [BinInter_is_specified] at hzNotInter
+        rw [mem_inter_iff] at hzNotInter
         -- Manually handle ¬(z ∈ X ∧ z ∈ Y) with case split
         by_cases hzX : z ∈ X
         · -- z ∈ X, so z ∉ Y (from ¬(z ∈ X ∧ z ∈ Y) and z ∈ X)
@@ -294,7 +294,7 @@ namespace ZFC
           rw [Complement_is_specified]
           exact ⟨hz.1, hzX⟩
       · intro hz
-        rw [BinUnion_is_specified] at hz
+        rw [mem_union_iff] at hz
         rw [Complement_is_specified]
         cases hz with
         | inl hzAX =>
@@ -302,53 +302,53 @@ namespace ZFC
           constructor
           · exact hzAX.1
           · intro hzInter
-            rw [BinInter_is_specified] at hzInter
+            rw [mem_inter_iff] at hzInter
             exact hzAX.2 hzInter.1
         | inr hzAY =>
           rw [Complement_is_specified] at hzAY
           constructor
           · exact hzAY.1
           · intro hzInter
-            rw [BinInter_is_specified] at hzInter
+            rw [mem_inter_iff] at hzInter
             exact hzAY.2 hzInter.2
 
     /-! ### Absorption Laws -/
 
     /-- Absorption: X ∪ (X ∩ Y) = X -/
-    theorem PowerSet_absorb_union_inter (X Y : U) : BinUnion X (BinInter X Y) = X := by
+    theorem powerset_absorb_union_inter (X Y : U) : union X (inter X Y) = X := by
       apply ExtSet
       intro z
       constructor
       · intro hz
-        rw [BinUnion_is_specified] at hz
+        rw [mem_union_iff] at hz
         cases hz with
         | inl hzX => exact hzX
         | inr hzXY =>
-          rw [BinInter_is_specified] at hzXY
+          rw [mem_inter_iff] at hzXY
           exact hzXY.1
       · intro hz
-        rw [BinUnion_is_specified]
+        rw [mem_union_iff]
         left
         exact hz
 
     /-- Absorption: X ∩ (X ∪ Y) = X -/
-    theorem PowerSet_absorb_inter_union (X Y : U) : BinInter X (BinUnion X Y) = X := by
+    theorem powerset_absorb_inter_union (X Y : U) : inter X (union X Y) = X := by
       apply ExtSet
       intro z
       constructor
       · intro hz
-        rw [BinInter_is_specified] at hz
+        rw [mem_inter_iff] at hz
         exact hz.1
       · intro hz
-        rw [BinInter_is_specified]
+        rw [mem_inter_iff]
         constructor
         · exact hz
-        · rw [BinUnion_is_specified]; left; exact hz
+        · rw [mem_union_iff]; left; exact hz
 
     /-! ### Double Complement -/
 
     /-- Double complement: (X^∁[A])^∁[A] = X for X ⊆ A -/
-    theorem PowerSet_double_complement (A X : U) (hX : X ⊆ A) :
+    theorem powerset_double_complement (A X : U) (hX : X ⊆ A) :
         (X ^∁[ A ]) ^∁[ A ] = X := by
       apply ExtSet
       intro z
@@ -374,50 +374,50 @@ namespace ZFC
     /-! ### Idempotence Laws -/
 
     /-- Idempotent: X ∪ X = X -/
-    theorem PowerSet_union_idempotent (X : U) : BinUnion X X = X := BinUnion_idem X
+    theorem powerset_union_idempotent (X : U) : union X X = X := union_self X
 
     /-- Idempotent: X ∩ X = X -/
-    theorem PowerSet_inter_idempotent (X : U) : BinInter X X = X := BinInter_idempotence X
+    theorem powerset_inter_idempotent (X : U) : inter X X = X := inter_self X
 
     /-! ### Commutativity -/
 
     /-- Commutative: X ∪ Y = Y ∪ X -/
-    theorem PowerSet_union_comm (X Y : U) : BinUnion X Y = BinUnion Y X := BinUnion_comm X Y
+    theorem powerset_union_comm (X Y : U) : union X Y = union Y X := union_comm X Y
 
     /-- Commutative: X ∩ Y = Y ∩ X -/
-    theorem PowerSet_inter_comm (X Y : U) : BinInter X Y = BinInter Y X := BinInter_commutative X Y
+    theorem powerset_inter_comm (X Y : U) : inter X Y = inter Y X := inter_comm X Y
 
     /-! ### Associativity -/
 
     /-- Associative: X ∪ (Y ∪ Z) = (X ∪ Y) ∪ Z -/
-    theorem PowerSet_union_assoc (X Y Z : U) : BinUnion X (BinUnion Y Z) = BinUnion (BinUnion X Y) Z :=
-      (BinUnion_assoc X Y Z).symm
+    theorem powerset_union_assoc (X Y Z : U) : union X (union Y Z) = union (union X Y) Z :=
+      (union_assoc X Y Z).symm
 
     /-- Associative: X ∩ (Y ∩ Z) = (X ∩ Y) ∩ Z -/
-    theorem PowerSet_inter_assoc (X Y Z : U) : BinInter X (BinInter Y Z) = BinInter (BinInter X Y) Z :=
-      (BinInter_associative X Y Z).symm
+    theorem powerset_inter_assoc (X Y Z : U) : inter X (inter Y Z) = inter (inter X Y) Z :=
+      (inter_assoc X Y Z).symm
 
     /-! ### Bounded Lattice Properties -/
 
     /-- Annihilation: X ∩ ∅ = ∅ -/
-    theorem PowerSet_inter_empty (X : U) : BinInter X ∅ = ∅ := BinInter_absorbent_elem X
+    theorem powerset_inter_empty (X : U) : inter X ∅ = ∅ := inter_empty X
 
     /-- Annihilation: ∅ ∩ X = ∅ -/
-    theorem PowerSet_empty_inter (X : U) : BinInter ∅ X = ∅ := by
-      rw [BinInter_commutative]
-      exact BinInter_absorbent_elem X
+    theorem powerset_empty_inter (X : U) : inter ∅ X = ∅ := by
+      rw [inter_comm]
+      exact inter_empty X
 
     /-! ### Complement of Extremes -/
 
     /-- Complement of empty: ∅^∁[A] = A -/
-    theorem PowerSet_complement_empty (A : U) : (∅ ^∁[ A ]) = A := by
+    theorem powerset_complement_empty (A : U) : (∅ ^∁[ A ]) = A := by
       unfold Complement
-      exact Difference_with_empty A
+      exact sdiff_empty A
 
     /-- Complement of universe: A^∁[A] = ∅ -/
-    theorem PowerSet_complement_universe (A : U) : (A ^∁[ A ]) = ∅ := by
+    theorem powerset_complement_universe (A : U) : (A ^∁[ A ]) = ∅ := by
       unfold Complement
-      exact Difference_self_empty A
+      exact sdiff_self A
 
   end BoolAlg.PowerSetAlgebra
 
@@ -426,32 +426,32 @@ end ZFC
 export ZFC.BoolAlg.PowerSetAlgebra (
     Complement
     Complement_is_specified
-    union_mem_PowerSet
-    inter_mem_PowerSet
-    complement_mem_PowerSet
-    empty_in_PowerSet
-    universe_in_PowerSet
-    PowerSet_union_empty
-    PowerSet_empty_union
-    PowerSet_inter_universe
-    PowerSet_universe_inter
-    PowerSet_union_complement
-    PowerSet_inter_complement
-    PowerSet_union_distrib_inter
-    PowerSet_inter_distrib_union
-    PowerSet_DeMorgan_union
-    PowerSet_DeMorgan_inter
-    PowerSet_absorb_union_inter
-    PowerSet_absorb_inter_union
-    PowerSet_double_complement
-    PowerSet_union_idempotent
-    PowerSet_inter_idempotent
-    PowerSet_union_comm
-    PowerSet_inter_comm
-    PowerSet_union_assoc
-    PowerSet_inter_assoc
-    PowerSet_inter_empty
-    PowerSet_empty_inter
-    PowerSet_complement_empty
-    PowerSet_complement_universe
+    union_mem_powerset
+    inter_mem_powerset
+    complement_mem_powerset
+    empty_in_powerset
+    universe_in_powerset
+    powerset_union_empty
+    powerset_empty_union
+    powerset_inter_universe
+    powerset_universe_inter
+    powerset_union_complement
+    powerset_inter_complement
+    powerset_union_distrib_inter
+    powerset_inter_distrib_union
+    powerset_compl_union
+    powerset_compl_inter
+    powerset_absorb_union_inter
+    powerset_absorb_inter_union
+    powerset_double_complement
+    powerset_union_idempotent
+    powerset_inter_idempotent
+    powerset_union_comm
+    powerset_inter_comm
+    powerset_union_assoc
+    powerset_inter_assoc
+    powerset_inter_empty
+    powerset_empty_inter
+    powerset_complement_empty
+    powerset_complement_universe
 )

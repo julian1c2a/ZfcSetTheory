@@ -11,7 +11,7 @@ License: MIT
 
   ## Strategy
 
-  Fix m ∈ ω. Define `addFn m hm := RecursiveFn ω m successorFn hm hsucc`, so that
+  Fix m ∈ ω. Define `addFn m hm := RecursiveFn ω m succFn hm hsucc`, so that
   `addFn m hm : ω → ω` satisfies:
     - (addFn m hm)(∅) = m
     - (addFn m hm)(σ n) = σ ((addFn m hm)(n))
@@ -59,60 +59,60 @@ namespace ZFC
   namespace Nat.Add
 
     -- =========================================================================
-    -- Section 1: The successor set-function ω → ω
+    -- Section 1: The succ set-function ω → ω
     -- =========================================================================
 
-    /-- The successor function as a ZFC set: `{⟨n, σ n⟩ | n ∈ ω} ⊆ ω ×ₛ ω`. -/
-    noncomputable def successorFn : U :=
-      SpecSet (ω ×ₛ ω) (fun p => ∃ n, n ∈ (ω : U) ∧ p = ⟨n, σ n⟩)
+    /-- The succ function as a ZFC set: `{⟨n, σ n⟩ | n ∈ ω} ⊆ ω ×ₛ ω`. -/
+    noncomputable def succFn : U :=
+      sep (ω ×ₛ ω) (fun p => ∃ n, n ∈ (ω : U) ∧ p = ⟨n, σ n⟩)
 
-    /-- The pair `⟨n, σ n⟩` belongs to `successorFn` for every `n ∈ ω`. -/
-    theorem mem_successorFn (n : U) (hn : n ∈ (ω : U)) :
-        (⟨n, σ n⟩ : U) ∈ (successorFn : U) := by
-      unfold successorFn
-      rw [SpecSet_is_specified]
+    /-- The pair `⟨n, σ n⟩` belongs to `succFn` for every `n ∈ ω`. -/
+    theorem mem_succFn (n : U) (hn : n ∈ (ω : U)) :
+        (⟨n, σ n⟩ : U) ∈ (succFn : U) := by
+      unfold succFn
+      rw [mem_sep_iff]
       exact ⟨(OrderedPair_mem_CartesianProduct n (σ n) ω ω).mpr
                ⟨hn, succ_in_Omega n hn⟩,
              n, hn, rfl⟩
 
-    /-- `successorFn` is a function from ω to ω. -/
-    theorem successorFn_is_function :
-        isFunctionFromTo (successorFn : U) ω ω := by
+    /-- `succFn` is a function from ω to ω. -/
+    theorem succFn_is_function :
+        IsFunction (succFn : U) ω ω := by
       constructor
       · intro p hp
-        unfold successorFn at hp
-        rw [SpecSet_is_specified] at hp
+        unfold succFn at hp
+        rw [mem_sep_iff] at hp
         exact hp.1
       · intro n hn
-        exact ⟨σ n, mem_successorFn n hn, fun y hy => by
+        exact ⟨σ n, mem_succFn n hn, fun y hy => by
           dsimp only at hy
-          unfold successorFn at hy
-          rw [SpecSet_is_specified] at hy
+          unfold succFn at hy
+          rw [mem_sep_iff] at hy
           obtain ⟨_, k, _, heq⟩ := hy
           obtain ⟨hn_eq_k, hy_eq⟩ :=
             Eq_of_OrderedPairs_given_projections n y k (σ k) heq
           rw [hy_eq, ← hn_eq_k]⟩
 
-    /-- Applying `successorFn` to any `n ∈ ω` yields `σ n`. -/
-    theorem successorFn_apply (n : U) (hn : n ∈ (ω : U)) :
-        apply (successorFn : U) n = σ n :=
-      apply_eq successorFn n (σ n)
-        (successorFn_is_function.2 n hn)
-        (mem_successorFn n hn)
+    /-- Applying `succFn` to any `n ∈ ω` yields `σ n`. -/
+    theorem succFn_apply (n : U) (hn : n ∈ (ω : U)) :
+        apply (succFn : U) n = σ n :=
+      apply_eq succFn n (σ n)
+        (succFn_is_function.2 n hn)
+        (mem_succFn n hn)
 
     -- =========================================================================
     -- Section 2: Addition on ω
     -- =========================================================================
 
     /-- `addFn m hm` is the ZFC function ω → ω that computes `m + ·`.
-        Constructed via the Recursion Theorem with base `m` and step `successorFn`. -/
+        Constructed via the Recursion Theorem with base `m` and step `succFn`. -/
     noncomputable def addFn (m : U) (hm : m ∈ (ω : U)) : U :=
-      RecursiveFn ω m successorFn hm successorFn_is_function
+      RecursiveFn ω m succFn hm succFn_is_function
 
     /-- `addFn m hm` is a function from ω to ω. -/
     theorem addFn_is_function (m : U) (hm : m ∈ (ω : U)) :
-        isFunctionFromTo (addFn m hm) ω ω :=
-      RecursiveFn_is_function ω m successorFn hm successorFn_is_function
+        IsFunction (addFn m hm) ω ω :=
+      RecursiveFn_is_function ω m succFn hm succFn_is_function
 
     /-- `add m n` = `m + n` in ZFC.
         Defined without a proof argument (defaults to ∅ when m ∉ ω) so that
@@ -145,18 +145,18 @@ namespace ZFC
     theorem add_zero (m : U) (hm : m ∈ (ω : U)) :
         add m ∅ = m := by
       simp only [add, dif_pos hm, addFn]
-      exact RecursiveFn_zero ω m successorFn hm successorFn_is_function
+      exact RecursiveFn_zero ω m succFn hm succFn_is_function
 
     /-- `add m (σ n) = σ (add m n)` for `m n ∈ ω`. -/
     theorem add_succ (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) :
         add m (σ n) = σ (add m n) := by
       simp only [add, dif_pos hm, addFn]
-      rw [RecursiveFn_succ ω m successorFn hm successorFn_is_function n hn]
-      have h_val_in : apply (RecursiveFn ω m successorFn hm successorFn_is_function) n ∈ ω := by
+      rw [RecursiveFn_succ ω m succFn hm succFn_is_function n hn]
+      have h_val_in : apply (RecursiveFn ω m succFn hm succFn_is_function) n ∈ ω := by
         have := add_in_Omega m n hm hn
         simp only [add, dif_pos hm, addFn] at this
         exact this
-      exact successorFn_apply _ h_val_in
+      exact succFn_apply _ h_val_in
 
     -- =========================================================================
     -- Section 4: Bridge theorem — fromPeano commutes with addition
@@ -166,7 +166,7 @@ namespace ZFC
         `fromPeano (Peano.Add.add p q) = add (fromPeano p) (fromPeano q)`.
 
         Proof: induction on `q`. The base uses `add_zero`; the step uses `add_succ`
-        and `successorFn_apply`. This allows all theorems of `Peano.Add` to be
+        and `succFn_apply`. This allows all theorems of `Peano.Add` to be
         transported to ZFC. -/
     theorem fromPeano_add (p q : Peano.ℕ₀) :
         (fromPeano (Peano.Add.add p q) : U) =
@@ -181,11 +181,11 @@ namespace ZFC
         rw [Peano.Add.add_succ]
         -- fromPeano (succ x) = σ (fromPeano x) by definition
         -- fromPeano (succ q') = σ (fromPeano q') by definition
-        show successor (fromPeano (Peano.Add.add p q') : U) =
-             add (fromPeano p) (successor (fromPeano q' : U))
+        show succ (fromPeano (Peano.Add.add p q') : U) =
+             add (fromPeano p) (succ (fromPeano q' : U))
         rw [add_succ _ _ (Nat_in_Omega _ (fromPeano_is_nat p))
                          (Nat_in_Omega _ (fromPeano_is_nat q'))]
-        exact congrArg successor ih
+        exact congrArg succ ih
 
     -- =========================================================================
     -- Section 5: Algebraic properties lifted from Peano
@@ -307,11 +307,11 @@ namespace ZFC
   end Nat.Add
 
   export Nat.Add (
-    -- Section 1: successorFn
-    successorFn
-    mem_successorFn
-    successorFn_is_function
-    successorFn_apply
+    -- Section 1: succFn
+    succFn
+    mem_succFn
+    succFn_is_function
+    succFn_apply
     -- Section 2: add
     addFn
     addFn_is_function

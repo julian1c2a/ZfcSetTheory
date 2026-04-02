@@ -91,7 +91,7 @@ namespace ZFC
     noncomputable def interSet (w : U) : U :=
       if h : ∃ y, y ∈ w then
         let y₀ := choose h
-        SpecSet y₀ (fun v => ∀ y, y ∈ w → v ∈ y)
+        sep y₀ (fun v => ∀ y, y ∈ w → v ∈ y)
       else
         ∅
 
@@ -136,7 +136,7 @@ namespace ZFC
         let y₀ := choose h_exists
         have hy₀ : y₀ ∈ ({A} : U) := choose_spec h_exists
         have hy₀_eq_A : y₀ = A := (Singleton_is_specified A y₀).mp hy₀
-        rw [SpecSet_is_specified] at hz_in_inter
+        rw [mem_sep_iff] at hz_in_inter
         let hA : A ∈ ({A} : U) := (Singleton_is_specified A A).mpr rfl
         exact (hz_in_inter.2 A) hA
       · intro hz_in_A
@@ -148,7 +148,7 @@ namespace ZFC
         have h_exists : ∃ y, y ∈ ({A} : U) := (nonempty_iff_exists_mem _).mp h_nonempty
         unfold interSet
         simp only [dif_pos h_exists]
-        rw [SpecSet_is_specified]
+        rw [mem_sep_iff]
         constructor
         · have hy₀ : choose h_exists ∈ ({A} : U) := choose_spec h_exists
           have hy₀_eq_A : choose h_exists = A := (Singleton_is_specified A _).mp hy₀
@@ -207,7 +207,7 @@ namespace ZFC
         have h_exists : ∃ elem, elem ∈ (⟨x, y⟩ : U) := (nonempty_iff_exists_mem _).mp h_nonempty
         unfold interSet at hz_in_inter
         simp only [dif_pos h_exists] at hz_in_inter
-        rw [SpecSet_is_specified] at hz_in_inter
+        rw [mem_sep_iff] at hz_in_inter
         exact hz_in_inter.2 {x} ((OrderedPair_is_specified x y {x}).mpr (Or.inl rfl))
       · intro hz_in_singleton
         have h_nonempty : ⟨x, y⟩ ≠ (∅ : U) := by
@@ -217,7 +217,7 @@ namespace ZFC
         have h_exists : ∃ elem, elem ∈ (⟨x, y⟩ : U) := (nonempty_iff_exists_mem _).mp h_nonempty
         unfold interSet
         simp only [dif_pos h_exists]
-        rw [SpecSet_is_specified]
+        rw [mem_sep_iff]
         constructor
         · have hz_eq_x : z = x := (Singleton_is_specified x z).mp hz_in_singleton
           have h_choose_spec := choose_spec h_exists
@@ -261,7 +261,7 @@ namespace ZFC
         := by
           apply ExtSet
           intro z
-          rw [Difference_is_specified,
+          rw [mem_sdiff_iff,
               OrderedPair_is_specified,
               Singleton_is_specified,
               Singleton_is_specified]
@@ -300,7 +300,7 @@ namespace ZFC
       (({x, y} : U) \ ({x} : U)) = ({y} : U) := by
       apply ExtSet
       intro z
-      rw [Difference_is_specified, PairSet_is_specified, Singleton_is_specified, Singleton_is_specified]
+      rw [mem_sdiff_iff, PairSet_is_specified, Singleton_is_specified, Singleton_is_specified]
       constructor
       · -- Dirección ->
         intro h_diff
@@ -361,7 +361,7 @@ namespace ZFC
           ((⟨ y , y ⟩ : U) \ ({{y}} : U) : U) = ((({({y} : U), ({y, y} : U)} : U) \ ({({y} : U)} : U)) : U) := by rfl
           _ = ((({({y} : U), ({y} : U)} : U)  \ ({({y} : U)} : U)) : U) := by rfl
           _ = ((({({y} : U)} : U)  \ ({({y} : U)} : U)) : U) := by rfl
-          _ = (∅ : U) := Difference_self_empty ({({y} : U)} : U)
+          _ = (∅ : U) := sdiff_self ({({y} : U)} : U)
       intro z hz_in_pair
       rw [h_eq] at hz_in_pair
       have h_1_eq_2 : ({y} : U) = ({y, y} : U) := by
@@ -401,7 +401,7 @@ namespace ZFC
           rw [h_pair_self_eq]
           -- El objetivo ahora es: ({{y}} \ {{y}}) = ∅
           -- Esto es cierto por la definición de diferencia de un conjunto consigo mismo.
-          exact Difference_self_empty {{y}}
+          exact sdiff_self {{y}}
 
     theorem ordered_pair_neq_mem (x y : U) :
       ∀ (z : U), (z ∈ (⟨x, y⟩ : U)) → (z = ({x, y} : U) ∨ (z = ({x} : U)))
@@ -417,7 +417,7 @@ namespace ZFC
         := by
           apply ExtSet
           intro z
-          rw [Difference_is_specified, OrderedPair_is_specified, Singleton_is_specified]
+          rw [mem_sdiff_iff, OrderedPair_is_specified, Singleton_is_specified]
           constructor
           · intro h
             have h_inter : (⋂ (⟨x, y⟩ : U)) = {x} := inter_of_ordered_pair x y

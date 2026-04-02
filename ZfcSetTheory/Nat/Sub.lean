@@ -71,14 +71,14 @@ namespace ZFC
         Since `predecessor (σ n) = n` and `predecessor ∅ = ∅`, this represents the
         saturated predecessor function on Von Neumann naturals. -/
     noncomputable def predecessorFn : U :=
-      SpecSet (ω ×ₛ ω) (fun p => ∃ n, n ∈ (ω : U) ∧ p = ⟨n, predecessor n⟩)
+      sep (ω ×ₛ ω) (fun p => ∃ n, n ∈ (ω : U) ∧ p = ⟨n, predecessor n⟩)
 
     /-- For `n ∈ ω`, the pair `⟨n, predecessor n⟩` belongs to `predecessorFn`. -/
     theorem mem_predecessorFn (n : U) (hn : n ∈ (ω : U)) :
         (⟨n, predecessor n⟩ : U) ∈ (predecessorFn : U) := by
       unfold predecessorFn
-      rw [SpecSet_is_specified]
-      have hn_nat : isNat n := mem_Omega_is_Nat n hn
+      rw [mem_sep_iff]
+      have hn_nat : IsNat n := mem_Omega_is_Nat n hn
       have hpred_in : predecessor n ∈ (ω : U) := by
         by_cases h : n = ∅
         · rw [h, predecessor_zero]; exact zero_in_Omega
@@ -89,17 +89,17 @@ namespace ZFC
 
     /-- `predecessorFn` is a function from ω to ω. -/
     theorem predecessorFn_is_function :
-        isFunctionFromTo (predecessorFn : U) ω ω := by
+        IsFunction (predecessorFn : U) ω ω := by
       constructor
       · intro p hp
         unfold predecessorFn at hp
-        rw [SpecSet_is_specified] at hp
+        rw [mem_sep_iff] at hp
         exact hp.1
       · intro n hn
         exact ⟨predecessor n, mem_predecessorFn n hn, fun y hy => by
           dsimp only at hy
           unfold predecessorFn at hy
-          rw [SpecSet_is_specified] at hy
+          rw [mem_sep_iff] at hy
           obtain ⟨_, k, _, heq⟩ := hy
           obtain ⟨hn_eq_k, hy_eq⟩ :=
             Eq_of_OrderedPairs_given_projections n y k (predecessor k) heq
@@ -124,7 +124,7 @@ namespace ZFC
 
     /-- `subFn m hm` is a function from ω to ω. -/
     theorem subFn_is_function (m : U) (hm : m ∈ (ω : U)) :
-        isFunctionFromTo (subFn m hm) ω ω :=
+        IsFunction (subFn m hm) ω ω :=
       RecursiveFn_is_function ω m predecessorFn hm predecessorFn_is_function
 
     /-- `sub m n` = saturated subtraction `m - n` in ZFC.
@@ -210,9 +210,9 @@ namespace ZFC
         simp only [Peano.τ]
         exact predecessor_zero
       | succ k =>
-        -- fromPeano (σ k) = successor (fromPeano k) definitionally
-        show predecessor (successor (fromPeano k : U)) = fromPeano k
-        exact predecessor_of_successor (fromPeano_is_nat k)
+        -- fromPeano (σ k) = succ (fromPeano k) definitionally
+        show predecessor (succ (fromPeano k : U)) = fromPeano k
+        exact predecessor_of_succ (fromPeano_is_nat k)
 
     -- =========================================================================
     -- Section 4: Bridge theorem — fromPeano commutes with subtraction
@@ -245,9 +245,9 @@ namespace ZFC
         -- IH: fromPeano (sub p q') = sub (fromPeano p) (fromPeano q')
         rw [ih]
         -- Goal: predecessor (sub (fromPeano p) (fromPeano q')) =
-        --       sub (fromPeano p) (successor (fromPeano q'))
+        --       sub (fromPeano p) (succ (fromPeano q'))
         show predecessor (sub (fromPeano p : U) (fromPeano q' : U)) =
-             sub (fromPeano p : U) (successor (fromPeano q' : U))
+             sub (fromPeano p : U) (succ (fromPeano q' : U))
         exact (sub_succ (fromPeano p) (fromPeano q')
                  (Nat_in_Omega _ (fromPeano_is_nat p))
                  (Nat_in_Omega _ (fromPeano_is_nat q'))).symm

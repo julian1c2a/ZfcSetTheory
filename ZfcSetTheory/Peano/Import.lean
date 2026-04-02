@@ -14,7 +14,7 @@ License: MIT
   This module establishes an isomorphism between the Von Neumann natural numbers
   defined in this project and the Peano natural numbers from the `peanolib` library.
 
-  Predecessor theorems (predecessorPos, predecessor_zero, successor_predecessorPos)
+  Predecessor theorems (predecessorPos, predecessor_zero, succ_predecessorPos)
   live in `ZFC.Nat.Basic` (Nat.Basic.lean).
 
   Order on ω (≺, ≼, natLt_*, natLe_*, Omega_has_min) lives in
@@ -49,7 +49,7 @@ namespace ZFC
     /-- Converts a Peano natural number to its Von Neumann representation. -/
     noncomputable def fromPeano : Peano.ℕ₀ → U
       | Peano.ℕ₀.zero    => (∅ : U)
-      | Peano.ℕ₀.succ n' => successor (fromPeano n')
+      | Peano.ℕ₀.succ n' => succ (fromPeano n')
 
     /-- `ΠZ p` : canonical embedding Peano ℕ → Von Neumann ℕ.
         Typed as `\PiZ` in the editor.
@@ -59,10 +59,10 @@ namespace ZFC
     scoped notation "ΠZ" => fromPeano
 
     /-- `ΠZ` maps Peano naturals to Von Neumann naturals. -/
-    theorem fromPeano_is_nat (n : Peano.ℕ₀) : isNat (ΠZ n : U) := by
+    theorem fromPeano_is_nat (n : Peano.ℕ₀) : IsNat (ΠZ n : U) := by
       induction n with
-      | zero       => exact zero_is_nat
-      | succ n' ih => exact nat_successor_is_nat (ΠZ n') ih
+      | zero       => exact isNat_zero
+      | succ n' ih => exact isNat_succ (ΠZ n') ih
 
     /-- `ΠZ` is injective. -/
     theorem fromPeano_injective : Function.Injective (ΠZ : Peano.ℕ₀ → U) := by
@@ -74,51 +74,51 @@ namespace ZFC
         intro n h
         cases n with
         | zero   => rfl
-        | succ n' => exact absurd h (Ne.symm (successor_nonempty (ΠZ n')))
+        | succ n' => exact absurd h (Ne.symm (succ_nonempty (ΠZ n')))
       | succ m' ih =>
         intro n h
         cases n with
-        | zero => exact absurd h (successor_nonempty (ΠZ m'))
+        | zero => exact absurd h (succ_nonempty (ΠZ m'))
         | succ n' =>
           congr 1
           apply ih
-          exact successor_injective (ΠZ m') (ΠZ n')
+          exact succ_injective (ΠZ m') (ΠZ n')
             (fromPeano_is_nat m') (fromPeano_is_nat n') h
 
     /-- Every Von Neumann natural is in the image of `ΠZ`. -/
-    theorem fromPeano_surjective (n : U) (hn : isNat n) :
+    theorem fromPeano_surjective (n : U) (hn : IsNat n) :
         ∃ p : Peano.ℕ₀, (ΠZ p : U) = n := by
       -- S = { m ∈ ω | ∃ p : ℕ₀, ΠZ p = m }
-      let S := SpecSet (ω : U) (fun m => ∃ p : Peano.ℕ₀, (ΠZ p : U) = m)
+      let S := sep (ω : U) (fun m => ∃ p : Peano.ℕ₀, (ΠZ p : U) = m)
       suffices h : S = (ω : U) by
         have hn_in_S : n ∈ S := by rw [h]; exact Nat_in_Omega n hn
-        rw [SpecSet_is_specified] at hn_in_S
+        rw [mem_sep_iff] at hn_in_S
         exact hn_in_S.2
       apply strong_induction_principle S
-        (fun z hz => by rw [SpecSet_is_specified] at hz; exact hz.1)
+        (fun z hz => by rw [mem_sep_iff] at hz; exact hz.1)
       intro m hm ih
-      rw [SpecSet_is_specified]
+      rw [mem_sep_iff]
       refine ⟨hm, ?_⟩
-      rcases nat_is_zero_or_succ m (mem_Omega_is_Nat m hm) with rfl | ⟨k, rfl⟩
+      rcases eq_zero_or_exists_succ m (mem_Omega_is_Nat m hm) with rfl | ⟨k, rfl⟩
       · -- m = ∅ : ΠZ ℕ₀.zero = ∅
         exact ⟨Peano.ℕ₀.zero, rfl⟩
       · -- m = σ k : use IH on k ∈ m
-        have hk_in_S : k ∈ S := ih k (mem_successor_self k)
-        rw [SpecSet_is_specified] at hk_in_S
+        have hk_in_S : k ∈ S := ih k (mem_succ_self k)
+        rw [mem_sep_iff] at hk_in_S
         obtain ⟨p, hp⟩ := hk_in_S.2
         -- ΠZ (ℕ₀.succ p) = σ (ΠZ p) = σ k
         exact ⟨Peano.ℕ₀.succ p,
-          show successor (ΠZ p : U) = successor k from by rw [hp]⟩
+          show succ (ΠZ p : U) = succ k from by rw [hp]⟩
 
     /-- `ZΠ n h` : inverse isomorphism Von Neumann ℕ → Peano ℕ.
         Typed as `Z\Pi` in the editor. -/
-    noncomputable def toPeano (n : U) (hn : isNat n) : Peano.ℕ₀ :=
+    noncomputable def toPeano (n : U) (hn : IsNat n) : Peano.ℕ₀ :=
       Classical.choose (fromPeano_surjective n hn)
 
     scoped notation "ZΠ" => toPeano
 
     /-- `ΠZ (ZΠ n hn) = n`. -/
-    theorem fromPeano_toPeano (n : U) (hn : isNat n) :
+    theorem fromPeano_toPeano (n : U) (hn : IsNat n) :
         ΠZ (ZΠ n hn) = n :=
       Classical.choose_spec (fromPeano_surjective n hn)
 
@@ -128,13 +128,13 @@ namespace ZFC
       fromPeano_injective (fromPeano_toPeano (ΠZ p) (fromPeano_is_nat p))
 
     /-- `ZΠ` is injective on Von Neumann naturals. -/
-    theorem toPeano_injective {m n : U} (hm : isNat m) (hn : isNat n)
+    theorem toPeano_injective {m n : U} (hm : IsNat m) (hn : IsNat n)
         (h : ZΠ m hm = ZΠ n hn) : m = n := by
       rw [← fromPeano_toPeano m hm, ← fromPeano_toPeano n hn, h]
 
     /-- `ZΠ` is surjective onto Peano naturals. -/
     theorem toPeano_surjective (p : Peano.ℕ₀) :
-        ∃ (n : U) (hn : isNat n), ZΠ n hn = p :=
+        ∃ (n : U) (hn : IsNat n), ZΠ n hn = p :=
       ⟨(ΠZ p : U), fromPeano_is_nat p, toPeano_fromPeano p⟩
 
     -- =========================================================================
@@ -142,25 +142,25 @@ namespace ZFC
     -- =========================================================================
 
     /-- `ZΠ` maps ∅ to `Peano.ℕ₀.zero`.
-        Together with `toPeano_successor`, this shows the bijection is a
+        Together with `toPeano_succ`, this shows the bijection is a
         homomorphism of Peano algebras in both directions. -/
     theorem toPeano_zero :
-        ZΠ (∅ : U) zero_is_nat = Peano.ℕ₀.zero :=
+        ZΠ (∅ : U) isNat_zero = Peano.ℕ₀.zero :=
       -- ΠZ Peano.ℕ₀.zero = ∅ by definition, so fromPeano_toPeano gives
       -- ΠZ (ZΠ ∅ _) = ∅ = ΠZ ℕ₀.zero; injectivity concludes.
-      fromPeano_injective (fromPeano_toPeano (∅ : U) zero_is_nat)
+      fromPeano_injective (fromPeano_toPeano (∅ : U) isNat_zero)
 
-    /-- `ZΠ` commutes with successor: the bijection is a homomorphism of
-        the successor structure in both directions. -/
-    theorem toPeano_successor (n : U) (hn : isNat n) :
-        ZΠ (σ n) (nat_successor_is_nat n hn) =
+    /-- `ZΠ` commutes with succ: the bijection is a homomorphism of
+        the succ structure in both directions. -/
+    theorem toPeano_succ (n : U) (hn : IsNat n) :
+        ZΠ (σ n) (isNat_succ n hn) =
         Peano.ℕ₀.succ (ZΠ n hn) := by
       apply fromPeano_injective
       -- Goal: ΠZ (ZΠ (σ n) _) = ΠZ (ℕ₀.succ (ZΠ n hn))
       rw [fromPeano_toPeano]
       -- Goal: σ n = ΠZ (ℕ₀.succ (ZΠ n hn))
       -- ΠZ (ℕ₀.succ p) = σ (ΠZ p) by definition
-      show successor n = successor (ΠZ (ZΠ n hn))
+      show succ n = succ (ΠZ (ZΠ n hn))
       rw [fromPeano_toPeano]
 
     -- =========================================================================
@@ -192,13 +192,13 @@ namespace ZFC
     theorem recursion_transport_inv (a g : U) (f : Peano.ℕ₀ → U)
         (hf_zero : f Peano.ℕ₀.zero = a)
         (hf_succ : ∀ p, f (Peano.ℕ₀.succ p) = apply g (f p)) :
-        f (ZΠ (∅ : U) zero_is_nat) = a ∧
+        f (ZΠ (∅ : U) isNat_zero) = a ∧
         ∀ (n : U) (hn : n ∈ ω),
-          f (ZΠ (σ n) (nat_successor_is_nat n (mem_Omega_is_Nat n hn))) =
+          f (ZΠ (σ n) (isNat_succ n (mem_Omega_is_Nat n hn))) =
           apply g (f (ZΠ n (mem_Omega_is_Nat n hn))) := by
       refine ⟨?_, fun n hn => ?_⟩
       · rw [toPeano_zero]; exact hf_zero
-      · rw [toPeano_successor]; exact hf_succ _
+      · rw [toPeano_succ]; exact hf_succ _
 
     /-- **Recursion transport (VN → Peano, with step)**: variant of `recursion_transport`
         for `RecursionTheoremWithStep`, where the step function receives the current index.
@@ -222,13 +222,13 @@ namespace ZFC
     theorem recursion_transport_step_inv (a g : U) (f : Peano.ℕ₀ → U)
         (hf_zero : f Peano.ℕ₀.zero = a)
         (hf_succ : ∀ p, f (Peano.ℕ₀.succ p) = apply g ⟨(ΠZ p : U), f p⟩) :
-        f (ZΠ (∅ : U) zero_is_nat) = a ∧
+        f (ZΠ (∅ : U) isNat_zero) = a ∧
         ∀ (n : U) (hn : n ∈ ω),
-          f (ZΠ (σ n) (nat_successor_is_nat n (mem_Omega_is_Nat n hn))) =
+          f (ZΠ (σ n) (isNat_succ n (mem_Omega_is_Nat n hn))) =
           apply g ⟨n, f (ZΠ n (mem_Omega_is_Nat n hn))⟩ := by
       refine ⟨?_, fun n hn => ?_⟩
       · rw [toPeano_zero]; exact hf_zero
-      · rw [toPeano_successor]
+      · rw [toPeano_succ]
         have h := hf_succ (ZΠ n (mem_Omega_is_Nat n hn))
         rw [fromPeano_toPeano] at h
         exact h
@@ -237,9 +237,9 @@ namespace ZFC
     -- Section 4: Bridge theorems for order
     -- =========================================================================
 
-    /-- The successor function preserves and reflects membership:
+    /-- The succ function preserves and reflects membership:
         `n ∈ m ↔ σ n ∈ σ m` for Von Neumann naturals. -/
-    theorem succ_mem_succ_iff (n m : U) (hn : isNat n) (hm : isNat m) :
+    theorem succ_mem_succ_iff (n m : U) (hn : IsNat n) (hm : IsNat m) :
         n ∈ m ↔ σ n ∈ σ m := by
       constructor
       · intro h_nm
@@ -247,32 +247,32 @@ namespace ZFC
         have hn_sub_m : n ⊆ m := hm.1 n h_nm
         have h_σn_sub_σm : σ n ⊆ σ m := by
           intro x hx
-          rw [successor_is_specified] at hx
+          rw [mem_succ_iff] at hx
           rcases hx with hx | hx
-          · exact mem_successor_of_mem x m (hn_sub_m x hx)
-          · rw [hx]; exact mem_successor_of_mem n m h_nm
+          · exact mem_succ_of_mem x m (hn_sub_m x hx)
+          · rw [hx]; exact mem_succ_of_mem n m h_nm
         rcases nat_subset_mem_or_eq (σ n) (σ m)
-            (nat_successor_is_nat n hn) (nat_successor_is_nat m hm) h_σn_sub_σm with h | h
+            (isNat_succ n hn) (isNat_succ m hm) h_σn_sub_σm with h | h
         · exact h
-        · exact absurd (successor_injective n m hn hm h ▸ h_nm) (nat_not_mem_self n hn)
+        · exact absurd (succ_injective n m hn hm h ▸ h_nm) (not_mem_self n hn)
       · intro h_sn_sm
-        rcases nat_trichotomy n m hn hm with h | h | h
+        rcases trichotomy n m hn hm with h | h | h
         · exact h
         · -- n = m → σn = σm → σn ∈ σn: contradicts irreflexivity
-          exact absurd (h ▸ h_sn_sm) (nat_not_mem_self (σ n) (nat_successor_is_nat n hn))
+          exact absurd (h ▸ h_sn_sm) (not_mem_self (σ n) (isNat_succ n hn))
         · -- m ∈ n → σm ∈ σn; combined with σn ∈ σm: asymmetry contradiction
           have hm_sub_n : m ⊆ n := hn.1 m h
           have h_σm_sub_σn : σ m ⊆ σ n := by
             intro x hx
-            rw [successor_is_specified] at hx
+            rw [mem_succ_iff] at hx
             rcases hx with hx | hx
-            · exact mem_successor_of_mem x n (hm_sub_n x hx)
-            · rw [hx]; exact mem_successor_of_mem m n h
+            · exact mem_succ_of_mem x n (hm_sub_n x hx)
+            · rw [hx]; exact mem_succ_of_mem m n h
           rcases nat_subset_mem_or_eq (σ m) (σ n)
-              (nat_successor_is_nat m hm) (nat_successor_is_nat n hn) h_σm_sub_σn with hh | hh
-          · exact absurd h_sn_sm (nat_mem_asymm (σ m) (σ n)
-                (nat_successor_is_nat m hm) (nat_successor_is_nat n hn) hh)
-          · exact absurd (successor_injective m n hm hn hh ▸ h) (nat_not_mem_self m hm)
+              (isNat_succ m hm) (isNat_succ n hn) h_σm_sub_σn with hh | hh
+          · exact absurd h_sn_sm (mem_asymm (σ m) (σ n)
+                (isNat_succ m hm) (isNat_succ n hn) hh)
+          · exact absurd (succ_injective m n hm hn hh ▸ h) (not_mem_self m hm)
 
     /-- `ΠZ` preserves and reflects the strict order:
         `Peano.StrictOrder.Lt p q ↔ (ΠZ p : U) ∈ (ΠZ q : U)`. -/
@@ -294,8 +294,8 @@ namespace ZFC
           constructor
           · intro _
             exact zero_mem_of_nat_nonempty (σ (ΠZ q' : U))
-              (nat_successor_is_nat _ (fromPeano_is_nat q'))
-              (successor_nonempty _)
+              (isNat_succ _ (fromPeano_is_nat q'))
+              (succ_nonempty _)
           · intro _; trivial
         | succ p' =>
           -- Lt (σ p') (σ q') = Lt p' q' definitionally
@@ -337,7 +337,7 @@ namespace ZFC
     toPeano_surjective
     -- Section 2: Peano algebra isomorphism
     toPeano_zero
-    toPeano_successor
+    toPeano_succ
     -- Section 3: Recursion transport
     recursion_transport
     recursion_transport_inv

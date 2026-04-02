@@ -108,7 +108,7 @@ namespace ZFC
         This gives access to the zero and succ equations without needing the
         private helpers from Peano.FiniteSequencesArith. -/
     private theorem seqProdFn_spec {f : U} (hf : isFinSeq f (domain f) ω) :
-        isFunctionFromTo (seqProdFn f hf) ω ω ∧
+        IsFunction (seqProdFn f hf) ω ω ∧
         apply (seqProdFn f hf) (∅ : U) = σ (∅ : U) ∧
         ∀ n, n ∈ ω → apply (seqProdFn f hf) (σ n) =
           apply (prodStepFn f) ⟨n, apply (seqProdFn f hf) n⟩ :=
@@ -161,26 +161,26 @@ namespace ZFC
       let P : U → Prop := fun k =>
         ∀ f' g' : U, isFinSeq f' (domain f') ω → isFinSeq g' (domain g') ω →
           (∀ i, i ∈ k → f'⦅i⦆ = g'⦅i⦆) → seqProd f' k = seqProd g' k
-      let S := SpecSet (ω : U) P
+      let S := sep (ω : U) P
       suffices hS : S = ω by
         have hn_S : n ∈ S := hS ▸ hn
-        exact ((SpecSet_is_specified (ω : U) n P).mp hn_S).2 f g hf hg h_agree
+        exact ((mem_sep_iff (ω : U) n P).mp hn_S).2 f g hf hg h_agree
       apply induction_principle S
-      · exact fun x hx => ((SpecSet_is_specified (ω : U) x P).mp hx).1
+      · exact fun x hx => ((mem_sep_iff (ω : U) x P).mp hx).1
       · -- Base: k = ∅
-        rw [SpecSet_is_specified]
+        rw [mem_sep_iff]
         exact ⟨zero_in_Omega, fun f' g' hf' hg' _ =>
           (seqProd_zero_gen hf').trans (seqProd_zero_gen hg').symm⟩
       · -- Step: k → σ k
         intro k hk
-        rw [SpecSet_is_specified] at hk ⊢
+        rw [mem_sep_iff] at hk ⊢
         obtain ⟨hk_omega, ih⟩ := hk
         simp only [P] at ih ⊢
         exact ⟨succ_in_Omega k hk_omega, fun f' g' hf' hg' h_agree_sk => by
           rw [seqProd_succ_gen hf' k hk_omega, seqProd_succ_gen hg' k hk_omega]
           have h_sub : ∀ i, i ∈ k → f'⦅i⦆ = g'⦅i⦆ :=
-            fun i hi => h_agree_sk i (mem_successor_of_mem i k hi)
-          rw [ih f' g' hf' hg' h_sub, h_agree_sk k (mem_successor_self k)]⟩
+            fun i hi => h_agree_sk i (mem_succ_of_mem i k hi)
+          rw [ih f' g' hf' hg' h_sub, h_agree_sk k (mem_succ_self k)]⟩
 
     -- =========================================================================
     -- §4  DList → ZFC Sequence Bridge
@@ -188,16 +188,16 @@ namespace ZFC
 
     /-- fromPeano maps zero to ∅. -/
     private theorem fromPeano_zero_eq : (fromPeano Peano.ℕ₀.zero : U) = ∅ :=
-      (congrArg fromPeano toPeano_zero.symm).trans (fromPeano_toPeano ∅ zero_is_nat)
+      (congrArg fromPeano toPeano_zero.symm).trans (fromPeano_toPeano ∅ isNat_zero)
 
     /-- fromPeano maps succ to σ. -/
     private theorem fromPeano_succ_eq (n : Peano.ℕ₀) :
         (fromPeano (Peano.ℕ₀.succ n) : U) = σ (fromPeano n : U) := by
-      have hn : isNat (fromPeano n : U) := fromPeano_is_nat n
-      have h1 := toPeano_successor (fromPeano n : U) hn
+      have hn : IsNat (fromPeano n : U) := fromPeano_is_nat n
+      have h1 := toPeano_succ (fromPeano n : U) hn
       rw [toPeano_fromPeano] at h1
       exact (congrArg fromPeano h1.symm).trans
-        (fromPeano_toPeano (σ (fromPeano n : U) : U) (nat_successor_is_nat _ hn))
+        (fromPeano_toPeano (σ (fromPeano n : U) : U) (isNat_succ _ hn))
 
     /-- Convert a `DList ℕ₀` to a ZFC finite sequence in ω.
         Elements are placed in REVERSE order: head of DList goes to the
@@ -348,7 +348,7 @@ namespace ZFC
             have h_len : (dlistLen (.cons x xs) : U) = σ (dlistLen xs : U) := by
               rw [dlistLen_cons, fromPeano_succ_eq]; rfl
             rw [h_len] at hi
-            cases (successor_is_specified (dlistLen xs : U) i).mp hi with
+            cases (mem_succ_iff (dlistLen xs : U) i).mp hi with
             | inl hi_prev =>
               rw [dlistToSeq_apply_prev x xs i hi_prev]
               exact (dlistToSeq_isPrimeSeq xs (fun q hq => hpl q (Or.inr hq))).2 i hi_prev

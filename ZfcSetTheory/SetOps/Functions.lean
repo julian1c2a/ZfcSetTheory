@@ -24,20 +24,20 @@ including composition, identity, inverse, image, and preimage.
 
 ## Main Definitions
 
-* `isFunctionFromTo f A B` - f is a function from A to B
+* `IsFunction f A B` - f is a function from A to B
 * `apply f x` - the unique y such that ⟨x, y⟩ ∈ f
-* `FunctionComposition g f` - composition g ∘ f
-* `IdFunction A` - identity function on A
-* `InverseFunction f` - inverse relation of f
-* `Restriction f C` - restriction of f to domain C (f ↾ C)
-* `ImageSet f X` - direct image f[X]
-* `PreimageSet f Y` - preimage f⁻¹[Y]
+* `comp g f` - composition g ∘ f
+* `idFn A` - identity function on A
+* `inv f` - inverse relation of f
+* `restrict f C` - restriction of f to domain C (f ↾ C)
+* `image f X` - direct image f[X]
+* `preimage f Y` - preimage f⁻¹[Y]
 
 ## Main Theorems
 
 * `comp_is_function` - composition of functions is a function
-* `Restriction_is_function` - restriction of a function is a function
-* `Restriction_apply` - (f ↾ C)(x) = f(x) for x ∈ C
+* `restrict_is_function` - restriction of a function is a function
+* `restrict_apply` - (f ↾ C)(x) = f(x) for x ∈ C
 -/
 
 namespace ZFC
@@ -62,14 +62,14 @@ namespace ZFC
     /-! ============================================================ -/
 
     /-- A relation f is single-valued if each x has at most one associated y -/
-    def isSingleValued (f : U) : Prop :=
+    def IsSingleValued (f : U) : Prop :=
       ∀ x y₁ y₂, ⟨x, y₁⟩ ∈ f → ⟨x, y₂⟩ ∈ f → y₁ = y₂
 
     /-- f is a function from A to B iff:
         1. f ⊆ A × B
         2. ∀ x ∈ A, ∃! y, ⟨x, y⟩ ∈ f
         (Note: Dom f = A is implied by 2 and 1) -/
-    def isFunctionFromTo (f A B : U) : Prop :=
+    def IsFunction (f A B : U) : Prop :=
       (f ⊆ (A ×ₛ B)) ∧
       (∀ x, x ∈ A → ∃! y, ⟨x, y⟩ ∈ f)
 
@@ -107,16 +107,16 @@ namespace ZFC
     /-- Function composition g ∘ f.
         Defined as {⟨x, z⟩ | ∃ y, ⟨x, y⟩ ∈ f ∧ ⟨y, z⟩ ∈ g}.
     -/
-    noncomputable def FunctionComposition (g f : U) : U :=
-      SpecSet (domain f ×ₛ range g) (fun p =>
+    noncomputable def comp (g f : U) : U :=
+      sep (domain f ×ₛ range g) (fun p =>
         ∃ x z, p = ⟨x, z⟩ ∧ ∃ y, ⟨x, y⟩ ∈ f ∧ ⟨y, z⟩ ∈ g)
 
-    notation:60 g " ∘ " f:61 => FunctionComposition g f
+    notation:60 g " ∘ " f:61 => comp g f
 
     theorem comp_is_specified (g f p : U) :
       p ∈ (g ∘ f) ↔ ∃ x z, p = ⟨x, z⟩ ∧ ∃ y, ⟨x, y⟩ ∈ f ∧ ⟨y, z⟩ ∈ g := by
-      unfold FunctionComposition
-      rw [SpecSet_is_specified]
+      unfold comp
+      rw [mem_sep_iff]
       constructor
       · intro h; exact h.2
       · intro h
@@ -133,8 +133,8 @@ namespace ZFC
 
     /-- Composition of functions is a function -/
     theorem comp_is_function (f g A B C : U)
-      (hf : isFunctionFromTo f A B) (hg : isFunctionFromTo g B C) :
-      isFunctionFromTo (g ∘ f) A C := by
+      (hf : IsFunction f A B) (hg : IsFunction g B C) :
+      IsFunction (g ∘ f) A C := by
       constructor
       · -- Subset relation
         intro p hp
@@ -177,32 +177,32 @@ namespace ZFC
           exact hz_unique.2 z' hg'
 
     /-- Identity Function on A -/
-    noncomputable def IdFunction (A : U) : U := IdRel A
+    noncomputable def idFn (A : U) : U := IdRel A
 
     theorem apply_id (A x : U) (hx : x ∈ A) :
-      (IdFunction A)⦅x⦆ = x := by
-      apply apply_eq (IdFunction A) x x
+      (idFn A)⦅x⦆ = x := by
+      apply apply_eq (idFn A) x x
       · apply ExistsUnique.intro x
-        · unfold IdFunction
+        · unfold idFn
           rw [mem_IdRel]; exact ⟨hx, rfl⟩
         · intro y' hy'
-          unfold IdFunction at hy'
+          unfold idFn at hy'
           rw [mem_IdRel] at hy'; exact hy'.2.symm
-      · unfold IdFunction
+      · unfold idFn
         rw [mem_IdRel]; exact ⟨hx, rfl⟩
 
     /-! ============================================================ -/
     /-! ### INVERSE FUNCTION ### -/
     /-! ============================================================ -/
 
-    noncomputable def InverseFunction (f : U) : U := InverseRel f
+    noncomputable def inv (f : U) : U := InverseRel f
 
-    notation:100 f "⁻¹" => InverseFunction f
+    notation:100 f "⁻¹" => inv f
 
     theorem inverse_is_specified (f p : U) :
       p ∈ f⁻¹ ↔ isOrderedPair p ∧ ⟨snd p, fst p⟩ ∈ f := by
-      unfold InverseFunction InverseRel
-      rw [SpecSet_is_specified]
+      unfold inv InverseRel
+      rw [mem_sep_iff]
       constructor
       · intro h
         constructor
@@ -227,30 +227,30 @@ namespace ZFC
     /-! ### RESTRICTION OF FUNCTIONS ### -/
     /-! ============================================================ -/
 
-    /-- Restriction of a relation f to a domain C: f ↾ C = { p ∈ f | fst p ∈ C } -/
-    noncomputable def Restriction (f C : U) : U :=
-      SpecSet f (fun p => fst p ∈ C)
+    /-- restrict of a relation f to a domain C: f ↾ C = { p ∈ f | fst p ∈ C } -/
+    noncomputable def restrict (f C : U) : U :=
+      sep f (fun p => fst p ∈ C)
 
-    notation:60 f " ↾ " C:61 => Restriction f C
+    notation:60 f " ↾ " C:61 => restrict f C
 
-    theorem Restriction_is_specified (f C p : U) :
+    theorem mem_restrict_iff (f C p : U) :
       p ∈ (f ↾ C) ↔ p ∈ f ∧ fst p ∈ C := by
-      unfold Restriction
-      exact SpecSet_is_specified f p (fun p => fst p ∈ C)
+      unfold restrict
+      exact mem_sep_iff f p (fun p => fst p ∈ C)
 
-    theorem Restriction_subset (f C : U) : (f ↾ C) ⊆ f := by
+    theorem restrict_subset (f C : U) : (f ↾ C) ⊆ f := by
       intro p hp
-      rw [Restriction_is_specified] at hp
+      rw [mem_restrict_iff] at hp
       exact hp.1
 
-    /-- Restriction of a function is a function on the restricted domain -/
-    theorem Restriction_is_function (f A B C : U)
-      (hf : isFunctionFromTo f A B) (hC : C ⊆ A) :
-      isFunctionFromTo (f ↾ C) C B := by
+    /-- restrict of a function is a function on the restricted domain -/
+    theorem restrict_is_function (f A B C : U)
+      (hf : IsFunction f A B) (hC : C ⊆ A) :
+      IsFunction (f ↾ C) C B := by
       constructor
       · -- Subset of C × B
         intro p hp
-        rw [Restriction_is_specified] at hp
+        rw [mem_restrict_iff] at hp
         obtain ⟨hp_f, h_fst_C⟩ := hp
         have h_sub : p ∈ A ×ₛ B := hf.1 p hp_f
         -- p ∈ f and fst p ∈ C, with f ⊆ A × B, so p ∈ C × B
@@ -263,30 +263,30 @@ namespace ZFC
         obtain ⟨y, hy⟩ := hf.2 x hx_A
         apply ExistsUnique.intro y
         · -- Prove ⟨x, y⟩ ∈ f ↾ C
-          rw [Restriction_is_specified]
+          rw [mem_restrict_iff]
           constructor
           · exact hy.1
           · rw [fst_of_ordered_pair]
             exact hx
         · -- Prove uniqueness
           intro y' hy'
-          rw [Restriction_is_specified] at hy'
+          rw [mem_restrict_iff] at hy'
           exact hy.2 y' hy'.1
 
     /-- Application of restricted function equals application of original -/
-    theorem Restriction_apply (f C x : U) (hx : x ∈ C) :
+    theorem restrict_apply (f C x : U) (hx : x ∈ C) :
       apply (f ↾ C) x = apply f x := by
       unfold apply
       have h_iff : (∃! y, ⟨x, y⟩ ∈ f ↾ C) ↔ (∃! y, ⟨x, y⟩ ∈ f) := by
         constructor
         · intro h
           obtain ⟨y, hy, hunique⟩ := h
-          rw [Restriction_is_specified] at hy
+          rw [mem_restrict_iff] at hy
           refine ⟨y, hy.1, ?_⟩
           intro y' hy'
           apply hunique y'
           show ⟨x, y'⟩ ∈ f ↾ C
-          rw [Restriction_is_specified]
+          rw [mem_restrict_iff]
           constructor
           · exact hy'
           · rw [fst_of_ordered_pair]
@@ -295,13 +295,13 @@ namespace ZFC
           obtain ⟨y, hy, hunique⟩ := h
           refine ⟨y, ?_, ?_⟩
           · show ⟨x, y⟩ ∈ f ↾ C
-            rw [Restriction_is_specified]
+            rw [mem_restrict_iff]
             constructor
             · exact hy
             · rw [fst_of_ordered_pair]
               exact hx
           · intro y' hy'
-            rw [Restriction_is_specified] at hy'
+            rw [mem_restrict_iff] at hy'
             exact hunique y' hy'.1
 
       by_cases h : ∃! y, ⟨x, y⟩ ∈ f
@@ -312,7 +312,7 @@ namespace ZFC
           apply funext
           intro y
           apply propext
-          rw [Restriction_is_specified]
+          rw [mem_restrict_iff]
           constructor
           · intro h_in; exact h_in.1
           · intro h_in
@@ -329,16 +329,16 @@ namespace ZFC
     /-! ============================================================ -/
 
     /-- Image of a set X under f: f[X] = {y | ∃ x ∈ X, f(x) = y} -/
-    noncomputable def ImageSet (f X : U) : U :=
+    noncomputable def image (f X : U) : U :=
       range (f ↾ X)
 
-    notation:90 f "[" X "]" => ImageSet f X
+    notation:90 f "[" X "]" => image f X
 
     /-- Preimage of a set Y under f: f⁻¹[Y] = {x | f(x) ∈ Y} -/
-    noncomputable def PreimageSet (f Y : U) : U :=
-      SpecSet (domain f) (fun x => ∃ y, ⟨x, y⟩ ∈ f ∧ y ∈ Y)
+    noncomputable def preimage (f Y : U) : U :=
+      sep (domain f) (fun x => ∃ y, ⟨x, y⟩ ∈ f ∧ y ∈ Y)
 
-    notation:90 f "⁻¹[" Y "]" => PreimageSet f Y
+    notation:90 f "⁻¹[" Y "]" => preimage f Y
 
     /-! ============================================================ -/
     /-! ### EQUIPOTENCE AND DOMINANCE ### -/
@@ -351,7 +351,7 @@ namespace ZFC
       ∀ y, y ∈ B → ∃ x, ⟨x, y⟩ ∈ f
 
     def isBijection (f A B : U) : Prop :=
-      isFunctionFromTo f A B ∧ isInjective f ∧ isSurjectiveOnto f B
+      IsFunction f A B ∧ isInjective f ∧ isSurjectiveOnto f B
 
     def isEquipotent (A B : U) : Prop :=
       ∃ f, isBijection f A B
@@ -359,7 +359,7 @@ namespace ZFC
     infix:50 " ≃ₛ " => isEquipotent
 
     def isDominatedBy (A B : U) : Prop :=
-      ∃ f, isFunctionFromTo f A B ∧ isInjective f
+      ∃ f, IsFunction f A B ∧ isInjective f
 
     infix:50 " ≼ₛ " => isDominatedBy
 
@@ -373,7 +373,7 @@ namespace ZFC
     /-! ============================================================ -/
 
     theorem injective_inverse_single_valued (f : U) (hf : isInjective f) :
-      isSingleValued (f⁻¹) := by
+      IsSingleValued (f⁻¹) := by
       intro x y z h1 h2
       rw [inverse_is_specified] at h1 h2
       -- h1 : isOrderedPair ⟨x,y⟩ ∧ ⟨snd ⟨x,y⟩, fst ⟨x,y⟩⟩ ∈ f
@@ -384,14 +384,14 @@ namespace ZFC
   end SetOps.Functions
 
   export SetOps.Functions (
-    isSingleValued
-    isFunctionFromTo
+    IsSingleValued
+    IsFunction
     apply apply_mem apply_eq
-    FunctionComposition comp_is_specified comp_is_function
-    IdFunction apply_id
-    InverseFunction inverse_is_specified
-    Restriction Restriction_is_specified Restriction_subset Restriction_is_function Restriction_apply
-    ImageSet PreimageSet
+    comp comp_is_specified comp_is_function
+    idFn apply_id
+    inv inverse_is_specified
+    restrict mem_restrict_iff restrict_subset restrict_is_function restrict_apply
+    image preimage
     isInjective isSurjectiveOnto isBijection
     isEquipotent isDominatedBy isStrictlyDominatedBy
     injective_inverse_single_valued

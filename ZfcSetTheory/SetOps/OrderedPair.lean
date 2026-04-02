@@ -61,32 +61,32 @@ namespace ZFC
     /-! ============================================================ -/
 
     /-! ### El par ordenado pertenece a 𝒫(𝒫(A ∪ B)) si a ∈ A y b ∈ B ### -/
-    theorem OrderedPair_in_PowerSet (a b A B : U)
+    theorem OrderedPair_in_powerset (a b A B : U)
       (ha : a ∈ A) (hb : b ∈ B) :
         ⟨a, b⟩ ∈ 𝒫 (𝒫 (A ∪ B))
           := by
       -- ⟨a, b⟩ = {{a}, {a, b}}
       -- Necesitamos {{a}, {a, b}} ⊆ 𝒫(A ∪ B)
-      rw [PowerSet_is_specified]
+      rw [mem_powerset_iff]
       -- Objetivo: {{a}, {a, b}} ⊆ 𝒫(A ∪ B)
       intro z hz
       -- z ∈ {{a}, {a, b}}, entonces z = {a} ∨ z = {a, b}
       rw [OrderedPair_is_specified] at hz
-      rw [PowerSet_is_specified]
+      rw [mem_powerset_iff]
       cases hz with
       | inl hz_eq_singleton =>
         -- z = {a}, probamos {a} ⊆ A ∪ B
         rw [hz_eq_singleton]
         intro w hw
         rw [Singleton_is_specified] at hw
-        rw [BinUnion_is_specified, hw]
+        rw [mem_union_iff, hw]
         exact Or.inl ha
       | inr hz_eq_pair =>
         -- z = {a, b}, probamos {a, b} ⊆ A ∪ B
         rw [hz_eq_pair]
         intro w hw
         rw [PairSet_is_specified] at hw
-        rw [BinUnion_is_specified]
+        rw [mem_union_iff]
         cases hw with
         | inl hw_eq_a => rw [hw_eq_a]; exact Or.inl ha
         | inr hw_eq_b => rw [hw_eq_b]; exact Or.inr hb
@@ -97,7 +97,7 @@ end ZFC
 export ZFC.SetOps.OrderedPair (
   OrderedPair_eq_of
   OrderedPair_eq_iff
-  OrderedPair_in_PowerSet
+  OrderedPair_in_powerset
 )
 
 /-!

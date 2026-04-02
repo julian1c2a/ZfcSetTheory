@@ -31,7 +31,7 @@ and that the atoms are exactly the singletons.
 
 * `singleton_is_atom` - {x} is an atom when x ∈ A
 * `atom_is_singleton` - Every atom is a singleton
-* `PowerSet_is_atomic` - 𝒫(A) is an atomic Boolean algebra
+* `powerset_is_atomic` - 𝒫(A) is an atomic Boolean algebra
 -/
 
 namespace ZFC
@@ -70,7 +70,7 @@ namespace ZFC
         · left
           have hY_strict : Y ⊂ X := ⟨hY_sub, hY_eq⟩
           have hY_mem : Y ∈ 𝒫 A := by
-            rw [PowerSet_is_specified] at hX_mem ⊢
+            rw [mem_powerset_iff] at hX_mem ⊢
             exact fun z hz => hX_mem z (hY_sub z hz)
           exact hX_min Y hY_mem hY_strict
       · intro ⟨hX_mem, hX_ne, hX_alt⟩
@@ -90,8 +90,8 @@ namespace ZFC
       exact hx
 
     /-- A singleton is in the power set when its element is in A -/
-    theorem singleton_mem_PowerSet (A x : U) (hx : x ∈ A) : {x} ∈ 𝒫 A := by
-      rw [PowerSet_is_specified]
+    theorem singleton_mem_powerset (A x : U) (hx : x ∈ A) : {x} ∈ 𝒫 A := by
+      rw [mem_powerset_iff]
       exact singleton_subset A x hx
 
     /-- A singleton is not empty -/
@@ -126,7 +126,7 @@ namespace ZFC
     /-- Every singleton {x} with x ∈ A is an atom in 𝒫(A) -/
     theorem singleton_is_atom (A x : U) (hx : x ∈ A) : isAtom A {x} := by
       rw [isAtom_alt]
-      refine ⟨singleton_mem_PowerSet A x hx, singleton_nonempty x, ?_⟩
+      refine ⟨singleton_mem_powerset A x hx, singleton_nonempty x, ?_⟩
       intro Y hY
       exact subset_singleton x Y hY
 
@@ -172,7 +172,7 @@ namespace ZFC
       obtain ⟨x, hx, hx_unique⟩ := atom_has_unique_element A X hAtom
       refine ⟨x, ?_, ?_⟩
       · -- x ∈ A because X ⊆ A
-        rw [PowerSet_is_specified] at hX_mem
+        rw [mem_powerset_iff] at hX_mem
         exact hX_mem x hx
       · -- X = {x}
         apply ExtSet
@@ -199,13 +199,13 @@ namespace ZFC
 
     /-- The set of all atoms in 𝒫(A) -/
     noncomputable def Atoms (A : U) : U :=
-      SpecSet (𝒫 A) (fun X => isAtom A X)
+      sep (𝒫 A) (fun X => isAtom A X)
 
     /-- Specification for Atoms -/
     theorem Atoms_is_specified (A X : U) :
         X ∈ Atoms A ↔ X ∈ 𝒫 A ∧ isAtom A X := by
       unfold Atoms
-      rw [SpecSet_is_specified]
+      rw [mem_sep_iff]
 
     /-- The atoms of 𝒫(A) are exactly the singletons of elements of A -/
     theorem Atoms_eq_singletons (A X : U) :
@@ -218,7 +218,7 @@ namespace ZFC
         constructor
         · obtain ⟨x, hx, hX_eq⟩ := h
           rw [hX_eq]
-          exact singleton_mem_PowerSet A x hx
+          exact singleton_mem_powerset A x hx
         · exact h
 
     /-! ### Atomicity of 𝒫(A) -/
@@ -228,14 +228,14 @@ namespace ZFC
       ∀ X, X ∈ 𝒫 A → X ≠ ∅ → ∃ Y, isAtom A Y ∧ Y ⊆ X
 
     /-- Every non-empty subset of A contains an element, hence a singleton atom -/
-    theorem PowerSet_is_atomic (A : U) : isAtomic A := by
+    theorem powerset_is_atomic (A : U) : isAtomic A := by
       intro X hX_mem hX_ne
       -- X is nonempty, so pick an element x ∈ X
       have h_ex := (nonempty_iff_exists_mem X).mp hX_ne
       obtain ⟨x, hx⟩ := h_ex
       -- x ∈ A since X ⊆ A
       have hx_A : x ∈ A := by
-        rw [PowerSet_is_specified] at hX_mem
+        rw [mem_powerset_iff] at hX_mem
         exact hX_mem x hx
       -- {x} is an atom and {x} ⊆ X
       refine ⟨{x}, singleton_is_atom A x hx_A, ?_⟩
@@ -246,31 +246,31 @@ namespace ZFC
 
     /-- Alternative: Every element is a union of atoms below it -/
     theorem element_is_union_of_atoms (A X : U) (hX : X ∈ 𝒫 A) :
-        X = ⋃ (SpecSet (Atoms A) (fun Y => Y ⊆ X)) := by
+        X = ⋃ (sep (Atoms A) (fun Y => Y ⊆ X)) := by
       apply ExtSet
       intro z
       constructor
       · -- z ∈ X → z ∈ ⋃{atoms below X}
         intro hz
-        rw [UnionSet_is_specified]
+        rw [mem_sUnion_iff]
         -- {z} is an atom below X
         have hz_A : z ∈ A := by
-          rw [PowerSet_is_specified] at hX
+          rw [mem_powerset_iff] at hX
           exact hX z hz
         refine ⟨{z}, ?_, (Singleton_is_specified z z).mpr rfl⟩
-        rw [SpecSet_is_specified]
+        rw [mem_sep_iff]
         constructor
         · rw [Atoms_is_specified]
-          exact ⟨singleton_mem_PowerSet A z hz_A, singleton_is_atom A z hz_A⟩
+          exact ⟨singleton_mem_powerset A z hz_A, singleton_is_atom A z hz_A⟩
         · intro w hw
           have hw_eq_z := (Singleton_is_specified z w).mp hw
           rw [hw_eq_z]
           exact hz
       · -- z ∈ ⋃{atoms below X} → z ∈ X
         intro hz
-        rw [UnionSet_is_specified] at hz
+        rw [mem_sUnion_iff] at hz
         obtain ⟨Y, hY_mem, hz_Y⟩ := hz
-        rw [SpecSet_is_specified] at hY_mem
+        rw [mem_sep_iff] at hY_mem
         exact hY_mem.2 z hz_Y
 
     /-! ### Atom below relation -/
@@ -299,6 +299,6 @@ namespace ZFC
   -- Export key theorems
   export BoolAlg.Atomic (isAtom isAtom_alt singleton_is_atom atom_is_singleton
     atom_iff_singleton Atoms Atoms_is_specified Atoms_eq_singletons
-    isAtomic PowerSet_is_atomic element_is_union_of_atoms atomBelow singleton_below_iff)
+    isAtomic powerset_is_atomic element_is_union_of_atoms atomBelow singleton_below_iff)
 
 end ZFC

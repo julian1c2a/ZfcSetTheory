@@ -42,7 +42,7 @@ namespace ZFC
         exact hz_in_y
 
     @[simp]
-    theorem ExtSet_wc {x y : U}
+    theorem eq_of_subset_of_subset {x y : U}
       (h_x_subs_y: ∀ (z: U), z ∈ x → z ∈ y)
       (h_y_subs_x: ∀ (z: U), z ∈ y → z ∈ x) :
         (x = y)
@@ -57,29 +57,29 @@ namespace ZFC
 
     /-! ### Subconjunto (no estricto) ### -/
     @[simp]
-    def subseteq (x y : U) : Prop :=
+    def subset (x y : U) : Prop :=
       ∀ (z: U), z ∈ x → z ∈ y
 
     /-! ### Notación estándar de subconjunto (no estricto) ### -/
-    notation:50 lhs:51 " ⊆ " rhs:51 => subseteq lhs rhs
+    notation:50 lhs:51 " ⊆ " rhs:51 => subset lhs rhs
 
     /-! ### Subconjunto propio ### -/
     /-! ### Subset : x ⊆ y ∧ x ≠ y ### -/
     @[simp]
-    def subset (x y : U) : Prop :=
+    def ssubset (x y : U) : Prop :=
       (x  ⊆  y) ∧ (x ≠ y)
 
     /-! ### Notación estándar de subconjunto propio ### -/
-    notation:50 lhs:51 " ⊂ " rhs:51 => subset lhs rhs
+    notation:50 lhs:51 " ⊂ " rhs:51 => ssubset lhs rhs
 
     /-! ### Notación estándar de superconjunto y superconjunto propio ### -/
-    notation:50 lhs:51 " ⊇ " rhs:51 => subseteq rhs lhs
+    notation:50 lhs:51 " ⊇ " rhs:51 => subset rhs lhs
 
-    notation:50 lhs:51 " ⊃ " rhs:51 => subset rhs lhs
+    notation:50 lhs:51 " ⊃ " rhs:51 => ssubset rhs lhs
 
     /-! ### Teorema de igualdad de conjuntos a través de ser subconjunto uno de otro ### -/
     @[simp]
-    theorem EqualityOfSubset (x y : U) :
+    theorem subset_antisymm (x y : U) :
       (x ⊆ y) → (y ⊆ x) → (x = y)
         := by
       intro h_xy h_yx
@@ -91,14 +91,14 @@ namespace ZFC
 
     /-! ### 'U' es un Orden Parcial por '⊆' ### -/
     @[simp]
-    theorem subseteq_reflexive :
+    theorem subset_refl :
       ∀ (x : U), x ⊆ x
         := by
       intro x z h_mem
       exact h_mem
 
     @[simp]
-    theorem subseteq_transitive :
+    theorem subset_trans :
       ∀ (x y z : U), x ⊆ y → y ⊆ z → x ⊆ z
         := by
       intro x y z h_xy h_yz
@@ -108,44 +108,35 @@ namespace ZFC
       exact h_w_in_x
 
     @[simp]
-    theorem subseteq_antisymmetric :
-      ∀ (x y : U), x ⊆ y → y ⊆ x → x = y
-        := by
-      intro x y h_xy h_yx
-      apply EqualityOfSubset
-      exact h_xy
-      exact h_yx
-
-    @[simp]
-    theorem subset_asymmetric :
+    theorem ssubset_asymm :
       ∀ (x y : U), x ⊂ y → ¬(y ⊂ x)
         := by
       intro x y h_subs
       intro h_subs_reverse
       apply h_subs.2
-      apply EqualityOfSubset
+      apply subset_antisymm
       exact h_subs.1
       exact h_subs_reverse.1
 
     @[simp]
-    theorem subset_irreflexive :
+    theorem ssubset_irrefl :
       ∀ (x : U), ¬(x ⊂ x)
         := by
       intro x h_subs
       apply h_subs.2
       rfl
 
-    @[simp] theorem subset_transitive :
+    @[simp] theorem ssubset_trans :
       ∀ (x y z : U), x ⊂ y → y ⊂ z → x ⊂ z
         := by
       intro x y z h_subs_xy h_subs_yz
       constructor
-      · apply subseteq_transitive
+      · apply subset_trans
         exact h_subs_xy.1
         exact h_subs_yz.1
       · intro h_eq
         apply h_subs_xy.2
-        apply EqualityOfSubset
+        apply subset_antisymm
         exact h_subs_xy.1
         rw [h_eq]
         exact h_subs_yz.1
@@ -160,7 +151,7 @@ namespace ZFC
 
     /-! ### Simetría de los Conjuntos Disjuntos ### -/
     @[simp]
-    theorem disjoint_symm (x y : U) :
+    theorem disjoint_comm (x y : U) :
       (x ⟂ y) → (y ⟂ x)
         := by
       intro h_disj z h_z_in_y h_z_in_x
@@ -169,7 +160,7 @@ namespace ZFC
 
     /-! ### Teorema de conjuntos disjuntos (todavía sin notación estándar) ### -/
     @[simp]
-    theorem disjoint_is_empty (x y : U) :
+    theorem disjoint_elim (x y : U) :
       (x ⟂ y) → (∃ z : U, z ∈ x ∧ z ∈ y) → False
         := by
       intro h_disj h_exists
@@ -180,16 +171,16 @@ namespace ZFC
         exact h_z_both.2
 
     @[simp]
-    theorem disjoint_is_empty_wc {x y : U} (h_exists :  ∃ (z : U), z ∈ x ∧ z ∈ y) :
+    theorem not_disjoint_of_exists_mem {x y : U} (h_exists :  ∃ (z : U), z ∈ x ∧ z ∈ y) :
       ¬(x ⟂ y)
         := by
       intro h_disj
-      apply disjoint_is_empty
+      apply disjoint_elim
       exact h_disj
       exact h_exists
 
     @[simp]
-    noncomputable def isTransitiveSet (x : U) : Prop :=
+    noncomputable def IsTransitive (x : U) : Prop :=
       ∀ (y : U), (y ∈ x) → (y ⊂ x)
 
     @[simp]
@@ -237,11 +228,11 @@ end ZFC
 
 export ZFC (mem)
 export ZFC.Axiom.Extension (
-    ExtSet ExtSetReverse ExtSet_wc EqualityOfSubset
-    subseteq subseteq_reflexive subseteq_transitive subseteq_antisymmetric
-    disjoint disjoint_symm disjoint_is_empty disjoint_is_empty_wc
-    subset_irreflexive subset_asymmetric subset_transitive
-    isTransitiveSet isEmpty isNonEmpty isSingleton isPair
+    ExtSet ExtSetReverse eq_of_subset_of_subset subset_antisymm
+    subset subset_refl subset_trans
+    disjoint disjoint_comm disjoint_elim not_disjoint_of_exists_mem
+    ssubset_irrefl ssubset_asymm ssubset_trans
+    IsTransitive isEmpty isNonEmpty isSingleton isPair
     isBinInter isBinUnion isBinDiff isBinSymDiff
-    isUnion isinter subset subseteq
+    isUnion isinter ssubset
 )

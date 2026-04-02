@@ -18,24 +18,24 @@ import ZfcSetTheory.BoolAlg.PowerSetAlgebra
 # Boolean Ring Structure on Power Sets
 
 This file establishes that the power set forms a Boolean ring with:
-- Addition: symmetric difference (SymDiff)
+- Addition: symmetric difference (symmDiff)
 - Multiplication: intersection
 
 ## Main Theorems
 
 ### Ring Axioms
-* `SymDiff_assoc` - associativity of SymDiff
-* `SymDiff_is_comm` - commutativity of SymDiff
-* `SymDiff_empty_identity` - SymDiff with empty set
-* `SymDiff_inverse` - X SymDiff X = empty
+* `symmDiff_assoc` - associativity of symmDiff
+* `symmDiff_is_comm` - commutativity of symmDiff
+* `symmDiff_empty_identity` - symmDiff with empty set
+* `symmDiff_inverse` - X symmDiff X = empty
 
 ### Boolean Ring Properties
-* `SymDiff_inter_distrib` - distributivity of inter over SymDiff
+* `symmDiff_inter_distrib` - distributivity of inter over symmDiff
 * `inter_idempotent` - X inter X = X
 
 ### Formulas
-* `SymDiff_eq_union_diff` - SymDiff as union of differences
-* `SymDiff_as_complement` - SymDiff using complement (for subsets)
+* `symmDiff_eq_union_diff` - symmDiff as union of differences
+* `symmDiff_as_complement` - symmDiff using complement (for subsets)
 -/
 
 namespace ZFC
@@ -52,39 +52,39 @@ namespace ZFC
 
   namespace BoolAlg.Ring
 
-    /-! ### Basic SymDiff Properties -/
+    /-! ### Basic symmDiff Properties -/
 
-    /-- SymDiff is commutative -/
-    theorem SymDiff_is_comm (X Y : U) :
-      SymDiff X Y = SymDiff Y X
-      := SymDiff_comm X Y
+    /-- symmDiff is commutative -/
+    theorem symmDiff_is_comm (X Y : U) :
+      symmDiff X Y = symmDiff Y X
+      := symmDiff_comm X Y
 
-    /-- SymDiff identity: empty SymDiff X = X -/
-    theorem SymDiff_identity_empty (X : U) :
-      SymDiff ∅ X = X
-      := SymDiff_empty_left X
+    /-- symmDiff identity: empty symmDiff X = X -/
+    theorem symmDiff_identity_empty (X : U) :
+      symmDiff ∅ X = X
+      := empty_symmDiff X
 
-    /-- SymDiff identity: X SymDiff empty = X -/
-    theorem SymDiff_empty_identity (X : U) :
-      SymDiff X ∅ = X
+    /-- symmDiff identity: X symmDiff empty = X -/
+    theorem symmDiff_empty_identity (X : U) :
+      symmDiff X ∅ = X
       := by
-      rw [SymDiff_comm]
-      exact SymDiff_empty_left X
+      rw [symmDiff_comm]
+      exact empty_symmDiff X
 
-    /-- SymDiff inverse -/
-    theorem SymDiff_inverse (X : U) :
-      SymDiff X X = ∅
-      := SymDiff_self X
+    /-- symmDiff inverse -/
+    theorem symmDiff_inverse (X : U) :
+      symmDiff X X = ∅
+      := symmDiff_self X
 
-    /-! ### SymDiff Associativity -/
+    /-! ### symmDiff Associativity -/
 
-    /-- SymDiff is associative -/
-    theorem SymDiff_assoc (X Y Z : U) :
-      SymDiff (SymDiff X Y) Z = SymDiff X (SymDiff Y Z)
+    /-- symmDiff is associative -/
+    theorem symmDiff_assoc (X Y Z : U) :
+      symmDiff (symmDiff X Y) Z = symmDiff X (symmDiff Y Z)
       := by
       apply ExtSet
       intro z
-      simp only [SymDiff_is_specified]
+      simp only [mem_symmDiff_iff]
       constructor
       · intro h
         cases h with
@@ -164,42 +164,42 @@ namespace ZFC
               | inl hXnotY => exact hzNotX hXnotY.1
               | inr hYnotX => exact hZnotY.2 hYnotX.1
 
-    /-! ### Distributivity of Intersection over SymDiff -/
+    /-! ### Distributivity of Intersection over symmDiff -/
 
-    /-- Distributivity of inter over SymDiff -/
-    theorem SymDiff_inter_distrib (X Y Z : U) :
-        BinInter X (SymDiff Y Z) = SymDiff (BinInter X Y) (BinInter X Z)
+    /-- Distributivity of inter over symmDiff -/
+    theorem symmDiff_inter_distrib (X Y Z : U) :
+        inter X (symmDiff Y Z) = symmDiff (inter X Y) (inter X Z)
         := by
       apply ExtSet
       intro w
       constructor
       · intro hw
-        rw [BinInter_is_specified] at hw
+        rw [mem_inter_iff] at hw
         have hwX := hw.1
         have hwYZ := hw.2
-        rw [SymDiff_is_specified] at hwYZ
-        rw [SymDiff_is_specified]
+        rw [mem_symmDiff_iff] at hwYZ
+        rw [mem_symmDiff_iff]
         cases hwYZ with
         | inl hYnotZ =>
           left
-          rw [BinInter_is_specified, BinInter_is_specified]
+          rw [mem_inter_iff, mem_inter_iff]
           constructor
           · exact ⟨hwX, hYnotZ.1⟩
           · intro hXZ
             exact hYnotZ.2 hXZ.2
         | inr hZnotY =>
           right
-          rw [BinInter_is_specified, BinInter_is_specified]
+          rw [mem_inter_iff, mem_inter_iff]
           constructor
           · exact ⟨hwX, hZnotY.1⟩
           · intro hXY
             exact hZnotY.2 hXY.2
       · intro hw
-        rw [SymDiff_is_specified] at hw
-        rw [BinInter_is_specified, SymDiff_is_specified]
+        rw [mem_symmDiff_iff] at hw
+        rw [mem_inter_iff, mem_symmDiff_iff]
         cases hw with
         | inl hXYnotXZ =>
-          rw [BinInter_is_specified] at hXYnotXZ
+          rw [mem_inter_iff] at hXYnotXZ
           have hwXY := hXYnotXZ.1
           have hwX := hwXY.1
           have hwY := hwXY.2
@@ -210,10 +210,10 @@ namespace ZFC
             constructor
             · exact hwY
             · intro hwZ
-              rw [BinInter_is_specified] at hNotXZ
+              rw [mem_inter_iff] at hNotXZ
               exact hNotXZ ⟨hwX, hwZ⟩
         | inr hXZnotXY =>
-          rw [BinInter_is_specified] at hXZnotXY
+          rw [mem_inter_iff] at hXZnotXY
           have hwXZ := hXZnotXY.1
           have hwX := hwXZ.1
           have hwZ := hwXZ.2
@@ -224,50 +224,50 @@ namespace ZFC
             constructor
             · exact hwZ
             · intro hwY
-              rw [BinInter_is_specified] at hNotXY
+              rw [mem_inter_iff] at hNotXY
               exact hNotXY ⟨hwX, hwY⟩
 
-    /-- Right distributivity of inter over SymDiff -/
-    theorem SymDiff_inter_distrib_right (X Y Z : U) :
-        BinInter (SymDiff Y Z) X = SymDiff (BinInter Y X) (BinInter Z X)
+    /-- Right distributivity of inter over symmDiff -/
+    theorem symmDiff_inter_distrib_right (X Y Z : U) :
+        inter (symmDiff Y Z) X = symmDiff (inter Y X) (inter Z X)
         := by
-      rw [BinInter_commutative, BinInter_commutative Y, BinInter_commutative Z]
-      exact SymDiff_inter_distrib X Y Z
+      rw [inter_comm, inter_comm Y, inter_comm Z]
+      exact symmDiff_inter_distrib X Y Z
 
-    /-! ### SymDiff Closure in PowerSet -/
+    /-! ### symmDiff Closure in PowerSet -/
 
-    /-- SymDiff of subsets is a subset -/
-    theorem SymDiff_mem_PowerSet (A X Y : U) (hX : X ∈ 𝒫 A) (hY : Y ∈ 𝒫 A) :
-        SymDiff X Y ∈ 𝒫 A
+    /-- symmDiff of subsets is a subset -/
+    theorem symmDiff_mem_powerset (A X Y : U) (hX : X ∈ 𝒫 A) (hY : Y ∈ 𝒫 A) :
+        symmDiff X Y ∈ 𝒫 A
         := by
-      rw [PowerSet_is_specified] at hX hY ⊢
+      rw [mem_powerset_iff] at hX hY ⊢
       intro z hz
-      rw [SymDiff_is_specified] at hz
+      rw [mem_symmDiff_iff] at hz
       cases hz with
       | inl hXnotY => exact hX z hXnotY.1
       | inr hYnotX => exact hY z hYnotX.1
 
     /-! ### Alternative Characterizations -/
 
-    /-- SymDiff as union of differences -/
-    theorem SymDiff_eq_union_diff (X Y : U) :
-      SymDiff X Y = BinUnion (X \ Y) (Y \ X)
+    /-- symmDiff as union of differences -/
+    theorem symmDiff_eq_union_diff (X Y : U) :
+      symmDiff X Y = union (X \ Y) (Y \ X)
       := by
       apply ExtSet
       intro z
-      simp only [SymDiff_is_specified, BinUnion_is_specified, Difference_is_specified]
+      simp only [mem_symmDiff_iff, mem_union_iff, mem_sdiff_iff]
 
-    /-- For subsets of A: SymDiff expressed using complement -/
-    theorem SymDiff_as_complement (A X Y : U) (hX : X ⊆ A) (hY : Y ⊆ A) :
-        SymDiff X Y = BinInter (BinUnion X Y) ((BinInter X Y)^∁[ A ])
+    /-- For subsets of A: symmDiff expressed using complement -/
+    theorem symmDiff_as_complement (A X Y : U) (hX : X ⊆ A) (hY : Y ⊆ A) :
+        symmDiff X Y = inter (union X Y) ((inter X Y)^∁[ A ])
         := by
       apply ExtSet
       intro z
       constructor
       · intro h
-        rw [SymDiff_is_specified] at h
-        rw [BinInter_is_specified, BinUnion_is_specified, Complement_is_specified,
-            BinInter_is_specified]
+        rw [mem_symmDiff_iff] at h
+        rw [mem_inter_iff, mem_union_iff, Complement_is_specified,
+            mem_inter_iff]
         cases h with
         | inl hXnotY =>
           constructor
@@ -284,12 +284,12 @@ namespace ZFC
             · intro hXY
               exact hYnotX.2 hXY.1
       · intro h
-        rw [BinInter_is_specified, BinUnion_is_specified, Complement_is_specified,
-            BinInter_is_specified] at h
+        rw [mem_inter_iff, mem_union_iff, Complement_is_specified,
+            mem_inter_iff] at h
         have hUnion := h.1
         have hzA := h.2.1
         have hNotInter := h.2.2
-        rw [SymDiff_is_specified]
+        rw [mem_symmDiff_iff]
         cases hUnion with
         | inl hzX =>
           by_cases hzY : z ∈ Y
@@ -302,8 +302,8 @@ namespace ZFC
 
     /-! ### Additional Properties -/
 
-    /-- SymDiff X Y = X is equivalent to Y = empty -/
-    theorem SymDiff_eq_self_iff_empty (X Y : U) : SymDiff X Y = X ↔ Y = ∅ := by
+    /-- symmDiff X Y = X is equivalent to Y = empty -/
+    theorem symmDiff_eq_self_iff_empty (X Y : U) : symmDiff X Y = X ↔ Y = ∅ := by
       constructor
       · intro h
         apply ExtSet
@@ -311,16 +311,16 @@ namespace ZFC
         constructor
         · intro hzY
           by_cases hzX : z ∈ X
-          · have hNotSymDiff : z ∉ SymDiff X Y := by
-              rw [SymDiff_is_specified]
+          · have hNotSymDiff : z ∉ symmDiff X Y := by
+              rw [mem_symmDiff_iff]
               intro hSymDiff
               cases hSymDiff with
               | inl hXnotY => exact hXnotY.2 hzY
               | inr hYnotX => exact hYnotX.2 hzX
             rw [h] at hNotSymDiff
             exact absurd hzX hNotSymDiff
-          · have hInSymDiff : z ∈ SymDiff X Y := by
-              rw [SymDiff_is_specified]
+          · have hInSymDiff : z ∈ symmDiff X Y := by
+              rw [mem_symmDiff_iff]
               right
               exact ⟨hzY, hzX⟩
             rw [h] at hInSymDiff
@@ -329,22 +329,22 @@ namespace ZFC
           exact absurd hz (EmptySet_is_empty z)
       · intro hY
         rw [hY]
-        exact SymDiff_empty_identity X
+        exact symmDiff_empty_identity X
 
   end BoolAlg.Ring
 
 end ZFC
 
 export ZFC.BoolAlg.Ring (
-    SymDiff_is_comm
-    SymDiff_empty_identity
-    SymDiff_identity_empty
-    SymDiff_inverse
-    SymDiff_assoc
-    SymDiff_inter_distrib
-    SymDiff_inter_distrib_right
-    SymDiff_mem_PowerSet
-    SymDiff_eq_union_diff
-    SymDiff_as_complement
-    SymDiff_eq_self_iff_empty
+    symmDiff_is_comm
+    symmDiff_empty_identity
+    symmDiff_identity_empty
+    symmDiff_inverse
+    symmDiff_assoc
+    symmDiff_inter_distrib
+    symmDiff_inter_distrib_right
+    symmDiff_mem_powerset
+    symmDiff_eq_union_diff
+    symmDiff_as_complement
+    symmDiff_eq_self_iff_empty
 )

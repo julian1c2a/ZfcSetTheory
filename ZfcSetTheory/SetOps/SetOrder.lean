@@ -40,7 +40,7 @@ namespace ZFC
       intro h_min
       have h_empty_sub : ∅ ⊆ x := empty_is_minimum x
       have h_x_sub_empty : x ⊆ ∅ := h_min ∅
-      exact EqualityOfSubset x ∅ h_x_sub_empty h_empty_sub
+      exact subset_antisymm x ∅ h_x_sub_empty h_empty_sub
 
     /-! ### Propiedades de Supremo e Ínfimo ### -/
     @[simp]
@@ -86,11 +86,11 @@ namespace ZFC
         intro x hx
         obtain ⟨hxA, hxB⟩ := hx
         intro w hw_in_x
-        exact (BinInter_is_specified A B w).mpr ⟨hxA w hw_in_x, hxB w hw_in_x⟩
+        exact (mem_inter_iff A B w).mpr ⟨hxA w hw_in_x, hxB w hw_in_x⟩
       · -- Segunda parte: A ∩ B es la menor cota superior
         -- Basta observar que A ∩ B ⊆ A y A ∩ B ⊆ B
         intro z hz_upper
-        have h_inter_sub_both : (A ∩ B) ⊆ A ∧ (A ∩ B) ⊆ B := BinInter_subset A B
+        have h_inter_sub_both : (A ∩ B) ⊆ A ∧ (A ∩ B) ⊆ B := inter_subset A B
         exact hz_upper (A ∩ B) h_inter_sub_both
 
     /-! ### Teoremas sobre Unión como Least Upper Bound ### -/
@@ -106,7 +106,7 @@ namespace ZFC
         intro x hx
         obtain ⟨hAx, hBx⟩ := hx
         intro w hw_in_union
-        have hw_cases := (BinUnion_is_specified A B w).mp hw_in_union
+        have hw_cases := (mem_union_iff A B w).mp hw_in_union
         cases hw_cases with
         | inl hw_in_A => exact hAx w hw_in_A
         | inr hw_in_B => exact hBx w hw_in_B
@@ -114,27 +114,27 @@ namespace ZFC
         -- Basta observar que A ⊆ A ∪ B y B ⊆ A ∪ B
         intro z hz_lower
         have h_A_sub_union : A ⊆ (A ∪ B) := fun w hw =>
-          (BinUnion_is_specified A B w).mpr (Or.inl hw)
+          (mem_union_iff A B w).mpr (Or.inl hw)
         have h_B_sub_union : B ⊆ (A ∪ B) := fun w hw =>
-          (BinUnion_is_specified A B w).mpr (Or.inr hw)
+          (mem_union_iff A B w).mpr (Or.inr hw)
         exact hz_lower (A ∪ B) ⟨h_A_sub_union, h_B_sub_union⟩
 
     /-! ### Propiedades de Orden Parcial ### -/
     @[simp]
-    theorem order_reflexive (x : U) : x ⊆ x := subseteq_reflexive x
+    theorem order_reflexive (x : U) : x ⊆ x := subset_refl x
 
     @[simp]
-    theorem order_transitive (x y z : U) : x ⊆ y → y ⊆ z → x ⊆ z := subseteq_transitive x y z
+    theorem order_transitive (x y z : U) : x ⊆ y → y ⊆ z → x ⊆ z := subset_trans x y z
 
     @[simp]
-    theorem order_antisymmetric (x y : U) : x ⊆ y → y ⊆ x → x = y := subseteq_antisymmetric x y
+    theorem order_antisymmetric (x y : U) : x ⊆ y → y ⊆ x → x = y := subset_antisymm x y
 
     /-! ### Monotonía de operaciones ### -/
     @[simp]
     theorem union_monotone_left (A B C : U) :
       A ⊆ B → (A ∪ C) ⊆ (B ∪ C) := by
       intro h x hx
-      simp only [BinUnion_is_specified] at hx ⊢
+      simp only [mem_union_iff] at hx ⊢
       rcases hx with hxA | hxC
       · left; exact h x hxA
       · right; exact hxC
@@ -143,7 +143,7 @@ namespace ZFC
     theorem union_monotone_right (A B C : U) :
       A ⊆ B → (C ∪ A) ⊆ (C ∪ B) := by
       intro h x hx
-      simp only [BinUnion_is_specified] at hx ⊢
+      simp only [mem_union_iff] at hx ⊢
       rcases hx with hxC | hxA
       · left; exact hxC
       · right; exact h x hxA
@@ -152,15 +152,15 @@ namespace ZFC
     theorem inter_monotone_left (A B C : U) :
       A ⊆ B → (A ∩ C) ⊆ (B ∩ C) := by
       intro h x hx
-      have hxAC := (BinInter_is_specified A C x).mp hx
-      exact (BinInter_is_specified B C x).mpr ⟨h x hxAC.1, hxAC.2⟩
+      have hxAC := (mem_inter_iff A C x).mp hx
+      exact (mem_inter_iff B C x).mpr ⟨h x hxAC.1, hxAC.2⟩
 
     @[simp]
     theorem inter_monotone_right (A B C : U) :
       A ⊆ B → (C ∩ A) ⊆ (C ∩ B) := by
       intro h x hx
-      have hxCA := (BinInter_is_specified C A x).mp hx
-      exact (BinInter_is_specified C B x).mpr ⟨hxCA.1, h x hxCA.2⟩
+      have hxCA := (mem_inter_iff C A x).mp hx
+      exact (mem_inter_iff C B x).mpr ⟨hxCA.1, h x hxCA.2⟩
 
   end SetOps.SetOrder
 

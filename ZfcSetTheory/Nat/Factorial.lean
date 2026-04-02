@@ -62,8 +62,8 @@ namespace ZFC
     -- Private helpers
     -- =========================================================================
 
-    /-- `toPeano n` gives the same value for any two proofs of `isNat n`. -/
-    private theorem toPeano_proof_irrel (n : U) (h1 h2 : isNat n) :
+    /-- `toPeano n` gives the same value for any two proofs of `IsNat n`. -/
+    private theorem toPeano_proof_irrel (n : U) (h1 h2 : IsNat n) :
         toPeano n h1 = toPeano n h2 :=
       fromPeano_injective ((fromPeano_toPeano n h1).trans (fromPeano_toPeano n h2).symm)
 
@@ -118,12 +118,12 @@ namespace ZFC
 
     /-- `(σ n)! = n! * (σ n)` for `n ∈ ω`. -/
     theorem factorialOf_succ (n : U) (hn : n ∈ (ω : U)) :
-        factorialOf (Nat.Basic.successor n) =
-        mul (factorialOf n) (Nat.Basic.successor n) := by
+        factorialOf (Nat.Basic.succ n) =
+        mul (factorialOf n) (Nat.Basic.succ n) := by
       obtain ⟨p, hp⟩ := fromPeano_surjective n (mem_Omega_is_Nat n hn)
       subst hp
       have h_succ : (fromPeano (Peano.ℕ₀.succ p) : U) =
-          Nat.Basic.successor (fromPeano p) := by simp only [fromPeano]
+          Nat.Basic.succ (fromPeano p) := by simp only [fromPeano]
       rw [← h_succ, ← fromPeano_factorial, Peano.Factorial.factorial_succ,
           fromPeano_mul, fromPeano_factorial]
 
@@ -180,12 +180,12 @@ namespace ZFC
 
     /-- `n! ∈ (σ n)! ∨ n! = (σ n)!` (i.e., `n! ≤ (n+1)!`) for all `n ∈ ω`. -/
     theorem factorialOf_le_succ (n : U) (hn : n ∈ (ω : U)) :
-        factorialOf n ∈ factorialOf (Nat.Basic.successor n) ∨
-        factorialOf n = factorialOf (Nat.Basic.successor n) := by
+        factorialOf n ∈ factorialOf (Nat.Basic.succ n) ∨
+        factorialOf n = factorialOf (Nat.Basic.succ n) := by
       obtain ⟨p, hp⟩ := fromPeano_surjective n (mem_Omega_is_Nat n hn)
       subst hp
       have h_succ : (fromPeano (Peano.ℕ₀.succ p) : U) =
-          Nat.Basic.successor (fromPeano p) := by simp only [fromPeano]
+          Nat.Basic.succ (fromPeano p) := by simp only [fromPeano]
       rw [← fromPeano_factorial p, ← h_succ, ← fromPeano_factorial (Peano.ℕ₀.succ p)]
       exact (fromPeano_le_iff
               (Peano.Factorial.factorial p)

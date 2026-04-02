@@ -154,36 +154,36 @@ namespace ZFC
     /-- The equivalence class of a under R within set A:
         EqClass a R A = {x ∈ A | (a, x) ∈ R} -/
     noncomputable def EqClass (a R A : U) : U :=
-      SpecSet A (fun x => ⟨a, x⟩ ∈ R)
+      sep A (fun x => ⟨a, x⟩ ∈ R)
 
     /-- The quotient set A/R: the set of all equivalence classes -/
     noncomputable def QuotientSet (A R : U) : U :=
-      SpecSet (𝒫 A) (fun C => ∃ a : U, a ∈ A ∧ C = EqClass a R A)
+      sep (𝒫 A) (fun C => ∃ a : U, a ∈ A ∧ C = EqClass a R A)
 
     /-! ### Relation Constructions -/
 
     /-- The identity relation on A: IdRel A = {(x, x) | x ∈ A} -/
     noncomputable def IdRel (A : U) : U :=
-      SpecSet (A ×ₛ A) (fun p => fst p = snd p)
+      sep (A ×ₛ A) (fun p => fst p = snd p)
 
     /-! ### Domain and Range for Relations -/
 
     /-- Domain of a relation R (properly defined for relations):
         domain R = {x | ∃ y, ⟨x, y⟩ ∈ R} -/
     noncomputable def domain (R : U) : U :=
-      SpecSet (⋃(⋃ R)) (fun x => ∃ y, ⟨x, y⟩ ∈ R)
+      sep (⋃(⋃ R)) (fun x => ∃ y, ⟨x, y⟩ ∈ R)
 
     /-- Range (image) of a relation R (properly defined for relations):
         range R = {y | ∃ x, ⟨x, y⟩ ∈ R} -/
     noncomputable def range (R : U) : U :=
-      SpecSet (⋃(⋃ R)) (fun y => ∃ x, ⟨x, y⟩ ∈ R)
+      sep (⋃(⋃ R)) (fun y => ∃ x, ⟨x, y⟩ ∈ R)
 
     /-- Alternative name for range -/
     noncomputable def imag (R : U) : U := range R
 
     /-- The inverse relation R⁻¹ = {(y, x) | (x, y) ∈ R} -/
     noncomputable def InverseRel (R : U) : U :=
-      SpecSet (range R ×ₛ domain R) (fun p => ⟨snd p, fst p⟩ ∈ R)
+      sep (range R ×ₛ domain R) (fun p => ⟨snd p, fst p⟩ ∈ R)
 
     /-! ### Theorems about Relation Properties -/
 
@@ -297,7 +297,7 @@ namespace ZFC
     theorem mem_IdRel (A x y : U) :
         ⟨x, y⟩ ∈ IdRel A ↔ x ∈ A ∧ x = y := by
       unfold IdRel
-      rw [SpecSet_is_specified]
+      rw [mem_sep_iff]
       constructor
       · intro h
         have hprod := h.1
@@ -322,7 +322,7 @@ namespace ZFC
       · -- isRelationOn
         intro p hp
         unfold IdRel at hp
-        rw [SpecSet_is_specified] at hp
+        rw [mem_sep_iff] at hp
         exact hp.1
       constructor
       · -- isReflexiveOn
@@ -345,7 +345,7 @@ namespace ZFC
     theorem mem_EqClass (a R A x : U) :
         x ∈ EqClass a R A ↔ x ∈ A ∧ ⟨a, x⟩ ∈ R := by
       unfold EqClass
-      rw [SpecSet_is_specified]
+      rw [mem_sep_iff]
 
     /-- For an equivalence relation, a is in its own equivalence class -/
     theorem EqClass_mem_self (R A a : U)
@@ -420,7 +420,7 @@ namespace ZFC
     /-- Equivalence classes partition the set: either equal or disjoint -/
     theorem EqClass_eq_or_disjoint (R A a b : U)
         (hEq : isEquivalenceOn R A) (haA : a ∈ A) (hbA : b ∈ A) :
-        EqClass a R A = EqClass b R A ∨ BinInter (EqClass a R A) (EqClass b R A) = ∅ := by
+        EqClass a R A = EqClass b R A ∨ inter (EqClass a R A) (EqClass b R A) = ∅ := by
       by_cases hab : ⟨a, b⟩ ∈ R
       · left
         exact (EqClass_eq_iff R A a b hEq haA hbA).mpr hab
@@ -429,7 +429,7 @@ namespace ZFC
         intro x
         constructor
         · intro hx
-          rw [BinInter_is_specified] at hx
+          rw [mem_inter_iff] at hx
           have hxa := hx.1
           have hxb := hx.2
           -- x ∈ EqClass a R A means ⟨a, x⟩ ∈ R
@@ -458,7 +458,7 @@ namespace ZFC
     theorem mem_domain (R x : U) :
         x ∈ domain R ↔ ∃ y, ⟨x, y⟩ ∈ R := by
       unfold domain
-      rw [SpecSet_is_specified]
+      rw [mem_sep_iff]
       constructor
       · -- Forward direction: x ∈ domain R → ∃ y, ⟨x, y⟩ ∈ R
         intro h
@@ -468,9 +468,9 @@ namespace ZFC
         obtain ⟨y, hxy⟩ := h
         refine ⟨?_, ⟨y, hxy⟩⟩
         -- Show x ∈ ⋃(⋃ R)
-        apply (UnionSet_is_specified (⋃ R) x).mpr
+        apply (mem_sUnion_iff (⋃ R) x).mpr
         refine ⟨{x}, ?_, (Singleton_is_specified x x).mpr rfl⟩
-        apply (UnionSet_is_specified R {x}).mpr
+        apply (mem_sUnion_iff R {x}).mpr
         exact ⟨⟨x, y⟩, hxy, (OrderedPair_is_specified x y {x}).mpr (Or.inl rfl)⟩
 
     /-- Characterization of range membership:
@@ -478,7 +478,7 @@ namespace ZFC
     theorem mem_range (R y : U) :
         y ∈ range R ↔ ∃ x, ⟨x, y⟩ ∈ R := by
       unfold range
-      rw [SpecSet_is_specified]
+      rw [mem_sep_iff]
       constructor
       · -- Forward direction: y ∈ range R → ∃ x, ⟨x, y⟩ ∈ R
         intro h
@@ -488,9 +488,9 @@ namespace ZFC
         obtain ⟨x, hxy⟩ := h
         refine ⟨?_, ⟨x, hxy⟩⟩
         -- Show y ∈ ⋃(⋃ R)
-        apply (UnionSet_is_specified (⋃ R) y).mpr
+        apply (mem_sUnion_iff (⋃ R) y).mpr
         refine ⟨{x, y}, ?_, (PairSet_is_specified x y y).mpr (Or.inr rfl)⟩
-        apply (UnionSet_is_specified R {x, y}).mpr
+        apply (mem_sUnion_iff R {x, y}).mpr
         exact ⟨⟨x, y⟩, hxy, (OrderedPair_is_specified x y {x, y}).mpr (Or.inr rfl)⟩
 
     /-- Characterization of imag (alias for range) -/

@@ -23,7 +23,7 @@ import ZfcSetTheory.BoolAlg.Atomic
 This file proves that the power set 𝒫(A) forms a **complete atomic Boolean algebra**:
 every subfamily of 𝒫(A) has a supremum and infimum within 𝒫(A).
 
-Combined with `PowerSet_is_atomic` from `BoolAlg.Atomic`, this yields the
+Combined with `powerset_is_atomic` from `BoolAlg.Atomic`, this yields the
 full structure theorem: 𝒫(A) is a complete atomic Boolean algebra.
 
 ## Main Definitions
@@ -36,21 +36,21 @@ full structure theorem: 𝒫(A) is a complete atomic Boolean algebra.
 ## Main Theorems
 
 ### Supremum
-* `UnionSet_subset_of_family` - ⋃F ⊆ A when F ⊆ 𝒫(A)
-* `UnionSet_mem_PowerSet_of_family` - ⋃S ∈ 𝒫(A) when S ⊆ 𝒫(A)
-* `UnionSet_is_supremumIn_PowerSet` - ⋃S is the supremum of S in 𝒫(A)
+* `sUnion_subset_of_family` - ⋃F ⊆ A when F ⊆ 𝒫(A)
+* `sUnion_mem_powerset_of_family` - ⋃S ∈ 𝒫(A) when S ⊆ 𝒫(A)
+* `sUnion_is_supremumIn_powerset` - ⋃S is the supremum of S in 𝒫(A)
 
 ### Infimum
 * `interSet_subset_of_family` - ⋂F ⊆ A when F ⊆ 𝒫(A) and F ≠ ∅
-* `interSet_mem_PowerSet_of_family` - ⋂S ∈ 𝒫(A) when S ⊆ 𝒫(A) and S ≠ ∅
-* `interSet_is_infimumIn_PowerSet` - ⋂S is the infimum of nonempty S in 𝒫(A)
-* `universe_is_infimumIn_PowerSet_empty` - A is the infimum of ∅ in 𝒫(A)
+* `interSet_mem_powerset_of_family` - ⋂S ∈ 𝒫(A) when S ⊆ 𝒫(A) and S ≠ ∅
+* `interSet_is_infimumIn_powerset` - ⋂S is the infimum of nonempty S in 𝒫(A)
+* `universe_is_infimumIn_powerset_empty` - A is the infimum of ∅ in 𝒫(A)
 
 ### Completeness
 * `supremumIn_unique` - Uniqueness of supremum
 * `infimumIn_unique` - Uniqueness of infimum
-* `PowerSet_is_complete_lattice` - 𝒫(A) is a complete lattice
-* `PowerSet_is_complete_atomic_BA` - 𝒫(A) is a complete atomic Boolean algebra
+* `powerset_is_complete_lattice` - 𝒫(A) is a complete lattice
+* `powerset_is_complete_atomic_BA` - 𝒫(A) is a complete atomic Boolean algebra
 -/
 
 namespace ZFC
@@ -105,32 +105,32 @@ namespace ZFC
     /-! ### Supremum in 𝒫(A) -/
 
     /-- ⋃F ⊆ A when F ⊆ 𝒫(A) -/
-    theorem UnionSet_subset_of_family (A F : U) (hF : F ⊆ 𝒫 A) :
+    theorem sUnion_subset_of_family (A F : U) (hF : F ⊆ 𝒫 A) :
         ⋃ F ⊆ A := by
       intro z hz
-      rw [UnionSet_is_specified] at hz
+      rw [mem_sUnion_iff] at hz
       obtain ⟨X, hX_F, hz_X⟩ := hz
       have hX_PA := hF X hX_F
-      rw [PowerSet_is_specified] at hX_PA
+      rw [mem_powerset_iff] at hX_PA
       exact hX_PA z hz_X
 
     /-- ⋃S ∈ 𝒫(A) when S ⊆ 𝒫(A) -/
-    theorem UnionSet_mem_PowerSet_of_family (A S : U) (hS : S ⊆ 𝒫 A) :
+    theorem sUnion_mem_powerset_of_family (A S : U) (hS : S ⊆ 𝒫 A) :
         ⋃ S ∈ 𝒫 A := by
-      rw [PowerSet_is_specified]
-      exact UnionSet_subset_of_family A S hS
+      rw [mem_powerset_iff]
+      exact sUnion_subset_of_family A S hS
 
     /-- ⋃S is the supremum of S in 𝒫(A) -/
-    theorem UnionSet_is_supremumIn_PowerSet (A S : U) (hS : S ⊆ 𝒫 A) :
+    theorem sUnion_is_supremumIn_powerset (A S : U) (hS : S ⊆ 𝒫 A) :
         isSupremumIn (𝒫 A) S (⋃ S) := by
-      refine ⟨UnionSet_mem_PowerSet_of_family A S hS, ?_, ?_⟩
+      refine ⟨sUnion_mem_powerset_of_family A S hS, ?_, ?_⟩
       · -- ⋃S is an upper bound: for each X ∈ S, X ⊆ ⋃S
         intro X hX_S z hz_X
-        rw [UnionSet_is_specified]
+        rw [mem_sUnion_iff]
         exact ⟨X, hX_S, hz_X⟩
       · -- ⋃S is the least upper bound
         intro z _hz_PA hz_ub w hw_union
-        rw [UnionSet_is_specified] at hw_union
+        rw [mem_sUnion_iff] at hw_union
         obtain ⟨X, hX_S, hw_X⟩ := hw_union
         exact hz_ub X hX_S w hw_X
 
@@ -144,19 +144,19 @@ namespace ZFC
       intro z hz
       have hz_all := (interSet_mem_iff F z hne).mp hz
       have hX₀_PA := hF X₀ hX₀
-      rw [PowerSet_is_specified] at hX₀_PA
+      rw [mem_powerset_iff] at hX₀_PA
       exact hX₀_PA z (hz_all X₀ hX₀)
 
     /-- ⋂S ∈ 𝒫(A) when S ⊆ 𝒫(A) and S ≠ ∅ -/
-    theorem interSet_mem_PowerSet_of_family (A S : U) (hS : S ⊆ 𝒫 A) (hne : S ≠ ∅) :
+    theorem interSet_mem_powerset_of_family (A S : U) (hS : S ⊆ 𝒫 A) (hne : S ≠ ∅) :
         (⋂ S) ∈ 𝒫 A := by
-      rw [PowerSet_is_specified]
+      rw [mem_powerset_iff]
       exact interSet_subset_of_family A S hS hne
 
     /-- ⋂S is the infimum of nonempty S in 𝒫(A) -/
-    theorem interSet_is_infimumIn_PowerSet (A S : U) (hS : S ⊆ 𝒫 A) (hne : S ≠ ∅) :
+    theorem interSet_is_infimumIn_powerset (A S : U) (hS : S ⊆ 𝒫 A) (hne : S ≠ ∅) :
         isInfimumIn (𝒫 A) S (⋂ S) := by
-      refine ⟨interSet_mem_PowerSet_of_family A S hS hne, ?_, ?_⟩
+      refine ⟨interSet_mem_powerset_of_family A S hS hne, ?_, ?_⟩
       · -- ⋂S is a lower bound: for each X ∈ S, ⋂S ⊆ X
         intro X hX_S z hz_inter
         exact (interSet_mem_iff S z hne).mp hz_inter X hX_S
@@ -167,32 +167,32 @@ namespace ZFC
         exact hz_lb X hX_S w hw_z
 
     /-- A is the infimum of the empty family in 𝒫(A) -/
-    theorem universe_is_infimumIn_PowerSet_empty (A : U) :
+    theorem universe_is_infimumIn_powerset_empty (A : U) :
         isInfimumIn (𝒫 A) ∅ A := by
-      refine ⟨self_mem_PowerSet A, ?_, ?_⟩
+      refine ⟨self_mem_powerset A, ?_, ?_⟩
       · -- A is a lower bound of ∅: vacuously true
         intro Y hY
         exact absurd hY (EmptySet_is_empty Y)
       · -- A is the greatest lower bound: if z ∈ 𝒫(A) is a lower bound, then z ⊆ A
         intro z hz_PA _
-        rw [PowerSet_is_specified] at hz_PA
+        rw [mem_powerset_iff] at hz_PA
         exact hz_PA
 
     /-! ### Complete Lattice -/
 
     /-- 𝒫(A) is a complete lattice -/
-    theorem PowerSet_is_complete_lattice (A : U) : isCompleteLattice (𝒫 A) := by
+    theorem powerset_is_complete_lattice (A : U) : isCompleteLattice (𝒫 A) := by
       intro S hS
       constructor
       · -- Supremum exists: ⋃S
-        exact ⟨⋃ S, UnionSet_is_supremumIn_PowerSet A S hS⟩
+        exact ⟨⋃ S, sUnion_is_supremumIn_powerset A S hS⟩
       · -- Infimum exists
         by_cases hne : S = ∅
         · -- S = ∅: infimum is A
           rw [hne]
-          exact ⟨A, universe_is_infimumIn_PowerSet_empty A⟩
+          exact ⟨A, universe_is_infimumIn_powerset_empty A⟩
         · -- S ≠ ∅: infimum is ⋂S
-          exact ⟨⋂ S, interSet_is_infimumIn_PowerSet A S hS hne⟩
+          exact ⟨⋂ S, interSet_is_infimumIn_powerset A S hS hne⟩
 
     /-! ### Complete Atomic Boolean Algebra -/
 
@@ -202,8 +202,8 @@ namespace ZFC
       isCompleteLattice (𝒫 A) ∧ isAtomic A
 
     /-- 𝒫(A) is a complete atomic Boolean algebra -/
-    theorem PowerSet_is_complete_atomic_BA (A : U) : isCompleteAtomicBA A :=
-      ⟨PowerSet_is_complete_lattice A, PowerSet_is_atomic A⟩
+    theorem powerset_is_complete_atomic_BA (A : U) : isCompleteAtomicBA A :=
+      ⟨powerset_is_complete_lattice A, powerset_is_atomic A⟩
 
   end BoolAlg.Complete
 
@@ -211,13 +211,13 @@ namespace ZFC
   export BoolAlg.Complete (
     isSupremumIn isInfimumIn isCompleteLattice
     supremumIn_unique infimumIn_unique
-    UnionSet_subset_of_family UnionSet_mem_PowerSet_of_family
-    UnionSet_is_supremumIn_PowerSet
-    interSet_subset_of_family interSet_mem_PowerSet_of_family
-    interSet_is_infimumIn_PowerSet
-    universe_is_infimumIn_PowerSet_empty
-    PowerSet_is_complete_lattice
-    isCompleteAtomicBA PowerSet_is_complete_atomic_BA
+    sUnion_subset_of_family sUnion_mem_powerset_of_family
+    sUnion_is_supremumIn_powerset
+    interSet_subset_of_family interSet_mem_powerset_of_family
+    interSet_is_infimumIn_powerset
+    universe_is_infimumIn_powerset_empty
+    powerset_is_complete_lattice
+    isCompleteAtomicBA powerset_is_complete_atomic_BA
   )
 
 end ZFC

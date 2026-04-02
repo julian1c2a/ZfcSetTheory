@@ -44,7 +44,7 @@ namespace ZFC
     theorem strict_order_asymmetric (x y : U) : x ⊂ y → ¬(y ⊂ x) := by
       intro h_subs h_subs_reverse
       apply h_subs.2
-      apply EqualityOfSubset
+      apply subset_antisymm
       exact h_subs.1
       exact h_subs_reverse.1
 
@@ -57,7 +57,7 @@ namespace ZFC
         exact h_subs_yz.1
       · intro h_eq
         apply h_subs_xy.2
-        apply EqualityOfSubset
+        apply subset_antisymm
         exact h_subs_xy.1
         rw [h_eq]
         exact h_subs_yz.1
@@ -73,7 +73,7 @@ namespace ZFC
         exact h_subs_yz.1
       · intro h_eq
         apply h_subs_yz.2
-        apply EqualityOfSubset
+        apply subset_antisymm
         exact h_subs_yz.1
         rw [← h_eq]
         exact h_subs_xy
@@ -88,7 +88,7 @@ namespace ZFC
         exact h_subs_yz
       · intro h_eq
         apply h_subs_xy.2
-        apply EqualityOfSubset
+        apply subset_antisymm
         exact h_subs_xy.1
         rw [h_eq]
         exact h_subs_yz

@@ -65,13 +65,13 @@ namespace ZFC
 
     /-- `mulFn m hm` is the ZFC function ω → ω that computes `m * ·`.
         Constructed via the Recursion Theorem with base `∅` and step `addFn m hm`
-        (so each successor step adds `m`). -/
+        (so each succ step adds `m`). -/
     noncomputable def mulFn (m : U) (hm : m ∈ (ω : U)) : U :=
       RecursiveFn ω ∅ (addFn m hm) zero_in_Omega (addFn_is_function m hm)
 
     /-- `mulFn m hm` is a function from ω to ω. -/
     theorem mulFn_is_function (m : U) (hm : m ∈ (ω : U)) :
-        isFunctionFromTo (mulFn m hm) ω ω :=
+        IsFunction (mulFn m hm) ω ω :=
       RecursiveFn_is_function ω ∅ (addFn m hm) zero_in_Omega (addFn_is_function m hm)
 
     /-- `mul m n` = `m * n` in ZFC.
@@ -138,7 +138,7 @@ namespace ZFC
         rw [ih]
         -- Goal: add (mul (fromPeano p) (fromPeano q')) (fromPeano p) = mul (fromPeano p) (σ (fromPeano q'))
         show add (mul (fromPeano p : U) (fromPeano q' : U)) (fromPeano p : U) =
-             mul (fromPeano p : U) (successor (fromPeano q' : U))
+             mul (fromPeano p : U) (succ (fromPeano q' : U))
         rw [mul_succ (fromPeano p : U) (fromPeano q' : U)
                      (Nat_in_Omega _ (fromPeano_is_nat p))
                      (Nat_in_Omega _ (fromPeano_is_nat q'))]
@@ -176,15 +176,15 @@ namespace ZFC
       rw [hlhs, hrhs]
       exact congrArg (fromPeano : Peano.ℕ₀ → U) (Peano.Mul.mul_comm p q)
 
-    /-- `mul (σ m) n = add (mul m n) n` (left-successor distributes), lifted from Peano. -/
+    /-- `mul (σ m) n = add (mul m n) n` (left-succ distributes), lifted from Peano. -/
     theorem succ_mul_Omega (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) :
         mul (σ m) n = add (mul m n) n := by
       obtain ⟨p, hp⟩ := fromPeano_surjective m (mem_Omega_is_Nat m hm)
       obtain ⟨q, hq⟩ := fromPeano_surjective n (mem_Omega_is_Nat n hn)
       subst hp; subst hq
-      show mul (successor (fromPeano p : U)) (fromPeano q : U) =
+      show mul (succ (fromPeano p : U)) (fromPeano q : U) =
            add (mul (fromPeano p : U) (fromPeano q : U)) (fromPeano q : U)
-      have hlhs : mul (successor (fromPeano p : U)) (fromPeano q : U) =
+      have hlhs : mul (succ (fromPeano p : U)) (fromPeano q : U) =
                   (fromPeano (Peano.Mul.mul (Peano.ℕ₀.succ p) q) : U) :=
         (fromPeano_mul (Peano.ℕ₀.succ p) q).symm
       have hrhs : add (mul (fromPeano p : U) (fromPeano q : U)) (fromPeano q : U) =

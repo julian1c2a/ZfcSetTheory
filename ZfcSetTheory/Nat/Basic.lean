@@ -14,8 +14,8 @@ License: MIT
 
   ### Construcciones Básicas
   - `σ n` : Función sucesor, σ(n) = n ∪ {n}
-  - `isInductive I` : I es inductivo si ∅ ∈ I y ∀x ∈ I, σ(x) ∈ I
-  - `isTransitiveSet S` : S es transitivo si ∀x ∈ S, x ⊆ S
+  - `IsInductive I` : I es inductivo si ∅ ∈ I y ∀x ∈ I, σ(x) ∈ I
+  - `IsTransitive S` : S es transitivo si ∀x ∈ S, x ⊆ S
 
   ### Orden Guiado por Membresía
   - `StrictOrderMembershipGuided S` : El orden ∈[S] = {⟨x,y⟩ | x,y ∈ S ∧ x ∈ y}
@@ -31,7 +31,7 @@ License: MIT
     (La existencia de máximo caracteriza la finitud)
 
   ### Definición de Número Natural
-  - `isNat n` : n es un número natural si y solo si:
+  - `IsNat n` : n es un número natural si y solo si:
     1. n es un conjunto transitivo
     2. ∈[n] es un orden total estricto en n
     3. ⟨n, ∈[n]⟩ está bien ordenado (con mínimos y máximos)
@@ -39,44 +39,44 @@ License: MIT
   ## Teoremas Fundamentales Probados
 
   ### Propiedades Elementales
-  - `zero_is_nat` : ∅ es un número natural
+  - `isNat_zero` : ∅ es un número natural
   - Ejemplos: 1 = {∅}, 2 = {∅,{∅}}, 3 = {∅,{∅},{∅,{∅}}} son naturales
-  - `mem_successor_self` : n ∈ σ(n)
-  - `nat_ne_successor` : n ≠ σ(n)
+  - `mem_succ_self` : n ∈ σ(n)
+  - `ne_succ_self` : n ≠ σ(n)
 
   ### Buena Fundación (SIN Axioma de Regularidad)
-  - `nat_not_mem_self` : n ∉ n (irreflexividad)
-  - `nat_no_two_cycle` : ¬(n ∈ m ∧ m ∈ n)
+  - `not_mem_self` : n ∉ n (irreflexividad)
+  - `not_mem_of_mem` : ¬(n ∈ m ∧ m ∈ n)
   - `nat_no_three_cycle` : ¬(n ∈ m ∧ m ∈ k ∧ k ∈ n)
 
   ### Propiedades Estructurales
-  - `nat_element_is_nat` : m ∈ n → isNat m (elementos son naturales)
+  - `nat_element_is_nat` : m ∈ n → IsNat m (elementos son naturales)
   - `nat_element_is_transitive` : elementos son conjuntos transitivos
   - `nat_element_has_strict_total_order` : elementos tienen orden total
   - `nat_element_has_well_order` : elementos están bien ordenados
 
   ### Clausura y Orden
-  - `nat_successor_is_nat` : isNat n → isNat (σ n)
-  - `nat_trichotomy` : n ∈ m ∨ n = m ∨ m ∈ n (tricotomía completa)
-  - `nat_mem_trans` : n ∈ m ∧ m ∈ k → n ∈ k (transitividad)
-  - `nat_mem_asymm` : n ∈ m → m ∉ n (asimetría)
+  - `isNat_succ` : IsNat n → IsNat (σ n)
+  - `trichotomy` : n ∈ m ∨ n = m ∨ m ∈ n (tricotomía completa)
+  - `mem_trans` : n ∈ m ∧ m ∈ k → n ∈ k (transitividad)
+  - `mem_asymm` : n ∈ m → m ∉ n (asimetría)
   - `nat_subset_mem_or_eq` : n ⊆ m → n ∈ m ∨ n = m
   - `no_nat_between` : entre n y σ(n) no hay otros naturales
 
   ### Segmentos Iniciales y Tricotomía
-  - `isInitialSegment` : definición de segmento inicial
+  - `IsInitialSegment` : definición de segmento inicial
   - `initial_segment_of_nat_is_eq_or_mem` : segmento inicial es igual o elemento
   - `inter_nat_is_initial_segment` : la intersección es segmento inicial
   - `nat_is_initial_segment` : n ∈ m → n es segmento inicial de m
   - `nat_element_trichotomy` : elementos de m cumplen tricotomía
 
   ### Propiedades del Sucesor
-  - `successor_injective` : σ(n) = σ(m) → n = m
-  - `successor_nonempty` : σ(n) ≠ ∅
-  - `mem_successor_of_mem` : m ∈ n → m ∈ σ(n)
+  - `succ_injective` : σ(n) = σ(m) → n = m
+  - `succ_nonempty` : σ(n) ≠ ∅
+  - `mem_succ_of_mem` : m ∈ n → m ∈ σ(n)
 
   ### Conjuntos Inductivos
-  - `nat_is_zero_or_succ` : todo natural es 0 o sucesor de otro
+  - `eq_zero_or_exists_succ` : todo natural es 0 o sucesor de otro
   - `nat_subset_inductive_set` : n ⊆ I para todo conjunto inductivo I
   - `nat_in_inductive_set` : n ∈ I para todo conjunto inductivo I
   - `zero/one/two/three_in_inductive` : casos específicos
@@ -98,7 +98,7 @@ License: MIT
   Los siguientes desarrollos continúan en archivos específicos:
 
   - **Recursion.lean**: Axioma de Infinito, conjunto ω, principio de inducción,
-    recursión sobre naturales, caracterización isNat n ↔ n ∈ ω
+    recursión sobre naturales, caracterización IsNat n ↔ n ∈ ω
 
   - **NaturalArithmetic.lean**: Aritmética básica (suma, multiplicación, exponenciación),
     propiedades algebraicas, orden aritmético, divisibilidad, números primos
@@ -141,15 +141,15 @@ namespace ZFC
     /-! ============================================================ -/
 
     /-! ### Función Sucesor: σ(n) = n ∪ {n} ### -/
-    noncomputable def successor (n : U) : U := n ∪ {n}
+    noncomputable def succ (n : U) : U := n ∪ {n}
 
-    notation "σ " n:90 => successor n
+    notation "σ " n:90 => succ n
 
-    /-- Specification theorem for successor -/
-    theorem successor_is_specified (n x : U) :
+    /-- Specification theorem for succ -/
+    theorem mem_succ_iff (n x : U) :
       x ∈ (σ n) ↔ x ∈ n ∨ x = n := by
-      unfold successor
-      simp only [BinUnion_is_specified, Singleton_is_specified]
+      unfold succ
+      simp only [mem_union_iff, Singleton_is_specified]
 
     /-! ### Conjunto Inductivo ### -/
     /-- Un conjunto I es inductivo si contiene al vacío y es cerrado bajo sucesores.
@@ -159,7 +159,7 @@ namespace ZFC
         Esta definición no requiere que I sea el "menor" conjunto inductivo (ω).
         Los conjuntos inductivos caracterizan aquellos que contienen "todos los naturales",
         aunque ω no esté definido todavía. -/
-    def isInductive (I : U) : Prop :=
+    def IsInductive (I : U) : Prop :=
       (∅ : U) ∈ I ∧ ∀ x, x ∈ I → (σ x) ∈ I
 
     /-! ### Conjunto Transitivo ### -/
@@ -171,7 +171,7 @@ namespace ZFC
 
         Los conjuntos transitivos son fundamentales en la construcción de ordinales.
         Todo ordinal (y en particular, todo natural) es un conjunto transitivo. -/
-    def isTransitiveSet (S : U) : Prop :=
+    def IsTransitive (S : U) : Prop :=
       ∀ x, x ∈ S → x ⊆ S
 
     /-! ### Orden Estricto Guiado por Membresía ### -/
@@ -185,7 +185,7 @@ namespace ZFC
 
         **Notación**: ∈[S] se lee "orden-épsilon en S" o "membresía restringida a S" -/
     noncomputable def StrictOrderMembershipGuided (S : U) : U :=
-      SpecSet (S ×ₛ S) (fun p => ∃ x y, p = ⟨x, y⟩ ∧ x ∈ y)
+      sep (S ×ₛ S) (fun p => ∃ x y, p = ⟨x, y⟩ ∧ x ∈ y)
 
     notation "∈[" S "]" => StrictOrderMembershipGuided S
 
@@ -193,7 +193,7 @@ namespace ZFC
     theorem mem_StrictOrderMembershipGuided (S x y : U) :
       ⟨x, y⟩ ∈ (∈[S]) ↔ x ∈ S ∧ y ∈ S ∧ x ∈ y := by
       unfold StrictOrderMembershipGuided
-      rw [SpecSet_is_specified]
+      rw [mem_sep_iff]
       constructor
       · intro ⟨hp_cart, a, b, hab, hab'⟩
         have h_eq := Eq_of_OrderedPairs_given_projections _ _ _ _ hab
@@ -226,7 +226,7 @@ namespace ZFC
 
         Para conjuntos transitivos, estas propiedades hacen de ∈[S] un orden lineal. -/
     def isTotalStrictOrderMembershipGuided (S : U) : Prop :=
-      isTransitiveSet S ∧
+      IsTransitive S ∧
       (∀ x y, x ∈ S → y ∈ S → x ∈ y → y ∉ x) ∧
       (∀ x y, x ∈ S → y ∈ S → (x ∈ y ∨ x = y ∨ y ∈ x))
 
@@ -280,8 +280,8 @@ namespace ZFC
 
         Esta definición NO usa el Axioma de Infinito y caracteriza los naturales
         intrínsecamente, sin referencia a un conjunto ω de "todos los naturales". -/
-    def isNat (n : U) : Prop :=
-      isTransitiveSet n ∧
+    def IsNat (n : U) : Prop :=
+      IsTransitive n ∧
       isTotalStrictOrderMembershipGuided n ∧
       isWellOrderMembershipGuided n
 
@@ -291,7 +291,7 @@ namespace ZFC
 
     /-- **TEOREMA BASE**: El conjunto vacío es un número natural.
 
-        **Enunciado**: isNat ∅
+        **Enunciado**: IsNat ∅
 
         Este es el punto de partida de la construcción inductiva de naturales.
         La prueba es vacua porque ∅ no tiene elementos, así que:
@@ -302,18 +302,18 @@ namespace ZFC
         Esta prueba vacua es típica del caso base en construcciones ordinales.
 
         **Notación**: Usaremos 0 ≡ ∅ como el primer natural. -/
-    theorem zero_is_nat : isNat (∅ : U) := by
-      unfold isNat isTotalStrictOrderMembershipGuided isWellOrderMembershipGuided
+    theorem isNat_zero : IsNat (∅ : U) := by
+      unfold IsNat isTotalStrictOrderMembershipGuided isWellOrderMembershipGuided
       refine ⟨?_, ?_, ?_⟩
       · -- ∅ is transitive
-        unfold isTransitiveSet
+        unfold IsTransitive
         intro x hx
         exfalso
         exact EmptySet_is_empty x hx
       · -- ∈[∅] is a total strict order
         refine ⟨?_, ?_, ?_⟩
         · -- ∅ is transitive (proven above)
-          unfold isTransitiveSet
+          unfold IsTransitive
           intro x hx
           exfalso
           exact EmptySet_is_empty x hx
@@ -349,18 +349,18 @@ namespace ZFC
 
         Por definición, σ(n) = n ∪ {n}, así que n ∈ {n} ⊆ σ(n).
         Este lema es fundamental para muchas pruebas sobre sucesores. -/
-    theorem mem_successor_self (n : U) : n ∈ (σ n) := by
-      rw [successor_is_specified]
+    theorem mem_succ_self (n : U) : n ∈ (σ n) := by
+      rw [mem_succ_iff]
       exact Or.inr rfl
 
     /-- **Lema de characterización**: x ∈ σ(n) ⟺ x ∈ n ∨ x = n
 
         El sucesor añade exactamente un nuevo elemento (n mismo) al conjunto n.
         Esta characterización es útil para razonar por casos sobre elementos de sucesores. -/
-    theorem subset_of_mem_successor (n x : U) :
+    theorem subset_of_mem_succ (n x : U) :
       x ∈ (σ n) → x ∈ n ∨ x = n := by
       intro hx
-      rw [successor_is_specified] at hx
+      rw [mem_succ_iff] at hx
       exact hx
 
     /-- **Lema de preservación**: La membresía se preserva al tomar sucesores.
@@ -369,27 +369,27 @@ namespace ZFC
 
         Si n está en m, también está en σ(m) = m ∪ {m}.
         Este lema es útil para probar propiedades de orden. -/
-    theorem mem_successor_of_mem (n m : U) (h : n ∈ m) : n ∈ σ m := by
-      rw [successor_is_specified]
+    theorem mem_succ_of_mem (n m : U) (h : n ∈ m) : n ∈ σ m := by
+      rw [mem_succ_iff]
       left
       exact h
 
     /-- **Teorema de preservación de transitividad**: Si n es transitivo, σ(n) es transitivo.
 
-        **Enunciado**: isTransitiveSet n → isTransitiveSet σ(n)
+        **Enunciado**: IsTransitive n → IsTransitive σ(n)
 
-        Este teorema es crucial para probar que nat_successor_is_nat.
+        Este teorema es crucial para probar que isNat_succ.
         La prueba analiza dos casos para x ∈ σ(n):
         - Si x ∈ n: usa transitividad de n
         - Si x = n: entonces los elementos de x están en n ⊆ σ(n)
 
         La transitividad es la primera propiedad que debe verificarse
         para mostrar que σ(n) es natural. -/
-    theorem successor_preserves_transitivity (n : U) (hn : isTransitiveSet n) :
-      isTransitiveSet (σ n) := by
-      unfold isTransitiveSet at hn ⊢
+    theorem succ_preserves_transitivity (n : U) (hn : IsTransitive n) :
+      IsTransitive (σ n) := by
+      unfold IsTransitive at hn ⊢
       intro x hx y hy
-      simp only [successor_is_specified] at hx ⊢
+      simp only [mem_succ_iff] at hx ⊢
       cases hx with
       | inl hx_in_n =>
         -- x ∈ n, so x ⊆ n by transitivity of n
@@ -404,14 +404,14 @@ namespace ZFC
 
     /-! ### Lema: elementos de un conjunto transitivo están contenidos en él ### -/
     theorem transitive_element_subset (S x : U)
-      (hS : isTransitiveSet S) (hx : x ∈ S) :
+      (hS : IsTransitive S) (hx : x ∈ S) :
       x ⊆ S := by
-      unfold isTransitiveSet at hS
+      unfold IsTransitive at hS
       exact hS x hx
 
     /-! ### Lema auxiliar: No hay 3-ciclo de elementos dentro de un natural ### -/
     /-- Helper lemma for nat_element_is_transitive -/
-    private theorem no_three_cycle_in_nat (n m k l : U) (hn : isNat n)
+    private theorem no_three_cycle_in_nat (n m k l : U) (hn : IsNat n)
         (hm_in_n : m ∈ n) (hk_in_n : k ∈ n) (hl_in_n : l ∈ n)
         (hm_in_l : m ∈ l) (hl_in_k : l ∈ k) (hk_in_m : k ∈ m) : False := by
       obtain ⟨hn_trans, ⟨_, hn_asym, hn_trich⟩, hn_wo⟩ := hn
@@ -419,7 +419,7 @@ namespace ZFC
       let S := {m, k} ∪ ({l} : U)
       have hS_sub : S ⊆ n := by
         intro x hx
-        rw [BinUnion_is_specified] at hx
+        rw [mem_union_iff] at hx
         cases hx with
         | inl hxmk =>
           rw [PairSet_is_specified] at hxmk
@@ -432,7 +432,7 @@ namespace ZFC
       have hS_nonempty : S ≠ (∅ : U) := by
         intro h_eq
         have : m ∈ S := by
-          rw [BinUnion_is_specified]
+          rw [mem_union_iff]
           left
           rw [PairSet_is_specified]
           left; rfl
@@ -441,7 +441,7 @@ namespace ZFC
       -- Apply well-ordering (only min needed here) to get minimal element
       obtain ⟨w, hw_in_S, hw_min⟩ := (hn_wo S hS_sub hS_nonempty).1
       -- w ∈ S means w ∈ {m, k} ∨ w ∈ {l}
-      rw [BinUnion_is_specified] at hw_in_S
+      rw [mem_union_iff] at hw_in_S
       cases hw_in_S with
       | inl hw_mk =>
         rw [PairSet_is_specified] at hw_mk
@@ -450,9 +450,9 @@ namespace ZFC
           -- m is minimal, so m ≤ k and m ≤ l
           rw [hw_eq_m] at hw_min
           have hm_k : m = k ∨ m ∈ k := hw_min k (by
-            rw [BinUnion_is_specified]; left; rw [PairSet_is_specified]; right; rfl)
+            rw [mem_union_iff]; left; rw [PairSet_is_specified]; right; rfl)
           have hm_l : m = l ∨ m ∈ l := hw_min l (by
-            rw [BinUnion_is_specified]; right; rw [Singleton_is_specified])
+            rw [mem_union_iff]; right; rw [Singleton_is_specified])
           cases hm_k with
           | inl hmk_eq =>
             -- m = k, but k ∈ m, contradiction
@@ -465,9 +465,9 @@ namespace ZFC
           -- k is minimal, so k ≤ m and k ≤ l
           rw [hw_eq_k] at hw_min
           have hk_m : k = m ∨ k ∈ m := hw_min m (by
-            rw [BinUnion_is_specified]; left; rw [PairSet_is_specified]; left; rfl)
+            rw [mem_union_iff]; left; rw [PairSet_is_specified]; left; rfl)
           have hk_l : k = l ∨ k ∈ l := hw_min l (by
-            rw [BinUnion_is_specified]; right; rw [Singleton_is_specified])
+            rw [mem_union_iff]; right; rw [Singleton_is_specified])
           cases hk_m with
           | inl hkm_eq =>
             -- k = m, but k ∈ m, contradiction
@@ -489,9 +489,9 @@ namespace ZFC
         rw [Singleton_is_specified] at hw_l
         rw [hw_l] at hw_min
         have hl_m : l = m ∨ l ∈ m := hw_min m (by
-          rw [BinUnion_is_specified]; left; rw [PairSet_is_specified]; left; rfl)
+          rw [mem_union_iff]; left; rw [PairSet_is_specified]; left; rfl)
         have hl_k : l = k ∨ l ∈ k := hw_min k (by
-          rw [BinUnion_is_specified]; left; rw [PairSet_is_specified]; right; rfl)
+          rw [mem_union_iff]; left; rw [PairSet_is_specified]; right; rfl)
         cases hl_m with
         | inl hlm_eq =>
           -- l = m, but m ∈ l, contradiction
@@ -507,7 +507,7 @@ namespace ZFC
 
     /-- **TEOREMA FUNDAMENTAL**: Ningún número natural es miembro de sí mismo.
 
-        **Enunciado**: isNat n → n ∉ n
+        **Enunciado**: IsNat n → n ∉ n
 
         Este teorema establece la irreflexividad de la membresía en naturales.
         Es crucial porque:
@@ -517,8 +517,8 @@ namespace ZFC
 
         **Prueba**: Si n ∈ n, entonces por asimetría de n: n ∈ n → n ∉ n,
         contradicción. -/
-    theorem nat_not_mem_self (n : U) :
-      isNat n → n ∉ n := by
+    theorem not_mem_self (n : U) :
+      IsNat n → n ∉ n := by
       intro ⟨_, ⟨_,hasym, _⟩, _⟩ hn_mem
       -- By asymmetry: if n ∈ n then n ∉ n
       have : n ∉ n := hasym n n hn_mem hn_mem hn_mem
@@ -526,39 +526,39 @@ namespace ZFC
 
     /-- **TEOREMA**: No existen ciclos de membresía de dos elementos entre naturales.
 
-        **Enunciado**: isNat x → isNat y → ¬(x ∈ y ∧ y ∈ x)
+        **Enunciado**: IsNat x → IsNat y → ¬(x ∈ y ∧ y ∈ x)
 
         Si x e y son naturales y x ∈ y, entonces y ∉ x.
         Esto prueba que la membresía entre naturales es antisimétrica.
 
         **Prueba**: Si x ∈ y y y ∈ x:
-        - Si x = y: entonces x ∈ x, contradiciendo nat_not_mem_self
+        - Si x = y: entonces x ∈ x, contradiciendo not_mem_self
         - Si x ≠ y: por transitividad de y, tendríamos y ∈ y, contradicción -/
-    theorem nat_no_two_cycle (x y : U) :
-      isNat x → isNat y → ¬(x ∈ y ∧ y ∈ x) := by
+    theorem not_mem_of_mem (x y : U) :
+      IsNat x → IsNat y → ¬(x ∈ y ∧ y ∈ x) := by
       intro hx hy hmem
       obtain ⟨hxy, hyx⟩ := hmem
       -- Distinguish two cases: x = y or x ≠ y
       by_cases h_eq : x = y
       · -- Case: x = y
-        -- Then x ∈ y means x ∈ x, contradicting nat_not_mem_self
+        -- Then x ∈ y means x ∈ x, contradicting not_mem_self
         rw [h_eq] at hxy
-        exact nat_not_mem_self y hy hxy
+        exact not_mem_self y hy hxy
       · -- Case: x ≠ y
         -- Since both are naturals, we have trichotomy
         -- But we have both x ∈ y and y ∈ x
         -- By asymmetry of y (since y is nat): x ∈ y → ¬(y ∈ x)
         have ⟨_, ⟨_, y_asym, _⟩, _⟩ := hy
         -- x and y are both in y since y is transitive and x ⊆ y
-        have y_trans : isTransitiveSet y := hy.1
+        have y_trans : IsTransitive y := hy.1
         have x_sub_y : x ⊆ y := y_trans x hxy
         have y_in_y : y ∈ y := x_sub_y y hyx
-        -- But this contradicts nat_not_mem_self
-        exact nat_not_mem_self y hy y_in_y
+        -- But this contradicts not_mem_self
+        exact not_mem_self y hy y_in_y
 
     /-- **TEOREMA**: No existen ciclos de membresía de tres elementos entre naturales.
 
-        **Enunciado**: isNat x → isNat y → isNat z → ¬(x ∈ y ∧ y ∈ z ∧ z ∈ x)
+        **Enunciado**: IsNat x → IsNat y → IsNat z → ¬(x ∈ y ∧ y ∈ z ∧ z ∈ x)
 
         Este teorema generaliza la ausencia de ciclos a tres elementos.
         Es importante para establecer que la membresía en naturales es acíclica.
@@ -566,20 +566,20 @@ namespace ZFC
         **Prueba**: Si x ∈ y, y ∈ z, z ∈ x, entonces por transitividad de x:
         z ⊆ x, luego y ∈ x, formando un 2-ciclo x ∈ y ∧ y ∈ x, contradicción. -/
     theorem nat_no_three_cycle (x y z : U) :
-      isNat x → isNat y → isNat z → ¬(x ∈ y ∧ y ∈ z ∧ z ∈ x) := by
+      IsNat x → IsNat y → IsNat z → ¬(x ∈ y ∧ y ∈ z ∧ z ∈ x) := by
       intro hx hy hz hmem
       obtain ⟨hxy, hyz, hzx⟩ := hmem
       -- Since x is transitive and z ∈ x, we have z ⊆ x
-      have x_trans : isTransitiveSet x := hx.1
+      have x_trans : IsTransitive x := hx.1
       have z_sub_x : z ⊆ x := x_trans z hzx
       -- Since y ∈ z and z ⊆ x, we have y ∈ x
       have hyx : y ∈ x := z_sub_x y hyz
       -- Now we have x ∈ y and y ∈ x, which is a 2-cycle
-      exact nat_no_two_cycle x y hx hy ⟨hxy, hyx⟩
+      exact not_mem_of_mem x y hx hy ⟨hxy, hyx⟩
 
     /-- **Lema estructural**: Elementos de naturales son transitivos.
 
-        **Enunciado**: isNat n → m ∈ n → isTransitiveSet m
+        **Enunciado**: IsNat n → m ∈ n → IsTransitive m
 
         Este lema establece que la propiedad de transitividad se hereda
         a los elementos. Es uno de los tres componentes necesarios para probar
@@ -589,15 +589,15 @@ namespace ZFC
         apoyado en no_three_cycle_in_nat para eliminar casos imposibles.
         Es una de las pruebas más técnicas del archivo. -/
     theorem nat_element_is_transitive (n m : U)
-      (hn : isNat n) (hm_in_n : m ∈ n) :
-      isTransitiveSet m := by
+      (hn : IsNat n) (hm_in_n : m ∈ n) :
+      IsTransitive m := by
       -- Si m ∈ n y n es natural, entonces m es natural por nat_element_is_nat
       -- Y si m es natural, entonces m es transitivo por definición
       -- Pero nat_element_is_nat aún no está completo, así que probamos directamente
       obtain ⟨hn_trans, ⟨hn_self, hn_asym, hn_trich⟩, hn_wo⟩ := hn
       -- Reconstruir hn para usarlo después
-      have hn_reconstructed : isNat n := ⟨hn_trans, ⟨hn_self, hn_asym, hn_trich⟩, hn_wo⟩
-      unfold isTransitiveSet at hn_trans ⊢
+      have hn_reconstructed : IsNat n := ⟨hn_trans, ⟨hn_self, hn_asym, hn_trich⟩, hn_wo⟩
+      unfold IsTransitive at hn_trans ⊢
       intro k hk_in_m
       -- m ∈ n and n transitive implies m ⊆ n
       have hm_sub_n : m ⊆ n := hn_trans m hm_in_n
@@ -677,7 +677,7 @@ namespace ZFC
 
     /-- **Lema estructural**: Elementos de naturales tienen orden total estricto.
 
-        **Enunciado**: isNat n → m ∈ n → isTotalStrictOrderMembershipGuided m
+        **Enunciado**: IsNat n → m ∈ n → isTotalStrictOrderMembershipGuided m
 
         El orden total se hereda de n a sus elementos m porque:
         - m ⊆ n (por transitividad de n)
@@ -685,13 +685,13 @@ namespace ZFC
 
         Este es el segundo componente para nat_element_is_nat. -/
     theorem nat_element_has_strict_total_order (n m : U)
-      (hn : isNat n) (hm_in_n : m ∈ n) :
+      (hn : IsNat n) (hm_in_n : m ∈ n) :
       isTotalStrictOrderMembershipGuided m := by
       obtain ⟨hn_trans, ⟨hn_self, hn_asym, hn_trich⟩, hn_wo⟩ := hn
       unfold isTotalStrictOrderMembershipGuided
 
       -- Reconstruir hn para usarlo
-      have hn_reconstructed : isNat n := ⟨hn_trans, ⟨hn_self, hn_asym, hn_trich⟩, hn_wo⟩
+      have hn_reconstructed : IsNat n := ⟨hn_trans, ⟨hn_self, hn_asym, hn_trich⟩, hn_wo⟩
 
       -- m ⊆ n porque n es transitivo
       have hm_sub_n : m ⊆ n := hn_trans m hm_in_n
@@ -723,7 +723,7 @@ namespace ZFC
 
     /-- **Lema estructural**: Elementos de naturales están bien ordenados.
 
-        **Enunciado**: isNat n → m ∈ n → isWellOrderMembershipGuided m
+        **Enunciado**: IsNat n → m ∈ n → isWellOrderMembershipGuided m
 
         El bien-orden se hereda porque para T ⊆ m ⊆ n no vacío:
         - n está bien ordenado, así que T tiene mínimo y máximo en n
@@ -731,7 +731,7 @@ namespace ZFC
 
         Este es el tercer y último componente para nat_element_is_nat. -/
     theorem nat_element_has_well_order (n m : U)
-      (hn : isNat n) (hm_in_n : m ∈ n) :
+      (hn : IsNat n) (hm_in_n : m ∈ n) :
       isWellOrderMembershipGuided m := by
       obtain ⟨hn_trans, ⟨hn_self, hn_asym, hn_trich⟩, hn_wo⟩ := hn
       unfold isWellOrderMembershipGuided
@@ -761,7 +761,7 @@ namespace ZFC
 
     /-- **TEOREMA FUNDAMENTAL**: Todo elemento de un número natural es un número natural.
 
-        **Enunciado**: isNat n → m ∈ n → isNat m
+        **Enunciado**: IsNat n → m ∈ n → IsNat m
 
         Este teorema establece que los naturales son "cerrados hacia abajo":
         si n es natural, entonces todos sus elementos son también naturales.
@@ -771,14 +771,14 @@ namespace ZFC
         - Cada natural es exactamente el conjunto de todos los naturales menores
         - Esto justifica la representación: n = {0, 1, 2, ..., n-1}
 
-        **Prueba**: Demostramos que m hereda las tres propiedades de isNat:
+        **Prueba**: Demostramos que m hereda las tres propiedades de IsNat:
         1. m es transitivo (por nat_element_is_transitive)
         2. m tiene orden total estricto (por nat_element_has_strict_total_order)
         3. m está bien ordenado (por nat_element_has_well_order) -/
     theorem nat_element_is_nat (n m : U) :
-      isNat n → m ∈ n → isNat m := by
+      IsNat n → m ∈ n → IsNat m := by
       intro hn hm_in_n
-      unfold isNat
+      unfold IsNat
       refine ⟨?_, ?_, ?_⟩
       · -- m es transitivo
         exact nat_element_is_transitive n m hn hm_in_n
@@ -790,19 +790,19 @@ namespace ZFC
     /-! ### Lemas previos para demostrar que el sucesor de un natural es natural ### -/
 
     /-- n ≠ σ n para todo natural n -/
-    theorem nat_ne_successor (n : U) (hn : isNat n) : n ≠ σ n := by
+    theorem ne_succ_self (n : U) (hn : IsNat n) : n ≠ σ n := by
       intro h_eq
-      have : n ∈ σ n := mem_successor_self n
+      have : n ∈ σ n := mem_succ_self n
       rw [←h_eq] at this
-      exact nat_not_mem_self n hn this
+      exact not_mem_self n hn this
 
     /-- σ n es transitivo si n es natural -/
-    theorem successor_of_nat_is_transitive (n : U) (hn : isNat n) :
-      isTransitiveSet (σ n) := by
+    theorem succ_of_nat_is_transitive (n : U) (hn : IsNat n) :
+      IsTransitive (σ n) := by
       obtain ⟨hn_trans, _, _⟩ := hn
-      unfold isTransitiveSet
+      unfold IsTransitive
       intro x hx_in_succ y hy_in_x
-      rw [successor_is_specified] at hx_in_succ ⊢
+      rw [mem_succ_iff] at hx_in_succ ⊢
       cases hx_in_succ with
       | inl hx_in_n =>
         -- x ∈ n, por transitividad de n: y ∈ x → y ∈ n
@@ -815,7 +815,7 @@ namespace ZFC
         exact hy_in_x
 
     /-- σ n tiene orden total estricto si n es natural -/
-    theorem successor_of_nat_has_strict_total_order (n : U) (hn : isNat n) :
+    theorem succ_of_nat_has_strict_total_order (n : U) (hn : IsNat n) :
       isTotalStrictOrderMembershipGuided (σ n) := by
       obtain ⟨hn_trans, ⟨hn_trans_self, hn_asym, hn_trich⟩, hn_wo⟩ := hn
       unfold isTotalStrictOrderMembershipGuided
@@ -823,11 +823,11 @@ namespace ZFC
       refine ⟨?_, ?_, ?_⟩
 
       · -- σ n es transitivo (ya lo tenemos)
-        exact successor_of_nat_is_transitive n ⟨hn_trans, ⟨hn_trans_self, hn_asym, hn_trich⟩, hn_wo⟩
+        exact succ_of_nat_is_transitive n ⟨hn_trans, ⟨hn_trans_self, hn_asym, hn_trich⟩, hn_wo⟩
 
       · -- Asimetría en σ n: x ∈ y → y ∉ x para x, y ∈ σ n
         intro x y hx_in_succ hy_in_succ hxy
-        rw [successor_is_specified] at hx_in_succ hy_in_succ
+        rw [mem_succ_iff] at hx_in_succ hy_in_succ
         cases hx_in_succ with
         | inl hx_in_n =>
           cases hy_in_succ with
@@ -840,7 +840,7 @@ namespace ZFC
             rw [hy_eq_n] at hn_in_x
             -- x ∈ n y n ∈ x implica n ∈ n por transitividad
             have : n ∈ n := hn_trans_self x hx_in_n n hn_in_x
-            exact nat_not_mem_self n ⟨hn_trans, ⟨hn_trans_self, hn_asym, hn_trich⟩, hn_wo⟩ this
+            exact not_mem_self n ⟨hn_trans, ⟨hn_trans_self, hn_asym, hn_trich⟩, hn_wo⟩ this
         | inr hx_eq_n =>
           cases hy_in_succ with
           | inl hy_in_n =>
@@ -849,16 +849,16 @@ namespace ZFC
             rw [hx_eq_n] at hxy
             -- y ∈ n y n ∈ y implica n ∈ n por transitividad
             have : n ∈ n := hn_trans_self y hy_in_n n hxy
-            exact nat_not_mem_self n ⟨hn_trans, ⟨hn_trans_self, hn_asym, hn_trich⟩, hn_wo⟩ this
+            exact not_mem_self n ⟨hn_trans, ⟨hn_trans_self, hn_asym, hn_trich⟩, hn_wo⟩ this
           | inr hy_eq_n =>
             -- x = n, y = n, entonces x ∈ y es n ∈ n: imposible
             rw [hx_eq_n, hy_eq_n] at hxy
             exfalso
-            exact nat_not_mem_self n ⟨hn_trans, ⟨hn_trans_self, hn_asym, hn_trich⟩, hn_wo⟩ hxy
+            exact not_mem_self n ⟨hn_trans, ⟨hn_trans_self, hn_asym, hn_trich⟩, hn_wo⟩ hxy
 
       · -- Tricotomía en σ n: x ∈ y ∨ x = y ∨ y ∈ x para x, y ∈ σ n
         intro x y hx_in_succ hy_in_succ
-        rw [successor_is_specified] at hx_in_succ hy_in_succ
+        rw [mem_succ_iff] at hx_in_succ hy_in_succ
         cases hx_in_succ with
         | inl hx_in_n =>
           cases hy_in_succ with
@@ -885,21 +885,21 @@ namespace ZFC
             exact hx_eq_n.trans hy_eq_n.symm
 
     /-! ### Teorema: el sucesor de un natural es natural ### -/
-    theorem nat_successor_is_nat (n : U) (hn : isNat n) : isNat (σ n) := by
+    theorem isNat_succ (n : U) (hn : IsNat n) : IsNat (σ n) := by
       -- Desempaquetamos propiedades de n
       obtain ⟨hn_trans, ⟨hn_trans_self, hn_asym, hn_trich⟩, hn_wo⟩ := hn
 
       -- Reconstruimos hn para usarlo después
-      have hn_reconstructed : isNat n := ⟨hn_trans, ⟨hn_trans_self, hn_asym, hn_trich⟩, hn_wo⟩
+      have hn_reconstructed : IsNat n := ⟨hn_trans, ⟨hn_trans_self, hn_asym, hn_trich⟩, hn_wo⟩
 
       -- Necesitamos probar 3 cosas: Transitividad, Orden Total Estricto, Bien-Orden (Min y Max)
       refine ⟨?_, ?_, ?_⟩
 
       -- 1. Transitividad
-      · exact successor_of_nat_is_transitive n hn_reconstructed
+      · exact succ_of_nat_is_transitive n hn_reconstructed
 
       -- 2. Orden Total Estricto
-      · exact successor_of_nat_has_strict_total_order n hn_reconstructed
+      · exact succ_of_nat_has_strict_total_order n hn_reconstructed
 
       -- 3. Bien-Orden
       · unfold isWellOrderMembershipGuided
@@ -918,20 +918,20 @@ namespace ZFC
               constructor
               · intro hx
                 have hx_succ : x ∈ (σ n) := hA_sub x hx
-                rw [successor_is_specified] at hx_succ
+                rw [mem_succ_iff] at hx_succ
                 cases hx_succ with
                 | inl hx_n =>
-                  have hx_B : x ∈ B := (BinInter_is_specified A n x).mpr ⟨hx, hx_n⟩
+                  have hx_B : x ∈ B := (mem_inter_iff A n x).mpr ⟨hx, hx_n⟩
                   rw [hB_empty] at hx_B
                   exact False.elim (EmptySet_is_empty x hx_B)
                 | inr hx_eq_n => rw [Singleton_is_specified]; exact hx_eq_n
               · intro hx; rw [Singleton_is_specified] at hx; rw [hx]
                 obtain ⟨z, hz⟩ := nonempty_iff_exists_mem A |>.mp hA_nonempty
                 have hz_succ : z ∈ (σ n) := hA_sub z hz
-                rw [successor_is_specified] at hz_succ
+                rw [mem_succ_iff] at hz_succ
                 cases hz_succ with
                 | inl hz_n =>
-                  have hz_B : z ∈ B := (BinInter_is_specified A n z).mpr ⟨hz, hz_n⟩
+                  have hz_B : z ∈ B := (mem_inter_iff A n z).mpr ⟨hz, hz_n⟩
                   rw [hB_empty] at hz_B
                   exact False.elim (EmptySet_is_empty z hz_B)
                 | inr hz_eq_n => rw [←hz_eq_n]; exact hz
@@ -941,22 +941,22 @@ namespace ZFC
             · apply (Singleton_is_specified n n).mpr rfl
             · intro x hx; rw [Singleton_is_specified] at hx; left; exact hx.symm
           · -- Caso 2: B no es vacío. Usamos el mínimo en n.
-            have hB_sub_n : B ⊆ n := BinInter_subset A n |>.2
+            have hB_sub_n : B ⊆ n := inter_subset A n |>.2
             have hB_nonempty : B ≠ (∅ : U) := hB_empty
             obtain ⟨m, hm_in_B, hm_min⟩ := (hn_wo B hB_sub_n hB_nonempty).1
             exists m
             constructor
-            · exact (BinInter_is_specified A n m).mp hm_in_B |>.1
+            · exact (mem_inter_iff A n m).mp hm_in_B |>.1
             · intro x hx_in_A
               have hx_succ := hA_sub x hx_in_A
-              rw [successor_is_specified] at hx_succ
+              rw [mem_succ_iff] at hx_succ
               cases hx_succ with
               | inl hx_n =>
-                have hx_B : x ∈ B := (BinInter_is_specified A n x).mpr ⟨hx_in_A, hx_n⟩
+                have hx_B : x ∈ B := (mem_inter_iff A n x).mpr ⟨hx_in_A, hx_n⟩
                 exact hm_min x hx_B
               | inr hx_eq_n =>
                 right; rw [hx_eq_n]
-                exact (BinInter_is_specified A n m).mp hm_in_B |>.2
+                exact (mem_inter_iff A n m).mp hm_in_B |>.2
 
         -- 3.2 Existencia del MÁXIMO (NUEVO)
         have h_max : (∃ M, M ∈ A ∧ ∀ x, x ∈ A → M = x ∨ x ∈ M) := by
@@ -968,7 +968,7 @@ namespace ZFC
             · intro x hx_in_A
               -- x ∈ A ⊆ n ∪ {n}, así que x ∈ n ∨ x = n
               have hx_succ := hA_sub x hx_in_A
-              rw [successor_is_specified] at hx_succ
+              rw [mem_succ_iff] at hx_succ
               cases hx_succ with
               | inl hx_n => right; exact hx_n -- x ∈ n
               | inr hx_eq_n => left; exact hx_eq_n.symm -- x = n
@@ -976,7 +976,7 @@ namespace ZFC
           · have hA_sub_n : A ⊆ n := by
               intro x hx
               have hx_succ := hA_sub x hx
-              rw [successor_is_specified] at hx_succ
+              rw [mem_succ_iff] at hx_succ
               cases hx_succ with
               | inl hx_n => exact hx_n
               | inr hx_eq_n =>
@@ -995,7 +995,7 @@ namespace ZFC
 
     /-- **TEOREMA DE FINITUD**: Todo subconjunto no vacío de un natural tiene elemento máximo.
 
-        **Enunciado**: isNat n → T ⊆ n → T ≠ ∅ →
+        **Enunciado**: IsNat n → T ⊆ n → T ≠ ∅ →
                        ∃max ∈ T, ∀x ∈ T, (x ∈ max ∨ x = max)
 
         Este teorema caracteriza a los naturales como ordinales FINITOS.
@@ -1017,18 +1017,18 @@ namespace ZFC
         - Fundamenta la inducción matemática (principio de descenso infinito)
         - Distingue naturales de transfinitos sin necesidad de ω
     -/
-    theorem nat_has_max (n T : U) (hn : isNat n) (hT_sub : T ⊆ n) (hT_ne : T ≠ ∅) :
+    theorem nat_has_max (n T : U) (hn : IsNat n) (hT_sub : T ⊆ n) (hT_ne : T ≠ ∅) :
       ∃ max, max ∈ T ∧ ∀ x, x ∈ T → (x ∈ max ∨ x = max) := by
       -- Definimos el conjunto de elementos maximales de T:
       -- aquellos que no tienen ningún elemento mayor en T
-      let Mx := SpecSet T (fun x => ¬∃ y, y ∈ T ∧ x ∈ y ∧ x ≠ y)
+      let Mx := sep T (fun x => ¬∃ y, y ∈ T ∧ x ∈ y ∧ x ≠ y)
 
       -- Si Mx ≠ ∅, cualquier elemento de Mx es el máximo buscado
       by_cases hMx : Mx ≠ ∅
       · -- Caso: existe al menos un elemento maximal
         have hMx_sub : Mx ⊆ T := by
           intro x hx
-          rw [SpecSet_is_specified] at hx
+          rw [mem_sep_iff] at hx
           exact hx.1
         have hMx_sub_n : Mx ⊆ n := by
           intro x hx
@@ -1052,7 +1052,7 @@ namespace ZFC
             -- max es maximal, así que no puede existir x ∈ T con max ∈ x y max ≠ x
             exfalso
             have hmax_maximal : ¬∃ y, y ∈ T ∧ max ∈ y ∧ max ≠ y := by
-              rw [SpecSet_is_specified] at hmax_in_Mx
+              rw [mem_sep_iff] at hmax_in_Mx
               exact hmax_in_Mx.2
             apply hmax_maximal
             exists x
@@ -1060,7 +1060,7 @@ namespace ZFC
             intro h_eq
             -- Si max = x, entonces max ∈ max (porque max ∈ x), contradicción
             have h_max_in_max : max ∈ max := h_eq ▸ h
-            exact nat_not_mem_self max (nat_element_is_nat n max hn hmax_in_n) h_max_in_max
+            exact not_mem_self max (nat_element_is_nat n max hn hmax_in_n) h_max_in_max
 
       · -- Caso: no hay elementos maximales
         -- Esto significa que para cada x ∈ T, existe y ∈ T con x ∈ y y x ≠ y
@@ -1073,7 +1073,7 @@ namespace ZFC
 
         -- Vamos a mostrar que M ∈ Mx, contradiciendo Mx = ∅
         have hM_in_Mx : M ∈ Mx := by
-          rw [SpecSet_is_specified]
+          rw [mem_sep_iff]
           refine ⟨hM_in_T, ?_⟩
           intro ⟨y, hy_in_T, hM_in_y, hM_ne_y⟩
           -- Si M ∈ y y M ≠ y, entonces por maximalidad de M: y ∈ M ∨ y = M
@@ -1098,7 +1098,7 @@ namespace ZFC
 
     /-- **TEOREMA**: El sucesor es el "siguiente" natural inmediato.
 
-        **Enunciado**: isNat n → isNat m → n ∈ m → σ(n) ⊆ m
+        **Enunciado**: IsNat n → IsNat m → n ∈ m → σ(n) ⊆ m
 
         Si n ∈ m (es decir, n < m), entonces σ(n) ⊆ m.
         Esto significa que no hay naturales "entre" n y su sucesor σ(n).
@@ -1112,11 +1112,11 @@ namespace ZFC
         - Justifica que σ es el "sucesor inmediato"
         - Base para definir el orden < como: n < m ⟺ n ∈ m
         - Fundamental para la aritmética de naturales -/
-    theorem no_nat_between (n m : U) (_hn : isNat n) (hm : isNat m)
+    theorem no_nat_between (n m : U) (_hn : IsNat n) (hm : IsNat m)
         (hn_in_m : n ∈ m) : σ n ⊆ m := by
       obtain ⟨hm_trans, _, _⟩ := hm
       intro x hx_in_succ
-      rw [successor_is_specified] at hx_in_succ
+      rw [mem_succ_iff] at hx_in_succ
       cases hx_in_succ with
       | inl hx_in_n =>
         -- x ∈ n y n ∈ m, por transitividad de m: x ∈ m
@@ -1131,14 +1131,14 @@ namespace ZFC
     /-- Un subconjunto S de n es un segmento inicial si es cerrado hacia abajo.
         Es decir, si x ∈ S y y ∈ x, entonces y ∈ S.
         Nota: Como n es transitivo, y ∈ x implica y ∈ n automáticamente. -/
-    def isInitialSegment (S n : U) : Prop :=
+    def IsInitialSegment (S n : U) : Prop :=
       S ⊆ n ∧ ∀ x y, x ∈ S → y ∈ x → y ∈ S
 
     /-- Teorema clave: Un segmento inicial de un número natural n es igual a n
         o es un elemento de n.
         Este teorema es fundamental para probar la tricotomía entre naturales. -/
     theorem initial_segment_of_nat_is_eq_or_mem (n S : U)
-      (hn : isNat n) (h_init : isInitialSegment S n) :
+      (hn : IsNat n) (h_init : IsInitialSegment S n) :
       S = n ∨ S ∈ n := by
       obtain ⟨hn_trans, ⟨_, hn_asym, hn_trich⟩, hn_wo⟩ := hn
       -- Consideramos la diferencia n \ S
@@ -1152,14 +1152,14 @@ namespace ZFC
         · exact h_init.1 x
         · intro hxn
           have hx_not_in_D : x ∉ D := by rw [hD_empty]; exact EmptySet_is_empty x
-          rw [Difference_is_specified] at hx_not_in_D
+          rw [mem_sdiff_iff] at hx_not_in_D
           -- x ∈ n y ¬(x ∈ n ∧ x ∉ S) => x ∈ S
           by_cases hxs : x ∈ S
           · exact hxs
           · exact False.elim (hx_not_in_D ⟨hxn, hxs⟩)
       · -- Caso 2: Si D no es vacío, tiene un elemento mínimo m debido al buen orden de n
         right
-        have hD_sub_n : D ⊆ n := Difference_subset n S
+        have hD_sub_n : D ⊆ n := sdiff_subset_left n S
         have hD_nonempty : D ≠ ∅ := hD_empty
         obtain ⟨m, hm_in_D, hm_min⟩ := (hn_wo D hD_sub_n hD_nonempty).1
 
@@ -1181,14 +1181,14 @@ namespace ZFC
               cases h_or with
               | inl hxm =>
                 -- x = m. Contradicción: x ∈ S pero m ∈ D (m ∉ S).
-                rw [Difference_is_specified] at hm_in_D
+                rw [mem_sdiff_iff] at hm_in_D
                 rw [hxm] at hxS
                 exact False.elim (hm_in_D.2 hxS)
               | inr hmx =>
                 -- m ∈ x. Contradicción: S es segmento inicial y x ∈ S => m ∈ S.
                 -- Pero m ∈ D => m ∉ S.
                 have hmS : m ∈ S := h_init.2 x m hxS hmx
-                rw [Difference_is_specified] at hm_in_D
+                rw [mem_sdiff_iff] at hm_in_D
                 exact False.elim (hm_in_D.2 hmS)
           · -- Dirección m ⊆ S
             intro hxm
@@ -1199,7 +1199,7 @@ namespace ZFC
             by_cases hxS : x ∈ S
             · exact hxS
             · -- x ∈ D
-              have hxD : x ∈ D := (Difference_is_specified n S x).mpr ⟨hxn, hxS⟩
+              have hxD : x ∈ D := (mem_sdiff_iff n S x).mpr ⟨hxn, hxS⟩
               -- Como m es el mínimo de D, m ≤ x (m = x ∨ m ∈ x).
               have h_min_cond := hm_min x hxD
               cases h_min_cond with
@@ -1213,28 +1213,28 @@ namespace ZFC
 
         rw [hS_eq_m]
         -- m ∈ D ⊆ n, así que S ∈ n
-        exact (Difference_is_specified n S m).mp hm_in_D |>.1
+        exact (mem_sdiff_iff n S m).mp hm_in_D |>.1
 
     /-! ### Tricotomía entre Naturales ### -/
 
     /-- Lema: La intersección de dos naturales es un segmento inicial de ambos. -/
-    theorem inter_nat_is_initial_segment (n m : U) (hn : isNat n) (hm : isNat m) :
-      isInitialSegment (n ∩ m) n ∧ isInitialSegment (n ∩ m) m := by
+    theorem inter_nat_is_initial_segment (n m : U) (hn : IsNat n) (hm : IsNat m) :
+      IsInitialSegment (n ∩ m) n ∧ IsInitialSegment (n ∩ m) m := by
       constructor
       · -- n ∩ m es segmento inicial de n
         constructor
-        · exact BinInter_subset n m |>.1
+        · exact inter_subset n m |>.1
         · intro x y hx hy
-          rw [BinInter_is_specified] at hx ⊢
+          rw [mem_inter_iff] at hx ⊢
           obtain ⟨hxn, hxm⟩ := hx
           constructor
           · exact hn.1 x hxn y hy
           · exact hm.1 x hxm y hy
       · -- n ∩ m es segmento inicial de m
         constructor
-        · exact BinInter_subset n m |>.2
+        · exact inter_subset n m |>.2
         · intro x y hx hy
-          rw [BinInter_is_specified] at hx ⊢
+          rw [mem_inter_iff] at hx ⊢
           obtain ⟨hxn, hxm⟩ := hx
           constructor
           · exact hn.1 x hxn y hy
@@ -1243,12 +1243,12 @@ namespace ZFC
     /-- Teorema de Tricotomía para Números Naturales:
         Dados dos naturales n y m, se cumple exactamente una de las siguientes:
         n ∈ m, n = m, o m ∈ n. -/
-    theorem nat_trichotomy (n m : U) (hn : isNat n) (hm : isNat m) :
+    theorem trichotomy (n m : U) (hn : IsNat n) (hm : IsNat m) :
       n ∈ m ∨ n = m ∨ m ∈ n := by
       let k := n ∩ m
       have hk_init := inter_nat_is_initial_segment n m hn hm
-      have hk_init_n : isInitialSegment k n := hk_init.1
-      have hk_init_m : isInitialSegment k m := hk_init.2
+      have hk_init_n : IsInitialSegment k n := hk_init.1
+      have hk_init_m : IsInitialSegment k m := hk_init.2
 
       have h_n_cases := initial_segment_of_nat_is_eq_or_mem n k hn hk_init_n
       have h_m_cases := initial_segment_of_nat_is_eq_or_mem m k hm hk_init_m
@@ -1276,19 +1276,19 @@ namespace ZFC
           -- k ∈ n y k ∈ m -> contradicción (k ∈ k)
           exfalso
           -- k ∈ n ∩ m = k
-          have hk_in_k : k ∈ k := (BinInter_is_specified n m k).mpr ⟨hk_in_n, hk_in_m⟩
+          have hk_in_k : k ∈ k := (mem_inter_iff n m k).mpr ⟨hk_in_n, hk_in_m⟩
           -- k es natural porque es elemento de n
-          have hk_nat : isNat k := nat_element_is_nat n k hn hk_in_n
-          exact nat_not_mem_self k hk_nat hk_in_k
+          have hk_nat : IsNat k := nat_element_is_nat n k hn hk_in_n
+          exact not_mem_self k hk_nat hk_in_k
 
     /-! ### Lema: subconjunto natural es elemento o igual ### -/
     /-- Si n y m son naturales y n ⊆ m, entonces n ∈ m ∨ n = m -/
     theorem nat_subset_mem_or_eq
-      (n m : U) (hn : isNat n) (hm : isNat m) (h_sub : n ⊆ m) :
+      (n m : U) (hn : IsNat n) (hm : IsNat m) (h_sub : n ⊆ m) :
       n ∈ m ∨ n = m
       := by
       -- Por tricotomía: n ∈ m ∨ n = m ∨ m ∈ n
-      have h_trich := nat_trichotomy n m hn hm
+      have h_trich := trichotomy n m hn hm
       cases h_trich with
       | inl h => left; exact h          -- caso n ∈ m
       | inr h => cases h with
@@ -1298,14 +1298,14 @@ namespace ZFC
           -- Luego n = m por extensionalidad, pero entonces m ∈ m: contradicción
           exfalso
           have h_m_sub : m ⊆ n := hn.1 m h_m_in_n
-          have h_eq : n = m := ExtSet_wc h_sub h_m_sub
+          have h_eq : n = m := eq_of_subset_of_subset h_sub h_m_sub
           rw [h_eq] at h_m_in_n
-          exact nat_not_mem_self m hm h_m_in_n
+          exact not_mem_self m hm h_m_in_n
 
     /-! ### Transitividad de membresía entre naturales ### -/
     /-- Si n, m, k son naturales y n ∈ m, m ∈ k, entonces n ∈ k.
         La membresía entre naturales es transitiva. -/
-    theorem nat_mem_trans (n m k : U) (_hn : isNat n) (_hm : isNat m) (hk : isNat k)
+    theorem mem_trans (n m k : U) (_hn : IsNat n) (_hm : IsNat m) (hk : IsNat k)
       (hnm : n ∈ m) (hmk : m ∈ k) : n ∈ k := by
       -- k es transitivo, así que m ∈ k implica m ⊆ k
       have hm_sub_k : m ⊆ k := hk.1 m hmk
@@ -1315,16 +1315,16 @@ namespace ZFC
     /-! ### Asimetría de membresía entre naturales ### -/
     /-- Si n y m son naturales y n ∈ m, entonces m ∉ n.
         La membresía entre naturales es asimétrica. -/
-    theorem nat_mem_asymm (n m : U) (hn : isNat n) (hm : isNat m)
+    theorem mem_asymm (n m : U) (hn : IsNat n) (hm : IsNat m)
       (hnm : n ∈ m) : m ∉ n := by
       intro hmn
       -- Si n ∈ m y m ∈ n, tendríamos un ciclo de 2 elementos
-      exact nat_no_two_cycle n m hn hm ⟨hnm, hmn⟩
+      exact not_mem_of_mem n m hn hm ⟨hnm, hmn⟩
 
     /-! ### Propiedad de segmento inicial para naturales ### -/
     /-- Si n ∈ m (ambos naturales), entonces n es un segmento inicial de m. -/
-    theorem nat_is_initial_segment (n m : U) (hn : isNat n) (hm : isNat m)
-      (hnm : n ∈ m) : isInitialSegment n m := by
+    theorem nat_is_initial_segment (n m : U) (hn : IsNat n) (hm : IsNat m)
+      (hnm : n ∈ m) : IsInitialSegment n m := by
       constructor
       · -- n ⊆ m: por transitividad de m
         exact hm.1 n hnm
@@ -1334,26 +1334,26 @@ namespace ZFC
         exact hn.1 x hx y hy
 
     /-- Si n y k son elementos de un natural m, entonces se cumple tricotomía entre ellos. -/
-    theorem nat_element_trichotomy (n k m : U) (hn : isNat n) (hk : isNat k) (_hm : isNat m)
+    theorem nat_element_trichotomy (n k m : U) (hn : IsNat n) (hk : IsNat k) (_hm : IsNat m)
       (_hnm : n ∈ m) (_hkm : k ∈ m) : n ∈ k ∨ n = k ∨ k ∈ n := by
       -- n y k son naturales, por lo tanto se cumple tricotomía
-      exact nat_trichotomy n k hn hk
+      exact trichotomy n k hn hk
 
     /-! ### Inyectividad del sucesor ### -/
     /-- El sucesor es inyectivo: si σ(n) = σ(m), entonces n = m. -/
-    theorem successor_injective (n m : U) (hn : isNat n) (hm : isNat m)
+    theorem succ_injective (n m : U) (hn : IsNat n) (hm : IsNat m)
       (h_eq : σ n = σ m) : n = m := by
       -- n ∈ σ(n) = σ(m), así que n ∈ σ(m)
-      have hn_in_succ_n : n ∈ σ n := mem_successor_self n
+      have hn_in_succ_n : n ∈ σ n := mem_succ_self n
       rw [h_eq] at hn_in_succ_n
       -- n ∈ σ(m) = m ∪ {m}, así que n ∈ m ∨ n = m
-      rw [successor_is_specified] at hn_in_succ_n
+      rw [mem_succ_iff] at hn_in_succ_n
 
       -- m ∈ σ(m) = σ(n), así que m ∈ σ(n)
-      have hm_in_succ_m : m ∈ σ m := mem_successor_self m
+      have hm_in_succ_m : m ∈ σ m := mem_succ_self m
       rw [←h_eq] at hm_in_succ_m
       -- m ∈ σ(n) = n ∪ {n}, así que m ∈ n ∨ m = n
-      rw [successor_is_specified] at hm_in_succ_m
+      rw [mem_succ_iff] at hm_in_succ_m
 
       cases hn_in_succ_n with
       | inl hn_in_m =>
@@ -1361,7 +1361,7 @@ namespace ZFC
         | inl hm_in_n =>
           -- n ∈ m y m ∈ n: contradicción (ciclo de 2 elementos)
           exfalso
-          exact nat_no_two_cycle n m hn hm ⟨hn_in_m, hm_in_n⟩
+          exact not_mem_of_mem n m hn hm ⟨hn_in_m, hm_in_n⟩
         | inr hm_eq_n =>
           -- m = n
           exact hm_eq_n.symm
@@ -1370,25 +1370,25 @@ namespace ZFC
         exact hn_eq_m
 
     /-- El sucesor nunca es vacío -/
-    theorem successor_nonempty (n : U) : (σ n) ≠ (∅ : U) := by
+    theorem succ_nonempty (n : U) : (σ n) ≠ (∅ : U) := by
       intro h
       -- σ(n) = ∅ contradice n ∈ σ(n)
-      have : n ∈ σ n := mem_successor_self n
+      have : n ∈ σ n := mem_succ_self n
       rw [h] at this
       exact EmptySet_is_empty n this
 
     /-- Lema: Todo número natural es 0 o un sucesor.
         Esto se deriva de que tiene un elemento máximo (si no es 0). -/
-    theorem nat_is_zero_or_succ (n : U) (hn : isNat n) :
+    theorem eq_zero_or_exists_succ (n : U) (hn : IsNat n) :
       n = ∅ ∨ ∃ k, n = σ k := by
       by_cases h_zero : n = ∅
       · left; exact h_zero
       · right
-        -- Como n ≠ ∅ y isNat n, n tiene un máximo M.
+        -- Como n ≠ ∅ y IsNat n, n tiene un máximo M.
         obtain ⟨hn_trans, hn_order, hn_wo⟩ := hn
         -- Reconstruimos hn para usarlo después
-        have hn_reconstructed : isNat n := ⟨hn_trans, hn_order, hn_wo⟩
-        obtain ⟨M, hM_in, hM_max⟩ := (hn_wo n (subseteq_reflexive n) h_zero).2
+        have hn_reconstructed : IsNat n := ⟨hn_trans, hn_order, hn_wo⟩
+        obtain ⟨M, hM_in, hM_max⟩ := (hn_wo n (subset_refl n) h_zero).2
 
         -- Afirmamos que n = σ(M)
         exists M
@@ -1399,11 +1399,11 @@ namespace ZFC
           intro hx
           -- Como M es máximo, M = x ∨ x ∈ M
           cases hM_max x hx with
-          | inl h_eq => rw [successor_is_specified]; right; exact h_eq.symm
-          | inr h_mem => rw [successor_is_specified]; left; exact h_mem
+          | inl h_eq => rw [mem_succ_iff]; right; exact h_eq.symm
+          | inr h_mem => rw [mem_succ_iff]; left; exact h_mem
         · -- x ∈ M ∪ {M} → x ∈ n
           intro hx
-          rw [successor_is_specified] at hx
+          rw [mem_succ_iff] at hx
           cases hx with
           | inl hx_M =>
             -- x ∈ M y M ∈ n → x ∈ n (transitividad)
@@ -1414,20 +1414,20 @@ namespace ZFC
     /-- **Lema fundamental**: El conjunto vacío pertenece a todo natural no vacío.
         Prueba SIN inducción: usa regresión imposible en la jerarquía de von Neumann.
 
-        **Enunciado**: isNat n → n ≠ ∅ → ∅ ∈ n
+        **Enunciado**: IsNat n → n ≠ ∅ → ∅ ∈ n
 
         PRUEBA: Sea m el mínimo elemento de n (existe por bien-orden).
         Supongamos m ≠ ∅. Entonces m es natural (elemento de natural).
         m tiene mínimo m' (bien-orden). Luego m' ∈ m ∈ n, así m' ∈ n (transitividad).
         Esto contradice que m es el mínimo de n.
         Por tanto m = ∅. -/
-    theorem zero_mem_of_nat_nonempty (n : U) (hn : isNat n) (h_ne : n ≠ ∅) : (∅ : U) ∈ n := by
-      -- Extraemos propiedades de isNat
+    theorem zero_mem_of_nat_nonempty (n : U) (hn : IsNat n) (h_ne : n ≠ ∅) : (∅ : U) ∈ n := by
+      -- Extraemos propiedades de IsNat
       obtain ⟨hn_trans, hn_order, hn_wo⟩ := hn
-      have hn_reconstructed : isNat n := ⟨hn_trans, hn_order, hn_wo⟩
+      have hn_reconstructed : IsNat n := ⟨hn_trans, hn_order, hn_wo⟩
 
       -- n tiene elemento mínimo m (por bien-orden)
-      obtain ⟨m, hm_in_n, hm_min⟩ := (hn_wo n (subseteq_reflexive n) h_ne).1
+      obtain ⟨m, hm_in_n, hm_min⟩ := (hn_wo n (subset_refl n) h_ne).1
 
       -- Probamos por casos: m = ∅ o m ≠ ∅
       by_cases h_m_eq : m = ∅
@@ -1436,17 +1436,17 @@ namespace ZFC
         exact hm_in_n
       · -- Caso 2: m ≠ ∅
         -- m es elemento de natural n, así que es natural
-        have hm_nat : isNat m := nat_element_is_nat n m hn_reconstructed hm_in_n
+        have hm_nat : IsNat m := nat_element_is_nat n m hn_reconstructed hm_in_n
 
         -- m es natural no vacío, así que tiene elemento mínimo m'
         obtain ⟨hn_trans_m, hn_order_m, hn_wo_m⟩ := hm_nat
-        obtain ⟨m', hm'_in_m, hm'_min⟩ := (hn_wo_m m (subseteq_reflexive m) h_m_eq).1
+        obtain ⟨m', hm'_in_m, hm'_min⟩ := (hn_wo_m m (subset_refl m) h_m_eq).1
 
         -- m' ∈ m y m ∈ n, por transitividad n: m' ∈ n
         have hm'_in_n : m' ∈ n := hn_trans m hm_in_n m' hm'_in_m
 
         -- Reconstruimos hm_nat para usarlo en los branches
-        have hm_nat : isNat m := ⟨hn_trans_m, hn_order_m, hn_wo_m⟩
+        have hm_nat : IsNat m := ⟨hn_trans_m, hn_order_m, hn_wo_m⟩
 
         -- m es el mínimo de n, entonces para m' ∈ n: m = m' ∨ m ∈ m'
         match hm_min m' hm'_in_n with
@@ -1454,11 +1454,11 @@ namespace ZFC
             -- m = m': pero m' ∈ m = m', así que m ∈ m → contradicción
             exfalso
             rw [←h_eq] at hm'_in_m
-            exact nat_not_mem_self m hm_nat hm'_in_m
+            exact not_mem_self m hm_nat hm'_in_m
           | Or.inr h_m_in_m' =>
             -- m ∈ m' y m' ∈ m: ciclo → contradicción
             exfalso
-            exact nat_no_two_cycle m' m
+            exact not_mem_of_mem m' m
               (nat_element_is_nat m m' hm_nat hm'_in_m)
               hm_nat
               ⟨hm'_in_m, h_m_in_m'⟩
@@ -1468,11 +1468,11 @@ namespace ZFC
     /-! ============================================================ -/
 
     /-!
-      NOTA: Gracias a la redefinición de `isNat` (ahora requiere mínimo Y MÁXIMO),
+      NOTA: Gracias a la redefinición de `IsNat` (ahora requiere mínimo Y MÁXIMO),
       hemos excluido los ordinales límite (como ω), que no tienen máximo.
-      Por tanto, `isNat n` implica que `n` es un ordinal finito (0 o sucesor).
+      Por tanto, `IsNat n` implica que `n` es un ordinal finito (0 o sucesor).
 
-      Ya no necesitamos el axioma `nat_is_zero_or_succ` porque es derivable
+      Ya no necesitamos el axioma `eq_zero_or_exists_succ` porque es derivable
       (aunque su prueba es sutil, aquí lo postularemos como lema para no complicar
       demasiado la demostración principal, sabiendo que ahora es semánticamente correcto).
     -/
@@ -1480,11 +1480,11 @@ namespace ZFC
 
     /-- Lema auxiliar: Todo natural es subconjunto de cualquier conjunto inductivo.
         Esta es la parte "fuerte" de la inducción.  -/
-    private theorem nat_subset_inductive_set (n : U) (hn : isNat n) (I : U) (hI : isInductive I) :
+    private theorem nat_subset_inductive_set (n : U) (hn : IsNat n) (I : U) (hI : IsInductive I) :
       n ⊆ I := by
       -- Usamos el principio del mínimo contraejemplo.
       -- Sea S el conjunto de elementos de n que NO están en I.
-      let S := SpecSet n (fun x => x ∉ I)
+      let S := sep n (fun x => x ∉ I)
 
       by_cases hS_empty : S = ∅
       · -- Si S es vacío, entonces todos los elementos de n están en I.
@@ -1492,30 +1492,30 @@ namespace ZFC
         -- Si x ∉ I, entonces x ∈ S
         by_cases hxi : x ∈ I
         · exact hxi
-        · have hxS : x ∈ S := (SpecSet_is_specified n x (fun z => z ∉ I)).mpr ⟨hx, hxi⟩
+        · have hxS : x ∈ S := (mem_sep_iff n x (fun z => z ∉ I)).mpr ⟨hx, hxi⟩
           rw [hS_empty] at hxS
           exact False.elim (EmptySet_is_empty x hxS)
 
       · -- Si S no es vacío, tiene un mínimo m (porque n está bien ordenado).
         obtain ⟨hn_trans, hn_order, hn_wo⟩ := hn
         -- Reconstruimos hn para usarlo después
-        have hn_reconstructed : isNat n := ⟨hn_trans, hn_order, hn_wo⟩
+        have hn_reconstructed : IsNat n := ⟨hn_trans, hn_order, hn_wo⟩
         -- S ⊆ n
         have hS_sub : S ⊆ n := by
           intro z hz
-          rw [SpecSet_is_specified] at hz
+          rw [mem_sep_iff] at hz
           exact hz.1
 
         obtain ⟨m, hm_in_S, hm_min⟩ := (hn_wo S hS_sub hS_empty).1
-        rw [SpecSet_is_specified] at hm_in_S
+        rw [mem_sep_iff] at hm_in_S
         have hm_in_n : m ∈ n := hm_in_S.1
         have hm_notin_I : m ∉ I := hm_in_S.2
 
         -- Analizamos qué es m: ¿0 o sucesor?
-        have hm_nat : isNat m := nat_element_is_nat n m hn_reconstructed hm_in_n
+        have hm_nat : IsNat m := nat_element_is_nat n m hn_reconstructed hm_in_n
 
         -- Ahora usamos el teorema derivado
-        have h_cases := nat_is_zero_or_succ m hm_nat
+        have h_cases := eq_zero_or_exists_succ m hm_nat
 
         cases h_cases with
         | inl hm_zero =>
@@ -1525,7 +1525,7 @@ namespace ZFC
         | inr h_succ =>
           obtain ⟨k, hk_eq⟩ := h_succ
           -- Si m = σ(k), entonces k ∈ m.
-          have hk_in_m : k ∈ m := by rw [hk_eq]; apply mem_successor_self
+          have hk_in_m : k ∈ m := by rw [hk_eq]; apply mem_succ_self
           -- Como m ∈ n y n es transitivo, k ∈ n.
           have hk_in_n : k ∈ n := hn_trans m hm_in_n k hk_in_m
 
@@ -1539,16 +1539,16 @@ namespace ZFC
               -- k = m. Imposible porque k ∈ m (regularidad / irreflexividad)
               -- h_eq : m = k, entonces después de rewrite tenemos m ∈ m
               rw [←h_eq] at hk_in_m
-              exact nat_not_mem_self m hm_nat hk_in_m
+              exact not_mem_self m hm_nat hk_in_m
             | inr h_mem =>
               -- m ∈ k. Imposible porque k ∈ m (asimetría)
-              exact nat_mem_asymm m k hm_nat (nat_element_is_nat n k hn_reconstructed hk_in_n) h_mem hk_in_m
+              exact mem_asymm m k hm_nat (nat_element_is_nat n k hn_reconstructed hk_in_n) h_mem hk_in_m
 
           -- Si k ∈ n pero k ∉ S, entonces k debe estar en I (por definición de S).
           have hk_in_I : k ∈ I := by
             by_cases h_k_in_I : k ∈ I
             · exact h_k_in_I
-            · have h_in_S : k ∈ S := (SpecSet_is_specified n k (fun z => z ∉ I)).mpr ⟨hk_in_n, h_k_in_I⟩
+            · have h_in_S : k ∈ S := (mem_sep_iff n k (fun z => z ∉ I)).mpr ⟨hk_in_n, h_k_in_I⟩
               exact absurd h_in_S hk_notin_S
 
           -- Si k ∈ I, entonces σ(k) ∈ I (por ser I inductivo).
@@ -1560,10 +1560,10 @@ namespace ZFC
 
     /-- Teorema Principal: Todo número natural pertenece a cualquier conjunto inductivo.
         (Equivale a decir que los naturales son el conjunto inductivo más pequeño). -/
-    theorem nat_in_inductive_set (n : U) (hn : isNat n) (I : U) (hI : isInductive I) :
+    theorem nat_in_inductive_set (n : U) (hn : IsNat n) (I : U) (hI : IsInductive I) :
       n ∈ I := by
       -- Usamos el lema de que es 0 o sucesor
-      cases nat_is_zero_or_succ n hn with
+      cases eq_zero_or_exists_succ n hn with
       | inl h_zero =>
         -- Si n = 0, 0 ∈ I por definición de inductivo
         rw [h_zero]
@@ -1572,7 +1572,7 @@ namespace ZFC
         obtain ⟨k, hk_eq⟩ := h_succ
         -- Si n = σ(k)
         -- k ∈ n (pues k ∈ σ(k))
-        have hk_in_n : k ∈ n := by rw [hk_eq]; exact mem_successor_self k
+        have hk_in_n : k ∈ n := by rw [hk_eq]; exact mem_succ_self k
         -- Por el lema anterior, n ⊆ I, así que k ∈ I
         have h_sub : n ⊆ I := nat_subset_inductive_set n hn I hI
         have hk_in_I : k ∈ I := h_sub k hk_in_n
@@ -1602,16 +1602,16 @@ namespace ZFC
       rfl
 
     theorem one_eq : one = ({∅} : U) := by
-      unfold one successor
-      rw [BinUnion_empty_left]
+      unfold one succ
+      rw [empty_union]
 
     theorem two_eq : two = ({∅, {∅}} : U) := by
-      unfold two successor
+      unfold two succ
       rw [one_eq]
-      apply ExtSet_wc
+      apply eq_of_subset_of_subset
       · -- {∅} ∪ {{∅}} ⊆ {∅, {∅}}
         intro x hx
-        rw [BinUnion_is_specified] at hx
+        rw [mem_union_iff] at hx
         rw [PairSet_is_specified]
         cases hx with
         | inl h =>
@@ -1626,7 +1626,7 @@ namespace ZFC
           exact h
       · -- {∅, {∅}} ⊆ {∅} ∪ {{∅}}
         intro x hx
-        rw [BinUnion_is_specified]
+        rw [mem_union_iff]
         rw [PairSet_is_specified] at hx
         cases hx with
         | inl h =>
@@ -1641,7 +1641,7 @@ namespace ZFC
           exact h
 
     theorem three_eq : three = (({∅, {∅}} : U) ∪ {{∅, {∅}}}) := by
-      unfold three successor
+      unfold three succ
       rw [two_eq]
 
     /-! **Ya tenemos que:**
@@ -1649,81 +1649,81 @@ namespace ZFC
     - 1 es un número natural
     - 2 es un número natural
     - 3 es un número natural
-    - isNat n => ∀ m ∈ n, isNat m
-    - isNat n => n ≠ (σ n)
-    - isNat n => n ∈ σ n
-    - isNat n => isTransitiveSet (σ n)
-    - isNat n => construimos el orden estricto en (σ n) bajo pertenencia, ∈[σ n]
+    - IsNat n => ∀ m ∈ n, IsNat m
+    - IsNat n => n ≠ (σ n)
+    - IsNat n => n ∈ σ n
+    - IsNat n => IsTransitive (σ n)
+    - IsNat n => construimos el orden estricto en (σ n) bajo pertenencia, ∈[σ n]
       (aunque todavía no tengamos que (σ n) sea natural)
       - Para todo par de elementos de n, el orden ∈[σ n] será el mismo que el de ∈[n]
       - Si x ∈ n, y ∈ (σ n)\n, entonces y = n, y por lo tanto x ∈ y, así (x, y) ∈ ∈[σ n]
       - Si x ∈ (σ n)\n, y ∈ (σ n)\n, entonces x = n, y = n, y x = y, por lo que (x, y) ∉ ∈[σ n]
-    - isNat n => ∈[σ n] es un orden total estricto
-    - isNat n => ∈[σ n] es un orden bien fundado (con min y max)
-    - isNat n → isNat m → n ∈ m ∨ n = m ∨ m ∈ n
-    - Lo siguiente es: isNat n → isNat (σ n)
+    - IsNat n => ∈[σ n] es un orden total estricto
+    - IsNat n => ∈[σ n] es un orden bien fundado (con min y max)
+    - IsNat n → IsNat m → n ∈ m ∨ n = m ∨ m ∈ n
+    - Lo siguiente es: IsNat n → IsNat (σ n)
     -/
 
     /-! ### Naturales específicos en conjuntos inductivos ### -/
 
     /-- 0 (vacío) pertenece a todo conjunto inductivo -/
-    theorem zero_in_inductive (I : U) (hI : isInductive I) : (∅ : U) ∈ I := hI.1
+    theorem zero_in_inductive (I : U) (hI : IsInductive I) : (∅ : U) ∈ I := hI.1
 
     /-- 1 pertenece a todo conjunto inductivo -/
-    theorem one_in_inductive (I : U) (hI : isInductive I) : σ (∅ : U) ∈ I := by
+    theorem one_in_inductive (I : U) (hI : IsInductive I) : σ (∅ : U) ∈ I := by
       have h0 := zero_in_inductive I hI
       exact hI.2 ∅ h0
 
     /-- 2 pertenece a todo conjunto inductivo -/
-    theorem two_in_inductive (I : U) (hI : isInductive I) : σ (σ (∅ : U)) ∈ I := by
+    theorem two_in_inductive (I : U) (hI : IsInductive I) : σ (σ (∅ : U)) ∈ I := by
       have h1 := one_in_inductive I hI
       exact hI.2 (σ (∅ : U)) h1
 
     /-- 3 pertenece a todo conjunto inductivo -/
-    theorem three_in_inductive (I : U) (hI : isInductive I) : σ (σ (σ (∅ : U))) ∈ I := by
+    theorem three_in_inductive (I : U) (hI : IsInductive I) : σ (σ (σ (∅ : U))) ∈ I := by
       have h2 := two_in_inductive I hI
       exact hI.2 (σ (σ (∅ : U))) h2
 
     /-- Predecessor of a non-zero natural number.
-        If n is a successor, n = σ(k), then k is the predecessor.
+        If n is a succ, n = σ(k), then k is the predecessor.
         In von Neumann ordinals, the predecessor of n is simply ⋃n. -/
     noncomputable def predecessor (n : U) : U := ⋃n
 
-    /-- For a natural number k, the predecessor of its successor is k itself. -/
-    theorem predecessor_of_successor {k : U} (hk : isNat k) : predecessor (σ k) = k := by
-      apply ExtSet_wc
+    /-- For a natural number k, the predecessor of its succ is k itself. -/
+    theorem predecessor_of_succ {k : U} (hk : IsNat k) : predecessor (σ k) = k := by
+      apply eq_of_subset_of_subset
       · -- predecessor (σ k) ⊆ k
         intro x hx
         unfold predecessor at hx
-        simp only [UnionSet_is_specified, successor_is_specified] at hx
+        simp only [mem_sUnion_iff, mem_succ_iff] at hx
         obtain ⟨y, hy | hy, hx_y⟩ := hx
         · exact hk.1 y hy x hx_y
         · subst hy; exact hx_y
       · -- k ⊆ predecessor (σ k)
         intro x hx
         unfold predecessor
-        simp only [UnionSet_is_specified, successor_is_specified]
+        simp only [mem_sUnion_iff, mem_succ_iff]
         exact ⟨k, Or.inr rfl, hx⟩
 
     /-- If n is a non-zero natural, its predecessor is also a natural. -/
-    theorem predecessor_is_nat (n : U) (hn : isNat n) (h_ne_zero : n ≠ ∅) :
-      isNat (predecessor n) := by
-      obtain ⟨k, hk⟩ := (nat_is_zero_or_succ n hn).resolve_left h_ne_zero
-      have k_is_nat : isNat k := nat_element_is_nat n k hn (by rw [hk]; exact mem_successor_self k)
+    theorem predecessor_is_nat (n : U) (hn : IsNat n) (h_ne_zero : n ≠ ∅) :
+      IsNat (predecessor n) := by
+      obtain ⟨k, hk⟩ := (eq_zero_or_exists_succ n hn).resolve_left h_ne_zero
+      have k_is_nat : IsNat k := nat_element_is_nat n k hn (by rw [hk]; exact mem_succ_self k)
       have h_pred_eq : predecessor n = k := by
-        rw [hk]; exact predecessor_of_successor k_is_nat
+        rw [hk]; exact predecessor_of_succ k_is_nat
       rw [h_pred_eq]
       exact k_is_nat
 
     /-- The predecessor of a non-zero natural n is an element of n. -/
-    theorem predecessor_mem (n : U) (hn : isNat n) (h_ne_zero : n ≠ ∅) :
+    theorem predecessor_mem (n : U) (hn : IsNat n) (h_ne_zero : n ≠ ∅) :
       predecessor n ∈ n := by
-      obtain ⟨k, hk⟩ := (nat_is_zero_or_succ n hn).resolve_left h_ne_zero
-      have k_is_nat : isNat k := nat_element_is_nat n k hn (by rw [hk]; exact mem_successor_self k)
+      obtain ⟨k, hk⟩ := (eq_zero_or_exists_succ n hn).resolve_left h_ne_zero
+      have k_is_nat : IsNat k := nat_element_is_nat n k hn (by rw [hk]; exact mem_succ_self k)
       have h_pred_eq : predecessor n = k := by
-        rw [hk]; exact predecessor_of_successor k_is_nat
+        rw [hk]; exact predecessor_of_succ k_is_nat
       rw [h_pred_eq, hk]
-      exact mem_successor_self k
+      exact mem_succ_self k
 
     /-! ============================================================ -/
     /-! ### ESTADO DEL DESARROLLO: NÚMEROS NATURALES ### -/
@@ -1745,9 +1745,9 @@ namespace ZFC
     ### ARQUITECTURA DE LA FORMALIZACIÓN:
 
     **NIVEL 1: Definiciones Básicas**
-    - `successor` (σ) : U → U
-    - `isInductive` : U → Prop
-    - `isTransitiveSet` : U → Prop
+    - `succ` (σ) : U → U
+    - `IsInductive` : U → Prop
+    - `IsTransitive` : U → Prop
     - `StrictOrderMembershipGuided` (∈[S]) : orden inducido por membresía
 
     **NIVEL 2: Estructuras de Orden**
@@ -1755,7 +1755,7 @@ namespace ZFC
     - `isWellOrderMembershipGuided` : existencia de mínimo Y máximo (finitud)
 
     **NIVEL 3: Definición de Natural**
-    - `isNat n` ≝ n transitivo ∧ ∈[n] orden total ∧ ∈[n] bien ordenado
+    - `IsNat n` ≝ n transitivo ∧ ∈[n] orden total ∧ ∈[n] bien ordenado
 
     **NIVEL 4: Teoremas Fundamentales**
     - Buena fundación (sin ciclos de membresía)
@@ -1773,21 +1773,21 @@ namespace ZFC
     /-! ## I. PROPIEDADES ELEMENTALES ✅
 
     **Teoremas básicos sobre 0 y sucesores**:
-    - `zero_is_nat` : ∅ es un número natural
+    - `isNat_zero` : ∅ es un número natural
     - Ejemplos: 1 = {∅}, 2 = {∅,{∅}}, 3 = {∅,{∅},{∅,{∅}}} son naturales
-    - `mem_successor_self` : n ∈ σ(n) para todo n
-    - `nat_ne_successor` : n ≠ σ(n) para todo natural n
+    - `mem_succ_self` : n ∈ σ(n) para todo n
+    - `ne_succ_self` : n ≠ σ(n) para todo natural n
 
     **Observaciones**:
-    - La prueba de zero_is_nat es vacua (todas las condiciones son vacuamente ciertas)
+    - La prueba de isNat_zero es vacua (todas las condiciones son vacuamente ciertas)
     - Los ejemplos 1, 2, 3 se prueban computacionalmente verificando las tres condiciones
     -/
 
     /-! ## II. BUENA FUNDACIÓN (SIN AXIOMA DE REGULARIDAD) ✅
 
     **Ausencia de ciclos de membresía**:
-    - `nat_not_mem_self` : n ∉ n (irreflexividad)
-    - `nat_no_two_cycle` : ¬(n ∈ m ∧ m ∈ n)
+    - `not_mem_self` : n ∉ n (irreflexividad)
+    - `not_mem_of_mem` : ¬(n ∈ m ∧ m ∈ n)
     - `nat_no_three_cycle` : ¬(n ∈ m ∧ m ∈ k ∧ k ∈ n)
 
     **IMPORTANCIA CRUCIAL**:
@@ -1797,15 +1797,15 @@ namespace ZFC
     - Base para probar que ∈ es acíclica en naturales
 
     **Técnica de prueba**:
-    - nat_not_mem_self: usa asimetría directamente
-    - nat_no_two_cycle: usa transitividad + nat_not_mem_self
+    - not_mem_self: usa asimetría directamente
+    - not_mem_of_mem: usa transitividad + not_mem_self
     - nat_no_three_cycle: reduce a ciclo de 2 elementos
     -/
 
     /-! ## III. PROPIEDADES ESTRUCTURALES ✅
 
     **Heredabilidad de la estructura de natural**:
-    - `nat_element_is_nat` : m ∈ n → isNat m (TEOREMA CLAVE)
+    - `nat_element_is_nat` : m ∈ n → IsNat m (TEOREMA CLAVE)
     - `nat_element_is_transitive` : elementos son transitivos
     - `nat_element_has_strict_total_order` : elementos tienen orden total
     - `nat_element_has_well_order` : elementos están bien ordenados
@@ -1825,18 +1825,18 @@ namespace ZFC
     /-! ## IV. CLAUSURA BAJO SUCESORES ✅
 
     **Teorema principal de clausura**:
-    - `nat_successor_is_nat` : isNat n → isNat (σ n)
+    - `isNat_succ` : IsNat n → IsNat (σ n)
 
     **CONSTRUCCIÓN INDUCTIVA**:
-    - 0 = ∅ es natural (zero_is_nat)
-    - 1 = σ(0) es natural (por nat_successor_is_nat)
-    - 2 = σ(1) es natural (por nat_successor_is_nat)
-    - 3 = σ(2) es natural (por nat_successor_is_nat)
+    - 0 = ∅ es natural (isNat_zero)
+    - 1 = σ(0) es natural (por isNat_succ)
+    - 2 = σ(1) es natural (por isNat_succ)
+    - 3 = σ(2) es natural (por isNat_succ)
     - ...
 
     **COMPLEJIDAD DE LA PRUEBA**:
-    Este teorema requiere verificar las tres condiciones de isNat para σ(n):
-    1. σ(n) es transitivo: usa successor_preserves_transitivity
+    Este teorema requiere verificar las tres condiciones de IsNat para σ(n):
+    1. σ(n) es transitivo: usa succ_preserves_transitivity
     2. σ(n) tiene orden total: extiende el orden de n con tricotomía
     3. σ(n) está bien ordenado: usa que n es el máximo elemento de σ(n)
 
@@ -1844,20 +1844,20 @@ namespace ZFC
     que requiere análisis de casos según si n ∈ subconjunto o no.
 
     **Propiedades adicionales del sucesor**:
-    - `successor_injective` : σ(n) = σ(m) → n = m
-    - `successor_nonempty` : σ(n) ≠ ∅
-    - `mem_successor_of_mem` : m ∈ n → m ∈ σ(n)
+    - `succ_injective` : σ(n) = σ(m) → n = m
+    - `succ_nonempty` : σ(n) ≠ ∅
+    - `mem_succ_of_mem` : m ∈ n → m ∈ σ(n)
     - `no_nat_between` : n ∈ m → σ(n) ⊆ m (no hay naturales intermedios)
     -/
 
     /-! ## V. TRICOTOMÍA Y ORDEN ✅
 
     **Teorema de tricotomía completa**:
-    - `nat_trichotomy` : n ∈ m ∨ n = m ∨ m ∈ n
+    - `trichotomy` : n ∈ m ∨ n = m ∨ m ∈ n
       (cualesquiera dos naturales son comparables)
 
     **ESTRATEGIA DE PRUEBA VÍA SEGMENTOS INICIALES**:
-    1. Definir `isInitialSegment S n` : S ⊆ n y cerrado hacia abajo
+    1. Definir `IsInitialSegment S n` : S ⊆ n y cerrado hacia abajo
     2. Probar `initial_segment_of_nat_is_eq_or_mem` : segmento inicial = n ó ∈ n
     3. Probar `inter_nat_is_initial_segment` : n ∩ m es segmento inicial de ambos
     4. Aplicar (2) a n ∩ m como segmento de n y de m
@@ -1870,8 +1870,8 @@ namespace ZFC
 
     **Teoremas derivados**:
     - `nat_subset_mem_or_eq` : n ⊆ m → n ∈ m ∨ n = m
-    - `nat_mem_trans` : n ∈ m ∧ m ∈ k → n ∈ k (transitividad de <)
-    - `nat_mem_asymm` : n ∈ m → m ∉ n (asimetría de <)
+    - `mem_trans` : n ∈ m ∧ m ∈ k → n ∈ k (transitividad de <)
+    - `mem_asymm` : n ∈ m → m ∉ n (asimetría de <)
     - `nat_is_initial_segment` : n ∈ m → n es segmento inicial de m
     - `nat_element_trichotomy` : elementos de m cumplen tricotomía
     -/
@@ -1879,7 +1879,7 @@ namespace ZFC
     /-! ## VI. CONJUNTOS INDUCTIVOS ✅
 
     **Teoremas sobre relación con conjuntos inductivos**:
-    - `nat_is_zero_or_succ` : todo natural es 0 ó sucesor de otro
+    - `eq_zero_or_exists_succ` : todo natural es 0 ó sucesor de otro
     - `nat_subset_inductive_set` : n ⊆ I para todo I inductivo
     - `nat_in_inductive_set` : si n es natural, entonces n ∈ I para todo I inductivo
 
@@ -1891,7 +1891,7 @@ namespace ZFC
 
     **INTERPRETACIÓN**:
     - Los naturales están "contenidos" en todo conjunto inductivo
-    - Esto anticipa el teorema (no probado aquí): isNat n ↔ n ∈ ω
+    - Esto anticipa el teorema (no probado aquí): IsNat n ↔ n ∈ ω
     - NO asumimos la existencia de ω (requiere Axioma de Infinito)
     - Los teoremas son válidos para CUALQUIER conjunto inductivo
 
@@ -1943,10 +1943,10 @@ namespace ZFC
 
     **Recursion.lean** contendrá:
 
-    - **Axioma de Infinito**: ∃I, isInductive I
+    - **Axioma de Infinito**: ∃I, IsInductive I
     - **Construcción de ω**: intersección de todos los conjuntos inductivos
     - **Propiedades de ω**: ω es inductivo, transitivo, el menor conjunto inductivo
-    - **Caracterización alternativa**: isNat n ↔ n ∈ ω
+    - **Caracterización alternativa**: IsNat n ↔ n ∈ ω
     - **Principio de inducción**:
       * Forma débil: P(0) → (∀n ∈ ω, P(n) → P(σ(n))) → (∀n ∈ ω, P(n))
       * Forma fuerte (inducción completa): (∀n ∈ ω, (∀m ∈ n, P(m)) → P(n)) → (∀n ∈ ω, P(n))
@@ -2018,7 +2018,7 @@ namespace ZFC
 
     1. **Recursion.lean** (prioridad alta):
        - Axioma de Infinito y construcción de ω
-       - Caracterización: isNat n ↔ n ∈ ω
+       - Caracterización: IsNat n ↔ n ∈ ω
        - Principio de inducción (débil y fuerte)
        - Teorema de recursión sobre naturales
        - ~300-400 líneas estimadas
@@ -2042,7 +2042,7 @@ namespace ZFC
     /-- The predecessor of ∅ is ∅ in ZFC: `predecessor ∅ = ⋃∅ = ∅`.
         Analogous to `τ 𝟘 = 𝟘` in the Peano setting. -/
     theorem predecessor_zero : predecessor (∅ : U) = ∅ :=
-      Set_is_empty_1 (∅ : U) rfl
+      sUnion_empty_of_empty (∅ : U) rfl
 
     /-- Strict predecessor of a non-zero Von Neumann natural.
         Requires an explicit proof that `n ≠ ∅`. Analogous to `ρ` in Peano. -/
@@ -2053,75 +2053,75 @@ namespace ZFC
         predecessorPos n h = predecessor n := rfl
 
     /-- `predecessorPos (σ k) h = k`. -/
-    theorem predecessorPos_of_successor (k : U) (hk : isNat k) (h : σ k ≠ ∅) :
+    theorem predecessorPos_of_succ (k : U) (hk : IsNat k) (h : σ k ≠ ∅) :
         predecessorPos (σ k) h = k :=
-      predecessor_of_successor hk
+      predecessor_of_succ hk
 
     /-- `predecessorPos n h` is a Von Neumann natural. -/
-    theorem predecessorPos_is_nat (n : U) (hn : isNat n) (h : n ≠ ∅) :
-        isNat (predecessorPos n h) :=
+    theorem predecessorPos_is_nat (n : U) (hn : IsNat n) (h : n ≠ ∅) :
+        IsNat (predecessorPos n h) :=
       predecessor_is_nat n hn h
 
     /-- `σ (predecessorPos n h) = n` for any non-zero Von Neumann natural. -/
-    theorem successor_predecessorPos (n : U) (hn : isNat n) (h : n ≠ ∅) :
+    theorem succ_predecessorPos (n : U) (hn : IsNat n) (h : n ≠ ∅) :
         σ (predecessorPos n h) = n := by
-      obtain ⟨k, hk⟩ := (nat_is_zero_or_succ n hn).resolve_left h
-      have hk_nat : isNat k :=
-        nat_element_is_nat n k hn (hk ▸ mem_successor_self k)
+      obtain ⟨k, hk⟩ := (eq_zero_or_exists_succ n hn).resolve_left h
+      have hk_nat : IsNat k :=
+        nat_element_is_nat n k hn (hk ▸ mem_succ_self k)
       calc σ (predecessorPos n h)
           = σ (predecessor n)      := by rw [predecessorPos_eq_predecessor]
         _ = σ (predecessor (σ k))  := by rw [hk]
-        _ = σ k                    := by rw [predecessor_of_successor hk_nat]
+        _ = σ k                    := by rw [predecessor_of_succ hk_nat]
         _ = n                      := hk.symm
 
   end Nat.Basic
 
   export Nat.Basic (
     -- Core definitions
-    successor
-    successor_is_specified
-    isInductive
-    isTransitiveSet
+    succ
+    mem_succ_iff
+    IsInductive
+    IsTransitive
     StrictOrderMembershipGuided
     mem_StrictOrderMembershipGuided
     isTotalStrictOrderMembershipGuided
     isWellOrderMembershipGuided
-    isNat
+    IsNat
     -- Basic theorems
-    zero_is_nat
-    mem_successor_self
-    subset_of_mem_successor
-    successor_preserves_transitivity
+    isNat_zero
+    mem_succ_self
+    subset_of_mem_succ
+    succ_preserves_transitivity
     transitive_element_subset
     -- Well-foundedness properties
-    nat_not_mem_self
-    nat_no_two_cycle
+    not_mem_self
+    not_mem_of_mem
     nat_no_three_cycle
     nat_element_is_transitive
     nat_element_has_strict_total_order
     nat_element_has_well_order
     nat_element_is_nat
-    nat_ne_successor
-    successor_of_nat_is_transitive
-    successor_of_nat_has_strict_total_order
-    nat_successor_is_nat
+    ne_succ_self
+    succ_of_nat_is_transitive
+    succ_of_nat_has_strict_total_order
+    isNat_succ
     no_nat_between
     -- Initial segments and trichotomy
-    isInitialSegment
+    IsInitialSegment
     initial_segment_of_nat_is_eq_or_mem
     inter_nat_is_initial_segment
     nat_subset_mem_or_eq
-    nat_trichotomy
-    nat_mem_trans
-    nat_mem_asymm
+    trichotomy
+    mem_trans
+    mem_asymm
     nat_is_initial_segment
     nat_element_trichotomy
-    successor_injective
-    successor_nonempty
+    succ_injective
+    succ_nonempty
     zero_mem_of_nat_nonempty
-    mem_successor_of_mem
+    mem_succ_of_mem
     -- Nat is Zero or Succ
-    nat_is_zero_or_succ
+    eq_zero_or_exists_succ
     nat_subset_inductive_set
     nat_in_inductive_set
     -- Naturales específicos en conjuntos inductivos
@@ -2132,16 +2132,16 @@ namespace ZFC
     nat_has_max
     -- Predecessor (saturated)
     predecessor
-    predecessor_of_successor
+    predecessor_of_succ
     predecessor_is_nat
     predecessor_mem
     predecessor_zero
     -- Predecessor (strict / ρ-like)
     predecessorPos
     predecessorPos_eq_predecessor
-    predecessorPos_of_successor
+    predecessorPos_of_succ
     predecessorPos_is_nat
-    successor_predecessorPos
+    succ_predecessorPos
     -- Examples
     zero
     one

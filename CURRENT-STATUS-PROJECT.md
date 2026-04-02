@@ -18,7 +18,17 @@ This project implements ZFC set theory in Lean 4, focusing on fundamental axioms
 
 ## Recent Achievements
 
-### Latest Updates (April 1, 2026)
+### Latest Updates (April 2, 2026)
+
+#### 0. Fase 3 — Convención de nombres Mathlib (✅ Complete)
+
+- **Renombrado global**: 40 archivos .lean, ~2300 líneas, 90+ patrones de renombrado
+- **Definiciones**: `SpecSet` → `sep`, `BinInter` → `inter`, `BinUnion` → `union`, `Difference` → `sdiff`, `UnionSet` → `sUnion`, `SymDiff` → `symmDiff`, `PowerSetOf` → `powerset`, `successor` → `succ`, `FunctionComposition` → `comp`, etc.
+- **Predicados → UpperCamelCase**: `isNat` → `IsNat`, `isInductive` → `IsInductive`, `isFunctionFromTo` → `IsFunction`, etc.
+- **Teoremas**: `_is_specified` → `mem_X_iff`, `_commutative` → `_comm`, `DeMorgan_*` → `compl_*`, etc.
+- Build limpio: 71 jobs, 0 errores
+
+### Previous Updates (April 1, 2026)
 
 #### 1. BoolAlg.Complete.lean — Álgebra booleana completa atómica (✅ Complete)
 

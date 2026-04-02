@@ -37,7 +37,7 @@ namespace ZFC
         ⟨a, ∅⟩ ↦ ⟨a, ∅⟩    (fixed point)
         ⟨a, b⟩ ↦ ⟨b, a mod b⟩   when b ≠ ∅  -/
     private noncomputable def euclid_stepFn : U :=
-      SpecSet ((ω ×ₛ ω : U) ×ₛ (ω ×ₛ ω : U)) (fun p =>
+      sep ((ω ×ₛ ω : U) ×ₛ (ω ×ₛ ω : U)) (fun p =>
         ∃ a b : U, a ∈ (ω : U) ∧ b ∈ (ω : U) ∧
           ((b = ∅ ∧ p = ⟨⟨a, b⟩, ⟨a, b⟩⟩) ∨
            (b ≠ ∅ ∧ p = ⟨⟨a, b⟩, ⟨b, mod a b⟩⟩)))
@@ -45,7 +45,7 @@ namespace ZFC
     private theorem mem_euclid_zero (a : U) (ha : a ∈ (ω : U)) :
         (⟨⟨a, ∅⟩, ⟨a, ∅⟩⟩ : U) ∈ euclid_stepFn := by
       unfold euclid_stepFn
-      rw [SpecSet_is_specified]
+      rw [mem_sep_iff]
       refine ⟨(OrderedPair_mem_CartesianProduct _ _ _ _).mpr
                ⟨(OrderedPair_mem_CartesianProduct a ∅ ω ω).mpr ⟨ha, zero_in_Omega⟩,
                 (OrderedPair_mem_CartesianProduct a ∅ ω ω).mpr ⟨ha, zero_in_Omega⟩⟩,
@@ -55,7 +55,7 @@ namespace ZFC
         (hb_pos : b ≠ ∅) :
         (⟨⟨a, b⟩, ⟨b, mod a b⟩⟩ : U) ∈ euclid_stepFn := by
       unfold euclid_stepFn
-      rw [SpecSet_is_specified]
+      rw [mem_sep_iff]
       refine ⟨(OrderedPair_mem_CartesianProduct _ _ _ _).mpr
                ⟨(OrderedPair_mem_CartesianProduct a b ω ω).mpr ⟨ha, hb⟩,
                 (OrderedPair_mem_CartesianProduct b (mod a b) ω ω).mpr
@@ -63,12 +63,12 @@ namespace ZFC
              a, b, ha, hb, Or.inr ⟨hb_pos, rfl⟩⟩
 
     private theorem euclid_stepFn_is_function :
-        isFunctionFromTo euclid_stepFn (ω ×ₛ ω : U) (ω ×ₛ ω : U) := by
+        IsFunction euclid_stepFn (ω ×ₛ ω : U) (ω ×ₛ ω : U) := by
       constructor
       · -- euclid_stepFn ⊆ (ω ×ₛ ω) ×ₛ (ω ×ₛ ω)
         intro p hp
         unfold euclid_stepFn at hp
-        rw [SpecSet_is_specified] at hp
+        rw [mem_sep_iff] at hp
         exact hp.1
       · -- For each input ∈ ω ×ₛ ω, unique output
         intro p hp
@@ -84,7 +84,7 @@ namespace ZFC
           · exact mem_euclid_zero a ha
           · intro y hy
             unfold euclid_stepFn at hy
-            rw [SpecSet_is_specified] at hy
+            rw [mem_sep_iff] at hy
             obtain ⟨-, a', b', -, -, h⟩ := hy
             rcases h with ⟨rfl, heq⟩ | ⟨hb'_pos, heq⟩
             · have hpair := (OrderedPair_eq_iff ⟨a, ∅⟩ y ⟨a', ∅⟩ ⟨a', ∅⟩).mp heq
@@ -97,7 +97,7 @@ namespace ZFC
           · exact mem_euclid_pos a b ha hb hb_pos
           · intro y hy
             unfold euclid_stepFn at hy
-            rw [SpecSet_is_specified] at hy
+            rw [mem_sep_iff] at hy
             obtain ⟨-, a', b', ha', hb', h⟩ := hy
             rcases h with ⟨rfl, heq⟩ | ⟨-, heq⟩
             · have hpair := (OrderedPair_eq_iff ⟨a, b⟩ y ⟨a', ∅⟩ ⟨a', ∅⟩).mp heq
@@ -171,14 +171,14 @@ namespace ZFC
         (n : U) (hn : n ∈ (ω : U)) :
         apply (euclidFn a b ha hb) (σ n) = apply (euclidFn a' b' ha' hb') n := by
       let P := fun k => apply (euclidFn a b ha hb) (σ k) = apply (euclidFn a' b' ha' hb') k
-      let S := SpecSet (ω : U) P
+      let S := sep (ω : U) P
       suffices hS : S = ω by
         have hn_S : n ∈ S := hS ▸ hn
-        rw [SpecSet_is_specified] at hn_S
+        rw [mem_sep_iff] at hn_S
         exact hn_S.2
       apply induction_principle S
-      · intro x hx; rw [SpecSet_is_specified] at hx; exact hx.1
-      · rw [SpecSet_is_specified]
+      · intro x hx; rw [mem_sep_iff] at hx; exact hx.1
+      · rw [mem_sep_iff]
         refine ⟨zero_in_Omega, ?_⟩
         simp only [P]
         rw [euclidFn_succ a b ha hb ∅ zero_in_Omega,
@@ -186,7 +186,7 @@ namespace ZFC
             heq,
             euclidFn_zero a' b' ha' hb']
       · intro k hk_S
-        rw [SpecSet_is_specified] at hk_S ⊢
+        rw [mem_sep_iff] at hk_S ⊢
         refine ⟨succ_in_Omega k hk_S.1, ?_⟩
         simp only [P]
         rw [euclidFn_succ a b ha hb (σ k) (succ_in_Omega k hk_S.1),
@@ -210,19 +210,19 @@ namespace ZFC
         (hstable : apply (euclidFn a b ha hb) n = (⟨x, ∅⟩ : U)) :
         apply (euclidFn a b ha hb) (add n k) = (⟨x, ∅⟩ : U) := by
       let P := fun k => apply (euclidFn a b ha hb) (add n k) = (⟨x, ∅⟩ : U)
-      let S := SpecSet (ω : U) P
+      let S := sep (ω : U) P
       suffices hS : S = ω by
         have hk_S : k ∈ S := hS ▸ hk
-        rw [SpecSet_is_specified] at hk_S
+        rw [mem_sep_iff] at hk_S
         exact hk_S.2
       apply induction_principle S
-      · intro z hz; rw [SpecSet_is_specified] at hz; exact hz.1
-      · rw [SpecSet_is_specified]
+      · intro z hz; rw [mem_sep_iff] at hz; exact hz.1
+      · rw [mem_sep_iff]
         refine ⟨zero_in_Omega, ?_⟩
         simp only [P]
         rw [add_zero n hn, hstable]
       · intro m hm_S
-        rw [SpecSet_is_specified] at hm_S ⊢
+        rw [mem_sep_iff] at hm_S ⊢
         refine ⟨succ_in_Omega m hm_S.1, ?_⟩
         simp only [P]
         rw [add_succ n m hn hm_S.1,
@@ -239,17 +239,17 @@ namespace ZFC
         ∃ (x : U), x ∈ (ω : U) ∧
           apply (euclidFn a b ha hb) (σ b) = (⟨x, ∅⟩ : U) := by
       -- Strong induction on b, universally quantifying over all a and proof terms
-      let S := SpecSet (ω : U) (fun b =>
+      let S := sep (ω : U) (fun b =>
         ∀ (a : U) (_ : a ∈ (ω : U)) (hb' : b ∈ (ω : U)) (ha' : a ∈ (ω : U)),
         ∃ x, x ∈ (ω : U) ∧ apply (euclidFn a b ha' hb') (σ b) = (⟨x, ∅⟩ : U))
       suffices hS_eq : S = ω by
         have hb_S : b ∈ S := hS_eq ▸ hb
-        rw [SpecSet_is_specified] at hb_S
+        rw [mem_sep_iff] at hb_S
         exact hb_S.2 a ha hb ha
       apply strong_induction_principle S
-      · intro x hx; rw [SpecSet_is_specified] at hx; exact hx.1
+      · intro x hx; rw [mem_sep_iff] at hx; exact hx.1
       · intro b hb_ω ih_b
-        rw [SpecSet_is_specified]
+        rw [mem_sep_iff]
         refine ⟨hb_ω, fun a_v _ha_v hb' ha' => ?_⟩
         rcases Classical.em (b = (∅ : U)) with rfl | hb_pos
         · -- Base: b = ∅
@@ -262,7 +262,7 @@ namespace ZFC
           have hmod_lt : mod a_v b ∈ b := mod_lt_divisor_ZFC a_v b ha' hb_ω hb_pos
           -- IH for mod a_v b
           have hmod_S : mod a_v b ∈ S := ih_b (mod a_v b) hmod_lt
-          rw [SpecSet_is_specified] at hmod_S
+          rw [mem_sep_iff] at hmod_S
           -- Convergence for (b, mod a_v b): ∃ x, apply (euclidFn b (mod a_v b) hb' hmod) (σ (mod a_v b)) = ⟨x, ∅⟩
           obtain ⟨x, hx, hconv⟩ := hmod_S.2 b hb_ω hmod hb'
           -- σ (mod a_v b) ≤ b
@@ -270,7 +270,7 @@ namespace ZFC
             (succ_mem_succ_iff (mod a_v b) b
               (mem_Omega_is_Nat _ hmod) (mem_Omega_is_Nat b hb_ω)).mp hmod_lt
           have h_sb_le_b : σ (mod a_v b) ∈ b ∨ σ (mod a_v b) = b :=
-            subset_of_mem_successor b _ h_sb_in_sb
+            subset_of_mem_succ b _ h_sb_in_sb
           obtain ⟨d, hd, hsum⟩ :=
             le_then_exists_add_Omega (σ (mod a_v b)) b
               (succ_in_Omega _ hmod) hb_ω h_sb_le_b
@@ -328,7 +328,7 @@ namespace ZFC
         (succ_mem_succ_iff (mod a b) b
           (mem_Omega_is_Nat (mod a b) hmod) (mem_Omega_is_Nat b hb)).mp hmod_lt
       have h_sb_le_b : σ (mod a b) ∈ b ∨ σ (mod a b) = b :=
-        subset_of_mem_successor b (σ (mod a b)) h_sb_in_sb
+        subset_of_mem_succ b (σ (mod a b)) h_sb_in_sb
       -- b = add (σ (mod a b)) d for some d
       obtain ⟨d, hd, hsum⟩ :=
         le_then_exists_add_Omega (σ (mod a b)) b
@@ -411,23 +411,23 @@ namespace ZFC
     theorem gcd_eq_gcdOf (a b : U) (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U)) :
         gcd a b = gcdOf a b := by
       -- Strong induction on b with simple S predicate
-      let S := SpecSet (ω : U) (fun b => ∀ (a : U), a ∈ (ω : U) → gcd a b = gcdOf a b)
+      let S := sep (ω : U) (fun b => ∀ (a : U), a ∈ (ω : U) → gcd a b = gcdOf a b)
       have hS_eq : S = ω := by
         apply strong_induction_principle S
-        · intro x hx; rw [SpecSet_is_specified] at hx; exact hx.1
+        · intro x hx; rw [mem_sep_iff] at hx; exact hx.1
         · intro b hb_ω ih
-          rw [SpecSet_is_specified]
+          rw [mem_sep_iff]
           refine ⟨hb_ω, fun a ha => ?_⟩
           rcases Classical.em (b = (∅ : U)) with rfl | hb_pos
           · rw [gcd_zero a ha, gcdOf_zero_right a ha]
           · have hmod : mod a b ∈ (ω : U) := mod_in_Omega a b ha hb_ω
             have hmod_lt : mod a b ∈ b := mod_lt_divisor_ZFC a b ha hb_ω hb_pos
             have hmod_S : mod a b ∈ S := ih (mod a b) hmod_lt
-            rw [SpecSet_is_specified] at hmod_S
+            rw [mem_sep_iff] at hmod_S
             have ih_mod : gcd b (mod a b) = gcdOf b (mod a b) := hmod_S.2 b hb_ω
             rw [gcd_pos_step a b ha hb_ω hb_pos, ih_mod, ← gcdOf_pos_step a b ha hb_ω hb_pos]
       have hb_S : b ∈ S := hS_eq ▸ hb
-      rw [SpecSet_is_specified] at hb_S
+      rw [mem_sep_iff] at hb_S
       exact hb_S.2 a ha
 
     -- =========================================================================

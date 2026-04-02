@@ -40,7 +40,7 @@ namespace ZFC
 
     /-! ### Definición del Producto Cartesiano ### -/
     noncomputable def SetOps.CartesianProduct (A B : U) : U :=
-      SpecSet (𝒫 (𝒫 (A ∪ B))) (fun p => isOrderedPair p ∧ fst p ∈ A ∧ snd p ∈ B)
+      sep (𝒫 (𝒫 (A ∪ B))) (fun p => isOrderedPair p ∧ fst p ∈ A ∧ snd p ∈ B)
 
     notation:70 A:71 " ×ₛ " B:71 => SetOps.CartesianProduct A B
 
@@ -49,7 +49,7 @@ namespace ZFC
       p ∈ (A ×ₛ B) ↔ (isOrderedPair p ∧ fst p ∈ A ∧ snd p ∈ B)
         := by
       unfold SetOps.CartesianProduct
-      rw [SpecSet_is_specified]
+      rw [mem_sep_iff]
       constructor
       · intro h
         exact h.2
@@ -62,7 +62,7 @@ namespace ZFC
           rw [hp_eq]
           have ha' : a ∈ A := by rw [hp_eq, fst_of_ordered_pair] at ha; exact ha
           have hb' : b ∈ B := by rw [hp_eq, snd_of_ordered_pair] at hb; exact hb
-          exact OrderedPair_in_PowerSet a b A B ha' hb'
+          exact OrderedPair_in_powerset a b A B ha' hb'
         · exact ⟨hop, ha, hb⟩
 
     /-! ### Caracterización con par ordenado explícito ### -/
@@ -128,9 +128,9 @@ namespace ZFC
       constructor
       · intro hp
         rw [CartesianProduct_is_specified] at hp
-        rw [BinUnion_is_specified]
+        rw [mem_union_iff]
         have hfst := hp.2.1
-        rw [BinUnion_is_specified] at hfst
+        rw [mem_union_iff] at hfst
         cases hfst with
         | inl hA =>
           left
@@ -141,7 +141,7 @@ namespace ZFC
           rw [CartesianProduct_is_specified]
           exact ⟨hp.1, hB, hp.2.2⟩
       · intro hp
-        rw [BinUnion_is_specified] at hp
+        rw [mem_union_iff] at hp
         rw [CartesianProduct_is_specified]
         cases hp with
         | inl hAC =>
@@ -149,7 +149,7 @@ namespace ZFC
           constructor
           · exact hAC.1
           · constructor
-            · rw [BinUnion_is_specified]
+            · rw [mem_union_iff]
               exact Or.inl hAC.2.1
             · exact hAC.2.2
         | inr hBC =>
@@ -157,7 +157,7 @@ namespace ZFC
           constructor
           · exact hBC.1
           · constructor
-            · rw [BinUnion_is_specified]
+            · rw [mem_union_iff]
               exact Or.inr hBC.2.1
             · exact hBC.2.2
 
@@ -169,9 +169,9 @@ namespace ZFC
       constructor
       · intro hp
         rw [CartesianProduct_is_specified] at hp
-        rw [BinUnion_is_specified]
+        rw [mem_union_iff]
         have hsnd := hp.2.2
-        rw [BinUnion_is_specified] at hsnd
+        rw [mem_union_iff] at hsnd
         cases hsnd with
         | inl hB =>
           left
@@ -182,7 +182,7 @@ namespace ZFC
           rw [CartesianProduct_is_specified]
           exact ⟨hp.1, hp.2.1, hC⟩
       · intro hp
-        rw [BinUnion_is_specified] at hp
+        rw [mem_union_iff] at hp
         rw [CartesianProduct_is_specified]
         cases hp with
         | inl hAB =>
@@ -191,7 +191,7 @@ namespace ZFC
           · exact hAB.1
           · constructor
             · exact hAB.2.1
-            · rw [BinUnion_is_specified]
+            · rw [mem_union_iff]
               exact Or.inl hAB.2.2
         | inr hAC =>
           rw [CartesianProduct_is_specified] at hAC
@@ -199,7 +199,7 @@ namespace ZFC
           · exact hAC.1
           · constructor
             · exact hAC.2.1
-            · rw [BinUnion_is_specified]
+            · rw [mem_union_iff]
               exact Or.inr hAC.2.2
 
     /-! ### Distributividad con Intersección ### -/
@@ -211,23 +211,23 @@ namespace ZFC
       constructor
       · intro hp
         rw [CartesianProduct_is_specified] at hp
-        rw [BinInter_is_specified]
+        rw [mem_inter_iff]
         have hfst := hp.2.1
-        rw [BinInter_is_specified] at hfst
+        rw [mem_inter_iff] at hfst
         constructor
         · rw [CartesianProduct_is_specified]
           exact ⟨hp.1, hfst.1, hp.2.2⟩
         · rw [CartesianProduct_is_specified]
           exact ⟨hp.1, hfst.2, hp.2.2⟩
       · intro hp
-        rw [BinInter_is_specified] at hp
+        rw [mem_inter_iff] at hp
         obtain ⟨hpAC, hpBC⟩ := hp
         rw [CartesianProduct_is_specified] at hpAC hpBC
         rw [CartesianProduct_is_specified]
         constructor
         · exact hpAC.1
         · constructor
-          · rw [BinInter_is_specified]
+          · rw [mem_inter_iff]
             exact ⟨hpAC.2.1, hpBC.2.1⟩
           · exact hpAC.2.2
 
@@ -239,16 +239,16 @@ namespace ZFC
       constructor
       · intro hp
         rw [CartesianProduct_is_specified] at hp
-        rw [BinInter_is_specified]
+        rw [mem_inter_iff]
         have hsnd := hp.2.2
-        rw [BinInter_is_specified] at hsnd
+        rw [mem_inter_iff] at hsnd
         constructor
         · rw [CartesianProduct_is_specified]
           exact ⟨hp.1, hp.2.1, hsnd.1⟩
         · rw [CartesianProduct_is_specified]
           exact ⟨hp.1, hp.2.1, hsnd.2⟩
       · intro hp
-        rw [BinInter_is_specified] at hp
+        rw [mem_inter_iff] at hp
         obtain ⟨hpAB, hpAC⟩ := hp
         rw [CartesianProduct_is_specified] at hpAB hpAC
         rw [CartesianProduct_is_specified]
@@ -256,7 +256,7 @@ namespace ZFC
         · exact hpAB.1
         · constructor
           · exact hpAB.2.1
-          · rw [BinInter_is_specified]
+          · rw [mem_inter_iff]
             exact ⟨hpAB.2.2, hpAC.2.2⟩
 
   end SetOps.CartesianProduct

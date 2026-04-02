@@ -63,82 +63,82 @@ namespace ZFC
         D = { x ∈ A | x ∉ f(x) } cannot be in the range of f. -/
 
     /-- The diagonal set: { x ∈ A | x ∉ f⦅x⦆ } -/
-    noncomputable def DiagonalSet (f A : U) : U :=
-      SpecSet A (fun x => x ∉ f⦅x⦆)
+    noncomputable def diagSet (f A : U) : U :=
+      sep A (fun x => x ∉ f⦅x⦆)
 
     /-- Characterization of the diagonal set -/
-    theorem DiagonalSet_is_specified (f A x : U) :
-        x ∈ DiagonalSet f A ↔ x ∈ A ∧ x ∉ f⦅x⦆ := by
-      unfold DiagonalSet
-      exact SpecSet_is_specified A x (fun x => x ∉ f⦅x⦆)
+    theorem mem_diagSet_iff (f A x : U) :
+        x ∈ diagSet f A ↔ x ∈ A ∧ x ∉ f⦅x⦆ := by
+      unfold diagSet
+      exact mem_sep_iff A x (fun x => x ∉ f⦅x⦆)
 
     /-- The diagonal set is a subset of A, hence in 𝒫(A) -/
-    theorem DiagonalSet_subset (f A : U) : DiagonalSet f A ⊆ A := by
+    theorem diagSet_subset (f A : U) : diagSet f A ⊆ A := by
       intro x hx
-      rw [DiagonalSet_is_specified] at hx
+      rw [mem_diagSet_iff] at hx
       exact hx.1
 
     /-- The diagonal set is in the power set of A -/
-    theorem DiagonalSet_in_PowerSet (f A : U) : DiagonalSet f A ∈ 𝒫 A := by
-      rw [PowerSet_is_specified]
-      exact DiagonalSet_subset f A
+    theorem diagSet_in_powerset (f A : U) : diagSet f A ∈ 𝒫 A := by
+      rw [mem_powerset_iff]
+      exact diagSet_subset f A
 
     /-- Key lemma: The diagonal set is not in the range of any function f: A → 𝒫(A) -/
-    theorem DiagonalSet_not_in_range (f A : U) :
-        ¬∃ d, d ∈ A ∧ f⦅d⦆ = DiagonalSet f A := by
+    theorem diagSet_not_in_range (f A : U) :
+        ¬∃ d, d ∈ A ∧ f⦅d⦆ = diagSet f A := by
       intro hex
       obtain ⟨d, hd_A, hd_eq⟩ := hex
-      -- Consider whether d ∈ DiagonalSet f A
-      by_cases h : d ∈ DiagonalSet f A
-      · -- Case: d ∈ DiagonalSet f A
-        -- By definition of DiagonalSet, d ∉ f⦅d⦆
-        have h' := (DiagonalSet_is_specified f A d).mp h
+      -- Consider whether d ∈ diagSet f A
+      by_cases h : d ∈ diagSet f A
+      · -- Case: d ∈ diagSet f A
+        -- By definition of diagSet, d ∉ f⦅d⦆
+        have h' := (mem_diagSet_iff f A d).mp h
         have h_not : d ∉ f⦅d⦆ := h'.2
-        -- But f⦅d⦆ = DiagonalSet f A, so d ∉ DiagonalSet f A
+        -- But f⦅d⦆ = diagSet f A, so d ∉ diagSet f A
         rw [hd_eq] at h_not
         exact h_not h
-      · -- Case: d ∉ DiagonalSet f A
-        -- Since d ∈ A and d ∉ DiagonalSet f A, we have ¬(d ∉ f⦅d⦆)
+      · -- Case: d ∉ diagSet f A
+        -- Since d ∈ A and d ∉ diagSet f A, we have ¬(d ∉ f⦅d⦆)
         -- i.e., d ∈ f⦅d⦆
         have h_in : d ∈ f⦅d⦆ := Classical.byContradiction fun h_not_in =>
-          h ((DiagonalSet_is_specified f A d).mpr ⟨hd_A, h_not_in⟩)
-        -- But f⦅d⦆ = DiagonalSet f A, so d ∈ DiagonalSet f A
+          h ((mem_diagSet_iff f A d).mpr ⟨hd_A, h_not_in⟩)
+        -- But f⦅d⦆ = diagSet f A, so d ∈ diagSet f A
         rw [hd_eq] at h_in
         exact h h_in
 
     /-- Cantor's Theorem: There is no surjection from A to 𝒫(A) -/
-    theorem cantor_no_surjection (f A : U) (hf : isFunctionFromTo f A (𝒫 A)) :
+    theorem cantor_no_surjection (f A : U) (hf : IsFunction f A (𝒫 A)) :
         ¬isSurjectiveOnto f (𝒫 A) := by
       intro hsurj
-      -- DiagonalSet f A ∈ 𝒫 A
-      have h_diag_in : DiagonalSet f A ∈ 𝒫 A := DiagonalSet_in_PowerSet f A
-      -- By surjectivity, there exists d ∈ A with f⦅d⦆ = DiagonalSet f A
-      obtain ⟨d, hd⟩ := hsurj (DiagonalSet f A) h_diag_in
+      -- diagSet f A ∈ 𝒫 A
+      have h_diag_in : diagSet f A ∈ 𝒫 A := diagSet_in_powerset f A
+      -- By surjectivity, there exists d ∈ A with f⦅d⦆ = diagSet f A
+      obtain ⟨d, hd⟩ := hsurj (diagSet f A) h_diag_in
       -- d ∈ A
       have hd_A : d ∈ A := by
-        have h := hf.1 ⟨d, DiagonalSet f A⟩ hd
+        have h := hf.1 ⟨d, diagSet f A⟩ hd
         rw [OrderedPair_mem_CartesianProduct] at h
         exact h.1
-      -- f⦅d⦆ = DiagonalSet f A
-      have hd_eq : f⦅d⦆ = DiagonalSet f A := apply_eq f d (DiagonalSet f A) (hf.2 d hd_A) hd
-      -- But this contradicts DiagonalSet_not_in_range
-      exact DiagonalSet_not_in_range f A ⟨d, hd_A, hd_eq⟩
+      -- f⦅d⦆ = diagSet f A
+      have hd_eq : f⦅d⦆ = diagSet f A := apply_eq f d (diagSet f A) (hf.2 d hd_A) hd
+      -- But this contradicts diagSet_not_in_range
+      exact diagSet_not_in_range f A ⟨d, hd_A, hd_eq⟩
 
     /-- Corollary: There is no bijection from A to 𝒫(A) -/
-    theorem cantor_no_bijection (f A : U) (hf : isFunctionFromTo f A (𝒫 A)) :
+    theorem cantor_no_bijection (f A : U) (hf : IsFunction f A (𝒫 A)) :
         ¬isBijection f A (𝒫 A) := by
       intro hbij
       exact cantor_no_surjection f A hf hbij.2.2
 
     /-- The canonical injection from A to 𝒫(A): x ↦ {x} -/
     noncomputable def singletonMap (A : U) : U :=
-      SpecSet (A ×ₛ 𝒫 A) (fun p => ∃ x, x ∈ A ∧ p = ⟨x, {x}⟩)
+      sep (A ×ₛ 𝒫 A) (fun p => ∃ x, x ∈ A ∧ p = ⟨x, {x}⟩)
 
     /-- The singleton map sends x to {x} -/
     theorem singletonMap_is_specified (A x y : U) :
         ⟨x, y⟩ ∈ singletonMap A ↔ x ∈ A ∧ y = {x} := by
       unfold singletonMap
-      rw [SpecSet_is_specified]
+      rw [mem_sep_iff]
       constructor
       · intro ⟨_, z, hz_A, hz_eq⟩
         have h := Eq_of_OrderedPairs_given_projections x y z {z} hz_eq
@@ -149,7 +149,7 @@ namespace ZFC
         · rw [h.2, OrderedPair_mem_CartesianProduct]
           constructor
           · exact h.1
-          · rw [PowerSet_is_specified]
+          · rw [mem_powerset_iff]
             intro z hz
             rw [Singleton_is_specified] at hz
             rw [hz]
@@ -157,12 +157,12 @@ namespace ZFC
         · exact ⟨x, h.1, h.2 ▸ rfl⟩
 
     /-- The singleton map is a function from A to 𝒫(A) -/
-    theorem singletonMap_is_function (A : U) : isFunctionFromTo (singletonMap A) A (𝒫 A) := by
+    theorem singletonMap_is_function (A : U) : IsFunction (singletonMap A) A (𝒫 A) := by
       constructor
       · -- singletonMap A ⊆ A ×ₛ 𝒫 A
         intro p hp
         unfold singletonMap at hp
-        rw [SpecSet_is_specified] at hp
+        rw [mem_sep_iff] at hp
         exact hp.1
       · -- ExistsUnique: for each x ∈ A, there exists unique y with ⟨x, y⟩ ∈ singletonMap A
         intro x hx
@@ -183,21 +183,21 @@ namespace ZFC
       exact (Singleton_is_specified x₂ x₁).mp hx₁_in
 
     /-- A is dominated by 𝒫(A) -/
-    theorem A_dominated_by_PowerSet (A : U) : isDominatedBy A (𝒫 A) :=
+    theorem A_dominated_by_powerset (A : U) : isDominatedBy A (𝒫 A) :=
       ⟨singletonMap A, singletonMap_is_function A, singletonMap_is_injective A⟩
 
     /-- 𝒫(A) does not dominate A via a surjection (hence not equipotent) -/
-    theorem PowerSet_not_dominated_by_A (A : U) : ¬isDominatedBy (𝒫 A) A := by
+    theorem powerset_not_dominated_by_A (A : U) : ¬isDominatedBy (𝒫 A) A := by
       intro hdominates
       obtain ⟨g, hg_func, hg_inj⟩ := hdominates
       -- If g: 𝒫(A) → A is injective, we derive a contradiction via diagonal argument
       -- Consider D = { g⦅S⦆ | S ∈ 𝒫(A) ∧ g⦅S⦆ ∉ S }
-      let D := SpecSet A (fun x => ∃ S, S ∈ 𝒫 A ∧ g⦅S⦆ = x ∧ x ∉ S)
+      let D := sep A (fun x => ∃ S, S ∈ 𝒫 A ∧ g⦅S⦆ = x ∧ x ∉ S)
       -- D ⊆ A, so D ∈ 𝒫(A)
       have hD_in : D ∈ 𝒫 A := by
-        rw [PowerSet_is_specified]
+        rw [mem_powerset_iff]
         intro x hx
-        rw [SpecSet_is_specified] at hx
+        rw [mem_sep_iff] at hx
         exact hx.1
       -- Consider g⦅D⦆
       -- g⦅D⦆ ∈ A
@@ -209,7 +209,7 @@ namespace ZFC
       -- Case analysis: g⦅D⦆ ∈ D or g⦅D⦆ ∉ D
       by_cases h : g⦅D⦆ ∈ D
       · -- g⦅D⦆ ∈ D means ∃ S, g⦅S⦆ = g⦅D⦆ ∧ g⦅D⦆ ∉ S
-        rw [SpecSet_is_specified] at h
+        rw [mem_sep_iff] at h
         obtain ⟨_, S, hS_pow, hgS_eq, hgD_notS⟩ := h
         -- By injectivity, S = D
         have hgS_mem := apply_mem g S (hg_func.2 S hS_pow)
@@ -221,19 +221,19 @@ namespace ZFC
           exact hg_inj S D (g⦅D⦆) (hgS_eq ▸ hgS_mem) hgD_mem
         -- But g⦅D⦆ ∉ S = D, contradiction with g⦅D⦆ ∈ D
         rw [hSD] at hgD_notS
-        have h' := (SpecSet_is_specified A (g⦅D⦆) (fun x => ∃ S, S ∈ 𝒫 A ∧ g⦅S⦆ = x ∧ x ∉ S)).mpr
+        have h' := (mem_sep_iff A (g⦅D⦆) (fun x => ∃ S, S ∈ 𝒫 A ∧ g⦅S⦆ = x ∧ x ∉ S)).mpr
           ⟨hgD_A, D, hD_in, rfl, hgD_notS⟩
         exact hgD_notS h'
       · -- g⦅D⦆ ∉ D, but g⦅D⦆ ∈ A and g⦅D⦆ = g⦅D⦆ and g⦅D⦆ ∉ D
         -- So by definition g⦅D⦆ ∈ D
         have h_in : g⦅D⦆ ∈ D := by
-          rw [SpecSet_is_specified]
+          rw [mem_sep_iff]
           exact ⟨hgD_A, D, hD_in, rfl, h⟩
         exact h h_in
 
     /-- Cantor's Theorem (cardinal form): A ≺ₛ 𝒫(A) -/
     theorem cantor_strict_dominance (A : U) : isStrictlyDominatedBy A (𝒫 A) :=
-      ⟨A_dominated_by_PowerSet A, PowerSet_not_dominated_by_A A⟩
+      ⟨A_dominated_by_powerset A, powerset_not_dominated_by_A A⟩
 
     /-- Corollary: A and 𝒫(A) are not equipotent -/
     theorem cantor_not_equipotent (A : U) : ¬isEquipotent A (𝒫 A) := by
@@ -262,7 +262,7 @@ namespace ZFC
 
     /-- Set difference: A \ B = { x ∈ A | x ∉ B } -/
     noncomputable def SetDiff (A B : U) : U :=
-      SpecSet A (fun x => x ∉ B)
+      sep A (fun x => x ∉ B)
 
     notation:70 A " ∖ " B => SetDiff A B
 
@@ -270,7 +270,7 @@ namespace ZFC
     theorem SetDiff_is_specified (A B x : U) :
         x ∈ (A ∖ B) ↔ x ∈ A ∧ x ∉ B := by
       unfold SetDiff
-      exact SpecSet_is_specified A x (fun x => x ∉ B)
+      exact mem_sep_iff A x (fun x => x ∉ B)
 
     /-- Set difference is a subset -/
     theorem SetDiff_subset (A B : U) : (A ∖ B) ⊆ A := by
@@ -280,26 +280,26 @@ namespace ZFC
 
     /-- Predicate: X contains A \ g[B] and is closed under g ∘ f -/
     def isCSB_closed (f g A B X : U) : Prop :=
-      (A ∖ ImageSet g B) ⊆ X ∧
+      (A ∖ image g B) ⊆ X ∧
       ∀ x, x ∈ X → x ∈ A → g⦅f⦅x⦆⦆ ∈ X
 
     /-- The CSB core: intersection of all closed sets -/
     noncomputable def CSB_core (f g A B : U) : U :=
-      SpecSet A (fun x => ∀ X, X ⊆ A → isCSB_closed f g A B X → x ∈ X)
+      sep A (fun x => ∀ X, X ⊆ A → isCSB_closed f g A B X → x ∈ X)
 
     /-- The CSB core is a subset of A -/
     theorem CSB_core_subset (f g A B : U) : CSB_core f g A B ⊆ A := by
       intro x hx
       unfold CSB_core at hx
-      rw [SpecSet_is_specified] at hx
+      rw [mem_sep_iff] at hx
       exact hx.1
 
     /-- A \ g[B] is contained in the CSB core -/
     theorem CSB_core_contains_base (f g A B : U) :
-        (A ∖ ImageSet g B) ⊆ CSB_core f g A B := by
+        (A ∖ image g B) ⊆ CSB_core f g A B := by
       intro x hx
       unfold CSB_core
-      rw [SpecSet_is_specified]
+      rw [mem_sep_iff]
       constructor
       · rw [SetDiff_is_specified] at hx
         exact hx.1
@@ -308,11 +308,11 @@ namespace ZFC
 
     /-- The CSB core is closed under g ∘ f -/
     theorem CSB_core_closed (f g A B : U)
-        (hf : isFunctionFromTo f A B) (hg : isFunctionFromTo g B A) :
+        (hf : IsFunction f A B) (hg : IsFunction g B A) :
         ∀ x, x ∈ CSB_core f g A B → g⦅f⦅x⦆⦆ ∈ CSB_core f g A B := by
       intro x hx
       unfold CSB_core at hx ⊢
-      rw [SpecSet_is_specified] at hx ⊢
+      rw [mem_sep_iff] at hx ⊢
       have hx_A := hx.1
       -- g⦅f⦅x⦆⦆ ∈ A
       constructor
@@ -333,10 +333,10 @@ namespace ZFC
 
     /-- Elements not in CSB core are in the image of g -/
     theorem CSB_complement_in_image (f g A B x : U)
-        (_ : isFunctionFromTo f A B) (_ : isFunctionFromTo g B A)
+        (_ : IsFunction f A B) (_ : IsFunction g B A)
         (hx_A : x ∈ A) (hx_not : x ∉ CSB_core f g A B) :
-        x ∈ ImageSet g B := Classical.byContradiction fun h_not_img => by
-      have h_in_diff : x ∈ A ∖ ImageSet g B := by
+        x ∈ image g B := Classical.byContradiction fun h_not_img => by
+      have h_in_diff : x ∈ A ∖ image g B := by
         rw [SetDiff_is_specified]
         exact ⟨hx_A, h_not_img⟩
       have h_in_core := CSB_core_contains_base f g A B x h_in_diff
@@ -345,7 +345,7 @@ namespace ZFC
     /-- The CSB bijection: h(x) = f(x) if x ∈ C, g⁻¹(x) if x ∉ C -/
     noncomputable def CSB_bijection (f g A B : U) : U :=
       let C := CSB_core f g A B
-      SpecSet (A ×ₛ B) (fun p =>
+      sep (A ×ₛ B) (fun p =>
         ∃ x y, p = ⟨x, y⟩ ∧ x ∈ A ∧
           ((x ∈ C ∧ y = f⦅x⦆) ∨ (x ∉ C ∧ ⟨y, x⟩ ∈ g)))
 
@@ -356,7 +356,7 @@ namespace ZFC
           ((x ∈ CSB_core f g A B ∧ y = f⦅x⦆) ∨
            (x ∉ CSB_core f g A B ∧ ⟨y, x⟩ ∈ g)) := by
       unfold CSB_bijection
-      rw [SpecSet_is_specified]
+      rw [mem_sep_iff]
       constructor
       · intro ⟨hp_in, x', y', hp_eq, hx'_A, hcase⟩
         have h_pair := Eq_of_OrderedPairs_given_projections x y x' y' hp_eq
@@ -372,14 +372,14 @@ namespace ZFC
 
     /-- The CSB bijection is a function -/
     theorem CSB_bijection_is_function (f g A B : U)
-        (hf : isFunctionFromTo f A B) (hg : isFunctionFromTo g B A)
+        (hf : IsFunction f A B) (hg : IsFunction g B A)
         (_ : isInjective f) (hg_inj : isInjective g) :
-        isFunctionFromTo (CSB_bijection f g A B) A B := by
+        IsFunction (CSB_bijection f g A B) A B := by
       constructor
       · -- CSB_bijection f g A B ⊆ A ×ₛ B
         intro p hp
         unfold CSB_bijection at hp
-        rw [SpecSet_is_specified] at hp
+        rw [mem_sep_iff] at hp
         exact hp.1
       · -- Total and Unique
         intro x hx
@@ -404,13 +404,13 @@ namespace ZFC
           | inr h_inr => exact absurd hxC h_inr.1
         · -- Case x ∉ C
           have h_img := CSB_complement_in_image f g A B x hf hg hx hxC
-          -- ImageSet g B = range (g ↾ B)
+          -- image g B = range (g ↾ B)
           have h_img' : ∃ y, ⟨y, x⟩ ∈ g ↾ B := by
-            unfold ImageSet at h_img
+            unfold image at h_img
             simp only [mem_range] at h_img
             exact h_img
           obtain ⟨y, hyx⟩ := h_img'
-          have hyx_prop := (Restriction_is_specified g B ⟨y, x⟩).mp hyx
+          have hyx_prop := (mem_restrict_iff g B ⟨y, x⟩).mp hyx
           have hyx_g := hyx_prop.1
           have hyx_fst := hyx_prop.2
           rw [fst_of_ordered_pair] at hyx_fst
@@ -432,7 +432,7 @@ namespace ZFC
 
     /-- The CSB bijection is injective -/
     theorem CSB_bijection_is_injective (f g A B : U)
-        (hf : isFunctionFromTo f A B) (hg : isFunctionFromTo g B A) (hf_inj : isInjective f) :
+        (hf : IsFunction f A B) (hg : IsFunction g B A) (hf_inj : isInjective f) :
         isInjective (CSB_bijection f g A B)
         := by
       intro x₁ x₂ y hx₁y hx₂y
@@ -490,7 +490,7 @@ namespace ZFC
 
     /-- The CSB bijection is surjective -/
     theorem CSB_bijection_is_surjective (f g A B : U)
-        (hf : isFunctionFromTo f A B) (hg : isFunctionFromTo g B A)
+        (hf : IsFunction f A B) (hg : IsFunction g B A)
         (_ : isInjective f) (hg_inj : isInjective g) :
         isSurjectiveOnto (CSB_bijection f g A B) B := by
       intro y hy
@@ -504,13 +504,13 @@ namespace ZFC
       by_cases hgyC : g⦅y⦆ ∈ C
       · -- g⦅y⦆ ∈ C
         -- g⦅y⦆ ∈ C and g⦅y⦆ ∈ g[B] (since y ∈ B)
-        -- We show g⦅y⦆ ∈ ImageSet g B, i.e., g⦅y⦆ ∈ range (g ↾ B)
+        -- We show g⦅y⦆ ∈ image g B, i.e., g⦅y⦆ ∈ range (g ↾ B)
         -- This means: ∃ x, ⟨x, g⦅y⦆⟩ ∈ g ↾ B, and we can use x = y
-        have hgy_in_img : g⦅y⦆ ∈ ImageSet g B := by
-          unfold ImageSet
+        have hgy_in_img : g⦅y⦆ ∈ image g B := by
+          unfold image
           -- g⦅y⦆ ∈ range (g ↾ B)
           have h_mem_restr : ⟨y, g⦅y⦆⟩ ∈ g ↾ B := by
-            rw [Restriction_is_specified]
+            rw [mem_restrict_iff]
             constructor
             · exact apply_mem g y (hg.2 y hy)
             · rw [fst_of_ordered_pair]
@@ -519,7 +519,7 @@ namespace ZFC
           exact pair_mem_implies_snd_in_range (g ↾ B) y (g⦅y⦆) h_mem_restr
 
         -- g⦅y⦆ ∉ A ∖ g[B]
-        have hgy_not_base : g⦅y⦆ ∉ A ∖ ImageSet g B := by
+        have hgy_not_base : g⦅y⦆ ∉ A ∖ image g B := by
           intro h_in
           rw [SetDiff_is_specified] at h_in
           exact h_in.2 hgy_in_img
@@ -580,7 +580,7 @@ namespace ZFC
           -- But C' = C \ {g⦅y⦆} and g⦅y⦆ ∈ C, so this is impossible
           have hgyC_core : g⦅y⦆ ∈ CSB_core f g A B := hgyC
           unfold CSB_core at hgyC_core
-          rw [SpecSet_is_specified] at hgyC_core
+          rw [mem_sep_iff] at hgyC_core
           have h_in_C' := hgyC_core.2 C' hC'_sub hC'_closed
           have h_decomp := (SetDiff_is_specified C (Singleton (g⦅y⦆)) (g⦅y⦆)).mp h_in_C'
           exact h_decomp.2 ((Singleton_is_specified (g⦅y⦆) (g⦅y⦆)).mpr rfl)
@@ -593,7 +593,7 @@ namespace ZFC
 
     /-- The CSB bijection is a bijection -/
     theorem CSB_bijection_is_bijection (f g A B : U)
-        (hf : isFunctionFromTo f A B) (hg : isFunctionFromTo g B A)
+        (hf : IsFunction f A B) (hg : IsFunction g B A)
         (hf_inj : isInjective f) (hg_inj : isInjective g) :
         isBijection (CSB_bijection f g A B) A B :=
       ⟨CSB_bijection_is_function f g A B hf hg hf_inj hg_inj,
@@ -617,11 +617,11 @@ namespace ZFC
 
   -- Export key definitions and theorems
   export Cardinal.Basic (
-    DiagonalSet DiagonalSet_is_specified DiagonalSet_subset DiagonalSet_in_PowerSet
-    DiagonalSet_not_in_range
+    diagSet mem_diagSet_iff diagSet_subset diagSet_in_powerset
+    diagSet_not_in_range
     cantor_no_surjection cantor_no_bijection cantor_not_equipotent
     singletonMap singletonMap_is_specified singletonMap_is_function singletonMap_is_injective
-    A_dominated_by_PowerSet PowerSet_not_dominated_by_A cantor_strict_dominance
+    A_dominated_by_powerset powerset_not_dominated_by_A cantor_strict_dominance
     SetDiff SetDiff_is_specified SetDiff_subset
     CSB_core CSB_core_subset CSB_core_contains_base CSB_core_closed
     CSB_bijection CSB_bijection_is_specified

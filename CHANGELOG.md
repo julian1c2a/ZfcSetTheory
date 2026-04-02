@@ -12,6 +12,32 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ### Cambiado (2026-04-02)
 
+- **Fase 3: Convención de nombres Mathlib (renombrado global)**:
+  - ✅ 40 archivos .lean modificados, ~2300 líneas cambiadas
+  - ✅ **Definiciones renombradas** (13 renames):
+    - `subseteq` → `subset`, `subset` → `ssubset` (⊆/⊂ swap)
+    - `SpecSet` → `sep`, `BinInter` → `inter`, `Difference` → `sdiff`
+    - `BinUnion` → `union`, `UnionSet` → `sUnion`, `SymDiff` → `symmDiff`
+    - `PowerSetOf` → `powerset`, `successor` → `succ`
+    - `FunctionComposition` → `comp`, `IdFunction` → `idFn`, `InverseFunction` → `inv`
+    - `ImageSet` → `image`, `PreimageSet` → `preimage`, `Restriction` → `restrict`, `DiagonalSet` → `diagSet`
+  - ✅ **Predicados → UpperCamelCase** (5 renames):
+    - `isNat` → `IsNat`, `isInductive` → `IsInductive`, `isInitialSegment` → `IsInitialSegment`
+    - `isSingleValued` → `IsSingleValued`, `isFunctionFromTo` → `IsFunction`
+    - `isTransitiveSet` → `IsTransitive` (hecho en Fase 3 de Extension.lean)
+  - ✅ **Teoremas renombrados** (~90 patrones):
+    - Patrón `_is_specified` → `mem_X_iff`: `SpecSet_is_specified` → `mem_sep_iff`, etc.
+    - Propiedades algebraicas: `_commutative` → `_comm`, `_associative` → `_assoc`, `_idempotence` → `_self`
+    - Naturales: `zero_is_nat` → `isNat_zero`, `nat_successor_is_nat` → `isNat_succ`, `successor_injective` → `succ_injective`, etc.
+    - De Morgan: `DeMorgan_union` → `compl_union`, `DeMorgan_inter` → `compl_inter`
+    - Absorción: `BinInter_absorb_union` → `inter_union_self`
+    - Distributividad: `BinUnion_distrib_inter` → `union_inter_distrib_left`, etc.
+  - ✅ **Compound names** actualizados en BoolAlg/: `SymDiff_*` → `symmDiff_*`, `PowerSet_*` → `powerset_*`, `UnionSet_*` → `sUnion_*`
+  - ✅ `subseteq_antisymmetric` eliminado (redundante con `subset_antisymm`)
+  - ✅ Todas las notaciones preservadas: ⊆ ⊂ ⊇ ⊃ ∩ \ ∪ △ 𝒫 ⋃
+  - ✅ Build limpio: 71 jobs, 0 errores, 0 sorry
+  - ⚠️ Proyección en REFERENCE.md: ❌ Pendiente
+
 - **Fase 2b: Alineación de sub-namespaces con estructura de directorios**:
   - ✅ 42 sub-namespaces renombrados para reflejar la jerarquía de directorios
   - ✅ Axiom: `ExtensionAxiom` → `Axiom.Extension`, etc. (7 archivos)

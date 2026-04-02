@@ -57,13 +57,13 @@ namespace ZFC
 
     /-- A finite sequence of length n in A: n ∈ ω and f is a function from n to A. -/
     def isFinSeq (f n A : U) : Prop :=
-      n ∈ ω ∧ isFunctionFromTo f n A
+      n ∈ ω ∧ IsFunction f n A
 
     theorem isFinSeq_in_Omega {f n A : U} (h : isFinSeq f n A) : n ∈ ω :=
       h.1
 
     theorem isFinSeq_is_function {f n A : U} (h : isFinSeq f n A) :
-        isFunctionFromTo f n A :=
+        IsFunction f n A :=
       h.2
 
     theorem isFinSeq_domain {f n A : U} (h : isFinSeq f n A) : domain f = n :=
@@ -95,7 +95,7 @@ namespace ZFC
     theorem isFinSeq_ext {f g n A : U}
         (hf : isFinSeq f n A) (hg : isFinSeq g n A)
         (hval : ∀ i, i ∈ n → f⦅i⦆ = g⦅i⦆) : f = g := by
-      apply ExtSet_wc
+      apply eq_of_subset_of_subset
       · intro p hp
         obtain ⟨hpair, hfst, _⟩ := (CartesianProduct_is_specified n A p).mp (hf.2.1 p hp)
         have hp_eq : p = ⟨fst p, snd p⟩ := (isOrderedPair_by_construction p).mp hpair
@@ -119,15 +119,15 @@ namespace ZFC
 
     /-- The set of all n-sequences in A. -/
     noncomputable def FinSeqSet (n A : U) : U :=
-      SpecSet (𝒫(n ×ₛ A)) (fun f => n ∈ ω ∧ isFunctionFromTo f n A)
+      sep (𝒫(n ×ₛ A)) (fun f => n ∈ ω ∧ IsFunction f n A)
 
     theorem mem_FinSeqSet_iff {f n A : U} : f ∈ FinSeqSet n A ↔ isFinSeq f n A := by
       unfold FinSeqSet isFinSeq
-      rw [SpecSet_is_specified]
+      rw [mem_sep_iff]
       constructor
       · intro h; exact h.2
       · intro h
-        exact ⟨(PowerSet_is_specified (n ×ₛ A) f).mpr h.2.1, h⟩
+        exact ⟨(mem_powerset_iff (n ×ₛ A) f).mpr h.2.1, h⟩
 
     theorem isFinSeq_mem_FinSeqSet {f n A : U} (h : isFinSeq f n A) :
         f ∈ FinSeqSet n A :=
@@ -145,7 +145,7 @@ namespace ZFC
 
     /-- The only 0-sequence is ∅. -/
     theorem isFinSeq_zero_unique {f A : U} (h : isFinSeq f ∅ A) : f = ∅ := by
-      apply ExtSet_wc
+      apply eq_of_subset_of_subset
       · intro p hp
         have h_mem := h.2.1 p hp
         rw [CartesianProduct_empty_left] at h_mem
@@ -164,25 +164,25 @@ namespace ZFC
     /-! ============================================================ -/
 
     /-- Extend f : n → A by appending element a at new index n.
-        Since n ∉ n (nat_not_mem_self), no collision occurs. -/
+        Since n ∉ n (not_mem_self), no collision occurs. -/
     noncomputable def appendElem (f n a : U) : U := f ∪ {⟨n, a⟩}
 
     /-- Characterization of membership in appendElem. -/
     theorem appendElem_is_specified {f n a x : U} :
         x ∈ appendElem f n a ↔ x ∈ f ∨ x = ⟨n, a⟩ := by
       unfold appendElem
-      rw [BinUnion_is_specified, Singleton_is_specified]
+      rw [mem_union_iff, Singleton_is_specified]
 
-    /-- n is a subset of its own successor. -/
+    /-- n is a subset of its own succ. -/
     private theorem nat_subset_succ (n : U) : n ⊆ σ n :=
-      fun x hx => (successor_is_specified n x).mpr (Or.inl hx)
+      fun x hx => (mem_succ_iff n x).mpr (Or.inl hx)
 
     /-- Appending an element a ∈ A to a finite n-sequence gives a finite (σ n)-sequence. -/
     theorem isFinSeq_appendElem {f n A a : U}
         (hf : isFinSeq f n A) (ha : a ∈ A) : isFinSeq (appendElem f n a) (σ n) A := by
-      have hn_nat : isNat n := mem_Omega_is_Nat n hf.1
+      have hn_nat : IsNat n := mem_Omega_is_Nat n hf.1
       constructor
-      · exact Nat_in_Omega (σ n) (nat_successor_is_nat n hn_nat)
+      · exact Nat_in_Omega (σ n) (isNat_succ n hn_nat)
       · constructor
         · -- appendElem f n a ⊆ σ n ×ₛ A
           intro p hp
@@ -194,10 +194,10 @@ namespace ZFC
             exact ⟨h1.1, nat_subset_succ n _ h1.2.1, h1.2.2⟩
           | inr hp_eq =>
             rw [hp_eq, OrderedPair_mem_CartesianProduct]
-            exact ⟨mem_successor_self n, ha⟩
+            exact ⟨mem_succ_self n, ha⟩
         · -- ∀ x ∈ σ n, ∃! y, ⟨x, y⟩ ∈ appendElem f n a
           intro x hx
-          rw [successor_is_specified] at hx
+          rw [mem_succ_iff] at hx
           cases hx with
           | inl hx_n =>
             obtain ⟨y, hy_in, hy_uniq⟩ := hf.2.2 x hx_n
@@ -209,7 +209,7 @@ namespace ZFC
               | inl hy'_f => exact hy_uniq y' hy'_f
               | inr hy'_eq =>
                 have hxn := (Eq_of_OrderedPairs_given_projections x y' n a hy'_eq).1
-                exact absurd (hxn ▸ hx_n) (nat_not_mem_self n hn_nat)
+                exact absurd (hxn ▸ hx_n) (not_mem_self n hn_nat)
           | inr hx_eq =>
             apply ExistsUnique.intro a
             · rw [hx_eq, appendElem_is_specified]; exact Or.inr rfl
@@ -220,14 +220,14 @@ namespace ZFC
               | inl hy'_f =>
                 have hn_dom : n ∈ domain f :=
                   (mem_domain f n).mpr ⟨y', hy'_f⟩
-                exact absurd (isFinSeq_domain hf ▸ hn_dom) (nat_not_mem_self n hn_nat)
+                exact absurd (isFinSeq_domain hf ▸ hn_dom) (not_mem_self n hn_nat)
               | inr hy'_eq =>
                 exact (Eq_of_OrderedPairs_given_projections n y' n a hy'_eq).2
 
     /-- The new element a is accessed at the last index n. -/
     theorem appendElem_apply_last {f n A a : U} (hf : isFinSeq f n A) :
         (appendElem f n a)⦅n⦆ = a := by
-      have hn_nat : isNat n := mem_Omega_is_Nat n hf.1
+      have hn_nat : IsNat n := mem_Omega_is_Nat n hf.1
       have h_pair_mem : ⟨n, a⟩ ∈ appendElem f n a := by
         rw [appendElem_is_specified]; exact Or.inr rfl
       have h_unique : ∃! y, ⟨n, y⟩ ∈ appendElem f n a := by
@@ -238,7 +238,7 @@ namespace ZFC
           cases hy' with
           | inl hy'_f =>
             exact absurd (isFinSeq_domain hf ▸ (mem_domain f n).mpr ⟨y', hy'_f⟩)
-              (nat_not_mem_self n hn_nat)
+              (not_mem_self n hn_nat)
           | inr hy'_eq =>
             exact (Eq_of_OrderedPairs_given_projections n y' n a hy'_eq).2
       exact apply_eq (appendElem f n a) n a h_unique h_pair_mem
@@ -247,8 +247,8 @@ namespace ZFC
     theorem appendElem_apply_prev {f n A a i : U}
         (hf : isFinSeq f n A) (hi : i ∈ n) :
         (appendElem f n a)⦅i⦆ = f⦅i⦆ := by
-      have hn_nat : isNat n := mem_Omega_is_Nat n hf.1
-      have hi_ne : i ≠ n := fun h => absurd (h ▸ hi) (nat_not_mem_self n hn_nat)
+      have hn_nat : IsNat n := mem_Omega_is_Nat n hf.1
+      have hi_ne : i ≠ n := fun h => absurd (h ▸ hi) (not_mem_self n hn_nat)
       have h_mem : ⟨i, f⦅i⦆⟩ ∈ appendElem f n a := by
         rw [appendElem_is_specified]
         exact Or.inl (isFinSeq_pair_mem hf hi)
@@ -280,11 +280,11 @@ namespace ZFC
     /-- Restricting a (σ n)-sequence to n gives an n-sequence. -/
     theorem isFinSeq_restriction {f n A : U} (h : isFinSeq f (σ n) A) :
         isFinSeq (f ↾ n) n A := by
-      have hσn_nat : isNat (σ n) := mem_Omega_is_Nat (σ n) h.1
-      have hn_nat : isNat n := nat_element_is_nat (σ n) n hσn_nat (mem_successor_self n)
+      have hσn_nat : IsNat (σ n) := mem_Omega_is_Nat (σ n) h.1
+      have hn_nat : IsNat n := nat_element_is_nat (σ n) n hσn_nat (mem_succ_self n)
       have hn_omega : n ∈ ω := Nat_in_Omega n hn_nat
       have hn_sub : n ⊆ σ n := nat_subset_succ n
-      exact ⟨hn_omega, Restriction_is_function f (σ n) A n h.2 hn_sub⟩
+      exact ⟨hn_omega, restrict_is_function f (σ n) A n h.2 hn_sub⟩
 
     /-! ============================================================ -/
     /-! ### SECTION 6: LENGTH ### -/
@@ -306,7 +306,7 @@ namespace ZFC
       unfold seqLength domain
       apply ExtSet
       intro x
-      rw [SpecSet_is_specified]
+      rw [mem_sep_iff]
       constructor
       · intro h
         obtain ⟨_, y, hy⟩ := h
@@ -329,33 +329,33 @@ namespace ZFC
       have hn_nat := mem_Omega_is_Nat n hn
       by_cases hj_ne : j = ∅
       · rw [hj_ne, add_zero n hn] at h_mem
-        exact nat_not_mem_self n hn_nat h_mem
+        exact not_mem_self n hn_nat h_mem
       · have h_n_in := add_pos_left_Omega j n hj hn hj_ne
         have hn_trans : ∀ x, x ∈ n → x ⊆ n := hn_nat.1
         have h_sub : (add n j) ⊆ n := hn_trans (add n j) h_mem
-        exact nat_not_mem_self n hn_nat (h_sub n h_n_in)
+        exact not_mem_self n hn_nat (h_sub n h_n_in)
 
     /-- i ∈ n → i ∈ add n m for n, m ∈ ω. -/
     theorem mem_add_of_mem_left {i n m : U} (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U))
         (hi : i ∈ n) : i ∈ add n m := by
       -- Induction on m
       let P : U → Prop := fun k => i ∈ add n k
-      let S := SpecSet (ω : U) P
+      let S := sep (ω : U) P
       suffices hS : S = ω by
         have hm_S : m ∈ S := hS ▸ hm
-        exact ((SpecSet_is_specified (ω : U) m P).mp hm_S).2
+        exact ((mem_sep_iff (ω : U) m P).mp hm_S).2
       apply induction_principle S
-      · exact fun x hx => ((SpecSet_is_specified (ω : U) x P).mp hx).1
-      · rw [SpecSet_is_specified]
+      · exact fun x hx => ((mem_sep_iff (ω : U) x P).mp hx).1
+      · rw [mem_sep_iff]
         exact ⟨zero_in_Omega, by simp only [P]; rw [add_zero n hn]; exact hi⟩
       · intro k hk
-        rw [SpecSet_is_specified] at hk ⊢
+        rw [mem_sep_iff] at hk ⊢
         obtain ⟨hk_omega, ih⟩ := hk
         simp only [P] at ih ⊢
         constructor
         · exact succ_in_Omega k hk_omega
         · rw [add_succ n k hn hk_omega]
-          exact mem_successor_of_mem i (add n k) ih
+          exact mem_succ_of_mem i (add n k) ih
 
     /-- Partition: i ∈ add n m → i ∈ n ∨ (∃ j ∈ m, i = add n j). -/
     theorem add_partition {i n m : U} (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U))
@@ -363,35 +363,35 @@ namespace ZFC
       -- Induction on m
       let P : U → Prop := fun k => ∀ x, x ∈ add n k →
         x ∈ n ∨ (∃ j, j ∈ k ∧ x = add n j)
-      let S := SpecSet (ω : U) P
+      let S := sep (ω : U) P
       suffices hS : S = ω by
         have hm_S : m ∈ S := hS ▸ hm
-        exact ((SpecSet_is_specified (ω : U) m P).mp hm_S).2 i hi
+        exact ((mem_sep_iff (ω : U) m P).mp hm_S).2 i hi
       apply induction_principle S
-      · exact fun x hx => ((SpecSet_is_specified (ω : U) x P).mp hx).1
-      · rw [SpecSet_is_specified]
+      · exact fun x hx => ((mem_sep_iff (ω : U) x P).mp hx).1
+      · rw [mem_sep_iff]
         refine ⟨zero_in_Omega, ?_⟩
         simp only [P]
         intro x hx
         rw [add_zero n hn] at hx
         exact Or.inl hx
       · intro k hk
-        rw [SpecSet_is_specified] at hk ⊢
+        rw [mem_sep_iff] at hk ⊢
         obtain ⟨hk_omega, ih⟩ := hk
         simp only [P] at ih ⊢
         constructor
         · exact succ_in_Omega k hk_omega
         · intro x hx
-          rw [add_succ n k hn hk_omega, successor_is_specified] at hx
+          rw [add_succ n k hn hk_omega, mem_succ_iff] at hx
           cases hx with
           | inl hx_prev =>
             cases ih x hx_prev with
             | inl hx_n => exact Or.inl hx_n
             | inr h_ex =>
               obtain ⟨j, hj_k, hx_eq⟩ := h_ex
-              exact Or.inr ⟨j, mem_successor_of_mem j k hj_k, hx_eq⟩
+              exact Or.inr ⟨j, mem_succ_of_mem j k hj_k, hx_eq⟩
           | inr hx_eq =>
-            exact Or.inr ⟨k, mem_successor_self k, hx_eq⟩
+            exact Or.inr ⟨k, mem_succ_self k, hx_eq⟩
 
     /-! ============================================================ -/
     /-! ### SECTION 8: CONCATENATION ### -/
@@ -399,14 +399,14 @@ namespace ZFC
 
     /-- The shifted graph: {⟨add n j, g⦅j⦆⟩ | j ∈ m}. -/
     noncomputable def shiftedGraph (n g m A : U) : U :=
-      SpecSet ((add n m) ×ₛ A) (fun p => ∃ j, j ∈ m ∧ p = ⟨add n j, g⦅j⦆⟩)
+      sep ((add n m) ×ₛ A) (fun p => ∃ j, j ∈ m ∧ p = ⟨add n j, g⦅j⦆⟩)
 
     /-- Membership characterization for shiftedGraph. -/
     theorem mem_shiftedGraph {n g m A p : U} :
         p ∈ shiftedGraph n g m A ↔
         (p ∈ (add n m) ×ₛ A ∧ ∃ j, j ∈ m ∧ p = ⟨add n j, g⦅j⦆⟩) := by
       unfold shiftedGraph
-      rw [SpecSet_is_specified]
+      rw [mem_sep_iff]
 
     /-- Concatenation of f : n → A and g : m → A. -/
     noncomputable def concatSeq (f n g m A : U) : U :=
@@ -426,7 +426,7 @@ namespace ZFC
         · -- concatSeq ⊆ (add n m) ×ₛ A
           intro p hp
           unfold concatSeq at hp
-          rw [BinUnion_is_specified] at hp
+          rw [mem_union_iff] at hp
           cases hp with
           | inl hp_f =>
             have h := hf.2.1 p hp_f
@@ -442,10 +442,10 @@ namespace ZFC
             -- i ∈ n: use f
             obtain ⟨y, hy, hy_uniq⟩ := hf.2.2 i hi_n
             apply ExistsUnique.intro y
-            · exact (BinUnion_is_specified f (shiftedGraph n g m A) ⟨i, y⟩).mpr (Or.inl hy)
+            · exact (mem_union_iff f (shiftedGraph n g m A) ⟨i, y⟩).mpr (Or.inl hy)
             · intro y' hy'
               unfold concatSeq at hy'
-              rw [BinUnion_is_specified] at hy'
+              rw [mem_union_iff] at hy'
               cases hy' with
               | inl hy'_f => exact hy_uniq y' hy'_f
               | inr hy'_sg =>
@@ -466,7 +466,7 @@ namespace ZFC
               have h_apply_eq : y = g⦅j⦆ :=
                 (apply_eq g j y (hg.2.2 j hj) hy).symm
               rw [h_apply_eq]
-              apply (BinUnion_is_specified f (shiftedGraph n g m A) ⟨add n j, g⦅j⦆⟩).mpr
+              apply (mem_union_iff f (shiftedGraph n g m A) ⟨add n j, g⦅j⦆⟩).mpr
               exact Or.inr (mem_shiftedGraph.mpr
                 ⟨(OrderedPair_mem_CartesianProduct (add n j) (g⦅j⦆) (add n m) A).mpr
                   ⟨add_lt_of_lt_Omega n j m hn hj_omega hm hj, isFinSeq_apply_mem hg hj⟩,
@@ -474,7 +474,7 @@ namespace ZFC
             · intro y' hy'
               rw [hi_eq] at hy'
               unfold concatSeq at hy'
-              rw [BinUnion_is_specified] at hy'
+              rw [mem_union_iff] at hy'
               cases hy' with
               | inl hy'_f =>
                 -- ⟨add n j, y'⟩ ∈ f, but add n j ∉ n — contradiction
@@ -502,7 +502,7 @@ namespace ZFC
       have h_concat := concatSeq_isFinSeq hf hg
       have hi_add : i ∈ add n m := mem_add_of_mem_left hn hm hi
       have h_pair : ⟨i, f⦅i⦆⟩ ∈ concatSeq f n g m A :=
-        (BinUnion_is_specified f (shiftedGraph n g m A) ⟨i, f⦅i⦆⟩).mpr
+        (mem_union_iff f (shiftedGraph n g m A) ⟨i, f⦅i⦆⟩).mpr
           (Or.inl (isFinSeq_pair_mem hf hi))
       exact apply_eq (concatSeq f n g m A) i (f⦅i⦆)
         (h_concat.2.2 i hi_add) h_pair
@@ -518,7 +518,7 @@ namespace ZFC
       have h_concat := concatSeq_isFinSeq hf hg
       have hi_add : add n j ∈ add n m := add_lt_of_lt_Omega n j m hn hj_omega hm hj
       have h_pair : ⟨add n j, g⦅j⦆⟩ ∈ concatSeq f n g m A :=
-        (BinUnion_is_specified f (shiftedGraph n g m A) ⟨add n j, g⦅j⦆⟩).mpr
+        (mem_union_iff f (shiftedGraph n g m A) ⟨add n j, g⦅j⦆⟩).mpr
           (Or.inr (mem_shiftedGraph.mpr
             ⟨(OrderedPair_mem_CartesianProduct (add n j) (g⦅j⦆) (add n m) A).mpr
               ⟨hi_add, isFinSeq_apply_mem hg hj⟩,
@@ -536,18 +536,18 @@ namespace ZFC
     theorem concatSeq_empty_right {f n A : U} (_hf : isFinSeq f n A) :
         concatSeq f n ∅ ∅ A = f := by
       unfold concatSeq shiftedGraph
-      have h_sg_empty : SpecSet ((add n ∅) ×ₛ A)
+      have h_sg_empty : sep ((add n ∅) ×ₛ A)
           (fun p => ∃ j, j ∈ (∅ : U) ∧ p = ⟨add n j, (∅ : U)⦅j⦆⟩) = ∅ := by
         apply ExtSet
         intro x
-        rw [SpecSet_is_specified]
+        rw [mem_sep_iff]
         constructor
         · intro ⟨_, j, hj, _⟩; exact absurd hj (EmptySet_is_empty j)
         · intro hx; exact absurd hx (EmptySet_is_empty x)
       rw [h_sg_empty]
       apply ExtSet
       intro x
-      rw [BinUnion_is_specified]
+      rw [mem_union_iff]
       constructor
       · intro h; cases h with
         | inl h => exact h

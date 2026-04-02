@@ -27,127 +27,127 @@ namespace ZFC
     /-! ### Álgebra Booleana - Teoremas que mezclan ∪ y ∩ ### -/
 
     /-! Absorción -/
-    theorem BinUnion_absorb_inter (A B : U) :
+    theorem union_inter_self (A B : U) :
       (A ∪ (A ∩ B)) = A := by
       apply ExtSet
       intro x
       constructor
       · intro hx
-        rw [BinUnion_is_specified] at hx
+        rw [mem_union_iff] at hx
         cases hx with
         | inl hA => exact hA
         | inr hAB =>
-          rw [BinInter_is_specified] at hAB
+          rw [mem_inter_iff] at hAB
           exact hAB.1
       · intro hA
-        rw [BinUnion_is_specified]
+        rw [mem_union_iff]
         exact Or.inl hA
 
-    theorem BinInter_absorb_union (A B : U) :
+    theorem inter_union_self (A B : U) :
       (A ∩ (A ∪ B)) = A := by
       apply ExtSet
       intro x
       constructor
       · intro hx
-        rw [BinInter_is_specified] at hx
+        rw [mem_inter_iff] at hx
         exact hx.1
       · intro hA
-        rw [BinInter_is_specified, BinUnion_is_specified]
+        rw [mem_inter_iff, mem_union_iff]
         exact ⟨hA, Or.inl hA⟩
 
     /-! ### Distributividad ### -/
 
-    theorem BinUnion_distrib_inter (A B C : U) :
+    theorem union_inter_distrib_left (A B C : U) :
       (A ∪ (B ∩ C)) = ((A ∪ B) ∩ (A ∪ C)) := by
       apply ExtSet
       intro x
       constructor
       · intro hx
-        rw [BinUnion_is_specified] at hx
-        rw [BinInter_is_specified, BinUnion_is_specified, BinUnion_is_specified]
+        rw [mem_union_iff] at hx
+        rw [mem_inter_iff, mem_union_iff, mem_union_iff]
         cases hx with
         | inl hA => exact ⟨Or.inl hA, Or.inl hA⟩
         | inr hBC =>
-          rw [BinInter_is_specified] at hBC
+          rw [mem_inter_iff] at hBC
           exact ⟨Or.inr hBC.1, Or.inr hBC.2⟩
       · intro hx
-        rw [BinInter_is_specified, BinUnion_is_specified, BinUnion_is_specified] at hx
-        rw [BinUnion_is_specified]
+        rw [mem_inter_iff, mem_union_iff, mem_union_iff] at hx
+        rw [mem_union_iff]
         cases hx.1 with
         | inl hA => exact Or.inl hA
         | inr hB =>
           cases hx.2 with
           | inl hA => exact Or.inl hA
           | inr hC =>
-            rw [BinInter_is_specified]
+            rw [mem_inter_iff]
             exact Or.inr ⟨hB, hC⟩
 
-    theorem BinInter_distrib_union (A B C : U) :
+    theorem inter_union_distrib_left (A B C : U) :
       (A ∩ (B ∪ C)) = ((A ∩ B) ∪ (A ∩ C)) := by
       apply ExtSet
       intro x
       constructor
       · intro hx
-        rw [BinInter_is_specified, BinUnion_is_specified] at hx
-        rw [BinUnion_is_specified]
+        rw [mem_inter_iff, mem_union_iff] at hx
+        rw [mem_union_iff]
         cases hx.2 with
         | inl hB =>
-          rw [BinInter_is_specified]
+          rw [mem_inter_iff]
           exact Or.inl ⟨hx.1, hB⟩
         | inr hC =>
-          exact Or.inr ((BinInter_is_specified A C x).mpr ⟨hx.1, hC⟩)
+          exact Or.inr ((mem_inter_iff A C x).mpr ⟨hx.1, hC⟩)
       · intro hx
-        rw [BinUnion_is_specified] at hx
-        rw [BinInter_is_specified, BinUnion_is_specified]
+        rw [mem_union_iff] at hx
+        rw [mem_inter_iff, mem_union_iff]
         cases hx with
         | inl hAB =>
-          rw [BinInter_is_specified] at hAB
+          rw [mem_inter_iff] at hAB
           exact ⟨hAB.1, Or.inl hAB.2⟩
         | inr hAC =>
-          rw [BinInter_is_specified] at hAC
+          rw [mem_inter_iff] at hAC
           exact ⟨hAC.1, Or.inr hAC.2⟩
 
     /-! ### Leyes de De Morgan ### -/
 
-    theorem DeMorgan_union (A B C : U) :
+    theorem compl_union (A B C : U) :
       (C \ (A ∪ B)) = ((C \ A) ∩ (C \ B)) := by
       apply ExtSet
       intro x
       constructor
       · intro hx
-        rw [Difference_is_specified, BinUnion_is_specified] at hx
-        rw [BinInter_is_specified, Difference_is_specified, Difference_is_specified]
+        rw [mem_sdiff_iff, mem_union_iff] at hx
+        rw [mem_inter_iff, mem_sdiff_iff, mem_sdiff_iff]
         constructor
         · exact ⟨hx.1, fun hA => hx.2 (Or.inl hA)⟩
         · exact ⟨hx.1, fun hB => hx.2 (Or.inr hB)⟩
       · intro hx
-        rw [BinInter_is_specified, Difference_is_specified, Difference_is_specified] at hx
-        rw [Difference_is_specified, BinUnion_is_specified]
+        rw [mem_inter_iff, mem_sdiff_iff, mem_sdiff_iff] at hx
+        rw [mem_sdiff_iff, mem_union_iff]
         exact ⟨hx.1.1, fun h => h.elim hx.1.2 hx.2.2⟩
 
-    theorem DeMorgan_inter (A B C : U) :
+    theorem compl_inter (A B C : U) :
       (C \ (A ∩ B)) = ((C \ A) ∪ (C \ B)) := by
       apply ExtSet
       intro x
       constructor
       · intro hx
-        rw [Difference_is_specified, BinInter_is_specified] at hx
-        rw [BinUnion_is_specified]
+        rw [mem_sdiff_iff, mem_inter_iff] at hx
+        rw [mem_union_iff]
         by_cases hA : x ∈ A
         · -- x ∈ A, entonces x ∉ B (de lo contrario x ∈ A ∩ B)
           have hnotB : x ∉ B := fun hB => hx.2 ⟨hA, hB⟩
-          exact Or.inr ((Difference_is_specified C B x).mpr ⟨hx.1, hnotB⟩)
+          exact Or.inr ((mem_sdiff_iff C B x).mpr ⟨hx.1, hnotB⟩)
         · -- x ∉ A
-          exact Or.inl ((Difference_is_specified C A x).mpr ⟨hx.1, hA⟩)
+          exact Or.inl ((mem_sdiff_iff C A x).mpr ⟨hx.1, hA⟩)
       · intro hx
-        rw [BinUnion_is_specified] at hx
-        rw [Difference_is_specified, BinInter_is_specified]
+        rw [mem_union_iff] at hx
+        rw [mem_sdiff_iff, mem_inter_iff]
         cases hx with
         | inl hCA =>
-          rw [Difference_is_specified] at hCA
+          rw [mem_sdiff_iff] at hCA
           exact ⟨hCA.1, fun hAB => hCA.2 hAB.1⟩
         | inr hCB =>
-          rw [Difference_is_specified] at hCB
+          rw [mem_sdiff_iff] at hCB
           exact ⟨hCB.1, fun hAB => hCB.2 hAB.2⟩
 
     /-! ### Complemento Relativo ### -/
@@ -158,17 +158,17 @@ namespace ZFC
       intro x
       constructor
       · intro hx
-        rw [BinUnion_is_specified] at hx
+        rw [mem_union_iff] at hx
         cases hx with
         | inl hA => exact h x hA
         | inr hCA =>
-          rw [Difference_is_specified] at hCA
+          rw [mem_sdiff_iff] at hCA
           exact hCA.1
       · intro hC
-        rw [BinUnion_is_specified]
+        rw [mem_union_iff]
         by_cases hA : x ∈ A
         · exact Or.inl hA
-        · rw [Difference_is_specified]
+        · rw [mem_sdiff_iff]
           exact Or.inr ⟨hC, hA⟩
 
     theorem Complement_inter (A C : U) :
@@ -177,7 +177,7 @@ namespace ZFC
       intro x
       constructor
       · intro hx
-        rw [BinInter_is_specified, Difference_is_specified] at hx
+        rw [mem_inter_iff, mem_sdiff_iff] at hx
         exact False.elim (hx.2.2 hx.1)
       · intro hEmpty
         exact False.elim (EmptySet_is_empty x hEmpty)
@@ -187,12 +187,12 @@ namespace ZFC
 end ZFC
 
 export ZFC.BoolAlg.Basic (
-  BinUnion_absorb_inter
-  BinInter_absorb_union
-  BinUnion_distrib_inter
-  BinInter_distrib_union
-  DeMorgan_union
-  DeMorgan_inter
+  union_inter_self
+  inter_union_self
+  union_inter_distrib_left
+  inter_union_distrib_left
+  compl_union
+  compl_inter
   Complement_union
   Complement_inter
 )

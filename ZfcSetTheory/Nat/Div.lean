@@ -23,7 +23,7 @@ License: MIT
 
   ## Helper: proof irrelevance of toPeano
 
-  Since `isNat n` is a `Prop`, any two proofs of `isNat n` yield the same `toPeano n _` result.
+  Since `IsNat n` is a `Prop`, any two proofs of `IsNat n` yield the same `toPeano n _` result.
   The private theorem `toPeano_proof_irrel` makes this explicit.
 
   ## Main Results
@@ -71,17 +71,17 @@ namespace ZFC
     -- Private helpers
     -- =========================================================================
 
-    /-- `toPeano n` gives the same value for any two proofs of `isNat n`.
+    /-- `toPeano n` gives the same value for any two proofs of `IsNat n`.
         Since the predicate `fun p => fromPeano p = n` has a unique witness (by injectivity
         of `fromPeano`), any two `Classical.choose` calls return the same result. -/
-    private theorem toPeano_proof_irrel (n : U) (h1 h2 : isNat n) :
+    private theorem toPeano_proof_irrel (n : U) (h1 h2 : IsNat n) :
         toPeano n h1 = toPeano n h2 :=
       fromPeano_injective ((fromPeano_toPeano n h1).trans (fromPeano_toPeano n h2).symm)
 
     /-- `fromPeano Peano.ℕ₀.zero = ∅`. Follows from `toPeano_zero` + `fromPeano_toPeano`. -/
     private theorem fromPeano_zero_is_empty : (fromPeano Peano.ℕ₀.zero : U) = ∅ :=
       (congrArg (fromPeano : Peano.ℕ₀ → U) toPeano_zero.symm).trans
-        (fromPeano_toPeano ∅ zero_is_nat)
+        (fromPeano_toPeano ∅ isNat_zero)
 
     -- =========================================================================
     -- Section 0: Definitions

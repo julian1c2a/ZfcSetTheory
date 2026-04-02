@@ -54,8 +54,8 @@ namespace ZFC
     -- Private helpers
     -- =========================================================================
 
-    /-- `toPeano n` gives the same value for any two proofs of `isNat n`. -/
-    private theorem toPeano_proof_irrel (n : U) (h1 h2 : isNat n) :
+    /-- `toPeano n` gives the same value for any two proofs of `IsNat n`. -/
+    private theorem toPeano_proof_irrel (n : U) (h1 h2 : IsNat n) :
         toPeano n h1 = toPeano n h2 :=
       fromPeano_injective ((fromPeano_toPeano n h1).trans (fromPeano_toPeano n h2).symm)
 
@@ -122,7 +122,7 @@ namespace ZFC
       obtain ⟨p, hp⟩ := fromPeano_surjective n (mem_Omega_is_Nat n hn)
       subst hp
       have h_succ : (fromPeano (Peano.ℕ₀.succ p) : U) =
-          Nat.Basic.successor (fromPeano p) := by simp only [fromPeano]
+          Nat.Basic.succ (fromPeano p) := by simp only [fromPeano]
       have h0 : (fromPeano Peano.ℕ₀.zero : U) = ∅ := by simp only [fromPeano]
       rw [← h_succ, ← h0, ← fromPeano_binom, Peano.Binom.binom_succ_zero]
       rfl
@@ -133,7 +133,7 @@ namespace ZFC
       obtain ⟨q, hq⟩ := fromPeano_surjective k (mem_Omega_is_Nat k hk)
       subst hq
       have h_succ : (fromPeano (Peano.ℕ₀.succ q) : U) =
-          Nat.Basic.successor (fromPeano q) := by simp only [fromPeano]
+          Nat.Basic.succ (fromPeano q) := by simp only [fromPeano]
       have h0 : (fromPeano Peano.ℕ₀.zero : U) = ∅ := by simp only [fromPeano]
       rw [← h_succ, ← h0, ← fromPeano_binom, Peano.Binom.binom_zero_succ]
 
@@ -149,9 +149,9 @@ namespace ZFC
       obtain ⟨q, hq⟩ := fromPeano_surjective k (mem_Omega_is_Nat k hk)
       subst hp; subst hq
       have h_succ_p : (fromPeano (Peano.ℕ₀.succ p) : U) =
-          Nat.Basic.successor (fromPeano p) := by simp only [fromPeano]
+          Nat.Basic.succ (fromPeano p) := by simp only [fromPeano]
       have h_succ_q : (fromPeano (Peano.ℕ₀.succ q) : U) =
-          Nat.Basic.successor (fromPeano q) := by simp only [fromPeano]
+          Nat.Basic.succ (fromPeano q) := by simp only [fromPeano]
       rw [← h_succ_p, ← h_succ_q,
           ← fromPeano_binom (Peano.ℕ₀.succ p) (Peano.ℕ₀.succ q),
           ← fromPeano_binom p q,
@@ -195,7 +195,7 @@ namespace ZFC
       obtain ⟨p, hp⟩ := fromPeano_surjective n (mem_Omega_is_Nat n hn)
       subst hp
       have h_succ : (fromPeano (Peano.ℕ₀.succ p) : U) =
-          Nat.Basic.successor (fromPeano p) := by simp only [fromPeano]
+          Nat.Basic.succ (fromPeano p) := by simp only [fromPeano]
       rw [← h_succ, ← fromPeano_binom, Peano.Binom.binom_succ_n_by_n]
 
     -- =========================================================================

@@ -26,7 +26,6 @@
 
 **[14.]** Habrá que exponer la teoría de modelos, construcción de modelos, expresiones lógicas relativas y absolutas. Introducción de modelos que satisfacen distintos axiomas, etc.
 
-
 **NUEVOS PENSAMIENTOS:**
 **[1.]** Es prioritario ordenar fuertemente el proyecto.
 *[1.1.]* Crear módulos separados en función de los temas principales, a ser posible en subdirectorios separados.

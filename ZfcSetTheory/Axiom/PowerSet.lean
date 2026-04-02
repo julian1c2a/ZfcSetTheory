@@ -34,7 +34,7 @@ namespace ZFC
 
     /-! ### Teorema de Existencia Única para el Axioma de Potencia ### -/
     @[simp]
-    theorem PowerSetExistsUnique (A : U) :
+    theorem powersetExistsUnique (A : U) :
       ∃! P, ∀ x : U, x ∈ P ↔ x ⊆ A
         := by
       obtain ⟨P, hP⟩ := PowerSet A
@@ -51,70 +51,70 @@ namespace ZFC
 
     /-! ### Definición del Conjunto Potencia ### -/
     @[simp]
-    noncomputable def PowerSetOf (A : U) : U :=
-      (PowerSetExistsUnique A).choose
+    noncomputable def powerset (A : U) : U :=
+      (powersetExistsUnique A).choose
 
-    notation " 𝒫 " A: 100 => PowerSetOf A
+    notation " 𝒫 " A: 100 => powerset A
 
     /-! ### Teorema de Especificación del Conjunto Potencia ### -/
     @[simp]
-    theorem PowerSet_is_specified (A x : U) :
+    theorem mem_powerset_iff (A x : U) :
       x ∈ (𝒫 A) ↔ x ⊆ A
         := by
-      unfold PowerSetOf
-      exact (PowerSetExistsUnique A).choose_spec x
+      unfold powerset
+      exact (powersetExistsUnique A).choose_spec x
 
     /-! ### Unicidad del Conjunto Potencia ### -/
     @[simp]
-    theorem PowerSet_is_unique (A P : U) :
+    theorem powerset_eq_iff (A P : U) :
       (∀ (x : U), x ∈ P ↔ x ⊆ A) ↔ (P = 𝒫 A)
         := by
       constructor
       · intro h
         apply ExtSet
         intro x
-        rw [h, PowerSet_is_specified]
+        rw [h, mem_powerset_iff]
       · intro h_eq
         rw [h_eq]
         intro x
-        exact PowerSet_is_specified A x
+        exact mem_powerset_iff A x
 
     /-! ============================================================ -/
     /-! ### PROPIEDADES BÁSICAS DEL CONJUNTO POTENCIA ### -/
     /-! ============================================================ -/
 
     /-! ### El conjunto vacío pertenece a cualquier conjunto potencia ### -/
-    theorem empty_mem_PowerSet (A : U) :
+    theorem empty_mem_powerset (A : U) :
       ∅ ∈ (𝒫 A)
         := by
-      rw [PowerSet_is_specified]
+      rw [mem_powerset_iff]
       exact EmptySet_subseteq_any A
 
     /-! ### Todo conjunto pertenece a su propio conjunto potencia ### -/
-    theorem self_mem_PowerSet (A : U) :
+    theorem self_mem_powerset (A : U) :
       A ∈ (𝒫 A)
         := by
-      rw [PowerSet_is_specified]
-      exact subseteq_reflexive A
+      rw [mem_powerset_iff]
+      exact subset_refl A
 
     /-! ### El conjunto potencia nunca es vacío ### -/
-    theorem PowerSet_nonempty (A : U) :
+    theorem powerset_nonempty (A : U) :
       (𝒫 A) ≠ ∅
         := by
       intro h
-      have h_empty_mem := empty_mem_PowerSet A
+      have h_empty_mem := empty_mem_powerset A
       rw [h] at h_empty_mem
       exact EmptySet_is_empty ∅ h_empty_mem
 
     /-! ### La potencia del vacío es el singleton del vacío ### -/
-    theorem PowerSet_empty :
+    theorem powerset_empty :
       (𝒫 (∅ : U)) = ({∅} : U)
         := by
       apply ExtSet
       intro x
       constructor
       · intro hx
-        rw [PowerSet_is_specified] at hx
+        rw [mem_powerset_iff] at hx
         rw [Singleton_is_specified]
         -- x ⊆ ∅ implica x = ∅
         apply ExtSet
@@ -126,7 +126,7 @@ namespace ZFC
           exact False.elim (EmptySet_is_empty z hz)
       · intro hx
         rw [Singleton_is_specified] at hx
-        rw [PowerSet_is_specified, hx]
+        rw [mem_powerset_iff, hx]
         exact EmptySet_subseteq_any ∅
 
     /-! ============================================================ -/
@@ -134,35 +134,35 @@ namespace ZFC
     /-! ============================================================ -/
 
     /-! ### Si A ⊆ B entonces 𝒫(A) ⊆ 𝒫(B) ### -/
-    theorem PowerSet_mono (A B : U) (h : A ⊆ B) :
+    theorem powerset_mono (A B : U) (h : A ⊆ B) :
       (𝒫 A) ⊆ (𝒫 B)
         := by
       intro x hx
-      rw [PowerSet_is_specified] at hx ⊢
-      exact subseteq_transitive x A B hx h
+      rw [mem_powerset_iff] at hx ⊢
+      exact subset_trans x A B hx h
 
     /-! ### Recíproco: Si 𝒫(A) ⊆ 𝒫(B) entonces A ⊆ B ### -/
-    theorem PowerSet_mono_iff (A B : U) :
+    theorem powerset_mono_iff (A B : U) :
       (𝒫 A) ⊆ (𝒫 B) ↔ A ⊆ B
         := by
       constructor
       · -- (→) 𝒫 A ⊆ 𝒫 B → A ⊆ B
         intro h
-        -- A ∈ 𝒫 A por self_mem_PowerSet
-        have hA_in_PA : A ∈ (𝒫 A) := self_mem_PowerSet A
+        -- A ∈ 𝒫 A por self_mem_powerset
+        have hA_in_PA : A ∈ (𝒫 A) := self_mem_powerset A
         -- Por hipótesis, A ∈ 𝒫 B
         have hA_in_PB : A ∈ (𝒫 B) := h A hA_in_PA
         -- Por especificación, A ⊆ B
-        exact (PowerSet_is_specified B A).mp hA_in_PB
+        exact (mem_powerset_iff B A).mp hA_in_PB
       · -- (←) A ⊆ B → 𝒫 A ⊆ 𝒫 B
-        exact PowerSet_mono A B
+        exact powerset_mono A B
 
     /-! ============================================================ -/
     /-! ### RELACIONES CON UNIÓN E INTERSECCIÓN ### -/
     /-! ============================================================ -/
 
     /-! ### 𝒫(A) ∩ 𝒫(B) = 𝒫(A ∩ B) ### -/
-    theorem PowerSet_inter (A B : U) :
+    theorem powerset_inter (A B : U) :
       ((𝒫 A) ∩ (𝒫 B)) = (𝒫 (A ∩ B))
         := by
       apply ExtSet
@@ -170,43 +170,43 @@ namespace ZFC
       constructor
       · -- (→) x ∈ 𝒫(A) ∩ 𝒫(B) → x ∈ 𝒫(A ∩ B)
         intro hx
-        rw [BinInter_is_specified, PowerSet_is_specified, PowerSet_is_specified] at hx
-        rw [PowerSet_is_specified]
+        rw [mem_inter_iff, mem_powerset_iff, mem_powerset_iff] at hx
+        rw [mem_powerset_iff]
         -- x ⊆ A y x ⊆ B implica x ⊆ A ∩ B
         intro z hz
-        rw [BinInter_is_specified]
+        rw [mem_inter_iff]
         exact ⟨hx.1 z hz, hx.2 z hz⟩
       · -- (←) x ∈ 𝒫(A ∩ B) → x ∈ 𝒫(A) ∩ 𝒫(B)
         intro hx
-        rw [PowerSet_is_specified] at hx
-        rw [BinInter_is_specified, PowerSet_is_specified, PowerSet_is_specified]
+        rw [mem_powerset_iff] at hx
+        rw [mem_inter_iff, mem_powerset_iff, mem_powerset_iff]
         constructor
         · -- x ⊆ A
           intro z hz
           have hz_inter := hx z hz
-          exact (BinInter_is_specified A B z).mp hz_inter |>.1
+          exact (mem_inter_iff A B z).mp hz_inter |>.1
         · -- x ⊆ B
           intro z hz
           have hz_inter := hx z hz
-          exact (BinInter_is_specified A B z).mp hz_inter |>.2
+          exact (mem_inter_iff A B z).mp hz_inter |>.2
 
     /-! ### 𝒫(A) ∪ 𝒫(B) ⊆ 𝒫(A ∪ B) (la igualdad NO vale en general) ### -/
-    theorem PowerSet_union_subset (A B : U) :
+    theorem powerset_union_subset (A B : U) :
       ((𝒫 A) ∪ (𝒫 B)) ⊆ (𝒫 (A ∪ B))
         := by
       intro x hx
-      rw [BinUnion_is_specified, PowerSet_is_specified, PowerSet_is_specified] at hx
-      rw [PowerSet_is_specified]
+      rw [mem_union_iff, mem_powerset_iff, mem_powerset_iff] at hx
+      rw [mem_powerset_iff]
       cases hx with
       | inl hxA =>
         -- x ⊆ A, entonces x ⊆ A ∪ B
         intro z hz
-        rw [BinUnion_is_specified]
+        rw [mem_union_iff]
         exact Or.inl (hxA z hz)
       | inr hxB =>
         -- x ⊆ B, entonces x ⊆ A ∪ B
         intro z hz
-        rw [BinUnion_is_specified]
+        rw [mem_union_iff]
         exact Or.inr (hxB z hz)
 
     /-! ============================================================ -/
@@ -214,18 +214,18 @@ namespace ZFC
     /-! ============================================================ -/
 
     /-! ### A ⊆ 𝒫(⋃ A) para cualquier familia A ### -/
-    theorem subset_PowerSet_Union (A : U) :
+    theorem subset_powerset_sUnion (A : U) :
       A ⊆ (𝒫 (⋃ A))
         := by
       intro x hx
-      rw [PowerSet_is_specified]
+      rw [mem_powerset_iff]
       -- x ∈ A, debemos probar x ⊆ ⋃ A
       intro z hz
-      rw [UnionSet_is_specified]
+      rw [mem_sUnion_iff]
       exact ⟨x, hx, hz⟩
 
     /-! ### ⋃ 𝒫(A) = A ### -/
-    theorem Union_PowerSet (A : U) :
+    theorem sUnion_powerset (A : U) :
       ⋃ (𝒫 A) = A
         := by
       apply ExtSet
@@ -233,18 +233,18 @@ namespace ZFC
       constructor
       · -- (→) x ∈ ⋃ 𝒫(A) → x ∈ A
         intro hx
-        rw [UnionSet_is_specified] at hx
+        rw [mem_sUnion_iff] at hx
         obtain ⟨S, hS_in_PA, hx_in_S⟩ := hx
-        rw [PowerSet_is_specified] at hS_in_PA
+        rw [mem_powerset_iff] at hS_in_PA
         -- S ⊆ A y x ∈ S implica x ∈ A
         exact hS_in_PA x hx_in_S
       · -- (←) x ∈ A → x ∈ ⋃ 𝒫(A)
         intro hx
-        rw [UnionSet_is_specified]
+        rw [mem_sUnion_iff]
         -- Tomamos S = {x}
         refine ⟨({x} : U), ?_, ?_⟩
         · -- {x} ∈ 𝒫(A), es decir, {x} ⊆ A
-          rw [PowerSet_is_specified]
+          rw [mem_powerset_iff]
           intro z hz
           rw [Singleton_is_specified] at hz
           rw [hz]
@@ -257,20 +257,20 @@ end ZFC
 
 export ZFC.Axiom.PowerSet (
   PowerSet
-  PowerSetExistsUnique
-  PowerSetOf
-  PowerSet_is_specified
-  PowerSet_is_unique
-  empty_mem_PowerSet
-  self_mem_PowerSet
-  PowerSet_nonempty
-  PowerSet_empty
-  PowerSet_mono
-  PowerSet_mono_iff
-  PowerSet_inter
-  PowerSet_union_subset
-  subset_PowerSet_Union
-  Union_PowerSet
+  powersetExistsUnique
+  powerset
+  mem_powerset_iff
+  powerset_eq_iff
+  empty_mem_powerset
+  self_mem_powerset
+  powerset_nonempty
+  powerset_empty
+  powerset_mono
+  powerset_mono_iff
+  powerset_inter
+  powerset_union_subset
+  subset_powerset_sUnion
+  sUnion_powerset
 )
 
 /-!
