@@ -7,9 +7,9 @@
 
 > 📊 **Project Status**: See [CURRENT-STATUS-PROJECT.md](CURRENT-STATUS-PROJECT.md) for complete details
 >
-> ✅ **41/41 modules** compiling successfully (42/42 jobs with peanolib)
+> ✅ **43/43 modules** compiling successfully
 > ✅ **100% of theorems** completely proven
-> ✅ **0 `sorry`** in all 41 modules
+> ✅ **0 `sorry`** in all 43 modules
 
 Una implementación formal de la **Teoría de Conjuntos de Zermelo-Fraenkel (ZFC)** en Lean 4, sin dependencias de Mathlib.
 
@@ -67,9 +67,11 @@ Este proyecto desarrolla los axiomas fundamentales de ZFC de manera progresiva, 
 | **Álgebra Booleana Atómica** | `AtomicBooleanAlgebra.lean` | 𝒫(A) es atómica, representación por átomos | ✅ Completo |
 | **Orden Parcial** | `SetOrder.lean` | Retículos, orden en conjuntos | ✅ Completo |
 | **Orden Estricto** | `SetStrictOrder.lean` | Propiedades de orden estricto | ✅ Completo |
+| **Álgebra Booleana Completa** | `CompleteBooleanAlgebra.lean` | 𝒫(A) es retículo completo y AB completa atómica | ✅ Completo |
+| **Álgebra Finita/Cofinita** | `FiniteCofinite.lean` | FinCofAlg(ω), clausura, contraejemplo completitud | ✅ Completo |
 | **Cardinalidad** | `Cardinality.lean` | Teorema de Cantor, CSB | ✅ Completo |
 
-### Total: 41 módulos — 41/41 con 0 sorry
+### Total: 43 módulos — 43/43 con 0 sorry
 
 ## ✨ Características Destacadas
 
@@ -142,6 +144,8 @@ ZfcSetTheory/
 ├── FiniteSequences.lean         # Secuencias finitas en ZFC
 ├── FiniteSequencesArith.lean    # Aritmética de secuencias finitas
 ├── FiniteSequencesBridge.lean   # Puente DList ↔ ZFC, nth, TFA nativo
+├── CompleteBooleanAlgebra.lean   # 𝒫(A) es retículo completo + AB completa atómica
+├── FiniteCofinite.lean           # FinCofAlg(ω), paridad, contraejemplo completitud
 ├── FiniteSets.lean              # Conjuntos finitos en ZFC
 └── ZfcSetTheory.lean            # Módulo raíz
 ```
@@ -191,7 +195,18 @@ ZfcSetTheory/
 - **Dominación estricta**: A se inyecta en 𝒫(A) pero no viceversa
 - **Teorema de Cantor-Schröder-Bernstein**: Si existen inyecciones f: A → B y g: B → A, entonces existe biyección A ↔ B
 
-## 📦 Instalación
+## � Naming Conventions
+
+El proyecto adopta convenciones de nombres estilo [Mathlib](https://leanprover-community.github.io/contribute/naming.html):
+
+- **Conclusión primero**: `isNat_succ_of_isNat` — la conclusión va antes, las hipótesis con `_of_`
+- **Bicondicionales**: sufijo `_iff` — `mem_powerset_iff`
+- **Propiedades algebraicas**: sufijos cortos — `_comm`, `_assoc`, `_refl`, `_trans`
+- **Especificaciones**: `mem_X_iff` en lugar de `X_is_specified`
+
+Para el detalle completo, consultar [NAMING-CONVENTIONS.md](NAMING-CONVENTIONS.md).
+
+## �📦 Instalación
 
 ```bash
 # Clonar el repositorio
@@ -212,12 +227,12 @@ lake build
 ### Status and Development
 
 - **[CURRENT-STATUS-PROJECT.md](CURRENT-STATUS-PROJECT.md)** - ⭐ **Complete project status**  (updated 2026-04-01)
-  - 41 modules, 100% proven, 0 sorry
+  - 43 modules, 100% proven, 0 sorry
   - Recent achievements (FiniteSequencesBridge: nth, dlistToSeq, isPrimeSeq, TFA native)
   - Architecture and dependency hierarchies
   - Next steps
 - **[REFERENCE.md](REFERENCE.md)** - 📖 **Complete technical reference** (11000+ lines)
-  - 41 fully documented modules with mathematical descriptions
+  - 43 fully documented modules with mathematical descriptions
   - All definitions, theorems, and exports with Lean4 signatures
   - Dependency tracking and namespace organization
 - [CHANGELOG.md](CHANGELOG.md) - Detailed change history
@@ -262,4 +277,4 @@ Este proyecto se desarrolló basándose en las siguientes fuentes:
 ---
 
 **Autor**: Julián Calderón Almendros
-*Last updated: 2026-04-01*
+*Last updated: 2026-04-07*

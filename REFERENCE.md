@@ -1,7 +1,57 @@
 # Referencia Técnica - ZfcSetTheory
 
-*Última actualización: 2026-04-01 10:00*
+*Última actualización: 2026-04-07 12:00*
 **Autor**: Julián Calderón Almendros
+
+## 0. Guía de Convenciones de Nombres para el Estudioso
+
+Este proyecto adopta convenciones de nombres estilo [Mathlib](https://leanprover-community.github.io/contribute/naming.html). A continuación se resumen las claves para leer y buscar teoremas.
+
+### 0.1 Reglas de Capitalización
+
+- **Teoremas/lemas** (Prop): `snake_case` — `union_comm`, `mem_powerset_iff`
+- **Definiciones Prop** (predicados): `UpperCamelCase` — `IsNat`, `IsFunction`; en nombres de teoremas bajan a `lowerCamelCase`: `isNat_zero`
+- **Funciones** (retornan `U`): `lowerCamelCase` — `powerset`, `union`, `sUnion`
+- **Acrónimos**: como grupo — `ZFC` (namespace), `zfc` (en snake_case)
+
+### 0.2 Diccionario de Símbolos → Palabras
+
+| Símbolo | Nombre | | Símbolo | Nombre | | Símbolo | Nombre |
+|---------|--------|---|---------|--------|---|---------|--------|
+| ∈ | `mem` | | ∪ | `union` | | + | `add` |
+| ∉ | `not_mem` | | ∩ | `inter` | | * | `mul` |
+| ⊆ | `subset` | | ⋃ | `sUnion` | | - | `sub`/`neg` |
+| ⊂ | `ssubset` | | ⋂ | `sInter` | | / | `div` |
+| 𝒫 | `powerset` | | \ | `sdiff` | | ^ | `pow` |
+| σ | `succ` | | △ | `symmDiff` | | ∣ | `dvd` |
+| ∅ | `empty` | | ᶜ | `compl` | | ≤ | `le` |
+| = | `eq` | | ⟂ | `disjoint` | | < | `lt` |
+| ≠ | `ne` | | ↔ | `iff` | | 0 | `zero` |
+| ¬ | `not` | | → | `of` | | 1 | `one` |
+
+### 0.3 Estructura de Nombres de Teoremas
+
+- **Conclusión primero**: `isNat_succ_of_isNat` — la conclusión (`isNat_succ`) va antes, las hipótesis (`of_isNat`) después con `_of_`
+- **Bicondicionales**: sufijo `_iff` — `mem_powerset_iff` (∈ 𝒫 ↔ ⊆)
+- **Direcciones de un iff**: `.mp` (→) y `.mpr` (←) — `mem_powerset_iff.mp`
+- **Especificaciones**: `mem_X_iff` — `mem_succ_iff`, `mem_inter_iff`, `mem_union_iff`
+
+### 0.4 Sufijos Axiomáticos
+
+| Sufijo | Significado | | Sufijo | Significado |
+|--------|------------|---|--------|------------|
+| `_comm` | conmutatividad | | `_self` | op consigo mismo |
+| `_assoc` | asociatividad | | `_left`/`_right` | variante lateral |
+| `_refl` | reflexividad | | `_cancel` | cancelación |
+| `_trans` | transitividad | | `_mono` | monotonía |
+| `_antisymm` | antisimetría | | `_inj` | inyectividad (iff) |
+| `_symm` | simetría | | `_injective` | inyectividad (pred) |
+
+### 0.5 Nota sobre Transición
+
+Los nombres actuales del proyecto (e.g., `BinUnion_commutative`, `PowerSet_is_specified`, `ExtSet_wc`) se migrarán progresivamente a las convenciones Mathlib (e.g., `union_comm`, `mem_powerset_iff`, `eq_of_subset_of_subset`). Durante la transición, ambos nombres podrán coexistir. Consultar `NAMING-CONVENTIONS.md` para la tabla completa de renombramientos.
+
+---
 
 ## 📋 Cumplimiento con AIDER-AI-GUIDE.md
 
@@ -85,7 +135,7 @@ Este documento cumple con todos los requisitos especificados en [AIDER-AI-GUIDE.
 | `FiniteSets.lean` | `SetUniverse.FiniteSets` | `NaturalNumbers`, `Infinity` + anteriores | ✅ Completo |
 | `FiniteSequencesArith.lean` | `SetUniverse.FiniteSequencesArith` | `NaturalNumbersMul`, `FiniteSequences`, `FiniteSets` + anteriores | ✅ Completo |
 | `FiniteSequencesBridge.lean` | `SetUniverse.FiniteSequencesBridge` | `FiniteSequencesArith`, `NaturalNumbersPrimes` + anteriores | ✅ Completo |
-| `CompleteBooleanAlgebra.lean` | `SetUniverse.CompleteBooleanAlgebra` | `PowerSetAlgebra`, `GeneralizedDeMorgan`, `SetOrder`, `AtomicBooleanAlgebra` + anteriores | ❌ Pendiente |
+| `CompleteBooleanAlgebra.lean` | `SetUniverse.CompleteBooleanAlgebra` | `PowerSetAlgebra`, `GeneralizedDeMorgan`, `SetOrder`, `AtomicBooleanAlgebra` + anteriores | ✅ Completo |
 | `FiniteCofinite.lean` | `SetUniverse.FiniteCofinite` | `CompleteBooleanAlgebra`, `FiniteSets`, `NaturalNumbersAdd`, `Cardinality` + anteriores | ✅ Completo |
 
 ## 2. Axiomas ZFC Implementados
@@ -4164,6 +4214,86 @@ noncomputable def EvenSet : U :=
 
 **Dependencias**: `SpecSet`, `ω`, `add`
 **Computabilidad**: Noncomputable
+
+### 3.41 CompleteBooleanAlgebra.lean
+
+#### Supremo Relativizado (isSupremumIn)
+
+**Ubicación**: `CompleteBooleanAlgebra.lean`, línea 69
+**Orden**: 1ª definición principal
+**Computable**: Sí (es Prop)
+
+**Enunciado Matemático**: $x$ es el supremo de $S$ dentro del retículo $L$ (ordenado por $\subseteq$) si:
+
+1. $x \in L$
+2. $\forall y \in S,\; y \subseteq x$ (cota superior)
+3. $\forall z \in L,\; (\forall y \in S,\; y \subseteq z) \Rightarrow x \subseteq z$ (mínima cota superior)
+
+**Firma Lean4**:
+
+```lean
+def isSupremumIn (L S x : U) : Prop :=
+  x ∈ L ∧ (∀ y, y ∈ S → y ⊆ x) ∧ (∀ z, z ∈ L → (∀ y, y ∈ S → y ⊆ z) → x ⊆ z)
+```
+
+**Dependencias**: `mem`, `subseteq`
+
+#### Ínfimo Relativizado (isInfimumIn)
+
+**Ubicación**: `CompleteBooleanAlgebra.lean`, línea 73
+**Orden**: 2ª definición principal
+**Computable**: Sí (es Prop)
+
+**Enunciado Matemático**: $x$ es el ínfimo de $S$ dentro del retículo $L$ (ordenado por $\subseteq$) si:
+
+1. $x \in L$
+2. $\forall y \in S,\; x \subseteq y$ (cota inferior)
+3. $\forall z \in L,\; (\forall y \in S,\; z \subseteq y) \Rightarrow z \subseteq x$ (máxima cota inferior)
+
+**Firma Lean4**:
+
+```lean
+def isInfimumIn (L S x : U) : Prop :=
+  x ∈ L ∧ (∀ y, y ∈ S → x ⊆ y) ∧ (∀ z, z ∈ L → (∀ y, y ∈ S → z ⊆ y) → z ⊆ x)
+```
+
+**Dependencias**: `mem`, `subseteq`
+
+#### Retículo Completo (isCompleteLattice)
+
+**Ubicación**: `CompleteBooleanAlgebra.lean`, línea 77
+**Orden**: 3ª definición principal
+**Computable**: Sí (es Prop)
+
+**Enunciado Matemático**: $L$ es un retículo completo si todo subconjunto $S \subseteq L$ tiene supremo e ínfimo en $L$:
+$$\forall S \subseteq L,\; (\exists x,\; \text{isSupremumIn}(L, S, x)) \land (\exists x,\; \text{isInfimumIn}(L, S, x))$$
+
+**Firma Lean4**:
+
+```lean
+def isCompleteLattice (L : U) : Prop :=
+  ∀ S, S ⊆ L → (∃ x, isSupremumIn L S x) ∧ (∃ x, isInfimumIn L S x)
+```
+
+**Dependencias**: `isSupremumIn`, `isInfimumIn`, `subseteq`
+
+#### Álgebra Booleana Completa Atómica (isCompleteAtomicBA)
+
+**Ubicación**: `CompleteBooleanAlgebra.lean`, línea 192
+**Orden**: 4ª definición principal
+**Computable**: Sí (es Prop)
+
+**Enunciado Matemático**: $\mathcal{P}(A)$ es un álgebra booleana completa atómica si es retículo completo y atómica:
+$$\text{isCompleteAtomicBA}(A) \iff \text{isCompleteLattice}(\mathcal{P}(A)) \land \text{isAtomic}(A)$$
+
+**Firma Lean4**:
+
+```lean
+def isCompleteAtomicBA (A : U) : Prop :=
+  isCompleteLattice (𝒫 A) ∧ isAtomic A
+```
+
+**Dependencias**: `isCompleteLattice`, `isAtomic`, `PowerSet`
 
 ---
 
@@ -9938,6 +10068,194 @@ theorem fromPeano_le_iff (p q : Peano.ℕ₀) :
 
 **Patrón de demostración de `FinCofAlg_not_complete`**: Por contradicción. Se define $S = \{\{x\} \mid x \in \text{EvenSet}\} \subseteq \text{FinCofAlg}(\omega)$. Si FinCofAlg fuera completo, $S$ tendría un supremo $Z \in \text{FinCofAlg}(\omega)$. Entonces $\text{EvenSet} \subseteq Z$ pero $Z \neq \text{EvenSet}$ (pues $\text{EvenSet} \notin \text{FinCofAlg}$), así que $\exists z \in Z \setminus \text{EvenSet}$. Se construye $Z' = Z \setminus \{z\}$, que es cofinito (y por tanto $\in \text{FinCofAlg}$) y sigue siendo cota superior de $S$. Pero entonces $Z \subseteq Z'$ por minimalidad, contradiciendo $z \in Z \setminus Z'$.
 
+### 4.37 CompleteBooleanAlgebra.lean
+
+#### Unicidad del Supremo (supremumIn_unique)
+
+**Ubicación**: `CompleteBooleanAlgebra.lean`, línea 83
+**Orden**: 1º teorema
+
+**Enunciado Matemático**: Si $x$ e $y$ son ambos supremos de $S$ en $L$, entonces $x = y$.
+
+**Firma Lean4**:
+
+```lean
+theorem supremumIn_unique (L S x y : U)
+    (hx : isSupremumIn L S x) (hy : isSupremumIn L S y) :
+    x = y
+```
+
+**Dependencias**: `isSupremumIn`, `order_antisymmetric`
+
+#### Unicidad del Ínfimo (infimumIn_unique)
+
+**Ubicación**: `CompleteBooleanAlgebra.lean`, línea 90
+**Orden**: 2º teorema
+
+**Enunciado Matemático**: Si $x$ e $y$ son ambos ínfimos de $S$ en $L$, entonces $x = y$.
+
+**Firma Lean4**:
+
+```lean
+theorem infimumIn_unique (L S x y : U)
+    (hx : isInfimumIn L S x) (hy : isInfimumIn L S y) :
+    x = y
+```
+
+**Dependencias**: `isInfimumIn`, `order_antisymmetric`
+
+#### Unión de Familia Acotada (UnionSet_subset_of_family)
+
+**Ubicación**: `CompleteBooleanAlgebra.lean`, línea 99
+**Orden**: 3º teorema
+
+**Enunciado Matemático**: Si $F \subseteq \mathcal{P}(A)$, entonces $\bigcup F \subseteq A$.
+
+**Firma Lean4**:
+
+```lean
+theorem UnionSet_subset_of_family (A F : U) (hF : F ⊆ 𝒫 A) :
+    ⋃ F ⊆ A
+```
+
+**Dependencias**: `UnionSet_is_specified`, `PowerSet_is_specified`
+
+#### Unión de Familia en Conjunto Potencia (UnionSet_mem_PowerSet_of_family)
+
+**Ubicación**: `CompleteBooleanAlgebra.lean`, línea 107
+**Orden**: 4º teorema
+
+**Enunciado Matemático**: Si $S \subseteq \mathcal{P}(A)$, entonces $\bigcup S \in \mathcal{P}(A)$.
+
+**Firma Lean4**:
+
+```lean
+theorem UnionSet_mem_PowerSet_of_family (A S : U) (hS : S ⊆ 𝒫 A) :
+    ⋃ S ∈ 𝒫 A
+```
+
+**Dependencias**: `PowerSet_is_specified`, `UnionSet_subset_of_family`
+
+#### Unión como Supremo en 𝒫(A) (UnionSet_is_supremumIn_PowerSet)
+
+**Ubicación**: `CompleteBooleanAlgebra.lean`, línea 112
+**Orden**: 5º teorema (TEOREMA PRINCIPAL: supremo)
+
+**Enunciado Matemático**: Si $S \subseteq \mathcal{P}(A)$, entonces $\bigcup S$ es el supremo de $S$ en $\mathcal{P}(A)$.
+
+**Firma Lean4**:
+
+```lean
+theorem UnionSet_is_supremumIn_PowerSet (A S : U) (hS : S ⊆ 𝒫 A) :
+    isSupremumIn (𝒫 A) S (⋃ S)
+```
+
+**Dependencias**: `UnionSet_mem_PowerSet_of_family`, `UnionSet_is_specified`
+
+**Patrón de demostración**: Para la cota superior, cada $X \in S$ satisface $X \subseteq \bigcup S$ por definición de $\bigcup$. Para la minimalidad, si $z$ es cota superior de $S$, cada $w \in \bigcup S$ pertenece a algún $X \in S$, y por tanto $w \in z$ por la cota.
+
+#### Intersección de Familia Acotada (interSet_subset_of_family)
+
+**Ubicación**: `CompleteBooleanAlgebra.lean`, línea 127
+**Orden**: 6º teorema
+
+**Enunciado Matemático**: Si $F \subseteq \mathcal{P}(A)$ y $F \neq \emptyset$, entonces $\bigcap F \subseteq A$.
+
+**Firma Lean4**:
+
+```lean
+theorem interSet_subset_of_family (A F : U) (hF : F ⊆ 𝒫 A) (hne : F ≠ ∅) :
+    (⋂ F) ⊆ A
+```
+
+**Dependencias**: `nonempty_iff_exists_mem`, `interSet_mem_iff`, `PowerSet_is_specified`
+
+#### Intersección de Familia en Conjunto Potencia (interSet_mem_PowerSet_of_family)
+
+**Ubicación**: `CompleteBooleanAlgebra.lean`, línea 136
+**Orden**: 7º teorema
+
+**Enunciado Matemático**: Si $S \subseteq \mathcal{P}(A)$ y $S \neq \emptyset$, entonces $\bigcap S \in \mathcal{P}(A)$.
+
+**Firma Lean4**:
+
+```lean
+theorem interSet_mem_PowerSet_of_family (A S : U) (hS : S ⊆ 𝒫 A) (hne : S ≠ ∅) :
+    (⋂ S) ∈ 𝒫 A
+```
+
+**Dependencias**: `PowerSet_is_specified`, `interSet_subset_of_family`
+
+#### Intersección como Ínfimo en 𝒫(A) (interSet_is_infimumIn_PowerSet)
+
+**Ubicación**: `CompleteBooleanAlgebra.lean`, línea 141
+**Orden**: 8º teorema (TEOREMA PRINCIPAL: ínfimo no vacío)
+
+**Enunciado Matemático**: Si $S \subseteq \mathcal{P}(A)$ y $S \neq \emptyset$, entonces $\bigcap S$ es el ínfimo de $S$ en $\mathcal{P}(A)$.
+
+**Firma Lean4**:
+
+```lean
+theorem interSet_is_infimumIn_PowerSet (A S : U) (hS : S ⊆ 𝒫 A) (hne : S ≠ ∅) :
+    isInfimumIn (𝒫 A) S (⋂ S)
+```
+
+**Dependencias**: `interSet_mem_PowerSet_of_family`, `interSet_mem_iff`
+
+**Patrón de demostración**: Para la cota inferior, $\bigcap S \subseteq X$ para cada $X \in S$ por definición de $\bigcap$. Para la maximalidad, si $z$ es cota inferior de $S$, cada $w \in z$ pertenece a todos los $X \in S$, y por tanto $w \in \bigcap S$.
+
+#### Ínfimo de la Familia Vacía (universe_is_infimumIn_PowerSet_empty)
+
+**Ubicación**: `CompleteBooleanAlgebra.lean`, línea 155
+**Orden**: 9º teorema (CASO ESPECIAL: familia vacía)
+
+**Enunciado Matemático**: $A$ es el ínfimo de $\emptyset$ en $\mathcal{P}(A)$.
+
+**Firma Lean4**:
+
+```lean
+theorem universe_is_infimumIn_PowerSet_empty (A : U) :
+    isInfimumIn (𝒫 A) ∅ A
+```
+
+**Dependencias**: `self_mem_PowerSet`, `EmptySet_is_empty`, `PowerSet_is_specified`
+
+**Patrón de demostración**: La cota inferior es vacuamente verdadera ($\forall Y \in \emptyset$ es vacuo). Para la maximalidad, si $z \in \mathcal{P}(A)$, entonces $z \subseteq A$ por definición de $\mathcal{P}$.
+
+#### Retículo Completo de 𝒫(A) (PowerSet_is_complete_lattice)
+
+**Ubicación**: `CompleteBooleanAlgebra.lean`, línea 166
+**Orden**: 10º teorema (TEOREMA FUNDAMENTAL)
+
+**Enunciado Matemático**: Para todo conjunto $A$, $\mathcal{P}(A)$ es un retículo completo.
+
+**Firma Lean4**:
+
+```lean
+theorem PowerSet_is_complete_lattice (A : U) : isCompleteLattice (𝒫 A)
+```
+
+**Dependencias**: `UnionSet_is_supremumIn_PowerSet`, `interSet_is_infimumIn_PowerSet`, `universe_is_infimumIn_PowerSet_empty`
+
+**Patrón de demostración**: Dado $S \subseteq \mathcal{P}(A)$: el supremo es siempre $\bigcup S$; para el ínfimo se distingue $S = \emptyset$ (ínfimo = $A$) de $S \neq \emptyset$ (ínfimo = $\bigcap S$).
+
+#### 𝒫(A) es Álgebra Booleana Completa Atómica (PowerSet_is_complete_atomic_BA)
+
+**Ubicación**: `CompleteBooleanAlgebra.lean`, línea 183
+**Orden**: 11º teorema (COROLARIO CULMINANTE)
+
+**Enunciado Matemático**: Para todo conjunto $A$, $\mathcal{P}(A)$ es un álgebra booleana completa atómica.
+
+**Firma Lean4**:
+
+```lean
+theorem PowerSet_is_complete_atomic_BA (A : U) : isCompleteAtomicBA A
+```
+
+**Dependencias**: `PowerSet_is_complete_lattice`, `PowerSet_is_atomic`
+
+**Patrón de demostración**: Directa: combina `PowerSet_is_complete_lattice` (retículo completo) con `PowerSet_is_atomic` (de `AtomicBooleanAlgebra.lean`, atomicidad).
+
 ---
 
 ## 5. Notación y Sintaxis
@@ -11258,6 +11576,34 @@ export FiniteCofinite (
 )
 ```
 
+### 6.38 CompleteBooleanAlgebra.lean
+
+**Namespace**: `SetUniverse.CompleteBooleanAlgebra` (exportado a `SetUniverse`)
+**Última modificación**: 2026-04-07
+**Dependencias**: `PowerSetAlgebra`, `GeneralizedDeMorgan`, `SetOrder`, `AtomicBooleanAlgebra` + anteriores
+
+```lean
+export CompleteBooleanAlgebra (
+    -- Definiciones
+    isSupremumIn isInfimumIn isCompleteLattice
+    isCompleteAtomicBA
+    -- Unicidad
+    supremumIn_unique infimumIn_unique
+    -- Supremo en 𝒫(A)
+    UnionSet_subset_of_family
+    UnionSet_mem_PowerSet_of_family
+    UnionSet_is_supremumIn_PowerSet
+    -- Ínfimo en 𝒫(A)
+    interSet_subset_of_family
+    interSet_mem_PowerSet_of_family
+    interSet_is_infimumIn_PowerSet
+    universe_is_infimumIn_PowerSet_empty
+    -- Completitud
+    PowerSet_is_complete_lattice
+    PowerSet_is_complete_atomic_BA
+)
+```
+
 ## 7. Estado de Proyección por Módulo
 
 ### 7.1 Leyenda de Estados
@@ -11311,6 +11657,7 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `FiniteSequencesArith.lean` - Aritmética de secuencias finitas en ZFC: sumación/producto numérico (seqSum/seqProd), producto cartesiano de familias (familyProduct), teoremas de cardinalidad (card_product_two, card_familyProduct), 7 definiciones + 18 teoremas + 33 exports
 - `FiniteSequencesBridge.lean` - Puente DList ↔ ZFC y TFA nativo: nth (acceso a elementos), seqProd generalizado (zero_gen, succ_gen, extensionalidad), dlistToSeq/dlistLen (conversión DList→ZFC), isPrimeSeq (secuencia de primos), TFA existencia/unicidad con secuencias ZFC-nativas, 4 definiciones + 15 teoremas + 23 exports
 - `FiniteCofinite.lean` - Álgebra booleana finita/cofinita: definiciones `isCofinite`, `isFinCof`, `FinCofAlg`, `EvenSet`; clausura de finitos (subconjunto, unión, ω no finito); paridad (even_or_odd, even_ne_odd, double_injective, EvenSet/OddSet infinitos); estructura de álgebra booleana (∅, A, complemento, unión, intersección ∈ FinCofAlg); contraejemplo FinCofAlg(ω) NO es retículo completo. 4 definiciones + 19 teoremas + 22 exports
+- `CompleteBooleanAlgebra.lean` - Álgebra booleana completa atómica en conjuntos potencia: definiciones `isSupremumIn`, `isInfimumIn`, `isCompleteLattice`, `isCompleteAtomicBA`; supremo/ínfimo en 𝒫(A) vía ⋃/⋂; unicidad; `PowerSet_is_complete_lattice`; `PowerSet_is_complete_atomic_BA`. 4 definiciones + 11 teoremas + 15 exports
 
 ### 7.3 Archivos Parcialmente Proyectados
 
@@ -11330,9 +11677,11 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 
 ### 7.5 Archivos Completos Pendientes de Proyectar
 
-- `CompleteBooleanAlgebra.lean` - Álgebra booleana completa atómica: definiciones `isSupremumIn`, `isInfimumIn`, `isCompleteLattice`, `isCompleteAtomicBA`; supremo/ínfimo en 𝒫(A) vía ⋃/⋂; unicidad; `PowerSet_is_complete_lattice`; `PowerSet_is_complete_atomic_BA`. 4 definiciones + 11 teoremas + 15 exports. **Prerequisito de FiniteCofinite.lean.**
+- (Ninguno actualmente — 43/43 módulos completamente proyectados)
 
 ---
+
+*Última actualización: 2026-04-07 — Proyección completa de CompleteBooleanAlgebra.lean (§3.41, §4.37, §6.38: 4 def + 11 teoremas + 15 exports, supremo/ínfimo relativizados isSupremumIn/isInfimumIn, retículo completo isCompleteLattice, álgebra booleana completa atómica isCompleteAtomicBA, supremo en 𝒫(A) vía ⋃, ínfimo en 𝒫(A) vía ⋂, unicidad, ínfimo de familia vacía = A, PowerSet_is_complete_lattice, PowerSet_is_complete_atomic_BA). Tabla §1.1 y §7.2 actualizadas. §7.5 vacío: 43/43 módulos proyectados. Estado: ✅ 100% completo, 0 sorry.*
 
 *Última actualización: 2026-04-01 — Proyección completa de FiniteCofinite.lean (§3.40, §4.36, §6.37: 4 def + 19 teoremas + 22 exports, álgebra booleana finita/cofinita FinCofAlg(ω), clausura de finitos finite_subset/finite_union/Omega_not_finite, paridad even_or_odd/even_ne_odd/double_injective, EvenSet/OddSet infinitos, estructura BA ∅/A/complemento/unión/intersección, contraejemplo FinCofAlg_not_complete). Tabla §1.1 y §7.2 actualizadas. CompleteBooleanAlgebra.lean añadido a §1.1 como ❌ Pendiente y §7.5. Estado: ✅ 100% completo, 0 sorry.*
 

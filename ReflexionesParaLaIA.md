@@ -25,3 +25,17 @@
 **[13.]**  Acontinuación habría que introducir la teoría de cardinales (aleph) y comenzar a exponer la jerarquía de conjuntos de Zermelo, y después la jerarquía de Gödel (construibles).
 
 **[14.]** Habrá que exponer la teoría de modelos, construcción de modelos, expresiones lógicas relativas y absolutas. Introducción de modelos que satisfacen distintos axiomas, etc.
+
+
+**NUEVOS PENSAMIENTOS:**
+**[1.]** Es prioritario ordenar fuertemente el proyecto.
+*[1.1.]* Crear módulos separados en función de los temas principales, a ser posible en subdirectorios separados.
+*[1.2.]* Utilizar de forma más sistemática y ordenadora los espacios de nombres.
+*[1.3.]* Temas: [Preliminares], [Axiomas de ZFC], [Operaciones con conjuntos en ZFC], [Construcción de los Teoremas sobre Recursión e Inducción], [Números Naturales de Von Neumann], [Integración de los Postulados de Peano en ZFC], [Integración del proyecto Peano en ZFC], [Álgebras y Anillos Booleanos], [Sistemas de Números Enteros, Racionales, Reales y Complejos], [Álgebra Lineal], [Topología], [Ordinales y su Teoría], [Recursion Transfinita], [Teoría de Cardinales], [Jerarquía de Conjuntos de Zermelo], [Jerarquía de Gödel (construibles)], [Teoría de Modelos], etc.
+*[1.4.]* Hacer algún tipo de comentario sistematizado para distinguir en cada módulo cuáles son los teoremas principales, cuáles son los secundarios, etc. Esto se puede hacer con algún tipo de etiqueta o comentario especial que permita identificar rápidamente la importancia de cada resultado dentro del módulo.
+*[1.5.]* Algún sistema de marcas para identificar las dependencias.
+*[1.6.]* Algún sistema de marcas para identificar los resultados que se han demostrado dentro de ZFC y los que no.
+*[1.7.]* Algún sistema de marcas para identificar los resultados que se han demostrado en Peano o en el sistema de Aczel (nuevo proyecto) y los que no.
+*[1.8.]* Quiero que adoptemos el sistema de nombres de teoremas, definiciones, etc de mathlib, si es que este es fácil de entender y de seguir. Tenemos una deuda de sistematicidad en los nombres que hace que sean muy difíciles de seguir los teoremas etc por sus nombres actuales. Esto es algo que se puede solucionar con un poco de trabajo y que hará que el proyecto sea mucho más fácil de seguir y de entender.
+*[1.9.]* Necesitamos un sistema de nombres para módulos y submódulos.
+*[1.10.]* Necesitamos un sistema de nombres para los espacios de nombres.

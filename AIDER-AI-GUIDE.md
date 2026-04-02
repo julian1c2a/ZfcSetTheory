@@ -264,6 +264,7 @@ Para facilitar la revisión sistemática de módulos .lean y su proyección en R
 **Sintaxis**: `revisar <nombre_módulo.lean>`
 
 **Acción**:
+
 1. Cargar el archivo `ZfcSetTheory/<nombre_módulo.lean>` si no está ya en el chat
 2. Analizar el contenido del módulo:
    - Cabecera de copyright y licencia
@@ -282,6 +283,7 @@ Para facilitar la revisión sistemática de módulos .lean y su proyección en R
 5. Descargar el módulo del chat al finalizar
 
 **Ejemplo de uso**:
+
 ```
 revisar PowerSet.lean
 ```
@@ -291,6 +293,7 @@ revisar PowerSet.lean
 **Sintaxis**: `proyectar <nombre_módulo.lean>`
 
 **Acción**:
+
 1. Cargar el archivo `ZfcSetTheory/<nombre_módulo.lean>` si no está ya en el chat
 2. Cargar REFERENCE.md si no está ya en el chat
 3. Extraer toda la información relevante del módulo:
@@ -311,6 +314,7 @@ revisar PowerSet.lean
 7. Descargar el módulo del chat al finalizar
 
 **Ejemplo de uso**:
+
 ```
 proyectar PowerSet.lean
 ```
@@ -320,6 +324,7 @@ proyectar PowerSet.lean
 **Sintaxis**: `siguiente módulo`
 
 **Acción**:
+
 1. Consultar TODO.md para identificar módulos pendientes de revisión
 2. Analizar dependencias en REFERENCE.md (tabla §1.1)
 3. Seleccionar el módulo con menos dependencias no revisadas
@@ -327,6 +332,7 @@ proyectar PowerSet.lean
 5. Solicitar confirmación antes de proceder
 
 **Ejemplo de uso**:
+
 ```
 siguiente módulo
 ```
@@ -336,6 +342,7 @@ siguiente módulo
 **Sintaxis**: `estado revisión`
 
 **Acción**:
+
 1. Leer TODO.md
 2. Generar resumen con:
    - Total de módulos revisados (✅)
@@ -346,6 +353,7 @@ siguiente módulo
 3. Mostrar próximo módulo sugerido según dependencias
 
 **Ejemplo de uso**:
+
 ```
 estado revisión
 ```
@@ -355,6 +363,7 @@ estado revisión
 **Sintaxis**: `verificar proyección <nombre_módulo.lean>`
 
 **Acción**:
+
 1. Cargar el archivo `ZfcSetTheory/<nombre_módulo.lean>`
 2. Cargar REFERENCE.md
 3. Verificar exhaustivamente:
@@ -370,6 +379,7 @@ estado revisión
 6. Descargar el módulo del chat al finalizar
 
 **Ejemplo de uso**:
+
 ```
 verificar proyección NaturalNumbers.lean
 ```
@@ -379,6 +389,7 @@ verificar proyección NaturalNumbers.lean
 **Sintaxis**: `ciclo revisión completo`
 
 **Acción**:
+
 1. Ejecutar `siguiente módulo`
 2. Ejecutar `revisar <módulo_seleccionado>`
 3. Si el módulo requiere proyección, preguntar al usuario si proceder
@@ -387,6 +398,7 @@ verificar proyección NaturalNumbers.lean
 6. Generar informe final de revisión
 
 **Ejemplo de uso**:
+
 ```
 ciclo revisión completo
 ```
@@ -396,11 +408,13 @@ ciclo revisión completo
 **Flujo recomendado**:
 
 1. **Inicio de sesión de revisión**:
+
    ```
    estado revisión
    ```
 
 2. **Revisión individual**:
+
    ```
    siguiente módulo
    revisar <módulo>
@@ -408,11 +422,13 @@ ciclo revisión completo
    ```
 
 3. **Revisión automática**:
+
    ```
    ciclo revisión completo
    ```
 
 4. **Verificación post-proyección**:
+
    ```
    verificar proyección <módulo>
    ```
@@ -428,6 +444,66 @@ ciclo revisión completo
 
 ---
 
+## Convenciones de Nombres (estilo Mathlib)
+
+### (23.) Sistema de Nombres para Definiciones y Teoremas
+
+El proyecto adopta las [convenciones de nombres de Mathlib](https://leanprover-community.github.io/contribute/naming.html) como estándar. A continuación se resumen las reglas principales. Para el detalle completo con ejemplos y desgloses comentados, consultar `NAMING-CONVENTIONS.md`.
+
+#### Reglas de Capitalización
+
+| Tipo de declaración | Convención | Ejemplo |
+|---------------------|------------|---------|
+| Teoremas, lemas (terms de `Prop`) | `snake_case` | `union_comm`, `mem_powerset_iff` |
+| Types, Props, Structures, Classes | `UpperCamelCase` | `IsFunction`, `IsNat`, `BooleanAlgebra` |
+| Funciones (retornan `U`) | `lowerCamelCase` | `powerset`, `union`, `sUnion` |
+| Acrónimos como grupo | `ZFC` (namespace) / `zfc` (en snake_case) | |
+
+#### Diccionario de Símbolos → Palabras
+
+| Símbolo | En nombres | | Símbolo | En nombres |
+|---------|-----------|---|---------|-----------|
+| ∈ | `mem` | | ∪ | `union` |
+| ∉ | `not_mem` | | ∩ | `inter` |
+| ⊆ | `subset` | | ⋃ | `sUnion` |
+| ⊂ | `ssubset` | | ⋂ | `sInter` |
+| 𝒫 | `powerset` | | \ | `sdiff` |
+| σ | `succ` | | △ | `symmDiff` |
+| ∅ | `empty` | | ᶜ | `compl` |
+| = | `eq` | | ↔ | `iff` |
+| ≠ | `ne` | | → | `of` (implícito) |
+| ¬ | `not` | | ⟂ | `disjoint` |
+| + | `add` | | * | `mul` |
+| - | `sub`/`neg` | | ^ | `pow` |
+| / | `div` | | ∣ | `dvd` |
+| ≤ | `le` | | < | `lt` |
+| 0 | `zero` | | 1 | `one` |
+
+#### Reglas de Formación de Nombres (resumen)
+
+1. **Conclusión primero, hipótesis con `_of_`**: `isNat_succ_of_isNat` (concl = isNat succ, hip = isNat)
+2. **Bicondicionales con `_iff`**: `mem_powerset_iff` (∈ 𝒫 ↔ ⊆)
+3. **Eliminar `_wc`**: usar `.mp`/`.mpr` del iff, o `_of_` para implicaciones separadas
+4. **Propiedades axiomáticas**: `_comm`, `_assoc`, `_refl`, `_trans`, `_antisymm`, `_self`, `_left`/`_right`, `_cancel`, `_mono`, `_inj`, `_injective`
+5. **Predicados como prefijo** en teoremas: `isNat_zero`, `isNat_succ` (excepto `_injective`, `_surjective`)
+6. **Abreviaturas estándar**: `pos` (> 0), `neg` (< 0), `nonpos` (≤ 0), `nonneg` (≥ 0)
+7. **Definiciones Prop**: `UpperCamelCase` (`IsNat`, `IsFunction`); en nombres de teoremas: `lowerCamelCase` (`isNat_zero`)
+8. **Funciones no-Prop**: `lowerCamelCase` sin prefijos redundantes (`union` no `BinUnion`, `powerset` no `PowerSetOf`)
+9. **Especificaciones**: `mem_X_iff` en lugar de `X_is_specified`
+10. **Unicidad/existencia**: `X_unique` en lugar de `XExistsUnique`
+11. **Variantes laterales**: `subset_union_left`, `subset_union_right`
+12. **Nombres propios**: se conservan (`cantor_no_surjection`, `cantor_schroeder_bernstein`)
+
+#### Referencia completa
+
+Consultar `NAMING-CONVENTIONS.md` para:
+
+- Desgloses comentados de cada regla con ejemplos del proyecto
+- Tabla de renombramientos actual → nuevo
+- Guía de transición
+
+---
+
 ## Cumplimiento de Requisitos
 
-Verificar que REFERENCE.md, archivos .lean y otros archivos de documentación cumplan con todos los puntos (0-22) antes de considerar la documentación completa y actualizada.
+Verificar que REFERENCE.md, archivos .lean y otros archivos de documentación cumplan con todos los puntos (0-23) antes de considerar la documentación completa y actualizada.
