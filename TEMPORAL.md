@@ -34,10 +34,38 @@ Fases del plan de reorganización (aprobado 2026-04-07):
 3. ✅ **Fase 3**: Renombrado de identificadores según convenciones Mathlib (commit `81f9075`)
 4. **Fase 4**: Sistema de anotaciones (@importance, @axiom_system)
 
-## Próximos pasos sugeridos
+## Siguiente objetivo: Teorema de Representación de Álgebras Booleanas
 
-1. **Fase 4 del plan** — Sistema de anotaciones (@importance, @axiom_system)
-2. **Enteros ℤ en ZFC** — clases de equivalencia de pares (a, b) ∈ ω × ω
-3. **Axioma de Reemplazo** — requerido para funciones con codominios grandes
-4. **Axioma de Fundación** — para función rango y estratificación del universo
-5. **Teorema de representación** — Toda álgebra booleana completa atómica es isomorfa a algún 𝒫(A)
+### Estado de los items de álgebras booleanas
+
+| # | Item | Estado |
+|---|------|--------|
+| 1 | 𝒫(A) es álgebra booleana completa atómica | ✅ `BoolAlg.Complete.lean` |
+| 2 | **Teorema de representación**: toda BA completa atómica ≅ algún 𝒫(A) | ❌ Pendiente |
+| 3 | Functor Anillo Booleano ↔ Álgebra de Boole | ❌ Pendiente |
+| 4 | Contraejemplo: FinCofAlg(ω) no es completa | ✅ `BoolAlg.FiniteCofinite.lean` |
+| 5 | \|𝒫(F)\| = 2^n para F finito | ❌ Pendiente |
+| 6 | Toda álgebra booleana finita tiene cardinalidad 2^n | ❌ Pendiente |
+
+### Plan de demostración del Teorema de Representación (item 2)
+
+Dado un álgebra booleana completa atómica (B, ∧, ∨, ¬, 0, 1):
+
+1. Tomar A = Atoms(B)
+2. Construir φ : B → 𝒫(A) definida por φ(x) = {a ∈ A | a ≤ x}
+3. Demostrar que φ preserva ∧, ∨, ¬ (es homomorfismo de álgebras booleanas)
+4. Demostrar inyectividad: la atomicidad garantiza que si φ(x) = φ(y) entonces x = y
+5. Demostrar sobreyectividad: la completitud garantiza que todo elemento es el supremo de los átomos debajo de él, dando que φ es sobre
+
+**Archivo propuesto**: `BoolAlg/Representation.lean`
+**Dependencias**: `BoolAlg.Complete`, `BoolAlg.Atomic`, `Cardinality`
+
+### Después: Fase 4
+
+Tras completar los items 2, 3, 5, 6 de álgebras booleanas → Fase 4 (sistema de anotaciones @importance, @axiom_system).
+
+## Próximos pasos sugeridos (posteriores)
+
+1. **Enteros ℤ en ZFC** — clases de equivalencia de pares (a, b) ∈ ω × ω
+2. **Axioma de Reemplazo** — requerido para funciones con codominios grandes
+3. **Axioma de Fundación** — para función rango y estratificación del universo
