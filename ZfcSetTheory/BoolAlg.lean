@@ -7,3 +7,4 @@ import ZfcSetTheory.BoolAlg.FiniteCofinite
 import ZfcSetTheory.BoolAlg.GenDeMorgan
 import ZfcSetTheory.BoolAlg.GenDistributive
 import ZfcSetTheory.BoolAlg.Representation
+import ZfcSetTheory.BoolAlg.FiniteBA

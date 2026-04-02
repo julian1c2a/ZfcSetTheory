@@ -5,12 +5,12 @@
 
 **[3.]** Como continuación de lo anterior, también quiero incluir que todo Anillo Booleano nos lleva via biyección (functor) a un Álgebra de Boole y viceversa.
 
-**[4.]** ~~Construiremos un Álgebra de Boole que no sea atómica con las partes finitas y cofinitas de un conjunto infinito, y mostraremos que no es isomorfa al Álgebra de Boole de las partes de un conjunto.~~ En el caso concreto de un conjunto numerable infinito, quedará claro que hay más Álgebras de Boole que las de las partes de un conjunto. Queda la duda de si en un conjunto inifinito no numerable (aleph_1) también podemos construir un álgebra de Boole de las partes numerables y conumerables de las partes de un conjunto.
+**[4.]** ~~Construiremos un Álgebra de Boole que no sea atómica con las partes finitas y cofinitas de un conjunto infinito, y mostraremos que no es isomorfa al Álgebra de Boole de las partes de un conjunto.~~ En el caso concreto de un conjunto numerable infinito, quedará claro que hay más Álgebras de Boole que las de las partes de un conjunto. Queda la duda de si en un conjunto inifinito no numerable ($\aleph_1$) también podemos construir un álgebra de Boole de las partes numerables y conumerables de las partes de un conjunto.
 > ✅ Completado en `BoolAlg.FiniteCofinite.lean`: `FinCofAlg_not_complete`, `EvenSet_not_in_FinCofAlg`. Nota: FinCofAlg(ω) SÍ es atómica (los átomos son singletons), pero NO es completa — por tanto no es isomorfa a ningún 𝒫(A).
 
 **[5.]** Los resultados **[2.]**, **[3.]** y **[4.]** quedarán unidos en un único módulo final sobre este tema.
 
-**[6.]** Queda algo interesante que es demostrar que para los conjuntos finitos, digamos que $F$ es de cardinalidad $n \in \omega$, $#\mathcal{P}(F) = 2^n$. Esto se puede demostrar con el sistema de isomorfismos, mostrando que $\mathcal{P}(F)$ es isomorfo a $2^n$ (con la estructura de los naturales de Von Neumann). Esto también quedará dentro del módulo final sobre Álgebras de Boole.
+**[6.]** Queda algo interesante que es demostrar que para los conjuntos finitos, digamos que $F$ es de cardinalidad $n \in \omega$, $\mathcal{P}(F) = 2^n$. Esto se puede demostrar con el sistema de isomorfismos, mostrando que $\mathcal{P}(F)$ es isomorfo a $2^n$ (con la estructura de los naturales de Von Neumann). Esto también quedará dentro del módulo final sobre Álgebras de Boole.
 
 **[7.]** Además habría que demostrar que si definimos sobre un conjunto finito $F$ un álgebra de Boole, entonces $∃ n ∈ ω, #F = 2^n$.
 
@@ -71,54 +71,50 @@
 
 *[7.]* Para el functor entre álgebras de Boole y anillos booleanos, tendremos que definir la estructura de Álgebra de Boole:
 
-```math
-<<R, +\_B, \cdot\_B, \b0\_B, \b1B>> es un álgebra de boole si cumple:
-1. `<<R, +\_B, \b0\_B>>` es una operación interna conmutativa con identidad \b0\_B
-2. `<<R, \cdot\_B, \b1\_B>>` es una operación interna conmutativa con identidad \b1\_B
-3. La operación `\cdot\_B` distribuye sobre `+\_B`
-4. La operación `+\_B` distribuye sobre `\cdot\_B`
-5. Para cada elemento `a ∈ R` existe un elemento `\neg_B a` tal que `a +_B \neg_B a = \b1\_B` y `a \cdot_B \neg_B a = \b0\_B`
-```
+**Estructura de Álgebra de Boole:**
+
+La estructura $\langle B, +_B, \cdot_B, \mathbf{0}_B, \mathbf{1}_B \rangle$ es un álgebra de Boole si cumple:
+1. $\langle B, +_B, \mathbf{0}_B \rangle$ es una operación interna conmutativa con identidad $\mathbf{0}_B$.
+2. $\langle B, \cdot_B, \mathbf{1}_B \rangle$ es una operación interna conmutativa con identidad $\mathbf{1}_B$.
+3. La operación $\cdot_B$ distribuye sobre $+_B$.
+4. La operación $+_B$ distribuye sobre $\cdot_B$.
+5. Para cada elemento $a \in B$ existe un elemento $\neg_B a$ tal que $a +_B \neg_B a = \mathbf{1}_B$ y $a \cdot_B \neg_B a = \mathbf{0}_B$.
 
 *[7.1.]* Habrá que añadirle la propiedad de ser completa.
+
 *[7.2.]* Habrá que añadirle la propiedad de ser atómica.
 
-Dada un Álgebra de Boole, definiremos la siguiente función:
+**De Álgebra de Boole a Anillo Booleano:**
 
-```math
-Si el álgebra de Boole es <<\bB, +\_\bB, \cdot\_\bB, \b0\_\bB, \b1\_\bB>>, entonces definimos la función `\circle{+}\_bB : \bB × \bB → \bB` como `a \circle{+}\_bB b := a\cdot\neg_\bB b +\_\bB \neg\_\bB a \cdot\_\bB b`, y definiremos `\circle\cdot\_\bB : \bB × \bB → \bB` como `a \circle\cdot\_\bB b := a\cdot\_\bB b`. Entonces, con estas operaciones, `<<\bB, \circle{+}\_bB, \circle\cdot\_\bB, \b0\_\bB, \b1\_\bB>>` es un anillo booleano.
-Además el functor asignará a \b0\_\bB el elemento \b0\_R, y a \b1\_\bB el elemento \b1\_R.
-```
+Si el álgebra de Boole es $\langle B, +_B, \cdot_B, \mathbf{0}_B, \mathbf{1}_B \rangle$, entonces definimos la función suma exclusiva $\oplus_B : B \times B \to B$ como $a \oplus_B b := (a \cdot_B \neg_B b) +_B (\neg_B a \cdot_B b)$, y definiremos la multiplicación $\odot_B : B \times B \to B$ como $a \odot_B b := a \cdot_B b$. 
+Entonces, con estas operaciones, $\langle B, \oplus_B, \odot_B, \mathbf{0}_B, \mathbf{1}_B \rangle$ es un anillo booleano.
+Además el functor asignará a $\mathbf{0}_B$ el elemento $\mathbf{0}_R$, y a $\mathbf{1}_B$ el elemento $\mathbf{1}_R$.
 
 *[8.]* Para el functor entre álgebras de Boole y anillos booleanos, tendremos que definir la estructura de grupo y de anillo:
 
-```math
-<<G, +\_G, 0\_G>> es un grupo si cumple:
-1. `+\_G` es una operación interna asociativa con identidad `0\_G`
-2. Para cada elemento de `x ∈ G` existe un elemento `y ∈ G` tal que `x +\_G y = 0\_G` y `y +\_G x = 0\_G`
-```
+**Estructura de Grupo:**
+
+$\langle G, +_G, \mathbf{0}_G \rangle$ es un grupo si cumple:
+1. $+_G$ es una operación interna asociativa con identidad $\mathbf{0}_G$.
+2. Para cada elemento $x \in G$ existe un elemento $y \in G$ tal que $x +_G y = \mathbf{0}_G$ y $y +_G x = \mathbf{0}_G$.
 
 La estructura de anillo es un refinamiento de la estructura de grupo, añadiendo una operación de multiplicación que cumple las siguientes propiedades:
 
-```math
-<<R, +\_R, \cdot\_R, \b0\_R, \b1\_R>> es un anillo booleano si cumple:
-1. `<<R, +\_R, \b0\_R>>` es un grupo
-2. `<<R, \cdot\_R, \b1\_R>>` es una operación asociativa con identidad \b1\_R
-3. La operación `\cdot\_R` distribuye sobre `+\_R`
-```
+**Estructura de Anillo Booleano:**
+
+La estructura $\langle R, +_R, \cdot_R, \mathbf{0}_R, \mathbf{1}_R \rangle$ es un anillo booleano si cumple:
+1. $\langle R, +_R, \mathbf{0}_R \rangle$ es un grupo abeliano.
+2. $\langle R, \cdot_R, \mathbf{1}_R \rangle$ es una operación asociativa con identidad $\mathbf{1}_R$.
+3. La operación $\cdot_R$ distribuye sobre $+_R$.
 
 Para que sea un anillo booleano, además de lo anterior, debe cumplir la propiedad de ser idempotente:
+4. Para cada elemento $a \in R$ se cumple que $a \cdot_R a = a$.
 
-```math
-4. Para cada elemento `a ∈ R` se cumple que `a \cdot\_R a = a`
-```
+**De Anillo Booleano a Álgebra de Boole:**
 
-Dado un anillo booleano, definiremos las siguientes funciones:
-
-```math
-Si el anillo booleano es <<\bR, +\_\bR, \cdot\_\bR, \b0\_\bR, \b1\_\bR>>, entonces definimos la función `+\_\bB : \bR × \bR → \bR` como `a +\_\bR b := a +\_\bR b +\_\bR (a \cdot\_\bR b)`, y definimos `\circle\cdot\_\bR : \bR × \bR → \bR` como `a \circle{\cdot}\_\bB b := a\cdot\_\bR b`. Entonces, con estas operaciones, `<<\bR, \circle{+}\_\bB, \circle\cdot\_\bB, \b0\_\bR, \b1\_\bR>>` es un álgebra de boole.
-Además el functor asignará a \b0\_\bR el elemento \b0\_\bB, y a \b1\_\bR el elemento \b1\_\bB.
-```
+Si el anillo booleano es $\langle R, +_R, \cdot_R, \mathbf{0}_R, \mathbf{1}_R \rangle$, entonces definimos la función $+_B : R \times R \to R$ como $a +_B b := a +_R b +_R (a \cdot_R b)$, y definimos $\cdot_B : R \times R \to R$ como $a \cdot_B b := a \cdot_R b$. 
+Entonces, con estas operaciones, $\langle R, +_B, \cdot_B, \mathbf{0}_R, \mathbf{1}_R \rangle$ es un álgebra de Boole.
+Además el functor asignará a $\mathbf{0}_R$ el elemento $\mathbf{0}_B$, y a $\mathbf{1}_R$ el elemento $\mathbf{1}_B$.
 
 **NOVÍSIMOS:**
 *[1.]* Hay que quitar los warnings de lean, de forma que aparezcan solo los errores, y finalmente la salida sea completamente limpia. Esto es algo que se puede hacer con un poco de trabajo y que hará que el proyecto sea mucho más fácil de seguir y de entender, ya que no habrá ruido visual de warnings que no aportan nada.
