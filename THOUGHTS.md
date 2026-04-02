@@ -60,6 +60,15 @@
 *[1.10.]* ~~Necesitamos un sistema de nombres para los espacios de nombres.~~
 > ✅ Completado (Fase 2): `ZFC.Axiom.*`, `ZFC.SetOps.*`, `ZFC.Nat.*`, `ZFC.BoolAlg.*`, etc.
 
+**NUEVOS PENSAMIENTOS EXTENSIÓN**
+
+*[1.]* Necesitamos una definición de las álgebras de Boole sobre un conjunto dado (en ZFC) en general. También de álgebras completas y de álgebras atómicas.
+*[2.]* El Álgebra de Boole pdodría definirse dentro de la definición de la estructura de un retículo, añadiendo los axiomas correspondientes. Esto es algo que se puede hacer sin problemas y que hará que la definición de Álgebra de Boole sea más clara y más fácil de entender.
+*[3.]* También necesitamos definir la estructura genérica de un grupo, de un anillo, y de un módulo izquierdo y derecho, para luego poder definir los grupos, anillos y módulos concretos dentro de ZFC. Esto es algo que se puede hacer sin problemas y que hará que la definición de estos objetos algebraicos sea más clara y más fácil de entender.
+*[4.]* Dentro del punto *[3.]* anterior, definiremos la estructura de anillo booleano, y mostraremos que todo anillo booleano nos lleva a un álgebra de boole y viceversa. Esto es algo que se puede hacer sin problemas y que hará que la relación entre estas dos estructuras algebraicas sea más clara y más fácil de entender.
+*[5.]* Todo lo anterior podría quedar en dos grupos temáticos, Álgebras de Boole y Retículos (estructuras de orden sobre conjuntos) por un lado, y Grupos, Anillos y Módulos (operaciones que cumplen determinadas propiedades sobre uno o varios conjuntos) como Álgebra Abstracta por otro lado.
+*[6.]* Para usar ya en los conjuntos numéricos que vayamos creando, podemos definir el espacio vectorial como un afinamiento de un módulo, y luego definir los espacios vectoriales concretos sobre los números racionales, reales, etc. Esto es algo que se puede hacer sin problemas y que hará que la definición de espacio vectorial sea más clara y más fácil de entender.
+
 **NOVÍSIMOS:**
 *[1.]* Hay que quitar los warnings de lean, de forma que aparezcan solo los errores, y finalmente la salida sea completamente limpia. Esto es algo que se puede hacer con un poco de trabajo y que hará que el proyecto sea mucho más fácil de seguir y de entender, ya que no habrá ruido visual de warnings que no aportan nada.
 *[2.]* Haría falta hacer todo lo anteripr también en el proyecto Peano.
