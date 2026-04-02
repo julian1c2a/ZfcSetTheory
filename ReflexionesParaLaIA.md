@@ -38,3 +38,11 @@
 *[1.8.]* Quiero que adoptemos el sistema de nombres de teoremas, definiciones, etc de mathlib, si es que este es fácil de entender y de seguir. Tenemos una deuda de sistematicidad en los nombres que hace que sean muy difíciles de seguir los teoremas etc por sus nombres actuales. Esto es algo que se puede solucionar con un poco de trabajo y que hará que el proyecto sea mucho más fácil de seguir y de entender.
 *[1.9.]* Necesitamos un sistema de nombres para módulos y submódulos.
 *[1.10.]* Necesitamos un sistema de nombres para los espacios de nombres.
+
+**NOVÍSIMOS:**
+*[1.]* Hay que quitar los warnings de lean, de forma que aparezcan solo los errores, y finalmente la salida sea completamente limpia. Esto es algo que se puede hacer con un poco de trabajo y que hará que el proyecto sea mucho más fácil de seguir y de entender, ya que no habrá ruido visual de warnings que no aportan nada.
+*[2.]* Haría falta hacer todo lo anteripr también en el proyecto Peano.
+*[3.]* Necesitamos hacer un sistema de "interfaz" de los axiomas, teoremas, operaciones, etc. independientes del sistema axiomático demostrado.
+*[4.]* *ZFC* sería un *modelo* que satisface las interfaces anteriormente escritas, como también *Peano*, como el sistema de *Aczel* (comenzado en paralelo), como el sistema del proyecto *MKplusCAC*.
+*[5.]* Para *[5.]* nos hace falta una estructuración más robusta del proyecto, que llegue a unificar todos los proyectos anteriores.
+*[6.]* Todo lo dicho quedaría en un nuevo proyecto, que podría llamarse algo así como "Fundamentos de la Matemática en Lean", o algo por el estilo, que unificaría todos los proyectos anteriores y que tendría una organización mucho más clara y sistematizada. Este nuevo proyecto sería el que se mantendría a largo plazo, y en el que se irían añadiendo nuevos temas y resultados a medida que se vayan desarrollando. El proyecto actual de ZFC quedaría como un subproyecto dentro de este nuevo proyecto más amplio, y se iría integrando poco a poco con los demás subproyectos (Peano, Aczel, MKplusCAC, etc) para crear una visión unificada de los fundamentos de la matemática en Lean.
