@@ -1,15 +1,15 @@
 # ZfcSetTheory
 
 [![Lean 4](https://img.shields.io/badge/Lean-v4.28.0-blue)](https://leanprover.github.io/)
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](CURRENT-STATUS-PROJECT.md)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](REFERENCE.md)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![Coverage](https://img.shields.io/badge/proofs-100%25%20complete-brightgreen)](CURRENT-STATUS-PROJECT.md)
+[![Coverage](https://img.shields.io/badge/proofs-100%25%20complete-brightgreen)](REFERENCE.md)
 
-> 📊 **Project Status**: See [CURRENT-STATUS-PROJECT.md](CURRENT-STATUS-PROJECT.md) for complete details
+> 📊 **Project Status**: See [REFERENCE.md](REFERENCE.md) for complete technical reference
 >
-> ✅ **43/43 modules** compiling successfully
+> ✅ **47/47 modules** compiling successfully
 > ✅ **100% of theorems** completely proven
-> ✅ **0 `sorry`** in all 43 modules
+> ✅ **0 `sorry`** in all 47 modules
 
 Una implementación formal de la **Teoría de Conjuntos de Zermelo-Fraenkel (ZFC)** en Lean 4, sin dependencias de Mathlib.
 
@@ -30,6 +30,7 @@ Este proyecto desarrolla los axiomas fundamentales de ZFC de manera progresiva, 
 | 7 | **Infinito** | `Infinity.lean` | ✅ Completo |
 | 8 | Reemplazo | - | 🔄 Futuro |
 | 9 | Fundación | - | 🔄 Futuro |
+| 10 | Elección | - | 🔄 Futuro |
 
 ## 🚀 Construcciones Avanzadas (más allá de los axiomas básicos)
 
@@ -69,9 +70,13 @@ Este proyecto desarrolla los axiomas fundamentales de ZFC de manera progresiva, 
 | **Orden Estricto** | `SetOps.SetStrictOrder.lean` | Propiedades de orden estricto | ✅ Completo |
 | **Álgebra Booleana Completa** | `BoolAlg.Complete.lean` | 𝒫(A) es retículo completo y AB completa atómica | ✅ Completo |
 | **Álgebra Finita/Cofinita** | `BoolAlg.FiniteCofinite.lean` | FinCofAlg(ω), clausura, contraejemplo completitud | ✅ Completo |
+| **Representación de Stone** | `BoolAlg.Representation.lean` | Toda BA completa atómica ≅ algún 𝒫(A) | ✅ Completo |
+| **Cardinalidad de 𝒫 finito** | `Cardinal.FinitePowerSet.lean` | |𝒫(F)| = 2^n para F finito | ✅ Completo |
+| **BA Finita** | `BoolAlg.FiniteBA.lean` | Toda BA finita tiene cardinalidad 2^n | ✅ Completo |
+| **Anillo ↔ Álgebra Booleana** | `BoolAlg.BoolRingBA.lean` | Correspondencia formal BR ↔ BA, round-trips | ✅ Completo |
 | **Cardinalidad** | `Cardinal.Basic.lean` | Teorema de Cantor, CSB | ✅ Completo |
 
-### Total: 43 módulos — 43/43 con 0 sorry
+### Total: 47 módulos — 47/47 con 0 sorry
 
 ## ✨ Características Destacadas
 
@@ -145,8 +150,12 @@ ZfcSetTheory/
 ├── Peano.FiniteSequencesArith.lean    # Aritmética de secuencias finitas
 ├── Peano.FiniteSequencesBridge.lean   # Puente DList ↔ ZFC, nth, TFA nativo
 ├── BoolAlg.Complete.lean   # 𝒫(A) es retículo completo + AB completa atómica
+├── BoolAlg.Representation.lean # Teorema de representación: BA completa atómica ≅ 𝒫(A)
 ├── BoolAlg.FiniteCofinite.lean           # FinCofAlg(ω), paridad, contraejemplo completitud
+├── BoolAlg.FiniteBA.lean       # Toda BA finita tiene cardinalidad 2^n
+├── BoolAlg.BoolRingBA.lean     # Correspondencia Anillo Booleano ↔ Álgebra Booleana
 ├── SetOps.FiniteSets.lean              # Conjuntos finitos en ZFC
+├── Cardinal.FinitePowerSet.lean # |𝒫(F)| = 2^n para F finito
 └── ZfcSetTheory.lean            # Módulo raíz
 ```
 
@@ -226,13 +235,8 @@ lake build
 
 ### Status and Development
 
-- **[CURRENT-STATUS-PROJECT.md](CURRENT-STATUS-PROJECT.md)** - ⭐ **Complete project status**  (updated 2026-04-01)
-  - 43 modules, 100% proven, 0 sorry
-  - Recent achievements (Peano.FiniteSequencesBridge: nth, dlistToSeq, isPrimeSeq, TFA native)
-  - Architecture and dependency hierarchies
-  - Next steps
 - **[REFERENCE.md](REFERENCE.md)** - 📖 **Complete technical reference** (11000+ lines)
-  - 43 fully documented modules with mathematical descriptions
+  - 45/47 modules documented (Representation, FinitePowerSet pending)
   - All definitions, theorems, and exports with Lean4 signatures
   - Dependency tracking and namespace organization
 - [CHANGELOG.md](CHANGELOG.md) - Detailed change history
@@ -277,4 +281,4 @@ Este proyecto se desarrolló basándose en las siguientes fuentes:
 ---
 
 **Autor**: Julián Calderón Almendros
-*Last updated: 2026-04-07*
+*Last updated: 2026-04-08*

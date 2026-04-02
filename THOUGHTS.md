@@ -30,6 +30,7 @@
 **[14.]** Habrá que exponer la teoría de modelos, construcción de modelos, expresiones lógicas relativas y absolutas. Introducción de modelos que satisfacen distintos axiomas, etc.
 
 **NUEVOS PENSAMIENTOS:**
+
 **[1.]** ~~Es prioritario ordenar fuertemente el proyecto.~~
 > ✅ Completado (Fases 1–3).
 
@@ -63,10 +64,15 @@
 **NUEVOS PENSAMIENTOS EXTENSIÓN**
 
 *[1.]* Necesitamos una definición de las álgebras de Boole sobre un conjunto dado (en ZFC) en general. También de álgebras completas y de álgebras atómicas.
+
 *[2.]* El Álgebra de Boole pdodría definirse dentro de la definición de la estructura de un retículo, añadiendo los axiomas correspondientes. Esto es algo que se puede hacer sin problemas y que hará que la definición de Álgebra de Boole sea más clara y más fácil de entender.
+
 *[3.]* También necesitamos definir la estructura genérica de un grupo, de un anillo, y de un módulo izquierdo y derecho, para luego poder definir los grupos, anillos y módulos concretos dentro de ZFC. Esto es algo que se puede hacer sin problemas y que hará que la definición de estos objetos algebraicos sea más clara y más fácil de entender.
+
 *[4.]* Dentro del punto *[3.]* anterior, definiremos la estructura de anillo booleano, y mostraremos que todo anillo booleano nos lleva a un álgebra de boole y viceversa. Esto es algo que se puede hacer sin problemas y que hará que la relación entre estas dos estructuras algebraicas sea más clara y más fácil de entender.
+
 *[5.]* Todo lo anterior podría quedar en dos grupos temáticos, Álgebras de Boole y Retículos (estructuras de orden sobre conjuntos) por un lado, y Grupos, Anillos y Módulos (operaciones que cumplen determinadas propiedades sobre uno o varios conjuntos) como Álgebra Abstracta por otro lado.
+
 *[6.]* Para usar ya en los conjuntos numéricos que vayamos creando, podemos definir el espacio vectorial como un afinamiento de un módulo, y luego definir los espacios vectoriales concretos sobre los números racionales, reales, etc. Esto es algo que se puede hacer sin problemas y que hará que la definición de espacio vectorial sea más clara y más fácil de entender.
 
 *[7.]* Para el functor entre álgebras de Boole y anillos booleanos, tendremos que definir la estructura de Álgebra de Boole:
@@ -74,11 +80,14 @@
 **Estructura de Álgebra de Boole:**
 
 La estructura $\langle B, +_B, \cdot_B, \mathbf{0}_B, \mathbf{1}_B \rangle$ es un álgebra de Boole si cumple:
+
 1. $\langle B, +_B, \mathbf{0}_B \rangle$ es una operación interna conmutativa con identidad $\mathbf{0}_B$.
+
 2. $\langle B, \cdot_B, \mathbf{1}_B \rangle$ es una operación interna conmutativa con identidad $\mathbf{1}_B$.
-3. La operación $\cdot_B$ distribuye sobre $+_B$.
-4. La operación $+_B$ distribuye sobre $\cdot_B$.
-5. Para cada elemento $a \in B$ existe un elemento $\neg_B a$ tal que $a +_B \neg_B a = \mathbf{1}_B$ y $a \cdot_B \neg_B a = \mathbf{0}_B$.
+
+3. La operación $+_B$ distribuye sobre $\cdot_B$.
+
+4. Para cada elemento $a \in B$ existe un elemento $\neg_B a$ tal que $a +_B \neg_B a = \mathbf{1}_B$ y $a \cdot_B \neg_B a = \mathbf{0}_B$.
 
 *[7.1.]* Habrá que añadirle la propiedad de ser completa.
 
@@ -86,7 +95,7 @@ La estructura $\langle B, +_B, \cdot_B, \mathbf{0}_B, \mathbf{1}_B \rangle$ es u
 
 **De Álgebra de Boole a Anillo Booleano:**
 
-Si el álgebra de Boole es $\langle B, +_B, \cdot_B, \mathbf{0}_B, \mathbf{1}_B \rangle$, entonces definimos la función suma exclusiva $\oplus_B : B \times B \to B$ como $a \oplus_B b := (a \cdot_B \neg_B b) +_B (\neg_B a \cdot_B b)$, y definiremos la multiplicación $\odot_B : B \times B \to B$ como $a \odot_B b := a \cdot_B b$. 
+Si el álgebra de Boole es $\langle B, +_B, \cdot_B, \mathbf{0}_B, \mathbf{1}_B \rangle$, entonces definimos la función suma exclusiva $\oplus_B : B \times B \to B$ como $a \oplus_B b := (a \cdot_B \neg_B b) +_B (\neg_B a \cdot_B b)$, y definiremos la multiplicación $\odot_B : B \times B \to B$ como $a \odot_B b := a \cdot_B b$.
 Entonces, con estas operaciones, $\langle B, \oplus_B, \odot_B, \mathbf{0}_B, \mathbf{1}_B \rangle$ es un anillo booleano.
 Además el functor asignará a $\mathbf{0}_B$ el elemento $\mathbf{0}_R$, y a $\mathbf{1}_B$ el elemento $\mathbf{1}_R$.
 
@@ -95,7 +104,9 @@ Además el functor asignará a $\mathbf{0}_B$ el elemento $\mathbf{0}_R$, y a $\
 **Estructura de Grupo:**
 
 $\langle G, +_G, \mathbf{0}_G \rangle$ es un grupo si cumple:
+
 1. $+_G$ es una operación interna asociativa con identidad $\mathbf{0}_G$.
+
 2. Para cada elemento $x \in G$ existe un elemento $y \in G$ tal que $x +_G y = \mathbf{0}_G$ y $y +_G x = \mathbf{0}_G$.
 
 La estructura de anillo es un refinamiento de la estructura de grupo, añadiendo una operación de multiplicación que cumple las siguientes propiedades:
@@ -103,25 +114,35 @@ La estructura de anillo es un refinamiento de la estructura de grupo, añadiendo
 **Estructura de Anillo Booleano:**
 
 La estructura $\langle R, +_R, \cdot_R, \mathbf{0}_R, \mathbf{1}_R \rangle$ es un anillo booleano si cumple:
+
 1. $\langle R, +_R, \mathbf{0}_R \rangle$ es un grupo abeliano.
+
 2. $\langle R, \cdot_R, \mathbf{1}_R \rangle$ es una operación asociativa con identidad $\mathbf{1}_R$.
+
 3. La operación $\cdot_R$ distribuye sobre $+_R$.
 
 Para que sea un anillo booleano, además de lo anterior, debe cumplir la propiedad de ser idempotente:
-4. Para cada elemento $a \in R$ se cumple que $a \cdot_R a = a$.
+
+1. Para cada elemento $a \in R$ se cumple que $a \cdot_R a = a$.
 
 **De Anillo Booleano a Álgebra de Boole:**
 
-Si el anillo booleano es $\langle R, +_R, \cdot_R, \mathbf{0}_R, \mathbf{1}_R \rangle$, entonces definimos la función $+_B : R \times R \to R$ como $a +_B b := a +_R b +_R (a \cdot_R b)$, y definimos $\cdot_B : R \times R \to R$ como $a \cdot_B b := a \cdot_R b$. 
+Si el anillo booleano es $\langle R, +_R, \cdot_R, \mathbf{0}_R, \mathbf{1}_R \rangle$, entonces definimos la función $+_B : R \times R \to R$ como $a +_B b := a +_R b +_R (a \cdot_R b)$, y definimos $\cdot_B : R \times R \to R$ como $a \cdot_B b := a \cdot_R b$.
 Entonces, con estas operaciones, $\langle R, +_B, \cdot_B, \mathbf{0}_R, \mathbf{1}_R \rangle$ es un álgebra de Boole.
 Además el functor asignará a $\mathbf{0}_R$ el elemento $\mathbf{0}_B$, y a $\mathbf{1}_R$ el elemento $\mathbf{1}_B$.
 
 **NOVÍSIMOS:**
+
 *[1.]* Hay que quitar los warnings de lean, de forma que aparezcan solo los errores, y finalmente la salida sea completamente limpia. Esto es algo que se puede hacer con un poco de trabajo y que hará que el proyecto sea mucho más fácil de seguir y de entender, ya que no habrá ruido visual de warnings que no aportan nada.
+
 *[2.]* Haría falta hacer todo lo anteripr también en el proyecto Peano.
+
 *[3.]* Necesitamos hacer un sistema de "interfaz" de los axiomas, teoremas, operaciones, etc. independientes del sistema axiomático demostrado.
+
 *[4.]* *ZFC* sería un *modelo* que satisface las interfaces anteriormente escritas, como también *Peano*, como el sistema de *Aczel* (comenzado en paralelo), como el sistema del proyecto *MKplusCAC*.
+
 *[5.]* Para *[5.]* nos hace falta una estructuración más robusta del proyecto, que llegue a unificar todos los proyectos anteriores.
+
 *[6.]* Todo lo dicho quedaría en un nuevo proyecto, que podría llamarse algo así como "Fundamentos de la Matemática en Lean", o algo por el estilo, que unificaría todos los proyectos anteriores y que tendría una organización mucho más clara y sistematizada. Este nuevo proyecto sería el que se mantendría a largo plazo, y en el que se irían añadiendo nuevos temas y resultados a medida que se vayan desarrollando. El proyecto actual de ZFC quedaría como un subproyecto dentro de este nuevo proyecto más amplio, y se iría integrando poco a poco con los demás subproyectos (Peano, Aczel, MKplusCAC, etc) para crear una visión unificada de los fundamentos de la matemática en Lean.
 
 **UNA IDEA DE IMPLEMENTACIÓN DE LOS NOVÍSIMOS**
@@ -129,13 +150,21 @@ Además el functor asignará a $\mathbf{0}_R$ el elemento $\mathbf{0}_B$, y a $\
 0. El sistema de puentes entre sistemas axiomáticos
 
    0.1. El sistema de Aczel debe probar como teoremas los axiomas de ZF (sin infinitud y sin regularidad, por supuesto que sin elección).
+
    0.2. El sistema de Peano debe probar que puede reproducido dentro del sistema de Aczel.
+
    0.3. El sistema ZF (debidamente recortado) debe probar que los axiomas de Aczael se pueden demostrar como teoremas dentro de ZF.
+
    0.4. El sistema de ZF debe probar que puede reproducir el sistema de Peano.
+
    0.5. El sistema de Aczel debe probar que puede reproducir el sistema de Peano.
+
    0.6. El sistema de MKplusCAC debe probar que puede reproducir el sistema ZFC completo.
+
    0.7. Debemos probar quje existen teoremas en ZFC que no pueden ser demostrados en el sistema computacional de Aczel.
+
    0.8. Debemos probar que existen teoremas en MKplusCAC que no pueden ser demostrados en ZFC.
+
    0.9. Debemos mantener el esquema de pruebas que tenemos en ZFC, que introduce los distintos axiomas solo cuando son necesarios para demostrar algún nuevo teorema en algún nuevo tema concreto. De esta forma, mantenemos una jerarquía clara de los axiomas dentro de los porpios sistemas axiomáticos, manteniendo así una isomorfía constructiva de los diferentes sistemas por capas.
 
 1. Las "Interfaces" son Clases de Tipos (class)

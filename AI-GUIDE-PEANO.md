@@ -72,10 +72,8 @@ Todos los archivos de documentación técnica deben incluir timestamps completos
 **Dónde aplicar**:
 
 - **REFERENCE.md**: Timestamp principal en el encabezado del documento
-- **CURRENT-STATUS-PROJECT.md**: Fecha de última actualización
 - **CHANGELOG.md**: Fechas de cada entrada
 - **DEPENDENCIES.md**: Fecha de última actualización
-- **TEMPORAL.md**: Timestamp de compilación y actualización
 - **Cualquier archivo de resumen técnico**: Incluir timestamp de última modificación
 
 **Propósito**: Permite rastrear cuánto está desactualizado un archivo respecto a REFERENCE.md y viceversa, incluso dentro de la misma sesión de trabajo.
@@ -92,7 +90,7 @@ Todos los archivos de documentación técnica deben incluir timestamps completos
 
 ### (16.) Información de Autoría
 
-En todos los archivos de documentación principal (README.md, REFERENCE.md, CURRENT-STATUS-PROJECT.md), debe quedar claro:
+En todos los archivos de documentación principal (README.md, REFERENCE.md), debe quedar claro:
 
 **Autor**: Julián Calderón Almendros
 
@@ -123,7 +121,6 @@ Debe estar claramente indicada en:
 
 - Archivo LICENSE (texto completo con copyright de Julián Calderón Almendros)
 - README.md (sección de licencia con enlace)
-- CURRENT-STATUS-PROJECT.md (en el footer)
 - Badge en README.md: `[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)`
 
 ### (19.) Cabeceras de Archivos .lean

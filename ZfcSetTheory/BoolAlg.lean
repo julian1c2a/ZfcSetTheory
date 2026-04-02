@@ -8,3 +8,4 @@ import ZfcSetTheory.BoolAlg.GenDeMorgan
 import ZfcSetTheory.BoolAlg.GenDistributive
 import ZfcSetTheory.BoolAlg.Representation
 import ZfcSetTheory.BoolAlg.FiniteBA
+import ZfcSetTheory.BoolAlg.BoolRingBA

@@ -78,10 +78,8 @@ Todos los archivos de documentación técnica deben incluir timestamps completos
 **Dónde aplicar**:
 
 - **REFERENCE.md**: Timestamp principal en el encabezado del documento
-- **CURRENT-STATUS-PROJECT.md**: Fecha de última actualización
 - **CHANGELOG.md**: Fechas de cada entrada
 - **DEPENDENCIES.md**: Fecha de última actualización
-- **TEMPORAL.md**: Timestamp de compilación y actualización
 - **Cualquier archivo de resumen técnico**: Incluir timestamp de última modificación
 
 **Propósito**: Permite rastrear cuánto está desactualizado un archivo respecto a REFERENCE.md y viceversa, incluso dentro de la misma sesión de trabajo.
@@ -98,7 +96,7 @@ Todos los archivos de documentación técnica deben incluir timestamps completos
 
 ### (16.) Información de Autoría
 
-En todos los archivos de documentación principal (README.md, REFERENCE.md, CURRENT-STATUS-PROJECT.md), debe quedar claro:
+En todos los archivos de documentación principal (README.md, REFERENCE.md), debe quedar claro:
 
 **Autor**: Julián Calderón Almendros
 
@@ -129,7 +127,6 @@ Debe estar claramente indicada en:
 
 - Archivo LICENSE (texto completo con copyright de Julián Calderón Almendros)
 - README.md (sección de licencia con enlace)
-- CURRENT-STATUS-PROJECT.md (en el footer)
 - Badge en README.md: `[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)`
 
 ### (19.) Cabeceras de Archivos .lean
@@ -276,7 +273,7 @@ Para facilitar la revisión sistemática de módulos .lean y su proyección en R
    - Verificar si el módulo está proyectado
    - Identificar definiciones/teoremas/exports faltantes
    - Detectar inconsistencias en el estado de proyección
-4. Actualizar TODO.md con:
+4. Actualizar REFERENCE.md §1.1 con:
    - Estado de revisión (✅ Completo / ⚠️ Parcial / ❌ No proyectado)
    - Lista detallada de acciones necesarias
    - Fecha de revisión (formato YYYY-MM-DD)
@@ -309,7 +306,7 @@ revisar PowerSet.lean
    - Crear/actualizar sección de exports (§6.X)
    - Actualizar tabla de módulos (§1.1) con estado "✅ Completo"
    - Renumerar secciones si es necesario
-5. Actualizar TODO.md marcando el módulo como ✅ Completo
+5. Actualizar REFERENCE.md §1.1 marcando el módulo como ✅ Completo
 6. Actualizar timestamp en REFERENCE.md (formato YYYY-MM-DD HH:MM)
 7. Descargar el módulo del chat al finalizar
 
@@ -325,7 +322,7 @@ proyectar PowerSet.lean
 
 **Acción**:
 
-1. Consultar TODO.md para identificar módulos pendientes de revisión
+1. Consultar REFERENCE.md §1.1 para identificar módulos pendientes de revisión
 2. Analizar dependencias en REFERENCE.md (tabla §1.1)
 3. Seleccionar el módulo con menos dependencias no revisadas
 4. Informar al usuario qué módulo se va a revisar y por qué
@@ -343,7 +340,7 @@ siguiente módulo
 
 **Acción**:
 
-1. Leer TODO.md
+1. Leer REFERENCE.md §1.1
 2. Generar resumen con:
    - Total de módulos revisados (✅)
    - Total de módulos con acciones pendientes (⚠️)
@@ -375,7 +372,7 @@ estado revisión
    - Las dependencias están correctas
    - El estado en tabla §1.1 es correcto
 4. Generar informe de verificación
-5. Actualizar TODO.md si se detectan problemas
+5. Actualizar REFERENCE.md §1.1 si se detectan problemas
 6. Descargar el módulo del chat al finalizar
 
 **Ejemplo de uso**:
@@ -439,7 +436,7 @@ ciclo revisión completo
 - Los nombres de módulos deben incluir la extensión `.lean`
 - Los comandos siempre descargan los módulos .lean del chat al finalizar
 - Los comandos siempre actualizan timestamps en formato YYYY-MM-DD HH:MM
-- Los comandos siempre actualizan TODO.md con el estado actual
+- Los comandos siempre actualizan REFERENCE.md §1.1 con el estado actual
 - Los comandos respetan el sistema de bloqueo de archivos (§20)
 
 ---

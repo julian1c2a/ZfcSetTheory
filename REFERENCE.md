@@ -53,9 +53,9 @@ Este proyecto adopta convenciones de nombres estilo [Mathlib](https://leanprover
 
 ---
 
-## 📋 Cumplimiento con AIDER-AI-GUIDE.md
+## 📋 Cumplimiento con AI-GUIDE.md
 
-Este documento cumple con todos los requisitos especificados en [AIDER-AI-GUIDE.md](AIDER-AI-GUIDE.md):
+Este documento cumple con todos los requisitos especificados en [AI-GUIDE.md](AI-GUIDE.md):
 
 ✅ **(1)** Todos los módulos .lean documentados en sección 1.1
 ✅ **(2)** Dependencias entre módulos (tabla con columna de dependencias)
@@ -137,6 +137,10 @@ Este documento cumple con todos los requisitos especificados en [AIDER-AI-GUIDE.
 | `Peano.FiniteSequencesBridge.lean` | `ZFC.Peano.FiniteSequencesBridge` | `Peano.FiniteSequencesArith`, `Nat.Primes` + anteriores | ✅ Completo |
 | `BoolAlg.Complete.lean` | `ZFC.BoolAlg.Complete` | `BoolAlg.PowerSetAlgebra`, `BoolAlg.GenDeMorgan`, `SetOps.SetOrder`, `BoolAlg.Atomic` + anteriores | ✅ Completo |
 | `BoolAlg.FiniteCofinite.lean` | `ZFC.BoolAlg.FiniteCofinite` | `BoolAlg.Complete`, `SetOps.FiniteSets`, `Nat.Add`, `Cardinality` + anteriores | ✅ Completo |
+| `BoolAlg.Representation.lean` | `ZFC.BoolAlg.Representation` | `BoolAlg.Complete`, `BoolAlg.Atomic`, `Cardinal.Basic` + anteriores | ❌ Pendiente |
+| `Cardinal.FinitePowerSet.lean` | `ZFC.Cardinal.FinitePowerSet` | `Cardinal.Basic`, `SetOps.FiniteSets`, `Nat.Mul`, `Nat.Pow` + anteriores | ❌ Pendiente |
+| `BoolAlg.FiniteBA.lean` | `ZFC.BoolAlg.FiniteBA` | `Cardinal.FinitePowerSet`, `BoolAlg.Representation` + anteriores | ✅ Completo |
+| `BoolAlg.BoolRingBA.lean` | `ZFC.BoolAlg.BoolRingBA` | `BoolAlg.Ring` + anteriores | ✅ Completo |
 
 ## 2. Axiomas ZFC Implementados
 
@@ -3313,7 +3317,7 @@ notation:max X:max " ^∁[ " A:max " ]" => Complement A X
 **Módulo**: `ZfcSetTheory.PeanoImport`
 **Namespace**: `ZFC` (sub-namespace `ZFC.Peano.Import`)
 **Dependencias**: `ZfcSetTheory.Nat.Basic`, `ZfcSetTheory.Infinity`, `PeanoNatLib.PeanoNatAxioms`, `PeanoNatLib.PeanoNatStrictOrder`, `PeanoNatLib.PeanoNatOrder`
-**Librería externa**: `peanolib` — ver [REFERENCE-PEANO.md](REFERENCE-PEANO.md) para la referencia técnica completa del proyecto Peano.
+**Librería externa**: `peanolib` — ver el [repositorio Peano en GitHub](https://github.com/julian1c2a/Peano) para la referencia técnica completa del proyecto Peano.
 **Descripción**: Establece el isomorfismo completo entre los números naturales de Von Neumann y los de Peano. Contiene cuatro secciones: (1) la biyección `fromPeano`/`toPeano` con inyectividad, sobreyectividad e inversas; (2) compatibilidad con la estructura algebraica básica (`toPeano_zero`, `toPeano_succ`); (3) transporte de los teoremas de recursión (simple y con paso) entre los dos mundos; (4) puentes de orden: `fromPeano_lt_iff` y `fromPeano_le_iff` que identifican el orden estricto de Peano con la membresía en ω. **Notación**: `ΠZ p` para `fromPeano p`, `ZΠ n hn` para `toPeano n hn`.
 
 **Abre los namespaces**: `Classical`, `ZFC.Axiom.Extension`, `ZFC.Axiom.Existence`, `ZFC.Axiom.Specification`, `ZFC.Axiom.Pairing`, `ZFC.Axiom.Union`, `ZFC.Axiom.PowerSet`, `ZFC.SetOps.OrderedPair`, `ZFC.SetOps.CartesianProduct`, `ZFC.SetOps.Relations`, `ZFC.SetOps.Functions`, `ZFC.Cardinal.Basic`, `ZFC.Nat.Basic`
@@ -4294,6 +4298,24 @@ def isCompleteAtomicBA (A : U) : Prop :=
 ```
 
 **Dependencias**: `isCompleteLattice`, `isAtomic`, `PowerSet`
+
+### 3.42 BoolAlg.FiniteBA.lean
+
+**Módulo**: `ZfcSetTheory.BoolAlg.FiniteBA`
+**Namespace**: `ZFC.BoolAlg.FiniteBA`
+**Dependencias**: `Cardinal.FinitePowerSet`, `BoolAlg.Representation`
+**Estrategia**: Combina finiteness + atoms + powerset_cardinality para probar |𝒫(A)| = 2^n.
+
+*(Este módulo no tiene definiciones públicas — solo teoremas.)*
+
+### 3.43 BoolAlg.BoolRingBA.lean
+
+**Módulo**: `ZfcSetTheory.BoolAlg.BoolRingBA`
+**Namespace**: `ZFC.BoolAlg.BoolRingBA`
+**Dependencias**: `BoolAlg.Ring`
+**Estrategia**: Establece la correspondencia formal (functor) entre el anillo booleano (△, ∩) y el álgebra booleana (∪, ∩, ^∁) sobre 𝒫(A), con round-trip theorems.
+
+*(Este módulo no tiene definiciones públicas — solo teoremas.)*
 
 ---
 
@@ -10256,6 +10278,355 @@ theorem powerset_is_complete_atomic_BA (A : U) : isCompleteAtomicBA A
 
 **Patrón de demostración**: Directa: combina `powerset_is_complete_lattice` (retículo completo) con `powerset_is_atomic` (de `BoolAlg.Atomic.lean`, atomicidad).
 
+### 4.38 BoolAlg.FiniteBA.lean
+
+#### Átomos Equipotentes a la Base (atoms_equipotent_base)
+
+**Ubicación**: `BoolAlg.FiniteBA.lean`, línea 52
+**Orden**: 1º teorema
+
+**Enunciado Matemático**: $\text{Atoms}(A) \simeq_s A$ (inversa de `A_equipotent_Atoms`).
+
+**Firma Lean4**:
+
+```lean
+theorem atoms_equipotent_base (A : U) : Atoms A ≃ₛ A
+```
+
+**Dependencias**: `equipotent_symm`, `A_equipotent_Atoms`
+
+#### Finitud de Átomos (finite_atoms_of_finite)
+
+**Ubicación**: `BoolAlg.FiniteBA.lean`, línea 56
+**Orden**: 2º teorema
+
+**Enunciado Matemático**: Si $A$ es finito, entonces $\text{Atoms}(A)$ es finito.
+
+**Firma Lean4**:
+
+```lean
+theorem finite_atoms_of_finite {A : U} (hA : isFiniteSet A) :
+    isFiniteSet (Atoms A)
+```
+
+**Dependencias**: `finite_equipotent`, `A_equipotent_Atoms`
+
+#### Finitud desde Átomos (finite_of_finite_atoms)
+
+**Ubicación**: `BoolAlg.FiniteBA.lean`, línea 61
+**Orden**: 3º teorema
+
+**Enunciado Matemático**: Si $\text{Atoms}(A)$ es finito, entonces $A$ es finito.
+
+**Firma Lean4**:
+
+```lean
+theorem finite_of_finite_atoms {A : U} (hAt : isFiniteSet (Atoms A)) :
+    isFiniteSet A
+```
+
+**Dependencias**: `finite_equipotent`, `atoms_equipotent_base`
+
+#### Cardinalidad vía Átomos (BA_cardinality_via_atoms)
+
+**Ubicación**: `BoolAlg.FiniteBA.lean`, línea 72
+**Orden**: 4º teorema
+
+**Enunciado Matemático**: Si $\text{Atoms}(A) \simeq_s n$ con $n \in \omega$, entonces $\mathcal{P}(A) \simeq_s 2^n$. Demostración vía teorema de representación: $\mathcal{P}(A) \simeq_s \mathcal{P}(\text{Atoms}(A)) \simeq_s 2^n$.
+
+**Firma Lean4**:
+
+```lean
+theorem BA_cardinality_via_atoms {A n : U} (hn : n ∈ ω)
+    (hAtoms : Atoms A ≃ₛ n) :
+    𝒫 A ≃ₛ pow (σ (σ (∅ : U))) n
+```
+
+**Dependencias**: `equipotent_trans`, `representation_equipotent`, `powerset_cardinality`
+
+#### Finitud del Conjunto Potencia (finite_powerset_is_finite)
+
+**Ubicación**: `BoolAlg.FiniteBA.lean`, línea 82
+**Orden**: 5º teorema
+
+**Enunciado Matemático**: Si $A$ es finito, entonces $\mathcal{P}(A)$ es finito.
+
+**Firma Lean4**:
+
+```lean
+theorem finite_powerset_is_finite {A : U} (hA : isFiniteSet A) :
+    isFiniteSet (𝒫 A)
+```
+
+**Dependencias**: `pow_in_Omega`, `powerset_cardinality`
+
+**Patrón de demostración**: De $A \simeq_s n$ con $n \in \omega$ se obtiene $\mathcal{P}(A) \simeq_s 2^n$ con $2^n \in \omega$.
+
+#### Cardinalidad de BA Finita (finite_BA_cardinality)
+
+**Ubicación**: `BoolAlg.FiniteBA.lean`, línea 93
+**Orden**: 6º teorema (TEOREMA PRINCIPAL)
+
+**Enunciado Matemático**: Toda álgebra booleana finita $\mathcal{P}(A)$ tiene cardinalidad $2^n$ para algún $n \in \omega$:
+$$A \text{ finito} \Rightarrow \exists n \in \omega,\; \mathcal{P}(A) \simeq_s 2^n$$
+
+**Firma Lean4**:
+
+```lean
+theorem finite_BA_cardinality {A : U} (hA : isFiniteSet A) :
+    ∃ n, n ∈ ω ∧ 𝒫 A ≃ₛ pow (σ (σ (∅ : U))) n
+```
+
+**Dependencias**: `powerset_cardinality`
+
+#### Cardinalidad de BA Finita con Átomos (finite_BA_cardinality_atoms)
+
+**Ubicación**: `BoolAlg.FiniteBA.lean`, línea 101
+**Orden**: 7º teorema
+
+**Enunciado Matemático**: Toda álgebra booleana finita $\mathcal{P}(A)$ tiene cardinalidad $2^n$ donde $n$ es el número de átomos:
+$$A \text{ finito} \Rightarrow \exists n \in \omega,\; \text{Atoms}(A) \simeq_s n \land \mathcal{P}(A) \simeq_s 2^n$$
+
+**Firma Lean4**:
+
+```lean
+theorem finite_BA_cardinality_atoms {A : U} (hA : isFiniteSet A) :
+    ∃ n, n ∈ ω ∧ Atoms A ≃ₛ n ∧ 𝒫 A ≃ₛ pow (σ (σ (∅ : U))) n
+```
+
+**Dependencias**: `atoms_equipotent_base`, `BA_cardinality_via_atoms`
+
+#### BA Finita Completa Atómica (finite_complete_atomic_BA)
+
+**Ubicación**: `BoolAlg.FiniteBA.lean`, línea 113
+**Orden**: 8º teorema (COROLARIO CULMINANTE)
+
+**Enunciado Matemático**: Si $A$ es finito, entonces $\mathcal{P}(A)$ es un álgebra booleana completa atómica con cardinalidad $2^n$.
+
+**Firma Lean4**:
+
+```lean
+theorem finite_complete_atomic_BA {A : U} (hA : isFiniteSet A) :
+    isCompleteAtomicBA A ∧ ∃ n, n ∈ ω ∧ 𝒫 A ≃ₛ pow (σ (σ (∅ : U))) n
+```
+
+**Dependencias**: `powerset_is_complete_atomic_BA`, `finite_BA_cardinality`
+
+### 4.39 BoolAlg.BoolRingBA.lean
+
+#### Recuperación del Join (ring_join_eq_union)
+
+**Ubicación**: `BoolAlg.BoolRingBA.lean`, línea 59
+**Orden**: 1º teorema (IDENTIDAD CLAVE BR→BA)
+
+**Enunciado Matemático**: $X \triangle Y \triangle (X \cap Y) = X \cup Y$. El join del álgebra booleana se recupera de las operaciones del anillo.
+
+**Firma Lean4**:
+
+```lean
+theorem ring_join_eq_union (X Y : U) :
+    symmDiff (symmDiff X Y) (inter X Y) = union X Y
+```
+
+**Dependencias**: `mem_symmDiff_iff`, `mem_union_iff`, `mem_inter_iff`, `subset_antisymm`
+
+#### Recuperación del Complemento (ring_compl_eq_complement)
+
+**Ubicación**: `BoolAlg.BoolRingBA.lean`, línea 103
+**Orden**: 2º teorema (IDENTIDAD CLAVE BR→BA)
+
+**Enunciado Matemático**: Si $X \subseteq A$, entonces $A \triangle X = X^{\complement[A]}$. El complemento del BA se recupera como suma con la identidad multiplicativa.
+
+**Firma Lean4**:
+
+```lean
+theorem ring_compl_eq_complement {A X : U} (hX : X ⊆ A) :
+    symmDiff A X = Complement A X
+```
+
+**Dependencias**: `mem_symmDiff_iff`, `Complement_is_specified`, `subset_antisymm`
+
+#### Recuperación de la Suma (BA_symmDiff_eq_ring_add)
+
+**Ubicación**: `BoolAlg.BoolRingBA.lean`, línea 126
+**Orden**: 3º teorema (IDENTIDAD CLAVE BA→BR)
+
+**Enunciado Matemático**: Si $X, Y \subseteq A$, entonces $(X \cap Y^{\complement[A]}) \cup (X^{\complement[A]} \cap Y) = X \triangle Y$. La suma del anillo se recupera de las operaciones del BA.
+
+**Firma Lean4**:
+
+```lean
+theorem BA_symmDiff_eq_ring_add {A X Y : U} (hX : X ⊆ A) (hY : Y ⊆ A) :
+    union (inter X (Complement A Y)) (inter (Complement A X) Y) =
+    symmDiff X Y
+```
+
+**Dependencias**: `mem_union_iff`, `mem_inter_iff`, `mem_symmDiff_iff`, `Complement_is_specified`, `subset_antisymm`
+
+#### Round-Trip BA→BR→BA Join (BA_ring_BA_join)
+
+**Ubicación**: `BoolAlg.BoolRingBA.lean`, línea 160
+**Orden**: 4º teorema (ROUND-TRIP)
+
+**Enunciado Matemático**: Para $X, Y \in \mathcal{P}(A)$: $X \triangle Y \triangle (X \cap Y) = X \cup Y$.
+
+**Firma Lean4**:
+
+```lean
+theorem BA_ring_BA_join {A X Y : U}
+    (_hX : X ∈ 𝒫 A) (_hY : Y ∈ 𝒫 A) :
+    symmDiff (symmDiff X Y) (inter X Y) = union X Y
+```
+
+**Dependencias**: `ring_join_eq_union`
+
+#### Round-Trip BA→BR→BA Complemento (BA_ring_BA_complement)
+
+**Ubicación**: `BoolAlg.BoolRingBA.lean`, línea 168
+**Orden**: 5º teorema (ROUND-TRIP)
+
+**Enunciado Matemático**: Para $X \in \mathcal{P}(A)$: $A \triangle X = X^{\complement[A]}$.
+
+**Firma Lean4**:
+
+```lean
+theorem BA_ring_BA_complement {A X : U} (hX : X ∈ 𝒫 A) :
+    symmDiff A X = Complement A X
+```
+
+**Dependencias**: `ring_compl_eq_complement`, `mem_powerset_iff`
+
+#### Round-Trip BA→BR→BA Meet (BA_ring_BA_meet)
+
+**Ubicación**: `BoolAlg.BoolRingBA.lean`, línea 175
+**Orden**: 6º teorema (ROUND-TRIP, trivial)
+
+**Enunciado Matemático**: $X \cap Y = X \cap Y$ (meet es intersección en ambas estructuras).
+
+**Firma Lean4**:
+
+```lean
+theorem BA_ring_BA_meet {A X Y : U}
+    (_hX : X ∈ 𝒫 A) (_hY : Y ∈ 𝒫 A) :
+    inter X Y = inter X Y
+```
+
+**Dependencias**: (ninguna — `rfl`)
+
+#### Round-Trip BR→BA→BR Suma (ring_BA_ring_add)
+
+**Ubicación**: `BoolAlg.BoolRingBA.lean`, línea 182
+**Orden**: 7º teorema (ROUND-TRIP)
+
+**Enunciado Matemático**: Para $X, Y \in \mathcal{P}(A)$: $(X \cap Y^{\complement[A]}) \cup (X^{\complement[A]} \cap Y) = X \triangle Y$.
+
+**Firma Lean4**:
+
+```lean
+theorem ring_BA_ring_add {A X Y : U}
+    (hX : X ∈ 𝒫 A) (hY : Y ∈ 𝒫 A) :
+    union (inter X (Complement A Y)) (inter (Complement A X) Y) =
+    symmDiff X Y
+```
+
+**Dependencias**: `BA_symmDiff_eq_ring_add`, `mem_powerset_iff`
+
+#### Round-Trip BR→BA→BR Multiplicación (ring_BA_ring_mul)
+
+**Ubicación**: `BoolAlg.BoolRingBA.lean`, línea 191
+**Orden**: 8º teorema (ROUND-TRIP, trivial)
+
+**Enunciado Matemático**: $X \cap Y = X \cap Y$ (multiplicación es intersección en ambas estructuras).
+
+**Firma Lean4**:
+
+```lean
+theorem ring_BA_ring_mul {A X Y : U}
+    (_hX : X ∈ 𝒫 A) (_hY : Y ∈ 𝒫 A) :
+    inter X Y = inter X Y
+```
+
+**Dependencias**: (ninguna — `rfl`)
+
+#### Diferencia Simétrica vía Complemento (symmDiff_via_complement)
+
+**Ubicación**: `BoolAlg.BoolRingBA.lean`, línea 201
+**Orden**: 9º teorema
+
+**Enunciado Matemático**: Si $X, Y \subseteq A$, entonces $X \triangle Y = (X \cup Y) \cap (X \cap Y)^{\complement[A]}$.
+
+**Firma Lean4**:
+
+```lean
+theorem symmDiff_via_complement {A X Y : U} (hX : X ⊆ A) (hY : Y ⊆ A) :
+    symmDiff X Y =
+    inter (union X Y) (Complement A (inter X Y))
+```
+
+**Dependencias**: `symmDiff_as_complement`
+
+#### Característica 2 del Anillo (ring_char_two)
+
+**Ubicación**: `BoolAlg.BoolRingBA.lean`, línea 207
+**Orden**: 10º teorema
+
+**Enunciado Matemático**: $X \triangle X = \emptyset$ (todo elemento es su propio inverso aditivo).
+
+**Firma Lean4**:
+
+```lean
+theorem ring_char_two (X : U) : symmDiff X X = (∅ : U)
+```
+
+**Dependencias**: `symmDiff_inverse`
+
+#### Idempotencia del Anillo (ring_idempotent)
+
+**Ubicación**: `BoolAlg.BoolRingBA.lean`, línea 212
+**Orden**: 11º teorema
+
+**Enunciado Matemático**: $X \cap X = X$ (todo elemento es idempotente bajo multiplicación).
+
+**Firma Lean4**:
+
+```lean
+theorem ring_idempotent (X : U) : inter X X = X
+```
+
+**Dependencias**: `powerset_inter_idempotent`
+
+#### Involución del Complemento (complement_involution)
+
+**Ubicación**: `BoolAlg.BoolRingBA.lean`, línea 217
+**Orden**: 12º teorema
+
+**Enunciado Matemático**: Si $X \subseteq A$, entonces $(X^{\complement[A]})^{\complement[A]} = X$.
+
+**Firma Lean4**:
+
+```lean
+theorem complement_involution {A X : U} (hX : X ⊆ A) :
+    Complement A (Complement A X) = X
+```
+
+**Dependencias**: `powerset_double_complement`
+
+#### Suma con Complemento da Universo (ring_add_complement_eq_universe)
+
+**Ubicación**: `BoolAlg.BoolRingBA.lean`, línea 222
+**Orden**: 13º teorema
+
+**Enunciado Matemático**: Si $X \subseteq A$, entonces $X \triangle X^{\complement[A]} = A$.
+
+**Firma Lean4**:
+
+```lean
+theorem ring_add_complement_eq_universe {A X : U} (hX : X ⊆ A) :
+    symmDiff X (Complement A X) = A
+```
+
+**Dependencias**: `mem_symmDiff_iff`, `Complement_is_specified`, `subset_antisymm`
+
 ---
 
 ## 5. Notación y Sintaxis
@@ -11604,6 +11975,49 @@ export BoolAlg.Complete (
 )
 ```
 
+### 6.39 BoolAlg.FiniteBA.lean
+
+**Namespace**: `ZFC.BoolAlg.FiniteBA` (exportado a `ZFC`)
+**Última modificación**: 2026-04-02
+**Dependencias**: `Cardinal.FinitePowerSet`, `BoolAlg.Representation` + anteriores
+
+```lean
+export BoolAlg.FiniteBA (
+    atoms_equipotent_base
+    finite_atoms_of_finite
+    finite_of_finite_atoms
+    BA_cardinality_via_atoms
+    finite_powerset_is_finite
+    finite_BA_cardinality
+    finite_BA_cardinality_atoms
+    finite_complete_atomic_BA
+)
+```
+
+### 6.40 BoolAlg.BoolRingBA.lean
+
+**Namespace**: `ZFC.BoolAlg.BoolRingBA` (exportado a `ZFC`)
+**Última modificación**: 2026-04-02
+**Dependencias**: `BoolAlg.Ring` + anteriores
+
+```lean
+export BoolAlg.BoolRingBA (
+    ring_join_eq_union
+    ring_compl_eq_complement
+    BA_symmDiff_eq_ring_add
+    BA_ring_BA_join
+    BA_ring_BA_complement
+    BA_ring_BA_meet
+    ring_BA_ring_add
+    ring_BA_ring_mul
+    symmDiff_via_complement
+    ring_char_two
+    ring_idempotent
+    complement_involution
+    ring_add_complement_eq_universe
+)
+```
+
 ## 7. Estado de Proyección por Módulo
 
 ### 7.1 Leyenda de Estados
@@ -11658,6 +12072,8 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `Peano.FiniteSequencesBridge.lean` - Puente DList ↔ ZFC y TFA nativo: nth (acceso a elementos), seqProd generalizado (zero_gen, succ_gen, extensionalidad), dlistToSeq/dlistLen (conversión DList→ZFC), isPrimeSeq (secuencia de primos), TFA existencia/unicidad con secuencias ZFC-nativas, 4 definiciones + 15 teoremas + 23 exports
 - `BoolAlg.FiniteCofinite.lean` - Álgebra booleana finita/cofinita: definiciones `isCofinite`, `isFinCof`, `FinCofAlg`, `EvenSet`; clausura de finitos (subconjunto, unión, ω no finito); paridad (even_or_odd, even_ne_odd, double_injective, EvenSet/OddSet infinitos); estructura de álgebra booleana (∅, A, complemento, unión, intersección ∈ FinCofAlg); contraejemplo FinCofAlg(ω) NO es retículo completo. 4 definiciones + 19 teoremas + 22 exports
 - `BoolAlg.Complete.lean` - Álgebra booleana completa atómica en conjuntos potencia: definiciones `isSupremumIn`, `isInfimumIn`, `isCompleteLattice`, `isCompleteAtomicBA`; supremo/ínfimo en 𝒫(A) vía ⋃/⋂; unicidad; `powerset_is_complete_lattice`; `powerset_is_complete_atomic_BA`. 4 definiciones + 11 teoremas + 15 exports
+- `BoolAlg.FiniteBA.lean` - Cardinalidad de BA finita: equipotencia de átomos con base, finiteness bidireccional átomos↔base, cardinalidad vía átomos (representación), |𝒫(A)|=2^n para A finito, BA finita es completa atómica. 0 definiciones + 8 teoremas + 8 exports
+- `BoolAlg.BoolRingBA.lean` - Correspondencia Anillo Booleano ↔ Álgebra Booleana: X△Y△(X∩Y)=X∪Y, A△X=X^∁[A], (X∩Y^∁)∪(X^∁∩Y)=X△Y, round-trip BA→BR→BA (join/complement/meet), round-trip BR→BA→BR (add/mul), char 2, idempotencia, involución, X△X^∁=A. 0 definiciones + 13 teoremas + 13 exports
 
 ### 7.3 Archivos Parcialmente Proyectados
 
@@ -11677,9 +12093,14 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 
 ### 7.5 Archivos Completos Pendientes de Proyectar
 
-- (Ninguno actualmente — 43/43 módulos completamente proyectados)
+- `BoolAlg.Representation.lean` — Teorema de Representación de Stone: toda BA completa atómica ≅ algún 𝒫(A)
+- `Cardinal.FinitePowerSet.lean` — Cardinalidad del conjunto potencia finito: |𝒫(F)| = 2^n
+
+(45/47 módulos completamente proyectados, 2 pendientes)
 
 ---
+
+*Última actualización: 2026-04-08 — Proyección completa de BoolAlg.FiniteBA.lean (§3.42, §4.38, §6.39: 0 def + 8 teoremas + 8 exports, cardinalidad de BA finita |𝒫(A)|=2^n, equipotencia átomos↔base, finiteness bidireccional, representación vía átomos, BA finita es completa atómica) y BoolAlg.BoolRingBA.lean (§3.43, §4.39, §6.40: 0 def + 13 teoremas + 13 exports, correspondencia BR↔BA, X△Y△(X∩Y)=X∪Y, A△X=X^∁[A], round-trips BA→BR→BA y BR→BA→BR, char 2, idempotencia, involución complemento). Tabla §1.1 y §7.2 actualizadas. §7.5: 45/45 módulos proyectados. Estado: ✅ 100% completo, 0 sorry.*
 
 *Última actualización: 2026-04-07 — Proyección completa de BoolAlg.Complete.lean (§3.41, §4.37, §6.38: 4 def + 11 teoremas + 15 exports, supremo/ínfimo relativizados isSupremumIn/isInfimumIn, retículo completo isCompleteLattice, álgebra booleana completa atómica isCompleteAtomicBA, supremo en 𝒫(A) vía ⋃, ínfimo en 𝒫(A) vía ⋂, unicidad, ínfimo de familia vacía = A, powerset_is_complete_lattice, powerset_is_complete_atomic_BA). Tabla §1.1 y §7.2 actualizadas. §7.5 vacío: 43/43 módulos proyectados. Estado: ✅ 100% completo, 0 sorry.*
 

@@ -1,6 +1,6 @@
 # Diagrama de Dependencias - ZfcSetTheory
 
-**Última actualización:** 2026-04-02
+**Última actualización:** 2026-04-08
 **Autor**: Julián Calderón Almendros
 
 > **Nota (Fase 3, 2026-04-02):** Los identificadores del proyecto han sido renombrados según convenciones Mathlib. Los nombres en las secciones "Exports por Módulo" pueden reflejar nombres anteriores; consultar REFERENCE.md §0 para la tabla completa de renombramientos.
@@ -49,9 +49,13 @@ ZfcSetTheory/
 ├── BoolAlg.Atomic.lean            # Álgebra de Boole atómica
 ├── BoolAlg.Complete.lean          # Álgebra booleana completa atómica (𝒫(A) retículo completo)
 ├── BoolAlg.FiniteCofinite.lean                  # Álgebra finita/cofinita, contraejemplo no completo
+├── BoolAlg.Representation.lean          # Teorema de representación: BA completa atómica ≅ 𝒫(A)
+├── BoolAlg.FiniteBA.lean                # Toda BA finita tiene cardinalidad 2^n
+├── BoolAlg.BoolRingBA.lean              # Correspondencia Anillo Booleano ↔ Álgebra Booleana
 ├── SetOps.SetOrder.lean                        # Orden parcial y retículos
 ├── SetOps.SetStrictOrder.lean                  # Orden estricto
-├── Cardinality.lean                     # Teoremas de Cantor y Cantor-Schröder-Bernstein
+├── Cardinal.Basic.lean                  # Teoremas de Cantor y Cantor-Schröder-Bernstein
+├── Cardinal.FinitePowerSet.lean         # |𝒫(F)| = 2^n para F finito
 └── ZfcSetTheory.lean                    # Módulo principal (exporta todo)
 ```
 
@@ -153,6 +157,20 @@ graph TD
     FSets --> FC
     NA --> FC
     Card --> FC
+    CBA --> Rep[BoolAlg.Representation.lean]
+    ABA --> Rep
+    Card --> Rep
+    Func --> Rep
+    PSA --> Rep
+    GDM --> Rep
+    GDD --> Rep
+    SO --> Rep
+    BR --> BRB[BoolAlg.BoolRingBA.lean]
+    FSets --> FPS[Cardinal.FinitePowerSet.lean]
+    NP --> FPS
+    FC --> FPS
+    FPS --> FBA[BoolAlg.FiniteBA.lean]
+    Rep --> FBA
     U --> GDM[BoolAlg.GenDeMorgan.lean]
     Pot --> GDM
     U --> GDD[BoolAlg.GenDistributive.lean]
@@ -205,6 +223,10 @@ graph TD
     FSets --> Z
     FSA --> Z
     FSB --> Z
+    Rep --> Z
+    FBA --> Z
+    BRB --> Z
+    FPS --> Z
 
     %% Estilos
     classDef axiom fill:#e1f5fe,stroke:#01579b,stroke-width:2px
@@ -218,11 +240,11 @@ graph TD
     classDef external fill:#fafafa,stroke:#424242,stroke-width:1px
     
     class E,Ex,S,Pa,U,Pot axiom
-    class BA,PSA,BR,ABA,CBA,FC,GDM,GDD algebra
+    class BA,PSA,BR,ABA,CBA,FC,GDM,GDD,Rep,FBA,BRB algebra
     class SO,SSO order
     class OP,CP extension
     class Rel,Func relation
-    class Inf,Nat,Rec,PI,NA,NM,NS,ND,NP,NAR,NF,NG,NPR,NB,NMM,NNB,NWF,FSeq,FSets,FSA,FSB natural
+    class Inf,Nat,Rec,PI,NA,NM,NS,ND,NP,NAR,NF,NG,NPR,NB,NMM,NNB,NWF,FSeq,FSets,FSA,FSB,FPS natural
     class Z main
     class IC,P,PL external
 ```
@@ -432,6 +454,43 @@ namespace ZFC.BoolAlg.Atomic
   --           PowerSet_is_atomic, element_is_union_of_atoms
 ```
 
+### 20b. **ZFC.BoolAlg.Representation**
+
+```lean
+namespace ZFC.BoolAlg.Representation
+  -- Teorema de representación de Stone (forma concreta)
+  -- Definiciones: atomsSingletonMap, atomsBelow, atomsBelowMap
+  -- Teoremas: atomsSingletonMap_is_bijection, A_equipotent_Atoms,
+  --           atomsBelowMap_is_bijection, representation_equipotent,
+  --           atomsBelowMap_preserves_union/inter/complement,
+  --           representation_theorem (BA completa atómica ≅ 𝒫(A))
+  -- Depende de: BoolAlg.Complete, BoolAlg.Atomic, Cardinal.Basic, SetOps.Functions
+```
+
+### 20c. **ZFC.BoolAlg.FiniteBA**
+
+```lean
+namespace ZFC.BoolAlg.FiniteBA
+  -- Toda BA finita tiene cardinalidad 2^n
+  -- Teoremas: atoms_equipotent_base, finite_atoms_of_finite, finite_of_finite_atoms,
+  --           BA_cardinality_via_atoms, finite_powerset_is_finite,
+  --           finite_BA_cardinality (MAIN), finite_BA_cardinality_atoms,
+  --           finite_complete_atomic_BA
+  -- Depende de: Cardinal.FinitePowerSet, BoolAlg.Representation
+```
+
+### 20d. **ZFC.BoolAlg.BoolRingBA**
+
+```lean
+namespace ZFC.BoolAlg.BoolRingBA
+  -- Correspondencia formal Anillo Booleano ↔ Álgebra Booleana sobre 𝒫(A)
+  -- Teoremas: ring_join_eq_union, ring_compl_eq_complement, BA_symmDiff_eq_ring_add,
+  --           BA_ring_BA_join/complement/meet, ring_BA_ring_add/mul (round-trips),
+  --           symmDiff_via_complement, ring_char_two, ring_idempotent,
+  --           complement_involution, ring_add_complement_eq_universe
+  -- Depende de: BoolAlg.Ring
+```
+
 ### 21. **ZFC.SetOps.SetOrder**
 
 ```lean
@@ -458,6 +517,18 @@ namespace ZFC.Cardinal.Basic
   -- Definiciones: DiagonalSet, SetDiff, singletonMap, CSB_core, CSB_bijection
   -- Teoremas de Cantor: cantor_no_surjection, cantor_no_bijection
   -- Teorema de Cantor-Schröder-Bernstein: cantor_schroeder_bernstein
+```
+
+### 23b. **ZFC.Cardinal.FinitePowerSet**
+
+```lean
+namespace ZFC.Cardinal.FinitePowerSet
+  -- Cardinalidad del conjunto potencia finito
+  -- Definiciones: removeElemMap
+  -- Teoremas: equipotent_union_singleton, disjoint_union_equipotent,
+  --           powerset_without_elem, powerset_halves_disjoint/union,
+  --           removeElemMap_is_bijection, powerset_cardinality (|𝒫(F)| = 2^n)
+  -- Depende de: SetOps.FiniteSets, Nat.Pow, BoolAlg.FiniteCofinite
 ```
 
 ### 24. **ZFC.Peano.FiniteSequencesArith**
@@ -553,12 +624,16 @@ namespace ZFC.Peano.FiniteSequencesBridge
 - `BoolAlg.GenDeMorgan.lean` - De Morgan generalizadas
 - `BoolAlg.GenDistributive.lean` - Distributivas generalizadas
 - `BoolAlg.Atomic.lean` - Álgebra de Boole atómica
+- `BoolAlg.BoolRingBA.lean` - Correspondencia BR ↔ BA sobre 𝒫(A)
 - `SetOps.SetOrder.lean` - Estructura de orden y retículo
 - `SetOps.SetStrictOrder.lean` - Orden estricto
 
-### **Nivel 10: Cardinalidad**
+### **Nivel 10: Cardinalidad y Representación**
 
 - `Cardinal.Basic.lean` - Teoremas de Cantor y Cantor-Schröder-Bernstein
+- `BoolAlg.Representation.lean` - Teorema de representación: BA completa atómica ≅ 𝒫(A)
+- `Cardinal.FinitePowerSet.lean` - |𝒫(F)| = 2^n para F finito
+- `BoolAlg.FiniteBA.lean` - Toda BA finita tiene cardinalidad 2^n
 
 ### **Nivel 11: Integración**
 
@@ -1013,7 +1088,7 @@ export ZFC.Nat.WellFounded (
 )
 ```
 
-### Cardinality.lean
+### Cardinal.Basic.lean
 
 ```lean
 export ZFC.Cardinal.Basic (
@@ -1026,6 +1101,80 @@ export ZFC.Cardinal.Basic (
     SetDiff, SetDiff_is_specified, isCSB_closed, CSB_core, CSB_core_is_specified,
     CSB_bijection, CSB_bijection_is_specified, CSB_bijection_is_bijection,
     cantor_schroeder_bernstein
+)
+```
+
+### Cardinal.FinitePowerSet.lean
+
+```lean
+export ZFC.Cardinal.FinitePowerSet (
+    equipotent_union_singleton,
+    sdiff_singleton_union,
+    union_sdiff_cancel,
+    union_singleton_sdiff_cancel,
+    disjoint_union_equipotent,
+    removeElemMap, removeElemMap_is_specified, removeElemMap_is_bijection,
+    powerset_without_elem,
+    powerset_halves_disjoint, powerset_halves_union,
+    mul_two_eq_double,
+    powerset_cardinality
+)
+```
+
+### BoolAlg.Representation.lean
+
+```lean
+export ZFC.BoolAlg.Representation (
+    atomsSingletonMap, atomsSingletonMap_spec,
+    atomsSingletonMap_is_function, atomsSingletonMap_is_injective,
+    atomsSingletonMap_is_surjective, atomsSingletonMap_is_bijection,
+    A_equipotent_Atoms,
+    atomsBelow, mem_atomsBelow_iff,
+    atomsBelow_mem_powerset_Atoms, atomsBelow_eq_singletons_in,
+    atomsBelowMap, atomsBelowMap_spec,
+    atomsBelowMap_is_function, atomsBelowMap_is_injective,
+    atomsBelowMap_is_surjective, atomsBelowMap_is_bijection,
+    representation_equipotent,
+    union_atomsBelow_eq, atomsBelow_of_union, union_atoms_mem_powerset,
+    atomsBelowMap_preserves_empty, atomsBelowMap_preserves_universe,
+    atomsBelowMap_preserves_union, atomsBelowMap_preserves_inter,
+    atomsBelowMap_preserves_complement,
+    representation_theorem
+)
+```
+
+### BoolAlg.FiniteBA.lean
+
+```lean
+export ZFC.BoolAlg.FiniteBA (
+    atoms_equipotent_base,
+    finite_atoms_of_finite,
+    finite_of_finite_atoms,
+    BA_cardinality_via_atoms,
+    finite_powerset_is_finite,
+    finite_BA_cardinality,
+    finite_BA_cardinality_atoms,
+    finite_complete_atomic_BA
+)
+```
+
+### BoolAlg.BoolRingBA.lean
+
+```lean
+export ZFC.BoolAlg.BoolRingBA (
+    ring_join_eq_union,
+    ring_compl_eq_complement,
+    BA_symmDiff_eq_ring_add,
+    BA_ring_BA_join,
+    BA_ring_BA_complement,
+    BA_ring_BA_meet,
+    ring_BA_ring_add,
+    ring_BA_ring_mul,
+    symmDiff_via_complement,
+    ring_char_two,
+    ring_idempotent,
+    complement_involution,
+    ring_add_complement_eq_universe
 )
 ```
 
