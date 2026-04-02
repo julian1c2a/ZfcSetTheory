@@ -67,3 +67,78 @@
 *[4.]* *ZFC* sería un *modelo* que satisface las interfaces anteriormente escritas, como también *Peano*, como el sistema de *Aczel* (comenzado en paralelo), como el sistema del proyecto *MKplusCAC*.
 *[5.]* Para *[5.]* nos hace falta una estructuración más robusta del proyecto, que llegue a unificar todos los proyectos anteriores.
 *[6.]* Todo lo dicho quedaría en un nuevo proyecto, que podría llamarse algo así como "Fundamentos de la Matemática en Lean", o algo por el estilo, que unificaría todos los proyectos anteriores y que tendría una organización mucho más clara y sistematizada. Este nuevo proyecto sería el que se mantendría a largo plazo, y en el que se irían añadiendo nuevos temas y resultados a medida que se vayan desarrollando. El proyecto actual de ZFC quedaría como un subproyecto dentro de este nuevo proyecto más amplio, y se iría integrando poco a poco con los demás subproyectos (Peano, Aczel, MKplusCAC, etc) para crear una visión unificada de los fundamentos de la matemática en Lean.
+
+**UNA IDEA DE IMPLEMENTACIÓN DE LOS NOVÍSIMOS**
+
+0. El sistema de puentes entre sistemas axiomáticos
+   
+   0.1. El sistema de Aczel debe probar como teoremas los axiomas de ZF (sin infinitud y sin regularidad, por supuesto que sin elección).
+   0.2. El sistema de Peano debe probar que puede reproducido dentro del sistema de Aczel.
+   0.3. El sistema ZF (debidamente recortado) debe probar que los axiomas de Aczael se pueden demostrar como teoremas dentro de ZF.
+   0.4. El sistema de ZF debe probar que puede reproducir el sistema de Peano.
+   0.5. El sistema de Aczel debe probar que puede reproducir el sistema de Peano.
+   0.6. El sistema de MKplusCAC debe probar que puede reproducir el sistema ZFC completo.
+   0.7. Debemos probar quje existen teoremas en ZFC que no pueden ser demostrados en el sistema computacional de Aczel.
+   0.8. Debemos probar que existen teoremas en MKplusCAC que no pueden ser demostrados en ZFC.
+   0.9. Debemos mantener el esquema de pruebas que tenemos en ZFC, que introduce los distintos axiomas solo cuando son necesarios para demostrar algún nuevo teorema en algún nuevo tema concreto. De esta forma, mantenemos una jerarquía clara de los axiomas dentro de los porpios sistemas axiomáticos, manteniendo así una isomorfía constructiva de los diferentes sistemas por capas.
+
+1. Las "Interfaces" son Clases de Tipos (class)
+
+En Lean 4, la forma estándar de hacer que un teorema sirva tanto para Peano como para Von Neumann es usar Typeclasses. En lugar de demostrar el Teorema Fundamental de la Aritmética para un tipo específico, lo demuestras para cualquier tipo que cumpla tu interfaz.
+Lean
+
+-- 1. Defines la interfaz abstracta (Typeclass)
+class Naturals (N : Type) where
+  zero : N
+  succ : N → N
+  add  : N → N → N
+  -- Aquí añadirías los axiomas, por ejemplo:
+  succ_inj : ∀ {a b : N}, succ a = succ b → a = b
+  -- (y el principio de inducción)
+
+-- 2. Tus implementaciones serán instancias (Instances)
+inductive PeanoNat where
+  | zero : PeanoNat
+  | succ : PeanoNat → PeanoNat
+
+instance : Naturals PeanoNat where
+  zero := PeanoNat.zero
+  succ := PeanoNat.succ
+  add  := ... -- tu función de suma
+  succ_inj := ... -- tu demostración
+
+De este modo, cuando escribas el teorema fundamental, su firma será algo como: theorem fundamental_arithmetic {N : Type} [Naturals N] : .... Lean se encargará de inyectar los axiomas correctos ya sea que uses Peano o Von Neumann.
+
+2. Isomorfismos y el paso de teoremas (Equiv)
+
+Para tus "puentes" entre Peano y Von Neumann, no reinventes la rueda: usa (o replica si estás evitando Mathlib) las equivalencias. Una equivalencia en Lean (≃) es una biyección con su inversa demostrada.
+
+Si demuestras que PeanoNat ≃ VonNeumannNat, puedes usar técnicas de transferencia. Lean tiene mecanismos (o puedes escribir una pequeña macro/táctica gracias al sistema de metaprogramación de Lean 4) para que si tienes un teorema demostrado en PeanoNat, la táctica lo transporte a través del isomorfismo (Equiv) para generar automáticamente la demostración en VonNeumannNat. Esto mantendrá tu código base extremadamente limpio.
+
+3. Manejando Morse-Kelley vs ZFC: Universos de Tipos
+
+Lean 4 está basado en la Teoría de Tipos (Cálculo de Construcciones Inductivas), no en Teoría de Conjuntos. Hacer Teoría de Conjuntos axiomática dentro de Lean requiere crear un modelo. Aquí es donde Morse-Kelley (MK) brilla en Lean si usas los Universos de Tipos (Type u).
+
+    Conjuntos (ZFC): Puedes definir tu modelo de conjuntos como un tipo inductivo o una estructura que habita en un universo particular (ej. Type 0).
+
+    Clases (MK): En Morse-Kelley, las clases propias son colecciones de conjuntos que son "demasiado grandes" para ser conjuntos. En Lean 4, esto se modela maravillosamente subiendo un nivel en la jerarquía de universos. Una clase sobre tu modelo de conjuntos V puede ser simplemente un predicado V → Prop. Así, el esquema de reemplazo de ZFC y el esquema de comprensión de clases de MK se expresan de forma muy natural usando las funciones del propio lenguaje Lean.
+
+4. El Modelo de Aczel (Computabilidad plena)
+
+Mencionaste que estás construyendo Aczel basado en listas para que sea computable. El punto fuerte de Lean 4 es que compila a C.
+Para tu modelo de Aczel, usa el comando inductive estándar de Lean apoyado en estructuras de datos eficientes (como List o Array).
+Lean
+
+-- Un modelo muy simplificado de Aczel (conjuntos hereditariamente finitos)
+inductive AczelSet where
+  | mk (elements : List AczelSet) : AczelSet
+  deriving Repr
+
+Como Lean 4 diferencia entre Prop (proposiciones, que se borran en tiempo de compilación y no tienen coste de ejecución) y Type (datos), puedes escribir tu sistema de Aczel para que operaciones como la intersección o unión sean funciones computables reales (def), que puedes testear usando #eval. Luego, usas Prop y theorem para demostrar que esas funciones en Lean satisfacen los axiomas de la Teoría de Conjuntos de tu capa base.
+Siguientes pasos en tu proyecto Lean 4:
+
+    Crea un lakefile.lean robusto: Organiza tu código en módulos lógicos (ej. MathFundamentals.Axioms.ZFC, MathFundamentals.Arithmetic.Abstract, etc.).
+
+    Abraza las class: Reescribe tus teoremas de Peano para que acepten variables de tipo [Naturals N] en lugar de depender directamente del tipo Peano.
+
+    Aisla las dependencias: Crea un archivo raíz que simplemente importe todo tu trabajo para asegurarte de que Lean compila todo el ecosistema sin dependencias circulares (Lean es muy estricto con esto).
