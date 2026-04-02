@@ -1,10 +1,12 @@
 **[1.]** Me acabo de dar cuenta que los teoremas de incompletitud de Gödel también pueden ser demostrados dentro de ZFC, y esto es algo que definitivamente quiero incluir en el proyecto. La demostración de los teoremas de incompletitud de Gödel dentro de ZFC no solo fortalecerá la comprensión de las limitaciones de los sistemas formales, sino que también proporcionará una perspectiva más profunda sobre la naturaleza de la lógica y la matemática. Esto será un paso crucial para mostrar cómo ZFC puede manejar incluso los resultados más profundos y fundamentales en la teoría de la computación y la lógica matemática.
 
-**[2.]** Al revisar el proyecto creo que me he quedado cojo con la parte de Álgebras de Boole, Anillos Booleanos y Retículos por Inclusión en álgebras de la partes de un conjunto. Lo que me interesa es terminar de demostrar que el conjunto de las partes de un conjunto es un Álgebra de Boole Atómica Completa, y luego mostrar que cualquier Álgebra de Boole Atómica Completa es isomorfa a un Álgebra de Boole de partes de un conjunto.
+**[2.]** ~~Al revisar el proyecto creo que me he quedado cojo con la parte de Álgebras de Boole, Anillos Booleanos y Retículos por Inclusión en álgebras de la partes de un conjunto. Lo que me interesa es terminar de demostrar que el conjunto de las partes de un conjunto es un Álgebra de Boole Atómica Completa~~, y luego mostrar que cualquier Álgebra de Boole Atómica Completa es isomorfa a un Álgebra de Boole de partes de un conjunto.
+> ✅ Primera parte completada en `BoolAlg.Complete.lean`: `PowerSet_is_complete_atomic_BA`. Pendiente: teorema de representación (isomorfismo inverso).
 
 **[3.]** Como continuación de lo anterior, también quiero incluir que todo Anillo Booleano nos lleva via biyección (functor) a un Álgebra de Boole y viceversa.
 
-**[4.]** Construiremos un Álgebra de Boole que no sea atómica con las partes finitas y cofinitas de un conjunto infinito, y mostraremos que no es isomorfa al Álgebra de Boole de las partes de un conjunto. En el caso concreto de un conjunto numerable infinito, quedará claro que hay más Álgebras de Boole que las de las partes de un conjunto. Queda la duda de si en un conjunto inifinito no numerable (aleph_1) también podemos construir un álgebra de Boole de las partes numerables y conumerables de las partes de un conjunto.
+**[4.]** ~~Construiremos un Álgebra de Boole que no sea atómica con las partes finitas y cofinitas de un conjunto infinito, y mostraremos que no es isomorfa al Álgebra de Boole de las partes de un conjunto.~~ En el caso concreto de un conjunto numerable infinito, quedará claro que hay más Álgebras de Boole que las de las partes de un conjunto. Queda la duda de si en un conjunto inifinito no numerable (aleph_1) también podemos construir un álgebra de Boole de las partes numerables y conumerables de las partes de un conjunto.
+> ✅ Completado en `BoolAlg.FiniteCofinite.lean`: `FinCofAlg_not_complete`, `EvenSet_not_in_FinCofAlg`. Nota: FinCofAlg(ω) SÍ es atómica (los átomos son singletons), pero NO es completa — por tanto no es isomorfa a ningún 𝒫(A).
 
 **[5.]** Los resultados **[2.]**, **[3.]** y **[4.]** quedarán unidos en un único módulo final sobre este tema.
 
@@ -16,7 +18,8 @@
 
 **[9.]** En un futuro, me gustaría incluir una introducción de la Topología, con las definiciones estándar de espacios topológicos, bases, subbases, etc. Igualmente me gustaría introducir la nociones básicas de Teoría de Grupos y de Anillos.
 
-**[10.]** Todo lo anterior nos lleva a que la organización del proyecto es demasiado básica, necesitamos un sistema de módulo y de espacios de nombres más compartimentados y con una organización más clara. Esto es algo que se puede hacer sin problemas, pero que requiere un poco de trabajo para reorganizar todo el proyecto. Creo que sería bueno tener módulos separados para cada uno de los temas principales, como por ejemplo un módulo para los naturales de Von Neumann, otro para las Álgebras de Boole, otro para los teoremas de incompletitud de Gödel, etc. Esto hará que el proyecto sea más fácil de navegar y entender. Además, dentro de cada módulo, podríamos tener submódulos para organizar mejor las definiciones, teoremas y demostraciones relacionadas con ese tema específico. Por ejemplo, dentro del módulo de los naturales de Von Neumann, podríamos tener submódulos para las definiciones básicas, las operaciones aritméticas, las propiedades fundamentales, etc. Esto no solo mejorará la claridad del proyecto, sino que también facilitará la colaboración y el mantenimiento a largo plazo.
+**[10.]** ~~Todo lo anterior nos lleva a que la organización del proyecto es demasiado básica, necesitamos un sistema de módulo y de espacios de nombres más compartimentados y con una organización más clara. Esto es algo que se puede hacer sin problemas, pero que requiere un poco de trabajo para reorganizar todo el proyecto. Creo que sería bueno tener módulos separados para cada uno de los temas principales, como por ejemplo un módulo para los naturales de Von Neumann, otro para las Álgebras de Boole, otro para los teoremas de incompletitud de Gödel, etc. Esto hará que el proyecto sea más fácil de navegar y entender. Además, dentro de cada módulo, podríamos tener submódulos para organizar mejor las definiciones, teoremas y demostraciones relacionadas con ese tema específico. Por ejemplo, dentro del módulo de los naturales de Von Neumann, podríamos tener submódulos para las definiciones básicas, las operaciones aritméticas, las propiedades fundamentales, etc. Esto no solo mejorará la claridad del proyecto, sino que también facilitará la colaboración y el mantenimiento a largo plazo.~~
+> ✅ Completado (Fases 1–3, abril 2026): 43 archivos en 8 subdirectorios (Core, Axiom, SetOps, Nat, Peano, Induction, BoolAlg, Cardinal), namespaces `ZFC.*` alineados con directorios, 185 identificadores renombrados según convención Mathlib.
 
 **[11.]** Lo siguiente a todo lo anterior (que podría seguir incrementándose hasta el infinito) es crear módulos para los números enteros en ZFC, para los racionales, y finalmente para los reales.
 
@@ -27,17 +30,35 @@
 **[14.]** Habrá que exponer la teoría de modelos, construcción de modelos, expresiones lógicas relativas y absolutas. Introducción de modelos que satisfacen distintos axiomas, etc.
 
 **NUEVOS PENSAMIENTOS:**
-**[1.]** Es prioritario ordenar fuertemente el proyecto.
-*[1.1.]* Crear módulos separados en función de los temas principales, a ser posible en subdirectorios separados.
-*[1.2.]* Utilizar de forma más sistemática y ordenadora los espacios de nombres.
+**[1.]** ~~Es prioritario ordenar fuertemente el proyecto.~~
+> ✅ Completado (Fases 1–3).
+
+*[1.1.]* ~~Crear módulos separados en función de los temas principales, a ser posible en subdirectorios separados.~~
+> ✅ Completado (Fase 1): Core, Axiom, SetOps, Nat, Peano, Induction, BoolAlg, Cardinal.
+
+*[1.2.]* ~~Utilizar de forma más sistemática y ordenadora los espacios de nombres.~~
+> ✅ Completado (Fase 2): namespace `ZFC.*` alineado con directorios.
 *[1.3.]* Temas: [Preliminares], [Axiomas de ZFC], [Operaciones con conjuntos en ZFC], [Construcción de los Teoremas sobre Recursión e Inducción], [Números Naturales de Von Neumann], [Integración de los Postulados de Peano en ZFC], [Integración del proyecto Peano en ZFC], [Álgebras y Anillos Booleanos], [Sistemas de Números Enteros, Racionales, Reales y Complejos], [Álgebra Lineal], [Topología], [Ordinales y su Teoría], [Recursion Transfinita], [Teoría de Cardinales], [Jerarquía de Conjuntos de Zermelo], [Jerarquía de Gödel (construibles)], [Teoría de Modelos], etc.
 *[1.4.]* Hacer algún tipo de comentario sistematizado para distinguir en cada módulo cuáles son los teoremas principales, cuáles son los secundarios, etc. Esto se puede hacer con algún tipo de etiqueta o comentario especial que permita identificar rápidamente la importancia de cada resultado dentro del módulo.
+> ⏳ Pendiente: Fase 4 del plan de reorganización (sistema de anotaciones @importance, @axiom_system).
+
 *[1.5.]* Algún sistema de marcas para identificar las dependencias.
+> ⏳ Pendiente: Fase 4.
+
 *[1.6.]* Algún sistema de marcas para identificar los resultados que se han demostrado dentro de ZFC y los que no.
+> ⏳ Pendiente: Fase 4.
+
 *[1.7.]* Algún sistema de marcas para identificar los resultados que se han demostrado en Peano o en el sistema de Aczel (nuevo proyecto) y los que no.
-*[1.8.]* Quiero que adoptemos el sistema de nombres de teoremas, definiciones, etc de mathlib, si es que este es fácil de entender y de seguir. Tenemos una deuda de sistematicidad en los nombres que hace que sean muy difíciles de seguir los teoremas etc por sus nombres actuales. Esto es algo que se puede solucionar con un poco de trabajo y que hará que el proyecto sea mucho más fácil de seguir y de entender.
-*[1.9.]* Necesitamos un sistema de nombres para módulos y submódulos.
-*[1.10.]* Necesitamos un sistema de nombres para los espacios de nombres.
+> ⏳ Pendiente: Fase 4.
+
+*[1.8.]* ~~Quiero que adoptemos el sistema de nombres de teoremas, definiciones, etc de mathlib, si es que este es fácil de entender y de seguir. Tenemos una deuda de sistematicidad en los nombres que hace que sean muy difíciles de seguir los teoremas etc por sus nombres actuales. Esto es algo que se puede solucionar con un poco de trabajo y que hará que el proyecto sea mucho más fácil de seguir y de entender.~~
+> ✅ Completado (Fase 3): 185 identificadores renombrados según convención Mathlib. Ver REFERENCE.md §0 para la tabla completa.
+
+*[1.9.]* ~~Necesitamos un sistema de nombres para módulos y submódulos.~~
+> ✅ Completado (Fases 1–2): directorios temáticos + namespaces `ZFC.*`.
+
+*[1.10.]* ~~Necesitamos un sistema de nombres para los espacios de nombres.~~
+> ✅ Completado (Fase 2): `ZFC.Axiom.*`, `ZFC.SetOps.*`, `ZFC.Nat.*`, `ZFC.BoolAlg.*`, etc.
 
 **NOVÍSIMOS:**
 *[1.]* Hay que quitar los warnings de lean, de forma que aparezcan solo los errores, y finalmente la salida sea completamente limpia. Esto es algo que se puede hacer con un poco de trabajo y que hará que el proyecto sea mucho más fácil de seguir y de entender, ya que no habrá ruido visual de warnings que no aportan nada.
