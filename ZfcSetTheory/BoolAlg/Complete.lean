@@ -23,7 +23,7 @@ import ZfcSetTheory.BoolAlg.Atomic
 This file proves that the power set 𝒫(A) forms a **complete atomic Boolean algebra**:
 every subfamily of 𝒫(A) has a supremum and infimum within 𝒫(A).
 
-Combined with `PowerSet_is_atomic` from `AtomicBooleanAlgebra`, this yields the
+Combined with `PowerSet_is_atomic` from `BoolAlg.Atomic`, this yields the
 full structure theorem: 𝒫(A) is a complete atomic Boolean algebra.
 
 ## Main Definitions
@@ -55,20 +55,20 @@ full structure theorem: 𝒫(A) is a complete atomic Boolean algebra.
 
 namespace ZFC
   open Classical
-  open ZFC.ExtensionAxiom
-  open ZFC.ExistenceAxiom
-  open ZFC.SpecificationAxiom
-  open ZFC.PairingAxiom
-  open ZFC.UnionAxiom
-  open ZFC.PowerSetAxiom
-  open ZFC.PowerSetAlgebra
-  open ZFC.GeneralizedDeMorgan
-  open ZFC.SetOrder
-  open ZFC.AtomicBooleanAlgebra
+  open ZFC.Axiom.Extension
+  open ZFC.Axiom.Existence
+  open ZFC.Axiom.Specification
+  open ZFC.Axiom.Pairing
+  open ZFC.Axiom.Union
+  open ZFC.Axiom.PowerSet
+  open ZFC.BoolAlg.PowerSetAlgebra
+  open ZFC.BoolAlg.GenDeMorgan
+  open ZFC.SetOps.SetOrder
+  open ZFC.BoolAlg.Atomic
   universe u
   variable {U : Type u}
 
-  namespace CompleteBooleanAlgebra
+  namespace BoolAlg.Complete
 
     /-! ### Relativized Supremum and Infimum -/
 
@@ -205,10 +205,10 @@ namespace ZFC
     theorem PowerSet_is_complete_atomic_BA (A : U) : isCompleteAtomicBA A :=
       ⟨PowerSet_is_complete_lattice A, PowerSet_is_atomic A⟩
 
-  end CompleteBooleanAlgebra
+  end BoolAlg.Complete
 
   -- Export key definitions and theorems
-  export CompleteBooleanAlgebra (
+  export BoolAlg.Complete (
     isSupremumIn isInfimumIn isCompleteLattice
     supremumIn_unique infimumIn_unique
     UnionSet_subset_of_family UnionSet_mem_PowerSet_of_family

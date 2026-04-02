@@ -36,19 +36,19 @@ and that the atoms are exactly the singletons.
 
 namespace ZFC
   open Classical
-  open ZFC.ExtensionAxiom
-  open ZFC.ExistenceAxiom
-  open ZFC.SpecificationAxiom
-  open ZFC.PairingAxiom
-  open ZFC.UnionAxiom
-  open ZFC.PowerSetAxiom
-  open ZFC.PowerSetAlgebra
-  open ZFC.SetOrder
-  open ZFC.SetStrictOrder
+  open ZFC.Axiom.Extension
+  open ZFC.Axiom.Existence
+  open ZFC.Axiom.Specification
+  open ZFC.Axiom.Pairing
+  open ZFC.Axiom.Union
+  open ZFC.Axiom.PowerSet
+  open ZFC.BoolAlg.PowerSetAlgebra
+  open ZFC.SetOps.SetOrder
+  open ZFC.SetOps.SetStrictOrder
   universe u
   variable {U : Type u}
 
-  namespace AtomicBooleanAlgebra
+  namespace BoolAlg.Atomic
 
     /-! ### Definition of Atom -/
 
@@ -294,10 +294,10 @@ namespace ZFC
         rw [hz_eq_x]
         exact hx_X
 
-  end AtomicBooleanAlgebra
+  end BoolAlg.Atomic
 
   -- Export key theorems
-  export AtomicBooleanAlgebra (isAtom isAtom_alt singleton_is_atom atom_is_singleton
+  export BoolAlg.Atomic (isAtom isAtom_alt singleton_is_atom atom_is_singleton
     atom_iff_singleton Atoms Atoms_is_specified Atoms_eq_singletons
     isAtomic PowerSet_is_atomic element_is_union_of_atoms atomBelow singleton_below_iff)
 

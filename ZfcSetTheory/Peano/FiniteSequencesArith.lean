@@ -30,28 +30,28 @@ import ZfcSetTheory.SetOps.FiniteSets
 
 namespace ZFC
   open Classical
-  open ZFC.ExtensionAxiom
-  open ZFC.ExistenceAxiom
-  open ZFC.SpecificationAxiom
-  open ZFC.PairingAxiom
-  open ZFC.UnionAxiom
-  open ZFC.PowerSetAxiom
-  open ZFC.OrderedPairExtensions
-  open ZFC.CartesianProduct
-  open ZFC.Relations
-  open ZFC.Functions
-  open ZFC.Cardinality
-  open ZFC.NaturalNumbers
-  open ZFC.InfinityAxiom
-  open ZFC.NaturalNumbersAdd
-  open ZFC.NaturalNumbersMul
-  open ZFC.FiniteSequences
-  open ZFC.FiniteSets
+  open ZFC.Axiom.Extension
+  open ZFC.Axiom.Existence
+  open ZFC.Axiom.Specification
+  open ZFC.Axiom.Pairing
+  open ZFC.Axiom.Union
+  open ZFC.Axiom.PowerSet
+  open ZFC.SetOps.OrderedPair
+  open ZFC.SetOps.CartesianProduct
+  open ZFC.SetOps.Relations
+  open ZFC.SetOps.Functions
+  open ZFC.Cardinal.Basic
+  open ZFC.Nat.Basic
+  open ZFC.Axiom.Infinity
+  open ZFC.Nat.Add
+  open ZFC.Nat.Mul
+  open ZFC.Peano.FiniteSequences
+  open ZFC.SetOps.FiniteSets
 
   universe u
   variable {U : Type u}
 
-  namespace FiniteSequencesArith
+  namespace Peano.FiniteSequencesArith
 
     /-! ============================================================ -/
     /-! ### SECTION 1: SUMMATION STEP FUNCTION ### -/
@@ -699,7 +699,7 @@ namespace ZFC
                             else Or.inl ⟨hz, h⟩,
                  fun h => h.elim (·.1) (by intro heq; rw [heq]; exact hb₀_B)⟩
         have h_product_eq : (A ×ₛ B' : U) = BinUnion (A ×ₛ (B' ∖ {b₀})) (A ×ₛ {b₀}) :=
-          (congrArg (CartesianProduct A) h_decomp).trans
+          (congrArg (SetOps.CartesianProduct A) h_decomp).trans
             (CartesianProduct_distrib_union_right A (B' ∖ {b₀}) {b₀})
         have h_disj : (A ×ₛ (B' ∖ {b₀})) ⟂ (A ×ₛ {b₀}) := by
           intro z hz₁ hz₂
@@ -1021,9 +1021,9 @@ namespace ZFC
         exact equipotent_trans h_decomp
           (card_product_two hsp_w hcn'_w ih_result (hcard' n' (mem_successor_self n')))
 
-  end FiniteSequencesArith
+  end Peano.FiniteSequencesArith
 
-  export FiniteSequencesArith (
+  export Peano.FiniteSequencesArith (
     -- Section 1: Summation step function
     sumStepFn
     mem_sumStepFn

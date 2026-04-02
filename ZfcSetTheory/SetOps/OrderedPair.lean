@@ -15,16 +15,16 @@ import ZfcSetTheory.Axiom.PowerSet
 
 namespace ZFC
   open Classical
-  open ZFC.ExtensionAxiom
-  open ZFC.ExistenceAxiom
-  open ZFC.SpecificationAxiom
-  open ZFC.PairingAxiom
-  open ZFC.UnionAxiom
-  open ZFC.PowerSetAxiom
+  open ZFC.Axiom.Extension
+  open ZFC.Axiom.Existence
+  open ZFC.Axiom.Specification
+  open ZFC.Axiom.Pairing
+  open ZFC.Axiom.Union
+  open ZFC.Axiom.PowerSet
   universe u
   variable {U : Type u}
 
-  namespace OrderedPairExtensions
+  namespace SetOps.OrderedPair
 
     /-! ============================================================ -/
     /-! ### EXTENSIONES DEL PAR ORDENADO ### -/
@@ -91,10 +91,10 @@ namespace ZFC
         | inl hw_eq_a => rw [hw_eq_a]; exact Or.inl ha
         | inr hw_eq_b => rw [hw_eq_b]; exact Or.inr hb
 
-  end OrderedPairExtensions
+  end SetOps.OrderedPair
 end ZFC
 
-export ZFC.OrderedPairExtensions (
+export ZFC.SetOps.OrderedPair (
   OrderedPair_eq_of
   OrderedPair_eq_iff
   OrderedPair_in_PowerSet

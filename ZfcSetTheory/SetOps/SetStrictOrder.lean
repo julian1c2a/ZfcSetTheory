@@ -11,12 +11,12 @@ import ZfcSetTheory.SetOps.SetOrder
 
 namespace ZFC
   open Classical
-  open ZFC.ExtensionAxiom
-  open ZFC.SetOrder
+  open ZFC.Axiom.Extension
+  open ZFC.SetOps.SetOrder
   universe u
   variable {U : Type u}
 
-  namespace SetStrictOrder
+  namespace SetOps.SetStrictOrder
 
     /-! ### Propiedades del Orden Estricto Completas ### -/
 
@@ -148,11 +148,11 @@ namespace ZFC
       have h_eq := order_antisymmetric x y h_strict.1 h_y_sub_x
       exact h_strict.2 h_eq
 
-  end SetStrictOrder
+  end SetOps.SetStrictOrder
 
 end ZFC
 
-export ZFC.SetStrictOrder (
+export ZFC.SetOps.SetStrictOrder (
     subset_subseteq subseteq_subset_or_eq
     strict_order_irreflexive strict_order_asymmetric strict_order_transitive
     subset_transitive_mixed_left subset_transitive_mixed_right

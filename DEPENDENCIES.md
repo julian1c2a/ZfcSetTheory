@@ -15,40 +15,40 @@ ZfcSetTheory/
 ├── Union.lean                           # Axioma de Unión + Unión Binaria + Diferencia Simétrica
 ├── PowerSet.lean                        # Axioma del Conjunto Potencia
 ├── OrderedPair.lean                     # Extensiones del Par Ordenado
-├── CartesianProduct.lean                # Producto Cartesiano A ×ₛ B
+├── SetOps.CartesianProduct.lean                # Producto Cartesiano A ×ₛ B
 ├── Relations.lean                       # Relaciones: equivalencia, orden, clases, dominio, rango
 ├── Functions.lean                       # Funciones, aplicación, composición, inversa
 ├── Infinity.lean                        # Axioma del Infinito y conjunto ω (nat_mem_wf)
-├── NaturalNumbers.lean                  # Números naturales como ordinales de von Neumann
+├── Nat.Basic.lean                  # Números naturales como ordinales de von Neumann
 ├── Recursion.lean                       # Teorema de Recursión sobre ℕ
 ├── PeanoImport.lean                     # Isomorfismo Von Neumann ↔ Peano
-├── NaturalNumbersAdd.lean               # Suma en ω vía RecursiveFn + puente Peano
-├── NaturalNumbersMul.lean               # Multiplicación en ω vía RecursiveFn + puente Peano
-├── NaturalNumbersSub.lean               # Sustracción saturada en ω vía RecursiveFn
-├── NaturalNumbersDiv.lean               # División euclídea Patrón B
-├── NaturalNumbersPow.lean               # Potenciación en ω vía RecursiveFn
-├── NaturalNumbersArith.lean             # Divisibilidad, GCD, LCM, Bézout
-├── NaturalNumbersFactorial.lean         # Factorial en ω Patrón B
-├── NaturalNumbersGcd.lean               # GCD/LCM ZFC-nativo (algoritmo euclídeo)
-├── NaturalNumbersPrimes.lean            # Primalidad ZFC-nativa + TFA
-├── NaturalNumbersBinom.lean             # Coeficientes binomiales Patrón B
-├── NaturalNumbersMaxMin.lean            # Máximo y mínimo en ω Patrón B
-├── NaturalNumbersNewtonBinom.lean       # Teorema binomial de Newton Patrón B
-├── NaturalNumbersWellFounded.lean       # Buen fundamento y buena ordenación de ω
-├── FiniteSequences.lean                 # Secuencias finitas en ZFC
-├── FiniteSequencesArith.lean            # Aritmética de secuencias finitas: seqSum, seqProd, familyProduct
-├── FiniteSequencesBridge.lean           # Puente DList ↔ ZFC, nth, isPrimeSeq, TFA nativo
-├── FiniteSets.lean                      # Conjuntos finitos en ZFC
-├── BooleanAlgebra.lean                  # Álgebra Booleana de conjuntos (teoremas)
-├── BooleanRing.lean                     # Anillo Booleano con SymDiff
-├── PowerSetAlgebra.lean                 # Álgebra del conjunto potencia (complemento, De Morgan)
-├── GeneralizedDeMorgan.lean             # Leyes de De Morgan generalizadas para familias
-├── GeneralizedDistributive.lean         # Leyes distributivas generalizadas
-├── AtomicBooleanAlgebra.lean            # Álgebra de Boole atómica
-├── CompleteBooleanAlgebra.lean          # Álgebra booleana completa atómica (𝒫(A) retículo completo)
-├── FiniteCofinite.lean                  # Álgebra finita/cofinita, contraejemplo no completo
-├── SetOrder.lean                        # Orden parcial y retículos
-├── SetStrictOrder.lean                  # Orden estricto
+├── Nat.Add.lean               # Suma en ω vía RecursiveFn + puente Peano
+├── Nat.Mul.lean               # Multiplicación en ω vía RecursiveFn + puente Peano
+├── Nat.Sub.lean               # Sustracción saturada en ω vía RecursiveFn
+├── Nat.Div.lean               # División euclídea Patrón B
+├── Nat.Pow.lean               # Potenciación en ω vía RecursiveFn
+├── Nat.Arith.lean             # Divisibilidad, GCD, LCM, Bézout
+├── Nat.Factorial.lean         # Factorial en ω Patrón B
+├── Nat.Gcd.lean               # GCD/LCM ZFC-nativo (algoritmo euclídeo)
+├── Nat.Primes.lean            # Primalidad ZFC-nativa + TFA
+├── Nat.Binom.lean             # Coeficientes binomiales Patrón B
+├── Nat.MaxMin.lean            # Máximo y mínimo en ω Patrón B
+├── Nat.NewtonBinom.lean       # Teorema binomial de Newton Patrón B
+├── Nat.WellFounded.lean       # Buen fundamento y buena ordenación de ω
+├── Peano.FiniteSequences.lean                 # Secuencias finitas en ZFC
+├── Peano.FiniteSequencesArith.lean            # Aritmética de secuencias finitas: seqSum, seqProd, familyProduct
+├── Peano.FiniteSequencesBridge.lean           # Puente DList ↔ ZFC, nth, isPrimeSeq, TFA nativo
+├── SetOps.FiniteSets.lean                      # Conjuntos finitos en ZFC
+├── BoolAlg.Basic.lean                  # Álgebra Booleana de conjuntos (teoremas)
+├── BoolAlg.Ring.lean                     # Anillo Booleano con SymDiff
+├── BoolAlg.PowerSetAlgebra.lean                 # Álgebra del conjunto potencia (complemento, De Morgan)
+├── BoolAlg.GenDeMorgan.lean             # Leyes de De Morgan generalizadas para familias
+├── BoolAlg.GenDistributive.lean         # Leyes distributivas generalizadas
+├── BoolAlg.Atomic.lean            # Álgebra de Boole atómica
+├── BoolAlg.Complete.lean          # Álgebra booleana completa atómica (𝒫(A) retículo completo)
+├── BoolAlg.FiniteCofinite.lean                  # Álgebra finita/cofinita, contraejemplo no completo
+├── SetOps.SetOrder.lean                        # Orden parcial y retículos
+├── SetOps.SetStrictOrder.lean                  # Orden estricto
 ├── Cardinality.lean                     # Teoremas de Cantor y Cantor-Schröder-Bernstein
 └── ZfcSetTheory.lean                    # Módulo principal (exporta todo)
 ```
@@ -91,7 +91,7 @@ graph TD
     U --> OP
     
     %% Nivel 6: Producto Cartesiano
-    OP --> CP[CartesianProduct.lean]
+    OP --> CP[SetOps.CartesianProduct.lean]
     
     %% Nivel 7: Relaciones y Funciones
     CP --> Rel[Relations.lean]
@@ -99,61 +99,61 @@ graph TD
     
     %% Nivel 8: Números Naturales
     Pot --> Inf[Infinity.lean]
-    Inf --> Nat[NaturalNumbers.lean]
+    Inf --> Nat[Nat.Basic.lean]
     Nat --> Rec[Recursion.lean]
     Nat --> PI[PeanoImport.lean]
     Inf --> PI
     PL[peanolib/PeanoNatAxioms] --> PI
-    PI --> NA[NaturalNumbersAdd.lean]
+    PI --> NA[Nat.Add.lean]
     Rec --> NA
-    NA --> NM[NaturalNumbersMul.lean]
-    NM --> NS[NaturalNumbersSub.lean]
-    NS --> ND[NaturalNumbersDiv.lean]
-    NM --> NP[NaturalNumbersPow.lean]
-    ND --> NAR[NaturalNumbersArith.lean]
+    NA --> NM[Nat.Mul.lean]
+    NM --> NS[Nat.Sub.lean]
+    NS --> ND[Nat.Div.lean]
+    NM --> NP[Nat.Pow.lean]
+    ND --> NAR[Nat.Arith.lean]
     NP --> NAR
-    NAR --> NF[NaturalNumbersFactorial.lean]
-    NAR --> NG[NaturalNumbersGcd.lean]
-    NG --> NPR[NaturalNumbersPrimes.lean]
-    NF --> NB[NaturalNumbersBinom.lean]
-    NB --> NNB[NaturalNumbersNewtonBinom.lean]
+    NAR --> NF[Nat.Factorial.lean]
+    NAR --> NG[Nat.Gcd.lean]
+    NG --> NPR[Nat.Primes.lean]
+    NF --> NB[Nat.Binom.lean]
+    NB --> NNB[Nat.NewtonBinom.lean]
     NP --> NNB
-    PI --> NMM[NaturalNumbersMaxMin.lean]
-    PI --> NWF[NaturalNumbersWellFounded.lean]
-    NA --> FSeq[FiniteSequences.lean]
-    NN --> FSets[FiniteSets.lean]
+    PI --> NMM[Nat.MaxMin.lean]
+    PI --> NWF[Nat.WellFounded.lean]
+    NA --> FSeq[Peano.FiniteSequences.lean]
+    NN --> FSets[SetOps.FiniteSets.lean]
     Inf --> FSets
-    NM --> FSA[FiniteSequencesArith.lean]
+    NM --> FSA[Peano.FiniteSequencesArith.lean]
     FSeq --> FSA
     FSets --> FSA
-    FSA --> FSB[FiniteSequencesBridge.lean]
+    FSA --> FSB[Peano.FiniteSequencesBridge.lean]
     NPR --> FSB
 
     %% Nivel 9: Álgebras y órdenes
-    E --> SSO[SetStrictOrder.lean]
-    Ex --> SO[SetOrder.lean]
+    E --> SSO[SetOps.SetStrictOrder.lean]
+    Ex --> SO[SetOps.SetOrder.lean]
     S --> SO
     Pa --> SO
     U --> SO
     SO --> SSO
-    S --> BA[BooleanAlgebra.lean]
+    S --> BA[BoolAlg.Basic.lean]
     Pa --> BA
     U --> BA
-    Pot --> PSA[PowerSetAlgebra.lean]
+    Pot --> PSA[BoolAlg.PowerSetAlgebra.lean]
     S --> PSA
-    PSA --> BR[BooleanRing.lean]
+    PSA --> BR[BoolAlg.Ring.lean]
     U --> BR
-    BA --> ABA[AtomicBooleanAlgebra.lean]
+    BA --> ABA[BoolAlg.Atomic.lean]
     Pot --> ABA
-    ABA --> CBA[CompleteBooleanAlgebra.lean]
+    ABA --> CBA[BoolAlg.Complete.lean]
     Pot --> CBA
-    CBA --> FC[FiniteCofinite.lean]
+    CBA --> FC[BoolAlg.FiniteCofinite.lean]
     FSets --> FC
     NA --> FC
     Card --> FC
-    U --> GDM[GeneralizedDeMorgan.lean]
+    U --> GDM[BoolAlg.GenDeMorgan.lean]
     Pot --> GDM
-    U --> GDD[GeneralizedDistributive.lean]
+    U --> GDD[BoolAlg.GenDistributive.lean]
     Pot --> GDD
     
     %% Nivel 10: Cardinalidad
@@ -236,81 +236,81 @@ namespace ZFC
   notation:50 lhs:51 " ∈ " rhs:51 => mem lhs rhs
 ```
 
-### 2. **ZFC.ExtensionAxiom**
+### 2. **ZFC.Axiom.Extension**
 
 ```lean
-namespace ZFC.ExtensionAxiom
+namespace ZFC.Axiom.Extension
   -- Axioma de Extensionalidad
   -- Definiciones: subseteq (⊆), subset (⊂), disjoint (⟂)
   -- Teoremas: orden parcial, igualdad de conjuntos
 ```
 
-### 3. **ZFC.ExistenceAxiom**
+### 3. **ZFC.Axiom.Existence**
 
 ```lean
-namespace ZFC.ExistenceAxiom
+namespace ZFC.Axiom.Existence
   -- Axioma de Existencia del conjunto vacío
   -- Definiciones: EmptySet (∅)
   -- Teoremas: unicidad del vacío, propiedades básicas
 ```
 
-### 4. **ZFC.SpecificationAxiom**
+### 4. **ZFC.Axiom.Specification**
 
 ```lean
-namespace ZFC.SpecificationAxiom
+namespace ZFC.Axiom.Specification
   -- Axioma de Especificación/Separación
   -- Definiciones: SpecSet, BinInter (∩), Difference (\)
   -- Teoremas: propiedades de intersección y diferencia
 ```
 
-### 5. **ZFC.PairingAxiom**
+### 5. **ZFC.Axiom.Pairing**
 
 ```lean
-namespace ZFC.PairingAxiom
+namespace ZFC.Axiom.Pairing
   -- Axioma de Pares
   -- Definiciones: PairSet {a,b}, Singleton {a}, OrderedPair ⟨a,b⟩
   -- Teoremas: pares ordenados, relaciones, funciones
 ```
 
-### 6. **ZFC.UnionAxiom**
+### 6. **ZFC.Axiom.Union**
 
 ```lean
-namespace ZFC.UnionAxiom
+namespace ZFC.Axiom.Union
   -- Axioma de Unión
   -- Definiciones: UnionSet (⋃), BinUnion (∪), SymDiff (△)
   -- Teoremas: propiedades de unión de familias y binaria
 ```
 
-### 7. **ZFC.PowerSetAxiom**
+### 7. **ZFC.Axiom.PowerSet**
 
 ```lean
-namespace ZFC.PowerSetAxiom
+namespace ZFC.Axiom.PowerSet
   -- Axioma del Conjunto Potencia
   -- Definiciones: PowerSetOf (𝒫)
   -- Teoremas: caracterización, monotonía, propiedades con ∩ y ∪
 ```
 
-### 8. **ZFC.OrderedPairExtensions**
+### 8. **ZFC.SetOps.OrderedPair**
 
 ```lean
-namespace ZFC.OrderedPairExtensions
+namespace ZFC.SetOps.OrderedPair
   -- Extensiones del Par Ordenado
   -- Teoremas: OrderedPair_eq_of, OrderedPair_eq_iff, OrderedPair_in_PowerSet
 ```
 
-### 9. **ZFC.CartesianProduct**
+### 9. **ZFC.SetOps.CartesianProduct**
 
 ```lean
-namespace ZFC.CartesianProduct
+namespace ZFC.SetOps.CartesianProduct
   -- Producto Cartesiano
-  -- Definiciones: CartesianProduct (A ×ₛ B)
+  -- Definiciones: SetOps.CartesianProduct (A ×ₛ B)
   -- Teoremas: caracterización, vacío, monotonía, distributividad
 ```
 
-### 10. **ZFC.Relations**
+### 10. **ZFC.SetOps.Relations**
 
 ```lean
-namespace ZFC.Relations
+namespace ZFC.SetOps.Relations
   -- Relaciones sobre conjuntos
   -- Definiciones: isRelationOn, isReflexiveOn, isSymmetricOn, etc.
   -- Tipos: equivalencia, preorden, orden parcial, orden lineal, orden estricto
@@ -319,37 +319,37 @@ namespace ZFC.Relations
   -- Teoremas: propiedades de relaciones, clases de equivalencia, dominio y rango
 ```
 
-### 11. **ZFC.Functions**
+### 11. **ZFC.SetOps.Functions**
 
 ```lean
-namespace ZFC.Functions
+namespace ZFC.SetOps.Functions
   -- Funciones y aplicaciones
   -- Definiciones: isFunctionFromTo, apply (⦅⦆), composition, inverse
   -- Teoremas: propiedades de funciones, composición, aplicación
 ```
 
-### 12. **ZFC.InfinityAxiom**
+### 12. **ZFC.Axiom.Infinity**
 
 ```lean
-namespace ZFC.InfinityAxiom
+namespace ZFC.Axiom.Infinity
   -- Axioma del Infinito
   -- Definiciones: isInductive, InfSet (conjunto infinito)
   -- Teoremas: existencia de conjunto inductivo infinito
 ```
 
-### 13. **ZFC.NaturalNumbers**
+### 13. **ZFC.Nat.Basic**
 
 ```lean
-namespace ZFC.NaturalNumbers
+namespace ZFC.Nat.Basic
   -- Números naturales como ordinales de von Neumann
   -- Definiciones: isNatural, ℕ (conjunto omega), successor
   -- Teoremas: propiedades de números naturales, inducción
 ```
 
-### 14. **ZFC.NaturalNumbersAdd**
+### 14. **ZFC.Nat.Add**
 
 ```lean
-namespace ZFC.NaturalNumbersAdd
+namespace ZFC.Nat.Add
   -- Suma de naturales de von Neumann vía Recursión
   -- Definiciones: successorFn, addFn, add
   -- Teoremas: semianillo conmutativo (add_zero, zero_add, add_succ, add_comm, add_assoc,
@@ -358,128 +358,128 @@ namespace ZFC.NaturalNumbersAdd
   -- Depende de: PeanoImport, Recursion
 ```
 
-### 14b. **ZFC.NaturalNumbersMul**
+### 14b. **ZFC.Nat.Mul**
 
 ```lean
-namespace ZFC.NaturalNumbersMul
+namespace ZFC.Nat.Mul
   -- Multiplicación de naturales de von Neumann vía Recursión
   -- Definiciones: mulFn, mul
   -- Teoremas: anillo conmutativo (mul_zero, zero_mul, mul_succ, mul_comm,
   --           mul_assoc, mul_one, one_mul, mul_ldistr, mul_rdistr, fromPeano_mul)
-  -- Depende de: NaturalNumbersAdd, PeanoImport, Recursion
+  -- Depende de: Nat.Add, PeanoImport, Recursion
 ```
 
-### 15. **ZFC.Recursion**
+### 15. **ZFC.Induction.Recursion**
 
 ```lean
-namespace ZFC.Recursion
+namespace ZFC.Induction.Recursion
   -- Teorema de Recursión sobre ℕ
   -- Teoremas: recursión, unicidad de funciones recursivas
 ```
 
-### 15. **ZFC.BooleanAlgebra**
+### 15. **ZFC.BoolAlg.Basic**
 
 ```lean
-namespace ZFC.BooleanAlgebra
+namespace ZFC.BoolAlg.Basic
   -- Álgebra Booleana de conjuntos
   -- Teoremas: leyes booleanas, distributividad, idempotencia
 ```
 
-### 16. **ZFC.PowerSetAlgebra**
+### 16. **ZFC.BoolAlg.PowerSetAlgebra**
 
 ```lean
-namespace ZFC.PowerSetAlgebra
+namespace ZFC.BoolAlg.PowerSetAlgebra
   -- Álgebra del conjunto potencia
   -- Definiciones: Complement (X^∁[ A ]), ComplementFamily
   -- Teoremas: double_complement, DeMorgan_union_family, DeMorgan_inter_family
 ```
 
-### 17. **ZFC.BooleanRing**
+### 17. **ZFC.BoolAlg.Ring**
 
 ```lean
-namespace ZFC.BooleanRing
+namespace ZFC.BoolAlg.Ring
   -- Anillo Booleano con SymDiff
   -- Teoremas: SymDiff como suma, intersección como producto
   --           asociatividad, distributividad, conmutatividad
 ```
 
-### 18. **ZFC.GeneralizedDeMorgan**
+### 18. **ZFC.BoolAlg.GenDeMorgan**
 
 ```lean
-namespace ZFC.GeneralizedDeMorgan
+namespace ZFC.BoolAlg.GenDeMorgan
   -- Leyes de De Morgan generalizadas
   -- Teoremas: complement_union_eq_inter_complement, complement_inter_eq_union_complement
 ```
 
-### 19. **ZFC.GeneralizedDistributive**
+### 19. **ZFC.BoolAlg.GenDistributive**
 
 ```lean
-namespace ZFC.GeneralizedDistributive
+namespace ZFC.BoolAlg.GenDistributive
   -- Leyes distributivas generalizadas
   -- Definiciones: DistribSet
   -- Teoremas: inter_union_distrib, union_inter_distrib
 ```
 
-### 20. **ZFC.AtomicBooleanAlgebra**
+### 20. **ZFC.BoolAlg.Atomic**
 
 ```lean
-namespace ZFC.AtomicBooleanAlgebra
+namespace ZFC.BoolAlg.Atomic
   -- Álgebra de Boole atómica
   -- Definiciones: isAtom, Atoms, isAtomic, atomBelow
   -- Teoremas: singleton_is_atom, atom_is_singleton, atom_iff_singleton
   --           PowerSet_is_atomic, element_is_union_of_atoms
 ```
 
-### 21. **ZFC.SetOrder**
+### 21. **ZFC.SetOps.SetOrder**
 
 ```lean
-namespace ZFC.SetOrder
+namespace ZFC.SetOps.SetOrder
   -- Orden parcial y estructura de retículo
   -- Definiciones: isUpperBound, isLowerBound, isSupremum, isInfimum
   -- Teoremas: propiedades de orden, cotas, supremos/ínfimos
 ```
 
-### 22. **ZFC.SetStrictOrder**
+### 22. **ZFC.SetOps.SetStrictOrder**
 
 ```lean
-namespace ZFC.SetStrictOrder
+namespace ZFC.SetOps.SetStrictOrder
   -- Orden estricto
   -- Teoremas: irreflexividad, asimetría, transitividad
   -- Relaciones entre orden parcial y estricto
 ```
 
-### 23. **ZFC.Cardinality**
+### 23. **ZFC.Cardinal.Basic**
 
 ```lean
-namespace ZFC.Cardinality
+namespace ZFC.Cardinal.Basic
   -- Teoría de Cardinalidad
   -- Definiciones: DiagonalSet, SetDiff, singletonMap, CSB_core, CSB_bijection
   -- Teoremas de Cantor: cantor_no_surjection, cantor_no_bijection
   -- Teorema de Cantor-Schröder-Bernstein: cantor_schroeder_bernstein
 ```
 
-### 24. **ZFC.FiniteSequencesArith**
+### 24. **ZFC.Peano.FiniteSequencesArith**
 
 ```lean
-namespace ZFC.FiniteSequencesArith
+namespace ZFC.Peano.FiniteSequencesArith
   -- Aritmética de secuencias finitas en ZFC
   -- Definiciones: sumStepFn, seqSumFn, seqSum, prodStepFn, seqProdFn, seqProd, familyProduct
   -- Teoremas: seqSum_zero/succ/singleton, seqProd_zero/succ/singleton
   --           familyProduct_zero, familyProduct_succ_char
   --           card_product_two, card_familyProduct
-  -- Depende de: NaturalNumbersMul, FiniteSequences, FiniteSets
+  -- Depende de: Nat.Mul, Peano.FiniteSequences, SetOps.FiniteSets
 ```
 
-### 25. **ZFC.FiniteSequencesBridge**
+### 25. **ZFC.Peano.FiniteSequencesBridge**
 
 ```lean
-namespace ZFC.FiniteSequencesBridge
+namespace ZFC.Peano.FiniteSequencesBridge
   -- Puente DList ℕ₀ ↔ ZFC secuencias finitas + TFA nativo
   -- Definiciones: nth, dlistToSeq, dlistLen, isPrimeSeq
   -- Teoremas: nth_apply, nth_in_codomain, nth_ext, seqProd general recursion/extensionality
   --           dlistToSeq_isFinSeq, dlistToSeq_apply, dlistToSeq_seqProd
   --           isPrimeSeq, tfa_exists_native, tfa_unique_native
-  -- Depende de: FiniteSequencesArith, NaturalNumbersPrimes
+  -- Depende de: Peano.FiniteSequencesArith, Nat.Primes
 ```
 
 ## Dependencias por Nivel
@@ -509,54 +509,54 @@ namespace ZFC.FiniteSequencesBridge
 
 ### **Nivel 5: Producto Cartesiano**
 
-- `CartesianProduct.lean` - Producto cartesiano A ×ₛ B
+- `SetOps.CartesianProduct.lean` - Producto cartesiano A ×ₛ B
 
 ### **Nivel 6: Relaciones**
 
-- `Relations.lean` - Relaciones, equivalencias, órdenes, clases de equivalencia, dominio y rango
+- `SetOps.Relations.lean` - Relaciones, equivalencias, órdenes, clases de equivalencia, dominio y rango
 
 ### **Nivel 7: Funciones**
 
-- `Functions.lean` - Funciones, aplicación, composición, inversa
+- `SetOps.Functions.lean` - Funciones, aplicación, composición, inversa
 
 ### **Nivel 8: Infinito y Números Naturales**
 
 - `Infinity.lean` - Axioma del Infinito, conjunto inductivo, `nat_mem_wf`
-- `NaturalNumbers.lean` - Números naturales como ordinales de von Neumann, `predecessor`
-- `Recursion.lean` - Teorema de Recursión sobre ℕ (`RecursiveFn`, `RecursionTheoremWithStep`)
+- `Nat.Basic.lean` - Números naturales como ordinales de von Neumann, `predecessor`
+- `Induction.Recursion.lean` - Teorema de Recursión sobre ℕ (`RecursiveFn`, `RecursionTheoremWithStep`)
 - `PeanoImport.lean` - Isomorfismo Von Neumann ↔ Peano (depende de `peanolib`) *(2026-03-04)*
-- `NaturalNumbersAdd.lean` - Suma en ω vía RecursiveFn, puente `fromPeano_add`
-- `NaturalNumbersMul.lean` - Multiplicación en ω vía RecursiveFn, puente `fromPeano_mul`
-- `NaturalNumbersSub.lean` - Sustracción saturada (monus) vía RecursiveFn, puente `fromPeano_sub`
-- `NaturalNumbersDiv.lean` - División euclídea Patrón B (`divOf`/`modOf`), puentes `fromPeano_div/mod`
-- `NaturalNumbersPow.lean` - Potenciación vía RecursiveFn + `mulFn`, puente `fromPeano_pow`
-- `NaturalNumbersArith.lean` - Divisibilidad ZFC-nativa, `gcdOf`/`lcmOf` Patrón B, Bézout, TFA
-- `NaturalNumbersFactorial.lean` - Factorial Patrón B, puente `fromPeano_factorial`
-- `NaturalNumbersGcd.lean` - GCD ZFC-nativo (algoritmo euclídeo), LCM, puentes `gcd_eq_gcdOf`/`lcm_eq_lcmOf`
-- `NaturalNumbersPrimes.lean` - Primalidad ZFC-nativa (`isPrime`), TFA Enfoque A, puente `fromPeano_prime`
-- `NaturalNumbersBinom.lean` - Coeficientes binomiales Patrón B (`binomOf`), regla de Pascal
-- `NaturalNumbersMaxMin.lean` - Máximo/mínimo Patrón B (`maxOf`/`minOf`), 27 teoremas
-- `NaturalNumbersNewtonBinom.lean` - Teorema binomial de Newton Patrón B 4-arg (`binomTermOf`)
-- `NaturalNumbersWellFounded.lean` - Buen fundamento (`acc_lt_Omega`), buena ordenación (`well_ordering_Omega`)
-- `FiniteSequences.lean` - Secuencias finitas f : n → A con n ∈ ω (`isFinSeq`, `FinSeqSet`, `appendElem`)
-- `FiniteSets.lean` - Conjuntos finitos (`isFiniteSet`), biyecciones, equipotencia
-- `FiniteSequencesArith.lean` - Sumación/producto de secuencias (`seqSum`, `seqProd`), producto cartesiano de familias (`familyProduct`), teoremas de cardinalidad (`card_product_two`, `card_familyProduct`)
-- `FiniteSequencesBridge.lean` - Puente DList ↔ ZFC (`dlistToSeq`, `nth`), `isPrimeSeq`, TFA nativo (`tfa_exists_native`, `tfa_unique_native`)
+- `Nat.Add.lean` - Suma en ω vía RecursiveFn, puente `fromPeano_add`
+- `Nat.Mul.lean` - Multiplicación en ω vía RecursiveFn, puente `fromPeano_mul`
+- `Nat.Sub.lean` - Sustracción saturada (monus) vía RecursiveFn, puente `fromPeano_sub`
+- `Nat.Div.lean` - División euclídea Patrón B (`divOf`/`modOf`), puentes `fromPeano_div/mod`
+- `Nat.Pow.lean` - Potenciación vía RecursiveFn + `mulFn`, puente `fromPeano_pow`
+- `Nat.Arith.lean` - Divisibilidad ZFC-nativa, `gcdOf`/`lcmOf` Patrón B, Bézout, TFA
+- `Nat.Factorial.lean` - Factorial Patrón B, puente `fromPeano_factorial`
+- `Nat.Gcd.lean` - GCD ZFC-nativo (algoritmo euclídeo), LCM, puentes `gcd_eq_gcdOf`/`lcm_eq_lcmOf`
+- `Nat.Primes.lean` - Primalidad ZFC-nativa (`isPrime`), TFA Enfoque A, puente `fromPeano_prime`
+- `Nat.Binom.lean` - Coeficientes binomiales Patrón B (`binomOf`), regla de Pascal
+- `Nat.MaxMin.lean` - Máximo/mínimo Patrón B (`maxOf`/`minOf`), 27 teoremas
+- `Nat.NewtonBinom.lean` - Teorema binomial de Newton Patrón B 4-arg (`binomTermOf`)
+- `Nat.WellFounded.lean` - Buen fundamento (`acc_lt_Omega`), buena ordenación (`well_ordering_Omega`)
+- `Peano.FiniteSequences.lean` - Secuencias finitas f : n → A con n ∈ ω (`isFinSeq`, `FinSeqSet`, `appendElem`)
+- `SetOps.FiniteSets.lean` - Conjuntos finitos (`isFiniteSet`), biyecciones, equipotencia
+- `Peano.FiniteSequencesArith.lean` - Sumación/producto de secuencias (`seqSum`, `seqProd`), producto cartesiano de familias (`familyProduct`), teoremas de cardinalidad (`card_product_two`, `card_familyProduct`)
+- `Peano.FiniteSequencesBridge.lean` - Puente DList ↔ ZFC (`dlistToSeq`, `nth`), `isPrimeSeq`, TFA nativo (`tfa_exists_native`, `tfa_unique_native`)
 
 ### **Nivel 9: Estructuras Algebraicas**
 
-- `BooleanAlgebra.lean` - Teoremas booleanos
-- `BooleanRing.lean` - Anillo booleano con SymDiff
-- `PowerSetAlgebra.lean` - Álgebra del conjunto potencia
-- `GeneralizedDeMorgan.lean` - De Morgan generalizadas
-- `GeneralizedDistributive.lean` - Distributivas generalizadas
-- `AtomicBooleanAlgebra.lean` - Álgebra de Boole atómica
-- `SetOrder.lean` - Estructura de orden y retículo
-- `SetStrictOrder.lean` - Orden estricto
+- `BoolAlg.Basic.lean` - Teoremas booleanos
+- `BoolAlg.Ring.lean` - Anillo booleano con SymDiff
+- `BoolAlg.PowerSetAlgebra.lean` - Álgebra del conjunto potencia
+- `BoolAlg.GenDeMorgan.lean` - De Morgan generalizadas
+- `BoolAlg.GenDistributive.lean` - Distributivas generalizadas
+- `BoolAlg.Atomic.lean` - Álgebra de Boole atómica
+- `SetOps.SetOrder.lean` - Estructura de orden y retículo
+- `SetOps.SetStrictOrder.lean` - Orden estricto
 
 ### **Nivel 10: Cardinalidad**
 
-- `Cardinality.lean` - Teoremas de Cantor y Cantor-Schröder-Bernstein
+- `Cardinal.Basic.lean` - Teoremas de Cantor y Cantor-Schröder-Bernstein
 
 ### **Nivel 11: Integración**
 
@@ -568,7 +568,7 @@ namespace ZFC.FiniteSequencesBridge
 
 ```lean
 export ZFC (mem)
-export ZFC.ExtensionAxiom (
+export ZFC.Axiom.Extension (
     ExtSet, subseteq, subset, disjoint,
     subseteq_reflexive, subseteq_transitive, subseteq_antisymmetric,
     subset_irreflexive, subset_asymmetric, subset_transitive
@@ -578,7 +578,7 @@ export ZFC.ExtensionAxiom (
 ### Existence.lean
 
 ```lean
-export ZFC.ExistenceAxiom (
+export ZFC.Axiom.Existence (
     ExistsAnEmptySet, ExistsUniqueEmptySet, EmptySet,
     EmptySet_is_empty, EmptySet_is_same, EmptySet_subseteq_any
 )
@@ -587,7 +587,7 @@ export ZFC.ExistenceAxiom (
 ### Specification.lean
 
 ```lean
-export ZFC.SpecificationAxiom (
+export ZFC.Axiom.Specification (
     Specification, SpecSet, SpecSet_is_specified,
     BinInter, BinInter_is_specified, BinInter_commutative,
     BinInter_associative, BinInter_absorbent_elem, BinInter_idempotent,
@@ -600,7 +600,7 @@ export ZFC.SpecificationAxiom (
 ### Pairing.lean
 
 ```lean
-export ZFC.PairingAxiom (
+export ZFC.Axiom.Pairing (
     Pairing, PairingUniqueSet, PairSet, PairSet_is_specified,
     Singleton, Singleton_is_specified, nonempty_iff_exists_mem,
     member_inter, interSet, interSet_of_singleton,
@@ -620,7 +620,7 @@ export ZFC.PairingAxiom (
 ### Union.lean
 
 ```lean
-export ZFC.UnionAxiom (
+export ZFC.Axiom.Union (
   Union, UnionExistsUnique, Union_is_specified,
   UnionSet, UnionSet_is_empty, UnionSet_is_empty',
   UnionSet_is_specified, UnionSet_is_unique,
@@ -636,7 +636,7 @@ export ZFC.UnionAxiom (
 ### PowerSet.lean
 
 ```lean
-export ZFC.PowerSetAxiom (
+export ZFC.Axiom.PowerSet (
   PowerSet, PowerSetExistsUnique, PowerSetOf,
   PowerSet_is_specified, PowerSet_is_unique,
   empty_mem_PowerSet, self_mem_PowerSet, PowerSet_nonempty, PowerSet_empty,
@@ -648,16 +648,16 @@ export ZFC.PowerSetAxiom (
 ### OrderedPair.lean
 
 ```lean
-export ZFC.OrderedPairExtensions (
+export ZFC.SetOps.OrderedPair (
   OrderedPair_eq_of, OrderedPair_eq_iff, OrderedPair_in_PowerSet
 )
 ```
 
-### CartesianProduct.lean
+### SetOps.CartesianProduct.lean
 
 ```lean
-export ZFC.CartesianProduct (
-  CartesianProduct,
+export ZFC.SetOps.CartesianProduct (
+  SetOps.CartesianProduct,
   CartesianProduct_is_specified,
   OrderedPair_mem_CartesianProduct,
   CartesianProduct_empty_left,
@@ -673,7 +673,7 @@ export ZFC.CartesianProduct (
 ### Relations.lean
 
 ```lean
-export ZFC.Relations (
+export ZFC.SetOps.Relations (
     isRelationOn, isRelationFrom, Related,
     isReflexiveOn, isIrreflexiveOn, isSymmetricOn, isAntiSymmetricOn, isAsymmetricOn,
     isTransitiveOn, isConnectedOn, isStronglyConnectedOn, isTrichotomousOn,
@@ -698,7 +698,7 @@ export ZFC.Relations (
 ### Functions.lean
 
 ```lean
-export ZFC.Functions (
+export ZFC.SetOps.Functions (
     isFunctionFromTo, apply, composition, inverse,
     function_iff, apply_mem, apply_eq, apply_unique,
     composition_assoc, inverse_involutive
@@ -708,17 +708,17 @@ export ZFC.Functions (
 ### Infinity.lean
 
 ```lean
-export ZFC.InfinityAxiom (
-    InfinityAxiom, isInductive, InfSet,
+export ZFC.Axiom.Infinity (
+    Axiom.Infinity, isInductive, InfSet,
     InfSet_is_inductive, zero_in_InfSet, successor_in_InfSet,
     nat_mem_wf  -- añadido 2026-03-04
 )
 ```
 
-### NaturalNumbers.lean
+### Nat.Basic.lean
 
 ```lean
-export ZFC.NaturalNumbers (
+export ZFC.Nat.Basic (
     isNatural, ℕ, successor, zero_is_natural,
     successor_is_natural, nat_induction,
     -- Añadidos 2026-03-04:
@@ -730,7 +730,7 @@ export ZFC.NaturalNumbers (
 
 ```lean
 -- Namespace: ZFC (no sub-namespace propio)
--- Depende de: NaturalNumbers, Infinity, PeanoNatLib.PeanoNatAxioms
+-- Depende de: Nat.Basic, Infinity, PeanoNatLib.PeanoNatAxioms
 -- Definiciones:
 noncomputable def fromPeano : Peano.ℕ₀ → U
 noncomputable def toPeano (n : U) (hn : isNat n) : Peano.ℕ₀
@@ -738,10 +738,10 @@ noncomputable def toPeano (n : U) (hn : isNat n) : Peano.ℕ₀
 --           fromPeano_toPeano, toPeano_fromPeano, toPeano_injective, toPeano_surjective
 ```
 
-### NaturalNumbersAdd.lean
+### Nat.Add.lean
 
 ```lean
-export ZFC.NaturalNumbersAdd (
+export ZFC.Nat.Add (
     successorFn, addFn, add,
     add_zero_Omega, zero_add_Omega, add_succ_Omega, succ_add_Omega,
     add_comm_Omega, add_assoc_Omega,
@@ -754,10 +754,10 @@ export ZFC.NaturalNumbersAdd (
 )
 ```
 
-### NaturalNumbersMul.lean
+### Nat.Mul.lean
 
 ```lean
-export ZFC.NaturalNumbersMul (
+export ZFC.Nat.Mul (
     mulFn, mul,
     mul_zero_Omega, zero_mul_Omega, mul_succ,
     mul_comm_Omega, succ_mul_Omega,
@@ -771,15 +771,15 @@ export ZFC.NaturalNumbersMul (
 ### Recursion.lean
 
 ```lean
-export ZFC.Recursion (
+export ZFC.Induction.Recursion (
     recursion_theorem, recursion_unique
 )
 ```
 
-### BooleanAlgebra.lean
+### BoolAlg.Basic.lean
 
 ```lean
-export ZFC.BooleanAlgebra (
+export ZFC.BoolAlg.Basic (
     BinUnion_comm_ba, BinUnion_empty_left_ba, BinUnion_empty_right_ba,
     BinUnion_idem_ba, BinInter_idem_ba, BinInter_empty,
     BinInter_comm_ba, Subseteq_trans_ba, Subseteq_reflexive_ba,
@@ -787,10 +787,10 @@ export ZFC.BooleanAlgebra (
 )
 ```
 
-### BooleanRing.lean
+### BoolAlg.Ring.lean
 
 ```lean
-export ZFC.BooleanRing (
+export ZFC.BoolAlg.Ring (
     SymDiff_is_comm, SymDiff_empty_identity, SymDiff_self_eq_empty,
     SymDiff_assoc, SymDiff_inter_distrib_left, SymDiff_inter_distrib_right,
     SymDiff_eq_union_diff, SymDiff_eq_self_iff_empty,
@@ -799,10 +799,10 @@ export ZFC.BooleanRing (
 )
 ```
 
-### PowerSetAlgebra.lean
+### BoolAlg.PowerSetAlgebra.lean
 
 ```lean
-export ZFC.PowerSetAlgebra (
+export ZFC.BoolAlg.PowerSetAlgebra (
     Complement, ComplementFamily,
     PowerSet_Complement_subset, PowerSet_double_complement,
     PowerSet_complement_union, PowerSet_complement_inter,
@@ -815,39 +815,39 @@ export ZFC.PowerSetAlgebra (
 )
 ```
 
-### GeneralizedDeMorgan.lean
+### BoolAlg.GenDeMorgan.lean
 
 ```lean
-export ZFC.GeneralizedDeMorgan (
+export ZFC.BoolAlg.GenDeMorgan (
     complement_union_eq_inter_complement, complement_inter_eq_union_complement,
     inter_complement_eq_complement_union, union_complement_eq_complement_inter
 )
 ```
 
-### GeneralizedDistributive.lean
+### BoolAlg.GenDistributive.lean
 
 ```lean
-export ZFC.GeneralizedDistributive (
+export ZFC.BoolAlg.GenDistributive (
     DistribSet, DistribSet_is_specified,
     inter_union_distrib, union_inter_distrib,
     inter_union_distrib', union_inter_distrib'
 )
 ```
 
-### AtomicBooleanAlgebra.lean
+### BoolAlg.Atomic.lean
 
 ```lean
-export ZFC.AtomicBooleanAlgebra (
+export ZFC.BoolAlg.Atomic (
     isAtom, Atoms, isAtomic, atomBelow,
     singleton_is_atom, atom_is_singleton, atom_iff_singleton,
     PowerSet_is_atomic, element_is_union_of_atoms
 )
 ```
 
-### SetOrder.lean
+### SetOps.SetOrder.lean
 
 ```lean
-export ZFC.SetOrder (
+export ZFC.SetOps.SetOrder (
     isUpperBound, isLowerBound, isSupremum, isInfimum,
     empty_is_minimum, any_family_bounded_below,
     inter_is_glb, union_is_lub,
@@ -856,19 +856,19 @@ export ZFC.SetOrder (
 )
 ```
 
-### SetStrictOrder.lean
+### SetOps.SetStrictOrder.lean
 
 ```lean
-export ZFC.SetStrictOrder (
+export ZFC.SetOps.SetStrictOrder (
     strict_order_irreflexive, strict_order_asymmetric,
     strict_order_transitive, partial_to_strict_order
 )
 ```
 
-### NaturalNumbersSub.lean
+### Nat.Sub.lean
 
 ```lean
-export ZFC.NaturalNumbersSub (
+export ZFC.Nat.Sub (
     predecessorFn, subFn, sub,
     sub_zero_Omega, zero_sub_Omega, sub_self_Omega,
     sub_succ_succ_Omega, sub_k_add_k_Omega, add_k_sub_k_Omega,
@@ -877,10 +877,10 @@ export ZFC.NaturalNumbersSub (
 )
 ```
 
-### NaturalNumbersDiv.lean
+### Nat.Div.lean
 
 ```lean
-export ZFC.NaturalNumbersDiv (
+export ZFC.Nat.Div (
     divOf, modOf,
     divOf_in_Omega, modOf_in_Omega,
     fromPeano_div, fromPeano_mod,
@@ -889,10 +889,10 @@ export ZFC.NaturalNumbersDiv (
 )
 ```
 
-### NaturalNumbersPow.lean
+### Nat.Pow.lean
 
 ```lean
-export ZFC.NaturalNumbersPow (
+export ZFC.Nat.Pow (
     powFn, pow,
     pow_zero, pow_succ, pow_eq, pow_in_Omega,
     fromPeano_pow,
@@ -903,10 +903,10 @@ export ZFC.NaturalNumbersPow (
 )
 ```
 
-### NaturalNumbersArith.lean
+### Nat.Arith.lean
 
 ```lean
-export ZFC.NaturalNumbersArith (
+export ZFC.Nat.Arith (
     divides, div, mod,
     div_eq_divOf, mod_eq_modOf,
     gcdOf, lcmOf,
@@ -922,10 +922,10 @@ export ZFC.NaturalNumbersArith (
 )
 ```
 
-### NaturalNumbersFactorial.lean
+### Nat.Factorial.lean
 
 ```lean
-export ZFC.NaturalNumbersFactorial (
+export ZFC.Nat.Factorial (
     factorialOf,
     factorialOf_zero, factorialOf_one, factorialOf_two,
     factorialOf_succ, factorialOf_pos, factorialOf_ne_zero,
@@ -934,10 +934,10 @@ export ZFC.NaturalNumbersFactorial (
 )
 ```
 
-### NaturalNumbersGcd.lean
+### Nat.Gcd.lean
 
 ```lean
-export ZFC.NaturalNumbersGcd (
+export ZFC.Nat.Gcd (
     gcd, lcm,
     gcd_in_Omega, lcm_in_Omega,
     gcd_zero, gcd_pos_step,
@@ -948,10 +948,10 @@ export ZFC.NaturalNumbersGcd (
 )
 ```
 
-### NaturalNumbersPrimes.lean
+### Nat.Primes.lean
 
 ```lean
-export ZFC.NaturalNumbersPrimes (
+export ZFC.Nat.Primes (
     isPrime, fromPeano_prime,
     isPrime_in_Omega, isPrime_ne_zero, isPrime_ne_one,
     isPrime_ge_two, isPrime_prime_divisors,
@@ -960,10 +960,10 @@ export ZFC.NaturalNumbersPrimes (
 )
 ```
 
-### NaturalNumbersBinom.lean
+### Nat.Binom.lean
 
 ```lean
-export ZFC.NaturalNumbersBinom (
+export ZFC.Nat.Binom (
     binomOf, fromPeano_binom,
     binomOf_n_zero, binomOf_n_n, binomOf_n_one,
     binomOf_one_succ, binomOf_pascal, binomOf_succ_n_by_n,
@@ -973,10 +973,10 @@ export ZFC.NaturalNumbersBinom (
 )
 ```
 
-### NaturalNumbersMaxMin.lean
+### Nat.MaxMin.lean
 
 ```lean
-export ZFC.NaturalNumbersMaxMin (
+export ZFC.Nat.MaxMin (
     maxOf, minOf, fromPeano_max, fromPeano_min,
     maxOf_in_Omega, minOf_in_Omega,
     maxOf_idem, minOf_idem,
@@ -990,10 +990,10 @@ export ZFC.NaturalNumbersMaxMin (
 )
 ```
 
-### NaturalNumbersNewtonBinom.lean
+### Nat.NewtonBinom.lean
 
 ```lean
-export ZFC.NaturalNumbersNewtonBinom (
+export ZFC.Nat.NewtonBinom (
     binomTermOf, fromPeano_binomTerm,
     binomTermOf_in_Omega,
     binomTerm_k_zero, binomTerm_k_n,
@@ -1003,10 +1003,10 @@ export ZFC.NaturalNumbersNewtonBinom (
 )
 ```
 
-### NaturalNumbersWellFounded.lean
+### Nat.WellFounded.lean
 
 ```lean
-export ZFC.NaturalNumbersWellFounded (
+export ZFC.Nat.WellFounded (
     acc_lt_Omega, well_ordering_Omega, well_ordering_Omega_exists
 )
 ```
@@ -1014,7 +1014,7 @@ export ZFC.NaturalNumbersWellFounded (
 ### Cardinality.lean
 
 ```lean
-export ZFC.Cardinality (
+export ZFC.Cardinal.Basic (
     -- Teorema de Cantor
     DiagonalSet, DiagonalSet_is_specified, DiagonalSet_not_in_range,
     cantor_no_surjection, cantor_no_bijection,

@@ -40,14 +40,14 @@
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-16
 
-### ✅ BooleanAlgebra.lean
+### ✅ BoolAlg.Basic.lean
 
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Verificación:** Correctamente proyectado
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-16
 
-### ✅ BooleanRing.lean
+### ✅ BoolAlg.Ring.lean
 
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Verificación:** Correctamente proyectado
@@ -67,7 +67,7 @@
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-16
 
-### ✅ AtomicBooleanAlgebra.lean
+### ✅ BoolAlg.Atomic.lean
 
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Proyección completada:** 2026-03-24 10:00
@@ -109,7 +109,7 @@
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-16
 
-### ✅ PowerSetAlgebra.lean
+### ✅ BoolAlg.PowerSetAlgebra.lean
 
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Verificación:** Correctamente proyectado
@@ -137,13 +137,13 @@
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-16
 
-### ✅ CartesianProduct.lean
+### ✅ SetOps.CartesianProduct.lean
 
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Verificación:** Correctamente proyectado
 - **Revisión detallada completada:** 2026-03-16
 - **Contenido verificado:**
-  - 1 definición: `CartesianProduct` con notación `A ×ₛ B`
+  - 1 definición: `SetOps.CartesianProduct` con notación `A ×ₛ B`
   - 9 teoremas principales (2 caracterización + 2 vacío + 1 monotonicidad + 4 distributividad)
   - 10 exports documentados
 - **Contenido proyectado en REFERENCE.md:**
@@ -183,7 +183,7 @@
 
 ## Módulos Pendientes de Revisión
 
-### ✅ NaturalNumbers.lean
+### ✅ Nat.Basic.lean
 
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Verificación:** Correctamente proyectado
@@ -237,7 +237,7 @@
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-16 19:30
 
-### ✅ NaturalNumbersAdd.lean
+### ✅ Nat.Add.lean
 
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Verificación:** Correctamente proyectado (verificado 2026-03-24)
@@ -246,7 +246,7 @@
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-24
 
-### ✅ NaturalNumbersMul.lean
+### ✅ Nat.Mul.lean
 
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Verificación:** Correctamente proyectado (verificado 2026-03-24)
@@ -255,7 +255,7 @@
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-24
 
-### ✅ NaturalNumbersSub.lean
+### ✅ Nat.Sub.lean
 
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Verificación:** Correctamente proyectado (verificado 2026-03-24)
@@ -264,7 +264,7 @@
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-24
 
-### ✅ NaturalNumbersDiv.lean
+### ✅ Nat.Div.lean
 
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Verificación:** Correctamente proyectado (verificado 2026-03-24)
@@ -285,7 +285,7 @@
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-24
 
-### ✅ GeneralizedDeMorgan.lean
+### ✅ BoolAlg.GenDeMorgan.lean
 
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Proyección completada:** 2026-03-24
@@ -297,7 +297,7 @@
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-24
 
-### ✅ GeneralizedDistributive.lean
+### ✅ BoolAlg.GenDistributive.lean
 
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Proyección completada:** 2026-03-24
@@ -309,7 +309,7 @@
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-24
 
-### ✅ SetOrder.lean
+### ✅ SetOps.SetOrder.lean
 
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Verificación:** Correctamente proyectado (verificado 2026-03-24)
@@ -320,7 +320,7 @@
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-24
 
-### ✅ SetStrictOrder.lean
+### ✅ SetOps.SetStrictOrder.lean
 
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Verificación:** Correctamente proyectado (verificado 2026-03-24)
@@ -342,7 +342,7 @@
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-24
 
-### ✅ NaturalNumbersPow.lean
+### ✅ Nat.Pow.lean
 
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Proyección completada:** 2026-03-22 12:00
@@ -350,7 +350,7 @@
 - **Patrón:** RecursiveFn con mulFn como función de paso
 - **Acciones necesarias:** Ninguna
 
-### ✅ NaturalNumbersArith.lean
+### ✅ Nat.Arith.lean
 
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Proyección completada:** 2026-03-22 12:00
@@ -358,28 +358,28 @@
 - **Patrón:** div/mod RecursiveFn + gcdOf/lcmOf Patrón B + Bézout substractivo
 - **Acciones necesarias:** Ninguna
 
-### ✅ NaturalNumbersFactorial.lean
+### ✅ Nat.Factorial.lean
 
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Implementación completada:** 2026-03-22
 - **Patrón:** Patrón B (bridge-only) via `Peano.Factorial.factorial`
 - **Acciones necesarias:** Ninguna
 
-### ✅ NaturalNumbersGcd.lean
+### ✅ Nat.Gcd.lean
 
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Implementación completada:** 2026-03-24
 - **Patrón:** ZFC-nativo vía RecursiveFn sobre ω ×ₛ ω (algoritmo euclídeo); LCM vía bridge
 - **Acciones necesarias:** Ninguna
 
-### ✅ NaturalNumbersPrimes.lean
+### ✅ Nat.Primes.lean
 
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Implementación completada:** 2026-03-25
 - **Patrón:** Bridge-only (Enfoque A); `isPrime` ZFC-nativo + TFA vía `fromPeano`/`toPeano`
 - **Acciones necesarias:** Ninguna
 
-### ✅ NaturalNumbersBinom.lean
+### ✅ Nat.Binom.lean
 
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Implementación completada:** 2026-03-25
@@ -388,7 +388,7 @@
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-26
 
-### ✅ NaturalNumbersMaxMin.lean
+### ✅ Nat.MaxMin.lean
 
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Implementación completada:** 2026-03-26
@@ -397,7 +397,7 @@
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-26
 
-### ✅ NaturalNumbersNewtonBinom.lean
+### ✅ Nat.NewtonBinom.lean
 
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Implementación completada:** 2026-03-26
@@ -407,7 +407,7 @@
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-26
 
-### ✅ NaturalNumbersWellFounded.lean
+### ✅ Nat.WellFounded.lean
 
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Implementación completada:** 2026-03-26
@@ -416,7 +416,7 @@
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-26
 
-### ✅ FiniteSequences.lean
+### ✅ Peano.FiniteSequences.lean
 
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Implementación completada:** 2026-03-27
@@ -425,7 +425,7 @@
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-27
 
-### ✅ FiniteSets.lean
+### ✅ SetOps.FiniteSets.lean
 
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Implementación completada:** 2026-03-29
@@ -434,7 +434,7 @@
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-29
 
-### ✅ FiniteSequencesArith.lean
+### ✅ Peano.FiniteSequencesArith.lean
 
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Implementación completada:** 2026-03-30
@@ -443,7 +443,7 @@
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-03-30
 
-### ✅ FiniteSequencesBridge.lean
+### ✅ Peano.FiniteSequencesBridge.lean
 
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Implementación completada:** 2026-04-01
@@ -452,7 +452,7 @@
 - **Acciones necesarias:** Ninguna
 - **Fecha de revisión:** 2026-04-01
 
-### ✅ CompleteBooleanAlgebra.lean
+### ✅ BoolAlg.Complete.lean
 
 - **Estado en REFERENCE.md:** ❌ Pendiente de proyección
 - **Implementación completada:** 2026-04-01
@@ -462,7 +462,7 @@
 - **Acciones necesarias:** Proyectar en REFERENCE.md (§3, §4, §6)
 - **Fecha de revisión:** 2026-04-01
 
-### ✅ FiniteCofinite.lean
+### ✅ BoolAlg.FiniteCofinite.lean
 
 - **Estado en REFERENCE.md:** ✅ Completo
 - **Implementación completada:** 2026-04-01

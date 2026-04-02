@@ -206,8 +206,8 @@ bash git-lock.bash list                                # muestra estado
 
 ### Versión actual: [Unreleased] — 2026-03-08
 
-- **NaturalNumbersAdd.lean** (nuevo módulo): suma en ω via Recursión, teorema puente `fromPeano_add`, 3 definiciones (`successorFn`, `addFn`, `add`), 16 teoremas (semianillo conmutativo: conmutatividad, asociatividad, cancelación izquierda/derecha, monotonía, tricotomía con adición)
-- **NaturalNumbersMul.lean** (nuevo módulo): multiplicación en ω via Recursión, teorema puente `fromPeano_mul`, 2 definiciones (`mulFn`, `mul`), 13 teoremas (anillo conmutativo: distributividad izquierda/derecha, asociatividad, identidades, conmutatividad)
+- **Nat.Add.lean** (nuevo módulo): suma en ω via Recursión, teorema puente `fromPeano_add`, 3 definiciones (`successorFn`, `addFn`, `add`), 16 teoremas (semianillo conmutativo: conmutatividad, asociatividad, cancelación izquierda/derecha, monotonía, tricotomía con adición)
+- **Nat.Mul.lean** (nuevo módulo): multiplicación en ω via Recursión, teorema puente `fromPeano_mul`, 2 definiciones (`mulFn`, `mul`), 13 teoremas (anillo conmutativo: distributividad izquierda/derecha, asociatividad, identidades, conmutatividad)
 - **PeanoImport.lean** (ampliado): +4 teoremas de transporte de recursión con paso (`recursion_transport_step`, `recursion_transport_step_inv`), +2 teoremas de puente de orden (`fromPeano_lt_iff`, `fromPeano_le_iff`)
 - **REFERENCE.md**: proyectados todos los nuevos módulos y teoremas (§3.22, §3.23, §4.18, §4.19, §5.11, §5.12, §6.15-6.17)
 - **Cardinality.lean**: ✅ confirmado 0 sorry (CSB completamente demostrado)
@@ -216,11 +216,11 @@ bash git-lock.bash list                                # muestra estado
 
 - **PeanoImport.lean** (nuevo módulo): isomorfismo Von Neumann ↔ Peano, `fromPeano`/`toPeano`, biyección completa, 7 teoremas iniciales
 - **Infinity.lean**: `nat_mem_wf` demostrado sin sorry
-- **NaturalNumbers.lean**: exports de predecessor ampliados
+- **Nat.Basic.lean**: exports de predecessor ampliados
 
 ### [0.8.0] — 2026-02-07
 
-- PowerSetAlgebra, GeneralizedDeMorgan, GeneralizedDistributive, AtomicBooleanAlgebra: álgebra de Boole atómica completa
+- BoolAlg.PowerSetAlgebra, BoolAlg.GenDeMorgan, BoolAlg.GenDistributive, BoolAlg.Atomic: álgebra de Boole atómica completa
 
 ### [0.7.0] — 2026-02-07
 
@@ -229,7 +229,7 @@ bash git-lock.bash list                                # muestra estado
 ### [0.6.0] — 2026-02-07
 
 - OrderedPair.lean: par ordenado de Kuratowski, extensiones
-- CartesianProduct.lean: producto cartesiano A ×ₛ B
+- SetOps.CartesianProduct.lean: producto cartesiano A ×ₛ B
 
 ### [0.5.0] — 2026-02-06
 
@@ -237,11 +237,11 @@ bash git-lock.bash list                                # muestra estado
 
 ### [0.4.0] — 2026-02-05
 
-- SetStrictOrder.lean, SetOrder.lean: órdenes y retículos
+- SetOps.SetStrictOrder.lean, SetOps.SetOrder.lean: órdenes y retículos
 
 ### [0.3.0] — 2026-02-04
 
-- BooleanAlgebra.lean, Union.lean (operaciones binarias): álgebra booleana básica
+- BoolAlg.Basic.lean, Union.lean (operaciones binarias): álgebra booleana básica
 
 ### [0.2.0] — 2026-02-03
 
@@ -381,7 +381,7 @@ estado revisión
 **Ejemplo de uso**:
 
 ```
-verificar proyección NaturalNumbers.lean
+verificar proyección Nat.Basic.lean
 ```
 
 #### Comando: `ciclo revisión completo`
@@ -455,7 +455,7 @@ El proyecto adopta las [convenciones de nombres de Mathlib](https://leanprover-c
 | Tipo de declaración | Convención | Ejemplo |
 |---------------------|------------|---------|
 | Teoremas, lemas (terms de `Prop`) | `snake_case` | `union_comm`, `mem_powerset_iff` |
-| Types, Props, Structures, Classes | `UpperCamelCase` | `IsFunction`, `IsNat`, `BooleanAlgebra` |
+| Types, Props, Structures, Classes | `UpperCamelCase` | `IsFunction`, `IsNat`, `BoolAlg.Basic` |
 | Funciones (retornan `U`) | `lowerCamelCase` | `powerset`, `union`, `sUnion` |
 | Acrónimos como grupo | `ZFC` (namespace) / `zfc` (en snake_case) | |
 

@@ -13,18 +13,18 @@ import ZfcSetTheory.Axiom.Pairing
 
 namespace ZFC
   open Classical
-  open ZFC.ExtensionAxiom
-  open ZFC.ExistenceAxiom
-  open ZFC.SpecificationAxiom
-  open ZFC.PairingAxiom
+  open ZFC.Axiom.Extension
+  open ZFC.Axiom.Existence
+  open ZFC.Axiom.Specification
+  open ZFC.Axiom.Pairing
   universe u
   variable {U : Type u}
 
-  namespace UnionAxiom
+  namespace Axiom.Union
 
     /-! ### Axioma de Unión ### -/
     @[simp]
-    axiom UnionAxiom :
+    axiom Axiom.Union :
       ∀ (C : U), ∃ (UC : U), ∀ (x : U), x ∈ UC ↔ ∃ (y : U), y ∈ C ∧ x ∈ y
 
     /-! ### Teorema de Existencia Única para el Axioma de Unión ### -/
@@ -32,7 +32,7 @@ namespace ZFC
     theorem UnionExistsUnique (C : U) :
       ∃! UC, ∀ x : U, x ∈ UC ↔ ∃ y : U, y ∈ C ∧ x ∈ y
         := by
-      obtain ⟨UC, hUC⟩ := UnionAxiom C
+      obtain ⟨UC, hUC⟩ := Axiom.Union C
       apply ExistsUnique.intro UC
       · exact hUC
       · -- proof of uniqueness
@@ -49,9 +49,9 @@ namespace ZFC
 
     @[simp]
     theorem Union_is_specified (C x : U) :
-      x ∈ (choose (UnionAxiom C)) ↔ ∃ (S : U), S ∈ C ∧ x ∈ S
+      x ∈ (choose (Axiom.Union C)) ↔ ∃ (S : U), S ∈ C ∧ x ∈ S
         := by
-      have hUC := choose_spec (UnionAxiom C)
+      have hUC := choose_spec (Axiom.Union C)
       constructor
       . intro h
         exact (hUC x).mp h
@@ -535,11 +535,11 @@ theorem BinUnion_absorb_inter (A B : U) :
         exact False.elim (EmptySet_is_empty x hx)
 
 
-  end UnionAxiom
+  end Axiom.Union
 end ZFC
 
-export ZFC.UnionAxiom (
-  UnionAxiom
+export ZFC.Axiom.Union (
+  Axiom.Union
   UnionExistsUnique
   Union_is_specified
   UnionSet

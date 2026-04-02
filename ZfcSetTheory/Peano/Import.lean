@@ -15,32 +15,32 @@ License: MIT
   defined in this project and the Peano natural numbers from the `peanolib` library.
 
   Predecessor theorems (predecessorPos, predecessor_zero, successor_predecessorPos)
-  live in `ZFC.NaturalNumbers` (NaturalNumbers.lean).
+  live in `ZFC.Nat.Basic` (Nat.Basic.lean).
 
   Order on ω (≺, ≼, natLt_*, natLe_*, Omega_has_min) lives in
-  `ZFC.InfinityAxiom` (Infinity.lean).
+  `ZFC.Axiom.Infinity` (Infinity.lean).
 -/
 
 namespace ZFC
   open Classical
-  open ZFC.ExtensionAxiom
-  open ZFC.ExistenceAxiom
-  open ZFC.SpecificationAxiom
-  open ZFC.PairingAxiom
-  open ZFC.UnionAxiom
-  open ZFC.PowerSetAxiom
-  open ZFC.OrderedPairExtensions
-  open ZFC.CartesianProduct
-  open ZFC.Relations
-  open ZFC.Functions
-  open ZFC.Cardinality
-  open ZFC.NaturalNumbers
-  open ZFC.InfinityAxiom
+  open ZFC.Axiom.Extension
+  open ZFC.Axiom.Existence
+  open ZFC.Axiom.Specification
+  open ZFC.Axiom.Pairing
+  open ZFC.Axiom.Union
+  open ZFC.Axiom.PowerSet
+  open ZFC.SetOps.OrderedPair
+  open ZFC.SetOps.CartesianProduct
+  open ZFC.SetOps.Relations
+  open ZFC.SetOps.Functions
+  open ZFC.Cardinal.Basic
+  open ZFC.Nat.Basic
+  open ZFC.Axiom.Infinity
 
   universe u
   variable {U : Type u}
 
-  namespace PeanoIsomorphism
+  namespace Peano.Import
 
     -- =========================================================================
     -- Section 1: The bijection between Peano and Von Neumann naturals
@@ -317,13 +317,13 @@ namespace ZFC
         · exact Or.inl h
         · exact Or.inr (fromPeano_injective h)
 
-  end PeanoIsomorphism
+  end Peano.Import
 
   -- Notations re-exported at ZFC level (require open ZFC)
-  scoped notation "ΠZ" => PeanoIsomorphism.fromPeano
-  scoped notation "ZΠ" => PeanoIsomorphism.toPeano
+  scoped notation "ΠZ" => Peano.Import.fromPeano
+  scoped notation "ZΠ" => Peano.Import.toPeano
 
-  export PeanoIsomorphism (
+  export Peano.Import (
     -- Definitions
     fromPeano
     toPeano

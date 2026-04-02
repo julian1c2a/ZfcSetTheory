@@ -48,7 +48,7 @@ namespace ZFC
   universe u
   variable {U : Type u}
 
-  namespace NaturalNumbersBinom
+  namespace Nat.Binom
 
     -- =========================================================================
     -- Private helpers
@@ -122,7 +122,7 @@ namespace ZFC
       obtain ⟨p, hp⟩ := fromPeano_surjective n (mem_Omega_is_Nat n hn)
       subst hp
       have h_succ : (fromPeano (Peano.ℕ₀.succ p) : U) =
-          NaturalNumbers.successor (fromPeano p) := by simp only [fromPeano]
+          Nat.Basic.successor (fromPeano p) := by simp only [fromPeano]
       have h0 : (fromPeano Peano.ℕ₀.zero : U) = ∅ := by simp only [fromPeano]
       rw [← h_succ, ← h0, ← fromPeano_binom, Peano.Binom.binom_succ_zero]
       rfl
@@ -133,7 +133,7 @@ namespace ZFC
       obtain ⟨q, hq⟩ := fromPeano_surjective k (mem_Omega_is_Nat k hk)
       subst hq
       have h_succ : (fromPeano (Peano.ℕ₀.succ q) : U) =
-          NaturalNumbers.successor (fromPeano q) := by simp only [fromPeano]
+          Nat.Basic.successor (fromPeano q) := by simp only [fromPeano]
       have h0 : (fromPeano Peano.ℕ₀.zero : U) = ∅ := by simp only [fromPeano]
       rw [← h_succ, ← h0, ← fromPeano_binom, Peano.Binom.binom_zero_succ]
 
@@ -149,9 +149,9 @@ namespace ZFC
       obtain ⟨q, hq⟩ := fromPeano_surjective k (mem_Omega_is_Nat k hk)
       subst hp; subst hq
       have h_succ_p : (fromPeano (Peano.ℕ₀.succ p) : U) =
-          NaturalNumbers.successor (fromPeano p) := by simp only [fromPeano]
+          Nat.Basic.successor (fromPeano p) := by simp only [fromPeano]
       have h_succ_q : (fromPeano (Peano.ℕ₀.succ q) : U) =
-          NaturalNumbers.successor (fromPeano q) := by simp only [fromPeano]
+          Nat.Basic.successor (fromPeano q) := by simp only [fromPeano]
       rw [← h_succ_p, ← h_succ_q,
           ← fromPeano_binom (Peano.ℕ₀.succ p) (Peano.ℕ₀.succ q),
           ← fromPeano_binom p q,
@@ -195,7 +195,7 @@ namespace ZFC
       obtain ⟨p, hp⟩ := fromPeano_surjective n (mem_Omega_is_Nat n hn)
       subst hp
       have h_succ : (fromPeano (Peano.ℕ₀.succ p) : U) =
-          NaturalNumbers.successor (fromPeano p) := by simp only [fromPeano]
+          Nat.Basic.successor (fromPeano p) := by simp only [fromPeano]
       rw [← h_succ, ← fromPeano_binom, Peano.Binom.binom_succ_n_by_n]
 
     -- =========================================================================
@@ -248,9 +248,9 @@ namespace ZFC
       exact congrArg (fromPeano : Peano.ℕ₀ → U)
         (Peano.Binom.binom_mul_factorials ((fromPeano_le_iff q p).mpr h_le))
 
-  end NaturalNumbersBinom
+  end Nat.Binom
 
-  export NaturalNumbersBinom (
+  export Nat.Binom (
     -- §0: definition
     binomOf
     -- §1: closure

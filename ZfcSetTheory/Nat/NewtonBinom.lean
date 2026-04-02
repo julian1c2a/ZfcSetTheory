@@ -46,7 +46,7 @@ namespace ZFC
   universe u
   variable {U : Type u}
 
-  namespace NaturalNumbersNewtonBinom
+  namespace Nat.NewtonBinom
 
     -- =========================================================================
     -- Private helpers
@@ -246,9 +246,9 @@ namespace ZFC
           rw [← h_one] at h1k
           exact (fromPeano_le_iff (Peano.ℕ₀.succ Peano.ℕ₀.zero) pk).mpr h1k))
 
-  end NaturalNumbersNewtonBinom
+  end Nat.NewtonBinom
 
-  export NaturalNumbersNewtonBinom (
+  export Nat.NewtonBinom (
     -- §0: definition
     binomTermOf
     -- §1: closure

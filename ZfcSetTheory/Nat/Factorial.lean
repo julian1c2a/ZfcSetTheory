@@ -37,26 +37,26 @@ import PeanoNatLib.PeanoNatFactorial
 
 namespace ZFC
   open Classical
-  open ZFC.ExtensionAxiom
-  open ZFC.ExistenceAxiom
-  open ZFC.SpecificationAxiom
-  open ZFC.PairingAxiom
-  open ZFC.UnionAxiom
-  open ZFC.PowerSetAxiom
-  open ZFC.OrderedPairExtensions
-  open ZFC.CartesianProduct
-  open ZFC.Relations
-  open ZFC.Functions
-  open ZFC.Cardinality
-  open ZFC.NaturalNumbers
-  open ZFC.InfinityAxiom
-  -- Note: PeanoIsomorphism is NOT opened here to avoid ΠZ notation ambiguity.
-  -- All PeanoIsomorphism exports are available at ZFC level.
+  open ZFC.Axiom.Extension
+  open ZFC.Axiom.Existence
+  open ZFC.Axiom.Specification
+  open ZFC.Axiom.Pairing
+  open ZFC.Axiom.Union
+  open ZFC.Axiom.PowerSet
+  open ZFC.SetOps.OrderedPair
+  open ZFC.SetOps.CartesianProduct
+  open ZFC.SetOps.Relations
+  open ZFC.SetOps.Functions
+  open ZFC.Cardinal.Basic
+  open ZFC.Nat.Basic
+  open ZFC.Axiom.Infinity
+  -- Note: Peano.Import is NOT opened here to avoid ΠZ notation ambiguity.
+  -- All Peano.Import exports are available at ZFC level.
 
   universe u
   variable {U : Type u}
 
-  namespace NaturalNumbersFactorial
+  namespace Nat.Factorial
 
     -- =========================================================================
     -- Private helpers
@@ -118,12 +118,12 @@ namespace ZFC
 
     /-- `(σ n)! = n! * (σ n)` for `n ∈ ω`. -/
     theorem factorialOf_succ (n : U) (hn : n ∈ (ω : U)) :
-        factorialOf (NaturalNumbers.successor n) =
-        mul (factorialOf n) (NaturalNumbers.successor n) := by
+        factorialOf (Nat.Basic.successor n) =
+        mul (factorialOf n) (Nat.Basic.successor n) := by
       obtain ⟨p, hp⟩ := fromPeano_surjective n (mem_Omega_is_Nat n hn)
       subst hp
       have h_succ : (fromPeano (Peano.ℕ₀.succ p) : U) =
-          NaturalNumbers.successor (fromPeano p) := by simp only [fromPeano]
+          Nat.Basic.successor (fromPeano p) := by simp only [fromPeano]
       rw [← h_succ, ← fromPeano_factorial, Peano.Factorial.factorial_succ,
           fromPeano_mul, fromPeano_factorial]
 
@@ -180,12 +180,12 @@ namespace ZFC
 
     /-- `n! ∈ (σ n)! ∨ n! = (σ n)!` (i.e., `n! ≤ (n+1)!`) for all `n ∈ ω`. -/
     theorem factorialOf_le_succ (n : U) (hn : n ∈ (ω : U)) :
-        factorialOf n ∈ factorialOf (NaturalNumbers.successor n) ∨
-        factorialOf n = factorialOf (NaturalNumbers.successor n) := by
+        factorialOf n ∈ factorialOf (Nat.Basic.successor n) ∨
+        factorialOf n = factorialOf (Nat.Basic.successor n) := by
       obtain ⟨p, hp⟩ := fromPeano_surjective n (mem_Omega_is_Nat n hn)
       subst hp
       have h_succ : (fromPeano (Peano.ℕ₀.succ p) : U) =
-          NaturalNumbers.successor (fromPeano p) := by simp only [fromPeano]
+          Nat.Basic.successor (fromPeano p) := by simp only [fromPeano]
       rw [← fromPeano_factorial p, ← h_succ, ← fromPeano_factorial (Peano.ℕ₀.succ p)]
       exact (fromPeano_le_iff
               (Peano.Factorial.factorial p)
@@ -206,9 +206,9 @@ namespace ZFC
         (Peano.Factorial.factorial_le_mono
           ((fromPeano_le_iff p q).mpr h_le))
 
-  end NaturalNumbersFactorial
+  end Nat.Factorial
 
-  export NaturalNumbersFactorial (
+  export Nat.Factorial (
     -- Section 0: definition
     factorialOf
     -- Section 1: closure

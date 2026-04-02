@@ -61,23 +61,23 @@ import ZfcSetTheory.Nat.Basic
 
 namespace ZFC
   open Classical
-  open ZFC.ExtensionAxiom
-  open ZFC.ExistenceAxiom
-  open ZFC.SpecificationAxiom
-  open ZFC.PairingAxiom
-  open ZFC.UnionAxiom
-  open ZFC.PowerSetAxiom
-  open ZFC.OrderedPairExtensions
-  open ZFC.CartesianProduct
-  open ZFC.Relations
-  open ZFC.Functions
-  open ZFC.Cardinality
-  open ZFC.NaturalNumbers
+  open ZFC.Axiom.Extension
+  open ZFC.Axiom.Existence
+  open ZFC.Axiom.Specification
+  open ZFC.Axiom.Pairing
+  open ZFC.Axiom.Union
+  open ZFC.Axiom.PowerSet
+  open ZFC.SetOps.OrderedPair
+  open ZFC.SetOps.CartesianProduct
+  open ZFC.SetOps.Relations
+  open ZFC.SetOps.Functions
+  open ZFC.Cardinal.Basic
+  open ZFC.Nat.Basic
 
   universe u
   variable {U : Type u}
 
-  namespace InfinityAxiom
+  namespace Axiom.Infinity
 
     /-! ============================================================ -/
     /-! ### EL AXIOMA DE INFINITO ### -/
@@ -444,9 +444,9 @@ namespace ZFC
       rw [SpecSet_is_specified] at hx_in_S
       exact hx_in_S.2 hxT
 
-  end InfinityAxiom
+  end Axiom.Infinity
 
-  export InfinityAxiom (
+  export Axiom.Infinity (
     ExistsInductiveSet
     Omega
     Omega_is_inductive

@@ -3,7 +3,7 @@ Copyright (c) 2025. All rights reserved.
 Author: Julián Calderón Almendros
 License: MIT
 
-NaturalNumbersGcd.lean — ZFC-native GCD and LCM via the Euclidean algorithm.
+Nat.Gcd.lean — ZFC-native GCD and LCM via the Euclidean algorithm.
 
 We implement gcd(a, b) by running σ b steps of the Euclidean pair recursion
   ⟨a, b⟩ → if b = ∅ then ⟨a, b⟩ else ⟨b, a mod b⟩
@@ -27,7 +27,7 @@ namespace ZFC
   universe u
   variable {U : Type u}
 
-  namespace NaturalNumbersGcd
+  namespace Nat.Gcd
 
     -- =========================================================================
     -- §1  The Euclidean step function  euclid_stepFn : ω ×ₛ ω → ω ×ₛ ω
@@ -498,9 +498,9 @@ namespace ZFC
       rw [lcm_eq_lcmOf a b ha hb, lcm_eq_lcmOf b a hb ha]
       exact lcmOf_comm_Omega a b ha hb
 
-  end NaturalNumbersGcd
+  end Nat.Gcd
 
-  export NaturalNumbersGcd (
+  export Nat.Gcd (
     -- Definitions
     gcd
     lcm

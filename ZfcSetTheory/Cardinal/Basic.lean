@@ -38,20 +38,20 @@ This file develops fundamental theorems about cardinality:
 
 namespace ZFC
   open Classical
-  open ZFC.ExtensionAxiom
-  open ZFC.ExistenceAxiom
-  open ZFC.SpecificationAxiom
-  open ZFC.PairingAxiom
-  open ZFC.UnionAxiom
-  open ZFC.PowerSetAxiom
-  open ZFC.OrderedPairExtensions
-  open ZFC.CartesianProduct
-  open ZFC.Relations
-  open ZFC.Functions
+  open ZFC.Axiom.Extension
+  open ZFC.Axiom.Existence
+  open ZFC.Axiom.Specification
+  open ZFC.Axiom.Pairing
+  open ZFC.Axiom.Union
+  open ZFC.Axiom.PowerSet
+  open ZFC.SetOps.OrderedPair
+  open ZFC.SetOps.CartesianProduct
+  open ZFC.SetOps.Relations
+  open ZFC.SetOps.Functions
   universe u
   variable {U : Type u}
 
-  namespace Cardinality
+  namespace Cardinal.Basic
 
     /-! ============================================================ -/
     /-! ### CANTOR'S THEOREM ### -/
@@ -613,10 +613,10 @@ namespace ZFC
         isDominatedBy A B → isDominatedBy B A → isEquipotent A B :=
       cantor_schroeder_bernstein A B
 
-  end Cardinality
+  end Cardinal.Basic
 
   -- Export key definitions and theorems
-  export Cardinality (
+  export Cardinal.Basic (
     DiagonalSet DiagonalSet_is_specified DiagonalSet_subset DiagonalSet_in_PowerSet
     DiagonalSet_not_in_range
     cantor_no_surjection cantor_no_bijection cantor_not_equipotent

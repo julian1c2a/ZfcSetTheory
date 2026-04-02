@@ -21,8 +21,8 @@
 
 | Módulo ZfcSetTheory | Módulo Peano fuente | Estado |
 |---|---|---|
-| `NaturalNumbersAdd.lean` | `Peano.Add` | ✅ Completo |
-| `NaturalNumbersMul.lean` | `Peano.Mul` | ✅ Completo |
+| `Nat.Add.lean` | `Peano.Add` | ✅ Completo |
+| `Nat.Mul.lean` | `Peano.Mul` | ✅ Completo |
 
 ### 0.2. Módulos Peano disponibles en `.lake` actual
 
@@ -108,11 +108,11 @@ Aplica a: **Div/Mod**, **Arith** (divisibilidad, gcd, lcm), **Factorial**, **Bin
 
 ## 3. Módulos a Implementar (por orden de dependencia)
 
-### Módulo 3.1 — `NaturalNumbersSub.lean`
+### Módulo 3.1 — `Nat.Sub.lean`
 
 **Fuente Peano:** `PeanoNatLib.PeanoNatSub` (`Peano.Sub`)
 **Patrón:** A (RecursiveFn con `predFn`)
-**Prerrequisitos:** `NaturalNumbersAdd.lean` ✅
+**Prerrequisitos:** `Nat.Add.lean` ✅
 
 #### 3.1.1. Función auxiliar `predFn`
 
@@ -181,11 +181,11 @@ theorem sub_lt_self_Omega (a b : U) (ha : a ∈ ω) (hb : b ∈ ω)     -- [T8.7
 
 ---
 
-### Módulo 3.2 — `NaturalNumbersDiv.lean`
+### Módulo 3.2 — `Nat.Div.lean`
 
 **Fuente Peano:** `PeanoNatLib.PeanoNatDiv` (`Peano.Div`)
 **Patrón:** B (bridge directo — la división euclídea usa recursión bien fundada)
-**Prerrequisitos:** `NaturalNumbersSub.lean`
+**Prerrequisitos:** `Nat.Sub.lean`
 
 #### 3.2.1. Definiciones
 
@@ -225,11 +225,11 @@ theorem mod_lt_divisor_Omega (a b : U) (ha : a ∈ ω) (hb : b ∈ ω) (hb_ne : 
 
 ---
 
-### Módulo 3.3 — `NaturalNumbersPow.lean`
+### Módulo 3.3 — `Nat.Pow.lean`
 
 **Fuente Peano:** `PeanoNatLib.PeanoNatPow` (`Peano.Pow`)
 **Patrón:** A (RecursiveFn con `mulFn m hm` como paso)
-**Prerrequisitos:** `NaturalNumbersMul.lean` ✅; `lake update` para `PeanoNatPow`
+**Prerrequisitos:** `Nat.Mul.lean` ✅; `lake update` para `PeanoNatPow`
 
 #### 3.3.1. Definición
 
@@ -285,11 +285,11 @@ theorem mul_pow_Omega (n k m : U) (hn : n ∈ ω) (hk : k ∈ ω) (hm : m ∈ ω
 
 ---
 
-### Módulo 3.4 — `NaturalNumbersArith.lean`
+### Módulo 3.4 — `Nat.Arith.lean`
 
 **Fuente Peano:** `PeanoNatLib.PeanoNatArith` (`Peano.Arith`)
 **Patrón:** B (bridge directo para gcd/lcm; definiciones proposicionales directas para divisibilidad)
-**Prerrequisitos:** `NaturalNumbersDiv.lean`
+**Prerrequisitos:** `Nat.Div.lean`
 
 #### 3.4.1. Definiciones proposicionales (directas en ZFC)
 
@@ -336,11 +336,11 @@ theorem gauss_Omega   -- Lema de Gauss: gcd(a,b)=1 ∧ a∣bc ⇒ a∣c
 
 ---
 
-### Módulo 3.5 — `NaturalNumbersFactorial.lean`
+### Módulo 3.5 — `Nat.Factorial.lean`
 
 **Fuente Peano:** `PeanoNatLib.PeanoNatFactorial` (`Peano.Factorial`)
 **Patrón:** A (RecursiveFn con `mulFn (σ ·) ·` — pero es función de un argumento; alternativamente Pattern B)
-**Prerrequisitos:** `NaturalNumbersMul.lean` ✅; `lake update`
+**Prerrequisitos:** `Nat.Mul.lean` ✅; `lake update`
 
 > **Observación:** `factorial n` es una función de **un argumento** en ℕ₀,
 > no de dos. No encaja directamente en `RecursiveFn` (que toma base + step).
@@ -370,11 +370,11 @@ theorem factorial_le_mono_Omega (m n : U) (hm : m ∈ ω) (hn : n ∈ ω)
 
 ---
 
-### Módulo 3.6 — `NaturalNumbersBinom.lean`
+### Módulo 3.6 — `Nat.Binom.lean`
 
 **Fuente Peano:** `PeanoNatLib.PeanoNatBinom` (`Peano.Binom`)
 **Patrón:** B (bridge directo)
-**Prerrequisitos:** `NaturalNumbersFactorial.lean`, `NaturalNumbersSub.lean`; `lake update`
+**Prerrequisitos:** `Nat.Factorial.lean`, `Nat.Sub.lean`; `lake update`
 
 ```lean
 noncomputable def binom (n k : U) : U :=
@@ -396,11 +396,11 @@ theorem binom_eq_zero_of_lt_Omega (n k : U) (hn : n ∈ ω) (hk : k ∈ ω)
 
 ---
 
-### Módulo 3.7 — `NaturalNumbersNewtonBinom.lean`
+### Módulo 3.7 — `Nat.NewtonBinom.lean`
 
 **Fuente Peano:** `PeanoNatLib.PeanoNatNewtonBinom` (`Peano.NewtonBinom`)
 **Patrón:** B (sumatorio finito sobre funciones Lean; no hay función ZFC directa)
-**Prerrequisitos:** `NaturalNumbersBinom.lean`, `NaturalNumbersPow.lean`, `NaturalNumbersSub.lean`; `lake update`
+**Prerrequisitos:** `Nat.Binom.lean`, `Nat.Pow.lean`, `Nat.Sub.lean`; `lake update`
 
 > **Observación:** `finSum` opera sobre funciones `ℕ₀ → ℕ₀`, no sobre conjuntos ZFC.
 > En ZfcSetTheory, el sumatorio finito debe operar sobre funciones `U → U` (Lean),
@@ -423,11 +423,11 @@ theorem sum_binom_eq_pow_two_Omega (n : U) (hn : n ∈ ω) :
 
 ---
 
-### Módulo 3.8 — `NaturalNumbersPrimes.lean` (OPCIONAL)
+### Módulo 3.8 — `Nat.Primes.lean` (OPCIONAL)
 
 **Fuente Peano:** `PeanoNatLib.PeanoNatPrimes` (`Peano.Primes`)
 **Patrón:** B (bridge directo + definiciones proposicionales)
-**Prerrequisitos:** `NaturalNumbersArith.lean`; `lake update`
+**Prerrequisitos:** `Nat.Arith.lean`; `lake update`
 
 > **Alcance:** Existencia y unicidad de factorización (TFA). Muy extenso.
 > Considerar como objetivo a largo plazo.
@@ -444,21 +444,21 @@ Teoremas clave a transportar:
 ```
 lake update
       ↓
-NaturalNumbersSub.lean    (Patrón A; predFn via ∪)
+Nat.Sub.lean    (Patrón A; predFn via ∪)
       ↓
-NaturalNumbersDiv.lean    (Patrón B; bridge directo)
+Nat.Div.lean    (Patrón B; bridge directo)
       ↓
-NaturalNumbersPow.lean    (Patrón A; mulFn como paso)
+Nat.Pow.lean    (Patrón A; mulFn como paso)
       ↓
-NaturalNumbersArith.lean  (Patrón B; gcd/lcm + divisibilidad)
+Nat.Arith.lean  (Patrón B; gcd/lcm + divisibilidad)
       ↓
-NaturalNumbersFactorial.lean  (Patrón B)
+Nat.Factorial.lean  (Patrón B)
       ↓
-NaturalNumbersBinom.lean      (Patrón B)
+Nat.Binom.lean      (Patrón B)
       ↓
-NaturalNumbersNewtonBinom.lean (Patrón B; finSum sobre U→U)
+Nat.NewtonBinom.lean (Patrón B; finSum sobre U→U)
       ↓
-NaturalNumbersPrimes.lean     (OPCIONAL; muy extenso)
+Nat.Primes.lean     (OPCIONAL; muy extenso)
 ```
 
 ---
@@ -468,14 +468,14 @@ NaturalNumbersPrimes.lean     (OPCIONAL; muy extenso)
 Añadir al final del fichero raíz, en orden:
 
 ```lean
-import ZfcSetTheory.NaturalNumbersSub
-import ZfcSetTheory.NaturalNumbersDiv
-import ZfcSetTheory.NaturalNumbersPow
-import ZfcSetTheory.NaturalNumbersArith
-import ZfcSetTheory.NaturalNumbersFactorial
-import ZfcSetTheory.NaturalNumbersBinom
-import ZfcSetTheory.NaturalNumbersNewtonBinom
--- import ZfcSetTheory.NaturalNumbersPrimes   -- opcional
+import ZfcSetTheory.Nat.Sub
+import ZfcSetTheory.Nat.Div
+import ZfcSetTheory.Nat.Pow
+import ZfcSetTheory.Nat.Arith
+import ZfcSetTheory.Nat.Factorial
+import ZfcSetTheory.Nat.Binom
+import ZfcSetTheory.Nat.NewtonBinom
+-- import ZfcSetTheory.Nat.Primes   -- opcional
 ```
 
 ---
@@ -503,7 +503,7 @@ En los módulos nuevos, usar consistently estas notaciones y conectarlas con
 En ZFC, 1 = σ ∅ = {∅}. Usarlo explícitamente como `σ (∅ : U)` o definir:
 
 ```lean
--- En Prelim.lean o NaturalNumbers.lean ya debería existir:
+-- En Prelim.lean o Nat.Basic.lean ya debería existir:
 abbrev one : U := σ ∅  -- = {∅}
 ```
 
@@ -527,7 +527,7 @@ No necesitamos `subₕₖ` como definición separada; `sub` ZFC corresponde a `P
 
 `predFn` se define como `{p ∈ ω ×ₛ ω | ∃ n ∈ ω, p = ⟨σ n, n⟩ ∨ p = ⟨∅, ∅⟩}`.
 Más directamente: `predFn = {⟨n, ∪ n⟩ | n ∈ ω}` usando el axioma Union ya importado.
-Necesita `union` (`∪`) del `UnionAxiom` disponible en el proyecto.
+Necesita `union` (`∪`) del `Axiom.Union` disponible en el proyecto.
 
 ### 7.6. Cuidado con módulos NewtonBinom y finSum
 
@@ -540,17 +540,17 @@ No hay obstáculo para definirla vía `toPeano`/`fromPeano` usando la inyectivid
 ## 8. Checklist de Implementación
 
 - [x] `lake update` — actualizar paquete Peano
-- [x] `NaturalNumbersSub.lean` — Sub (Patrón A) ✅ 2026-03-21
-- [x] `NaturalNumbersDiv.lean` — Div/Mod (Patrón B) ✅ 2026-03-21
-- [x] `NaturalNumbersPow.lean` — Pow (Patrón A) ✅ 2026-03-22
-- [x] `NaturalNumbersArith.lean` — divisibilidad, gcd, lcm (Patrón B) ✅ 2026-03-22
-- [x] `NaturalNumbersFactorial.lean` — factorial (Patrón B) ✅ 2026-03-22
-- [x] `NaturalNumbersGcd.lean` — GCD ZFC-nativo (Euclides) ✅ 2026-03-24
-- [x] `NaturalNumbersPrimes.lean` — TFA Enfoque A ✅ 2026-03-25
-- [x] `NaturalNumbersBinom.lean` — coeficientes binomiales (Patrón B) ✅ 2026-03-25
-- [x] `NaturalNumbersMaxMin.lean` — máximo/mínimo (Patrón B) ✅ 2026-03-26
-- [x] `NaturalNumbersNewtonBinom.lean` — Binomio de Newton (Patrón B 4-arg) ✅ 2026-03-26
-- [x] `NaturalNumbersWellFounded.lean` — buena ordenación de ω (Patrón B) ✅ 2026-03-26
+- [x] `Nat.Sub.lean` — Sub (Patrón A) ✅ 2026-03-21
+- [x] `Nat.Div.lean` — Div/Mod (Patrón B) ✅ 2026-03-21
+- [x] `Nat.Pow.lean` — Pow (Patrón A) ✅ 2026-03-22
+- [x] `Nat.Arith.lean` — divisibilidad, gcd, lcm (Patrón B) ✅ 2026-03-22
+- [x] `Nat.Factorial.lean` — factorial (Patrón B) ✅ 2026-03-22
+- [x] `Nat.Gcd.lean` — GCD ZFC-nativo (Euclides) ✅ 2026-03-24
+- [x] `Nat.Primes.lean` — TFA Enfoque A ✅ 2026-03-25
+- [x] `Nat.Binom.lean` — coeficientes binomiales (Patrón B) ✅ 2026-03-25
+- [x] `Nat.MaxMin.lean` — máximo/mínimo (Patrón B) ✅ 2026-03-26
+- [x] `Nat.NewtonBinom.lean` — Binomio de Newton (Patrón B 4-arg) ✅ 2026-03-26
+- [x] `Nat.WellFounded.lean` — buena ordenación de ω (Patrón B) ✅ 2026-03-26
 - [x] Actualizar `ZfcSetTheory.lean` con los nuevos imports
 - [x] Actualizar `REFERENCE.md` con las nuevas secciones (37 módulos proyectados)
 

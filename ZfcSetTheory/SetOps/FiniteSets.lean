@@ -34,23 +34,23 @@ import ZfcSetTheory.Axiom.Infinity
 
 namespace ZFC
   open Classical
-  open ZFC.ExtensionAxiom
-  open ZFC.ExistenceAxiom
-  open ZFC.SpecificationAxiom
-  open ZFC.PairingAxiom
-  open ZFC.UnionAxiom
-  open ZFC.PowerSetAxiom
-  open ZFC.OrderedPairExtensions
-  open ZFC.CartesianProduct
-  open ZFC.Relations
-  open ZFC.Functions
-  open ZFC.Cardinality
-  open ZFC.NaturalNumbers
-  open ZFC.InfinityAxiom
+  open ZFC.Axiom.Extension
+  open ZFC.Axiom.Existence
+  open ZFC.Axiom.Specification
+  open ZFC.Axiom.Pairing
+  open ZFC.Axiom.Union
+  open ZFC.Axiom.PowerSet
+  open ZFC.SetOps.OrderedPair
+  open ZFC.SetOps.CartesianProduct
+  open ZFC.SetOps.Relations
+  open ZFC.SetOps.Functions
+  open ZFC.Cardinal.Basic
+  open ZFC.Nat.Basic
+  open ZFC.Axiom.Infinity
   universe u
   variable {U : Type u}
 
-  namespace FiniteSets
+  namespace SetOps.FiniteSets
 
     /-! ============================================================ -/
     /-! ### SECTION 1: IDENTITY BIJECTION ### -/
@@ -720,9 +720,9 @@ namespace ZFC
       · exact h_eq
       · exact absurd (equipotent_symm h) (not_equipotent_nat_smaller hn hm h_gt)
 
-  end FiniteSets
+  end SetOps.FiniteSets
 
-  export FiniteSets (
+  export SetOps.FiniteSets (
     -- Identity bijection
     id_is_function id_is_injective id_is_surjective id_is_bijection
     equipotent_refl

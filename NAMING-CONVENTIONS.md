@@ -12,7 +12,7 @@
 | Tipo de declaración | Convención | Ejemplo |
 |---------------------|------------|---------|
 | Teoremas, lemas (terms de `Prop`) | `snake_case` | `union_comm`, `mem_powerset_iff` |
-| Types, Props, Structures, Classes | `UpperCamelCase` | `IsFunction`, `IsNat`, `BooleanAlgebra` |
+| Types, Props, Structures, Classes | `UpperCamelCase` | `IsFunction`, `IsNat`, `BoolAlg.Basic` |
 | Funciones que retornan `Type` | según tipo retorno | `powerset` (→ U → `snake`), `IsNat` (→ Prop → `Upper`) |
 | Otros terms de `Type` | `lowerCamelCase` | `successor`, `fromPeano`, `binUnion` |
 | Acrónimos | como grupo upper/lower | `ZFC` (namespace), `zfc` (en snake_case) |
@@ -541,9 +541,9 @@ Durante la migración (`ZFC` → `ZFC`), los nombres actuales se renombrarán pr
 siguiendo estas convenciones. El orden de prioridad es:
 
 1. Módulos base (axiomas): `Extension`, `Specification`, `Union`, `PowerSet`
-2. Números naturales: `NaturalNumbers` + 13 módulos de aritmética
-3. Funciones y relaciones: `Functions`, `Relations`, `CartesianProduct`
-4. Álgebra booleana: `BooleanAlgebra` + módulos derivados
+2. Números naturales: `Nat.Basic` + 13 módulos de aritmética
+3. Funciones y relaciones: `Functions`, `Relations`, `SetOps.CartesianProduct`
+4. Álgebra booleana: `BoolAlg.Basic` + módulos derivados
 5. Cardinalidad y resto
 
 Cada renombrado se verifica con compilación completa antes de continuar.

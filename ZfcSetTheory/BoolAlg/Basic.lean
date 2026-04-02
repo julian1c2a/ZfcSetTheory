@@ -14,15 +14,15 @@ import ZfcSetTheory.Axiom.Union
 
 namespace ZFC
   open Classical
-  open ZFC.ExtensionAxiom
-  open ZFC.ExistenceAxiom
-  open ZFC.SpecificationAxiom
-  open ZFC.PairingAxiom
-  open ZFC.UnionAxiom
+  open ZFC.Axiom.Extension
+  open ZFC.Axiom.Existence
+  open ZFC.Axiom.Specification
+  open ZFC.Axiom.Pairing
+  open ZFC.Axiom.Union
   universe u
   variable {U : Type u}
 
-  namespace BooleanAlgebra
+  namespace BoolAlg.Basic
 
     /-! ### Álgebra Booleana - Teoremas que mezclan ∪ y ∩ ### -/
 
@@ -182,11 +182,11 @@ namespace ZFC
       · intro hEmpty
         exact False.elim (EmptySet_is_empty x hEmpty)
 
-  end BooleanAlgebra
+  end BoolAlg.Basic
 
 end ZFC
 
-export ZFC.BooleanAlgebra (
+export ZFC.BoolAlg.Basic (
   BinUnion_absorb_inter
   BinInter_absorb_union
   BinUnion_distrib_inter

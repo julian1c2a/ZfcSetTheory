@@ -43,7 +43,7 @@ namespace ZFC
   universe u
   variable {U : Type u}
 
-  namespace NaturalNumbersMaxMin
+  namespace Nat.MaxMin
 
     -- =========================================================================
     -- Private helpers
@@ -393,9 +393,9 @@ namespace ZFC
         have := Peano.MaxMin.eq_max_min_then_eq p q (fromPeano_injective h)
         exact congrArg (fromPeano : Peano.ℕ₀ → U) this
 
-  end NaturalNumbersMaxMin
+  end Nat.MaxMin
 
-  export NaturalNumbersMaxMin (
+  export Nat.MaxMin (
     -- §0: definitions
     maxOf
     minOf

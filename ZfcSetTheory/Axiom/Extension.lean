@@ -21,7 +21,7 @@ namespace ZFC
 
   notation:50 lhs:51 " ∉ " rhs:51 => ¬(lhs ∈ rhs)
 
-  namespace ExtensionAxiom
+  namespace Axiom.Extension
     /-! ### Axioma de Extensionalidad de Conjuntos ### -/
     /-! ### ExtSet : x = y ↔ ∀ z, z ∈ x ↔ z ∈ y ### -/
     @[simp] axiom ExtSet (x y : U): (∀ (z: U), z ∈ x ↔ z ∈ y) → (x = y) --
@@ -232,11 +232,11 @@ namespace ZFC
     noncomputable def isinter (x X: U) : Prop :=
       ∀ (z: U), z ∈ X ↔ ∀ (y: U), y ∈ x → z ∈ y
 
-  end ExtensionAxiom
+  end Axiom.Extension
 end ZFC
 
 export ZFC (mem)
-export ZFC.ExtensionAxiom (
+export ZFC.Axiom.Extension (
     ExtSet ExtSetReverse ExtSet_wc EqualityOfSubset
     subseteq subseteq_reflexive subseteq_transitive subseteq_antisymmetric
     disjoint disjoint_symm disjoint_is_empty disjoint_is_empty_wc

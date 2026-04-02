@@ -32,17 +32,17 @@ For a family F of subsets of A:
 
 namespace ZFC
   open Classical
-  open ZFC.ExtensionAxiom
-  open ZFC.ExistenceAxiom
-  open ZFC.SpecificationAxiom
-  open ZFC.PairingAxiom
-  open ZFC.UnionAxiom
-  open ZFC.PowerSetAxiom
-  open ZFC.PowerSetAlgebra
+  open ZFC.Axiom.Extension
+  open ZFC.Axiom.Existence
+  open ZFC.Axiom.Specification
+  open ZFC.Axiom.Pairing
+  open ZFC.Axiom.Union
+  open ZFC.Axiom.PowerSet
+  open ZFC.BoolAlg.PowerSetAlgebra
   universe u
   variable {U : Type u}
 
-  namespace GeneralizedDeMorgan
+  namespace BoolAlg.GenDeMorgan
 
     /-! ### The Complement Family Operation -/
 
@@ -250,10 +250,10 @@ namespace ZFC
           = Difference A (Difference A (⋂ F)) := by rw [h_eq]
         _ = (⋂ F) := double_complement A (⋂ F) hIF_sub
 
-  end GeneralizedDeMorgan
+  end BoolAlg.GenDeMorgan
 
   -- Export key theorems
-  export GeneralizedDeMorgan (ComplementFamily ComplementFamily_is_specified
+  export BoolAlg.GenDeMorgan (ComplementFamily ComplementFamily_is_specified
     complement_mem_ComplementFamily interSet_mem_iff
     inter_complement_eq_complement_union union_complement_eq_complement_inter
     complement_inter_complement_eq_union complement_union_complement_eq_inter)

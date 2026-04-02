@@ -43,19 +43,19 @@ including composition, identity, inverse, image, and preimage.
 namespace ZFC
   open Classical
   open ExistsUnique
-  open ZFC.ExtensionAxiom
-  open ZFC.ExistenceAxiom
-  open ZFC.SpecificationAxiom
-  open ZFC.PairingAxiom
-  open ZFC.UnionAxiom
-  open ZFC.PowerSetAxiom
-  open ZFC.OrderedPairExtensions
-  open ZFC.CartesianProduct
-  open ZFC.Relations
+  open ZFC.Axiom.Extension
+  open ZFC.Axiom.Existence
+  open ZFC.Axiom.Specification
+  open ZFC.Axiom.Pairing
+  open ZFC.Axiom.Union
+  open ZFC.Axiom.PowerSet
+  open ZFC.SetOps.OrderedPair
+  open ZFC.SetOps.CartesianProduct
+  open ZFC.SetOps.Relations
   universe u
   variable {U : Type u}
 
-  namespace Functions
+  namespace SetOps.Functions
 
     /-! ============================================================ -/
     /-! ### BASIC FUNCTION DEFINITIONS ### -/
@@ -381,9 +381,9 @@ namespace ZFC
       simp only [fst_of_ordered_pair, snd_of_ordered_pair] at h1 h2
       exact hf y z x h1.2 h2.2
 
-  end Functions
+  end SetOps.Functions
 
-  export Functions (
+  export SetOps.Functions (
     isSingleValued
     isFunctionFromTo
     apply apply_mem apply_eq

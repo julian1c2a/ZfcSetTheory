@@ -209,7 +209,7 @@
 
 - ✅ PeanoImport.lean: isomorfismo Von Neumann ↔ Peano (2 def + 7 teoremas)
 - ✅ Infinity.lean: nat_mem_wf completamente probado y exportado
-- ✅ NaturalNumbers.lean: predecessor y teoremas relacionados exportados
+- ✅ Nat.Basic.lean: predecessor y teoremas relacionados exportados
 - ✅ Cardinality.lean: confirmado 0 sorry (Cantor + CSB completos)
 - ✅ Relations.lean: confirmado 0 sorry
 - ✅ Functions.lean: confirmado 0 sorry

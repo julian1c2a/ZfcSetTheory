@@ -14,15 +14,15 @@ import ZfcSetTheory.Axiom.Union
 
 namespace ZFC
   open Classical
-  open ZFC.ExtensionAxiom
-  open ZFC.ExistenceAxiom
-  open ZFC.SpecificationAxiom
-  open ZFC.PairingAxiom
-  open ZFC.UnionAxiom
+  open ZFC.Axiom.Extension
+  open ZFC.Axiom.Existence
+  open ZFC.Axiom.Specification
+  open ZFC.Axiom.Pairing
+  open ZFC.Axiom.Union
   universe u
   variable {U : Type u}
 
-  namespace PowerSetAxiom
+  namespace Axiom.PowerSet
 
     /-! ### Axioma de Conjunto Potencia ### -/
     /-! Para todo conjunto A, existe un conjunto P(A) cuyos elementos son
@@ -252,10 +252,10 @@ namespace ZFC
         · -- x ∈ {x}
           rw [Singleton_is_specified]
 
-  end PowerSetAxiom
+  end Axiom.PowerSet
 end ZFC
 
-export ZFC.PowerSetAxiom (
+export ZFC.Axiom.PowerSet (
   PowerSet
   PowerSetExistsUnique
   PowerSetOf

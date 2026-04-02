@@ -50,29 +50,29 @@ import ZfcSetTheory.Nat.Primes
 
 namespace ZFC
   open Classical
-  open ZFC.ExtensionAxiom
-  open ZFC.ExistenceAxiom
-  open ZFC.SpecificationAxiom
-  open ZFC.PairingAxiom
-  open ZFC.UnionAxiom
-  open ZFC.PowerSetAxiom
-  open ZFC.OrderedPairExtensions
-  open ZFC.CartesianProduct
-  open ZFC.Relations
-  open ZFC.Functions
-  open ZFC.Cardinality
-  open ZFC.NaturalNumbers
-  open ZFC.InfinityAxiom
-  open ZFC.NaturalNumbersAdd
-  open ZFC.NaturalNumbersMul
-  open ZFC.FiniteSequences
-  open ZFC.FiniteSequencesArith
-  open ZFC.NaturalNumbersPrimes
+  open ZFC.Axiom.Extension
+  open ZFC.Axiom.Existence
+  open ZFC.Axiom.Specification
+  open ZFC.Axiom.Pairing
+  open ZFC.Axiom.Union
+  open ZFC.Axiom.PowerSet
+  open ZFC.SetOps.OrderedPair
+  open ZFC.SetOps.CartesianProduct
+  open ZFC.SetOps.Relations
+  open ZFC.SetOps.Functions
+  open ZFC.Cardinal.Basic
+  open ZFC.Nat.Basic
+  open ZFC.Axiom.Infinity
+  open ZFC.Nat.Add
+  open ZFC.Nat.Mul
+  open ZFC.Peano.FiniteSequences
+  open ZFC.Peano.FiniteSequencesArith
+  open ZFC.Nat.Primes
 
   universe u
   variable {U : Type u}
 
-  namespace FiniteSequencesBridge
+  namespace Peano.FiniteSequencesBridge
 
     -- =========================================================================
     -- §1  nth — Element access for finite sequences
@@ -106,7 +106,7 @@ namespace ZFC
 
     /-- Full specification of seqProdFn, re-derived from RecursionTheoremWithStep.
         This gives access to the zero and succ equations without needing the
-        private helpers from FiniteSequencesArith. -/
+        private helpers from Peano.FiniteSequencesArith. -/
     private theorem seqProdFn_spec {f : U} (hf : isFinSeq f (domain f) ω) :
         isFunctionFromTo (seqProdFn f hf) ω ω ∧
         apply (seqProdFn f hf) (∅ : U) = σ (∅ : U) ∧
@@ -390,9 +390,9 @@ namespace ZFC
       -- Apply Approach A uniqueness
       exact unique_prime_factorization_ZFC ps qs hps hqs h_prod p hp
 
-  end FiniteSequencesBridge
+  end Peano.FiniteSequencesBridge
 
-  export FiniteSequencesBridge (
+  export Peano.FiniteSequencesBridge (
     -- §1: nth
     nth
     nth_eq_apply

@@ -8,13 +8,13 @@ This document outlines actionable next steps for the project, organized by prior
 
 ## 1. ~~Fundamental Theorem of Arithmetic (TFA)~~ — ✅ COMPLETE
 
-Completed 2026-03-25 in `NaturalNumbersPrimes.lean`: `isPrime` ZFC-nativo, `fromPeano_prime` bridge, TFA Existencia + Unicidad (Enfoque A), 11 exports.
+Completed 2026-03-25 in `Nat.Primes.lean`: `isPrime` ZFC-nativo, `fromPeano_prime` bridge, TFA Existencia + Unicidad (Enfoque A), 11 exports.
 
 ---
 
 ## 2. ~~Binomial Coefficients~~ — ✅ COMPLETE
 
-Completed 2026-03-25 in `NaturalNumbersBinom.lean`: `binomOf` Patrón B, `fromPeano_binom` bridge, regla de Pascal, propiedades algebraicas, conexión factorial, 15 exports.
+Completed 2026-03-25 in `Nat.Binom.lean`: `binomOf` Patrón B, `fromPeano_binom` bridge, regla de Pascal, propiedades algebraicas, conexión factorial, 15 exports.
 
 ---
 
@@ -22,9 +22,9 @@ Completed 2026-03-25 in `NaturalNumbersBinom.lean`: `binomOf` Patrón B, `fromPe
 
 Completed 2026-03-26:
 
-- `NaturalNumbersMaxMin.lean`: `maxOf`, `minOf` (Patrón B), 29 teoremas (idempotencia, conmutatividad, asociatividad, identidad, cotas, caracterización), 31 exports.
-- `NaturalNumbersNewtonBinom.lean`: `binomTermOf` (Patrón B 4-arg), Newton's binomial theorem, Σ C(n,k)=2^n, separación de potencias, comparación de crecimiento, 12 exports.
-- `NaturalNumbersWellFounded.lean`: `acc_lt_Omega`, `well_ordering_Omega` (con unicidad), `well_ordering_Omega_exists`, 3 exports.
+- `Nat.MaxMin.lean`: `maxOf`, `minOf` (Patrón B), 29 teoremas (idempotencia, conmutatividad, asociatividad, identidad, cotas, caracterización), 31 exports.
+- `Nat.NewtonBinom.lean`: `binomTermOf` (Patrón B 4-arg), Newton's binomial theorem, Σ C(n,k)=2^n, separación de potencias, comparación de crecimiento, 12 exports.
+- `Nat.WellFounded.lean`: `acc_lt_Omega`, `well_ordering_Omega` (con unicidad), `well_ordering_Omega_exists`, 3 exports.
 
 **All peanolib bridge modules are now complete.** No remaining unbridged Peano modules.
 
@@ -34,12 +34,12 @@ Completed 2026-03-26:
 
 ### 3.1 Status (per ReflexionesParaLaIA.md [6]–[11])
 
-`AtomicBooleanAlgebra.lean` is complete (atoms, atomicity of 𝒫(A), decomposition into atoms). Remaining goals:
+`BoolAlg.Atomic.lean` is complete (atoms, atomicity of 𝒫(A), decomposition into atoms). Remaining goals:
 
-1. ~~**Complete Boolean Algebra**: Show 𝒫(A) is a complete atomic Boolean algebra (every subset has a supremum/infimum).~~ ✅ COMPLETE (CompleteBooleanAlgebra.lean: `isCompleteLattice`, `PowerSet_is_complete_lattice`, `PowerSet_is_complete_atomic_BA`)
+1. ~~**Complete Boolean Algebra**: Show 𝒫(A) is a complete atomic Boolean algebra (every subset has a supremum/infimum).~~ ✅ COMPLETE (BoolAlg.Complete.lean: `isCompleteLattice`, `PowerSet_is_complete_lattice`, `PowerSet_is_complete_atomic_BA`)
 2. **Representation theorem**: Every complete atomic Boolean algebra is isomorphic to some 𝒫(A).
 3. **Boolean Ring ↔ Boolean Algebra functor** ([7]): Formal biyection between Boolean rings and Boolean algebras.
-4. ~~**Non-complete Boolean algebra counterexample** ([8]): Construct the algebra of finite/cofinite subsets of ω, show it is NOT a complete lattice, hence not isomorphic to any 𝒫(A).~~ ✅ COMPLETE (FiniteCofinite.lean: `FinCofAlg`, `FinCofAlg_not_complete`, `EvenSet_not_in_FinCofAlg`. Note: FinCofAlg(ω) IS atomic — atoms are singletons — but NOT complete.)
+4. ~~**Non-complete Boolean algebra counterexample** ([8]): Construct the algebra of finite/cofinite subsets of ω, show it is NOT a complete lattice, hence not isomorphic to any 𝒫(A).~~ ✅ COMPLETE (BoolAlg.FiniteCofinite.lean: `FinCofAlg`, `FinCofAlg_not_complete`, `EvenSet_not_in_FinCofAlg`. Note: FinCofAlg(ω) IS atomic — atoms are singletons — but NOT complete.)
 5. **Finite power set cardinality** ([10]): |𝒫(F)| = 2^n when |F| = n.
 6. **Finite Boolean algebra theorem** ([11]): Every finite Boolean algebra has cardinality 2^n for some n ∈ ω.
 
@@ -58,7 +58,7 @@ Create a unified module (or small family of modules) for items 1–6. This requi
 
 ### 4.1 Status
 
-**Basic theory completed** (2026-03-27) in `FiniteSequences.lean`:
+**Basic theory completed** (2026-03-27) in `Peano.FiniteSequences.lean`:
 
 - ✅ `isFinSeq (f n A)` — predicate for finite sequences
 - ✅ `FinSeqSet (n A)` — set of all n-sequences in A
@@ -66,7 +66,7 @@ Create a unified module (or small family of modules) for items 1–6. This requi
 - ✅ 15 theorems: core predicate (8), FinSeqSet (2), empty sequence (3), appendElem (5), decomposition/restriction (1)
 - ✅ 0 sorry, 0 errors, fully projected in REFERENCE.md
 
-**Arithmetic operations completed** (2026-03-30) in `FiniteSequencesArith.lean`:
+**Arithmetic operations completed** (2026-03-30) in `Peano.FiniteSequencesArith.lean`:
 
 - ✅ `sumStepFn`, `seqSumFn`, `seqSum` — Σ_{i<n} f(i) vía recursión ZFC
 - ✅ `prodStepFn`, `seqProdFn`, `seqProd` — Π_{i<n} f(i) vía recursión ZFC
@@ -80,11 +80,11 @@ Create a unified module (or small family of modules) for items 1–6. This requi
 ### 4.2 Proposed Plan (Remaining Items)
 
 1. ~~Define `FinSeq n A` = `{ f ∈ (n ×ₛ A) | isFunctionFromTo f n A }` for n ∈ ω~~ ✅ Done (as `isFinSeq` + `FinSeqSet`)
-2. ~~Define `concat`, `length`, `nth`, `product` for finite sequences~~ ✅ `concatSeq`, `seqLength`, `seqProd` already in FiniteSequencesArith; `nth` added in FiniteSequencesBridge
-3. ~~Bridge to `DList ℕ₀` via the Peano isomorphism~~ ✅ Done in FiniteSequencesBridge
-4. ~~Restate TFA with ZFC-native sequences~~ ✅ Done in FiniteSequencesBridge
+2. ~~Define `concat`, `length`, `nth`, `product` for finite sequences~~ ✅ `concatSeq`, `seqLength`, `seqProd` already in Peano.FiniteSequencesArith; `nth` added in Peano.FiniteSequencesBridge
+3. ~~Bridge to `DList ℕ₀` via the Peano isomorphism~~ ✅ Done in Peano.FiniteSequencesBridge
+4. ~~Restate TFA with ZFC-native sequences~~ ✅ Done in Peano.FiniteSequencesBridge
 
-**Bridge and TFA native completed** (2026-03-30) in `FiniteSequencesBridge.lean`:
+**Bridge and TFA native completed** (2026-03-30) in `Peano.FiniteSequencesBridge.lean`:
 
 - ✅ `nth` — indexed element access wrapper
 - ✅ `seqProd_zero_gen`, `seqProd_succ_gen`, `seqProd_in_Omega_gen` — general seqProd recursion (relaxed domain)
@@ -100,7 +100,7 @@ Create a unified module (or small family of modules) for items 1–6. This requi
 
 ## 6. ~~Finite Sets in ZFC~~ — ✅ COMPLETE
 
-Completed 2026-03-29 in `FiniteSets.lean`: `isFiniteSet` definition, bijection infrastructure (`id_is_bijection`, `bijection_inverse_is_bijection`, `comp_bijection`), equipotence equivalence relation (`equipotent_refl/symm/trans`), closure under equipotence, finiteness of ∅, ω-members, singletons, and union with singleton. 1 definition + 21 theorems, 22 exports.
+Completed 2026-03-29 in `SetOps.FiniteSets.lean`: `isFiniteSet` definition, bijection infrastructure (`id_is_bijection`, `bijection_inverse_is_bijection`, `comp_bijection`), equipotence equivalence relation (`equipotent_refl/symm/trans`), closure under equipotence, finiteness of ∅, ω-members, singletons, and union with singleton. 1 definition + 21 theorems, 22 exports.
 
 ---
 
@@ -132,13 +132,13 @@ Per ReflexionesParaLaIA.md [14]. Restructure into clear module hierarchies:
 
 | Priority | Task | New File | Key Dependency |
 |----------|------|----------|----------------|
-| ~~**1**~~ | ~~TFA via Peano bridge~~ | ~~`NaturalNumbersPrimes.lean`~~ | ✅ Complete 2026-03-25 |
-| ~~**2**~~ | ~~Binomial coefficients bridge~~ | ~~`NaturalNumbersBinom.lean`~~ | ✅ Complete 2026-03-25 |
+| ~~**1**~~ | ~~TFA via Peano bridge~~ | ~~`Nat.Primes.lean`~~ | ✅ Complete 2026-03-25 |
+| ~~**2**~~ | ~~Binomial coefficients bridge~~ | ~~`Nat.Binom.lean`~~ | ✅ Complete 2026-03-25 |
 | ~~**3**~~ | ~~MaxMin + NewtonBinom + WellFounded~~ | ~~3 modules~~ | ✅ Complete 2026-03-26 |
-| **4** | Complete atomic Boolean algebra + representation (2/6 done) | Extension of `AtomicBooleanAlgebra.lean` or new module | `AtomicBooleanAlgebra`, `Cardinality` |
-| ~~**5**~~ | ~~Finite sets in ZFC~~ | ~~`FiniteSets.lean`~~ | ✅ Complete 2026-03-29 |
-| **6** | Finite sequences in ZFC (remaining: concat, length, nth, DList bridge) | Extension of `FiniteSequences.lean` | `FiniteSequences`, `FiniteSequencesArith` |
+| **4** | Complete atomic Boolean algebra + representation (2/6 done) | Extension of `BoolAlg.Atomic.lean` or new module | `BoolAlg.Atomic`, `Cardinality` |
+| ~~**5**~~ | ~~Finite sets in ZFC~~ | ~~`SetOps.FiniteSets.lean`~~ | ✅ Complete 2026-03-29 |
+| **6** | Finite sequences in ZFC (remaining: concat, length, nth, DList bridge) | Extension of `Peano.FiniteSequences.lean` | `Peano.FiniteSequences`, `Peano.FiniteSequencesArith` |
 
 ---
 
-*Updated 2026-04-01. All peanolib bridge modules complete. FiniteSequences basic theory complete. FiniteSequencesArith complete (7 def + 18 theorems + 33 exports: seqSum, seqProd, familyProduct, card_familyProduct). FiniteSets complete (1 def + 21 theorems). CompleteBooleanAlgebra complete (𝒫(A) is complete atomic BA). FiniteCofinite complete (FinCofAlg(ω) is Boolean algebra but NOT complete lattice). Next focus: representation theorem, Boolean ring↔BA functor, finite power set cardinality.*
+*Updated 2026-04-01. All peanolib bridge modules complete. Peano.FiniteSequences basic theory complete. Peano.FiniteSequencesArith complete (7 def + 18 theorems + 33 exports: seqSum, seqProd, familyProduct, card_familyProduct). SetOps.FiniteSets complete (1 def + 21 theorems). BoolAlg.Complete complete (𝒫(A) is complete atomic BA). BoolAlg.FiniteCofinite complete (FinCofAlg(ω) is Boolean algebra but NOT complete lattice). Next focus: representation theorem, Boolean ring↔BA functor, finite power set cardinality.*

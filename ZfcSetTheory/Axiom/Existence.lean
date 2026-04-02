@@ -10,11 +10,11 @@ import ZfcSetTheory.Axiom.Extension
 
 namespace ZFC
   open Classical
-  open ZFC.ExtensionAxiom
+  open ZFC.Axiom.Extension
   universe u
   variable {U : Type u}
 
-  namespace ExistenceAxiom
+  namespace Axiom.Existence
 
     /-! ### Axioma de Existencia ### -/
     /-! ### Existence : existe algún conjunto vacío en el universo U ### -/
@@ -77,10 +77,10 @@ namespace ZFC
       exfalso
       exact EmptySet_is_empty y hy_in_empty
 
-  end ExistenceAxiom
+  end Axiom.Existence
 end ZFC
 
-export ZFC.ExistenceAxiom (
+export ZFC.Axiom.Existence (
     ExistsAnEmptySet ExistsUniqueEmptySet EmptySet EmptySet_is_empty EmptySet_unique
     EmptySet_subseteq_any
 )

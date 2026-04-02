@@ -37,26 +37,26 @@ import PeanoNatLib.PeanoNatAdd
 
 namespace ZFC
   open Classical
-  open ZFC.ExtensionAxiom
-  open ZFC.ExistenceAxiom
-  open ZFC.SpecificationAxiom
-  open ZFC.PairingAxiom
-  open ZFC.UnionAxiom
-  open ZFC.PowerSetAxiom
-  open ZFC.OrderedPairExtensions
-  open ZFC.CartesianProduct
-  open ZFC.Relations
-  open ZFC.Functions
-  open ZFC.Cardinality
-  open ZFC.NaturalNumbers
-  open ZFC.InfinityAxiom
-  -- Note: PeanoIsomorphism is NOT opened here to avoid ΠZ notation ambiguity.
-  -- All PeanoIsomorphism exports are available at ZFC level.
+  open ZFC.Axiom.Extension
+  open ZFC.Axiom.Existence
+  open ZFC.Axiom.Specification
+  open ZFC.Axiom.Pairing
+  open ZFC.Axiom.Union
+  open ZFC.Axiom.PowerSet
+  open ZFC.SetOps.OrderedPair
+  open ZFC.SetOps.CartesianProduct
+  open ZFC.SetOps.Relations
+  open ZFC.SetOps.Functions
+  open ZFC.Cardinal.Basic
+  open ZFC.Nat.Basic
+  open ZFC.Axiom.Infinity
+  -- Note: Peano.Import is NOT opened here to avoid ΠZ notation ambiguity.
+  -- All Peano.Import exports are available at ZFC level.
 
   universe u
   variable {U : Type u}
 
-  namespace NaturalNumbersAdd
+  namespace Nat.Add
 
     -- =========================================================================
     -- Section 1: The successor set-function ω → ω
@@ -304,9 +304,9 @@ namespace ZFC
         (fromPeano_lt_iff (Peano.Add.add p q) (Peano.Add.add p r)).mp h_lt'
       rwa [fromPeano_add p q, fromPeano_add p r] at h_mem
 
-  end NaturalNumbersAdd
+  end Nat.Add
 
-  export NaturalNumbersAdd (
+  export Nat.Add (
     -- Section 1: successorFn
     successorFn
     mem_successorFn

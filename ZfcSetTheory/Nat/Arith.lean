@@ -39,25 +39,25 @@ import PeanoNatLib.PeanoNatArith
 
 namespace ZFC
   open Classical
-  open ZFC.ExtensionAxiom
-  open ZFC.ExistenceAxiom
-  open ZFC.SpecificationAxiom
-  open ZFC.PairingAxiom
-  open ZFC.UnionAxiom
-  open ZFC.PowerSetAxiom
-  open ZFC.OrderedPairExtensions
-  open ZFC.CartesianProduct
-  open ZFC.Relations
-  open ZFC.Functions
-  open ZFC.Cardinality
-  open ZFC.NaturalNumbers
-  open ZFC.InfinityAxiom
-  -- Note: PeanoIsomorphism is NOT opened here to avoid ΠZ notation ambiguity.
+  open ZFC.Axiom.Extension
+  open ZFC.Axiom.Existence
+  open ZFC.Axiom.Specification
+  open ZFC.Axiom.Pairing
+  open ZFC.Axiom.Union
+  open ZFC.Axiom.PowerSet
+  open ZFC.SetOps.OrderedPair
+  open ZFC.SetOps.CartesianProduct
+  open ZFC.SetOps.Relations
+  open ZFC.SetOps.Functions
+  open ZFC.Cardinal.Basic
+  open ZFC.Nat.Basic
+  open ZFC.Axiom.Infinity
+  -- Note: Peano.Import is NOT opened here to avoid ΠZ notation ambiguity.
 
   universe u
   variable {U : Type u}
 
-  namespace NaturalNumbersArith
+  namespace Nat.Arith
 
     -- =========================================================================
     -- Section 0: Divisibility predicate (ZFC direct definition)
@@ -483,54 +483,54 @@ namespace ZFC
         exact ⟨by rw [zero_mul_Omega (fromPeano q) hq_om, add_zero ∅ zero_in_Omega],
                zero_mem_of_nat_nonempty _ (fromPeano_is_nat q) h_pos⟩
       | succ p' ih =>
-        -- Use NaturalNumbers.successor (fully qualified) to avoid σ notation ambiguity
+        -- Use Nat.Basic.successor (fully qualified) to avoid σ notation ambiguity
         -- with PeanoNatLib's σ n:max notation
         have hfp_succ : (fromPeano (Peano.ℕ₀.succ p') : U) =
-            NaturalNumbers.successor (fromPeano p') := by simp only [fromPeano]
+            Nat.Basic.successor (fromPeano p') := by simp only [fromPeano]
         rw [hfp_succ]
         have hm' : fromPeano p' ∈ (ω : U) := Nat_in_Omega _ (fromPeano_is_nat p')
         obtain ⟨ih_eq, ih_mod_lt⟩ := ih
         have hd := div_in_Omega (fromPeano p') (fromPeano q) hm' hq_om
         have hr := mod_in_Omega (fromPeano p') (fromPeano q) hm' hq_om
         rcases Classical.em
-            (NaturalNumbers.successor (mod (fromPeano p') (fromPeano q)) = fromPeano q)
+            (Nat.Basic.successor (mod (fromPeano p') (fromPeano q)) = fromPeano q)
             with h_wrap | h_wrap
         · -- Wrap: quotient increments, remainder resets to ∅
           rw [div_succ_wrap (fromPeano p') (fromPeano q) hm' hq_om h_wrap,
               mod_succ_wrap (fromPeano p') (fromPeano q) hm' hq_om h_wrap]
           constructor
           · symm
-            calc add (mul (NaturalNumbers.successor (div (fromPeano p') (fromPeano q)))
+            calc add (mul (Nat.Basic.successor (div (fromPeano p') (fromPeano q)))
                       (fromPeano q)) (∅ : U)
-                = mul (NaturalNumbers.successor (div (fromPeano p') (fromPeano q)))
+                = mul (Nat.Basic.successor (div (fromPeano p') (fromPeano q)))
                       (fromPeano q) :=
                     add_zero _ (mul_in_Omega _ _ (succ_in_Omega _ hd) hq_om)
               _ = add (mul (div (fromPeano p') (fromPeano q)) (fromPeano q)) (fromPeano q) :=
                     succ_mul_Omega _ _ hd hq_om
               _ = add (mul (div (fromPeano p') (fromPeano q)) (fromPeano q))
-                      (NaturalNumbers.successor (mod (fromPeano p') (fromPeano q))) :=
+                      (Nat.Basic.successor (mod (fromPeano p') (fromPeano q))) :=
                     by rw [h_wrap]
-              _ = NaturalNumbers.successor
+              _ = Nat.Basic.successor
                       (add (mul (div (fromPeano p') (fromPeano q)) (fromPeano q))
                       (mod (fromPeano p') (fromPeano q))) :=
                     add_succ _ _ (mul_in_Omega _ _ hd hq_om) hr
-              _ = NaturalNumbers.successor (fromPeano p') :=
-                    (congrArg NaturalNumbers.successor ih_eq).symm
+              _ = Nat.Basic.successor (fromPeano p') :=
+                    (congrArg Nat.Basic.successor ih_eq).symm
           · exact zero_mem_of_nat_nonempty _ (fromPeano_is_nat q) h_pos
         · -- Continue: quotient unchanged, remainder increments
           rw [div_succ_continue (fromPeano p') (fromPeano q) hm' hq_om h_wrap,
               mod_succ_continue (fromPeano p') (fromPeano q) hm' hq_om h_wrap]
           constructor
           · rw [add_succ _ _ (mul_in_Omega _ _ hd hq_om) hr]
-            exact congrArg NaturalNumbers.successor ih_eq
-          · -- NaturalNumbers.successor (mod p' q) ∈ fromPeano q
+            exact congrArg Nat.Basic.successor ih_eq
+          · -- Nat.Basic.successor (mod p' q) ∈ fromPeano q
             have h_succ_in_succ :
-                NaturalNumbers.successor (mod (fromPeano p') (fromPeano q)) ∈
-                NaturalNumbers.successor (fromPeano q) :=
+                Nat.Basic.successor (mod (fromPeano p') (fromPeano q)) ∈
+                Nat.Basic.successor (fromPeano q) :=
               (succ_mem_succ_iff (mod (fromPeano p') (fromPeano q)) (fromPeano q)
                 (mem_Omega_is_Nat _ hr) (fromPeano_is_nat q)).mp ih_mod_lt
             exact ((successor_is_specified (fromPeano q)
-              (NaturalNumbers.successor (mod (fromPeano p') (fromPeano q)))).mp
+              (Nat.Basic.successor (mod (fromPeano p') (fromPeano q)))).mp
               h_succ_in_succ).resolve_right h_wrap
 
     /-- The Euclidean equation for ZFC-native division: `m = (div m n)*n + (mod m n)`. -/
@@ -798,9 +798,9 @@ namespace ZFC
             ← fromPeano_sub (Peano.Mul.mul np q) (Peano.Mul.mul mp p)]
         exact congrArg (fromPeano : Peano.ℕ₀ → U) h
 
-  end NaturalNumbersArith
+  end Nat.Arith
 
-  export NaturalNumbersArith (
+  export Nat.Arith (
     -- Section 0: divisibility predicate
     divides
     -- Section 1: bridge

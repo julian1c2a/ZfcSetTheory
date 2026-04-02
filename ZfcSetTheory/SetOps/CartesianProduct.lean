@@ -16,17 +16,17 @@ import ZfcSetTheory.SetOps.OrderedPair
 
 namespace ZFC
   open Classical
-  open ZFC.ExtensionAxiom
-  open ZFC.ExistenceAxiom
-  open ZFC.SpecificationAxiom
-  open ZFC.PairingAxiom
-  open ZFC.UnionAxiom
-  open ZFC.PowerSetAxiom
-  open ZFC.OrderedPairExtensions
+  open ZFC.Axiom.Extension
+  open ZFC.Axiom.Existence
+  open ZFC.Axiom.Specification
+  open ZFC.Axiom.Pairing
+  open ZFC.Axiom.Union
+  open ZFC.Axiom.PowerSet
+  open ZFC.SetOps.OrderedPair
   universe u
   variable {U : Type u}
 
-  namespace CartesianProduct
+  namespace SetOps.CartesianProduct
 
     /-! ============================================================ -/
     /-! ### PRODUCTO CARTESIANO ### -/
@@ -39,16 +39,16 @@ namespace ZFC
     -/
 
     /-! ### Definición del Producto Cartesiano ### -/
-    noncomputable def CartesianProduct (A B : U) : U :=
+    noncomputable def SetOps.CartesianProduct (A B : U) : U :=
       SpecSet (𝒫 (𝒫 (A ∪ B))) (fun p => isOrderedPair p ∧ fst p ∈ A ∧ snd p ∈ B)
 
-    notation:70 A:71 " ×ₛ " B:71 => CartesianProduct A B
+    notation:70 A:71 " ×ₛ " B:71 => SetOps.CartesianProduct A B
 
     /-! ### Teorema de Caracterización ### -/
     theorem CartesianProduct_is_specified (A B p : U) :
       p ∈ (A ×ₛ B) ↔ (isOrderedPair p ∧ fst p ∈ A ∧ snd p ∈ B)
         := by
-      unfold CartesianProduct
+      unfold SetOps.CartesianProduct
       rw [SpecSet_is_specified]
       constructor
       · intro h
@@ -259,11 +259,11 @@ namespace ZFC
           · rw [BinInter_is_specified]
             exact ⟨hpAB.2.2, hpAC.2.2⟩
 
-  end CartesianProduct
+  end SetOps.CartesianProduct
 end ZFC
 
-export ZFC.CartesianProduct (
-  CartesianProduct
+export ZFC.SetOps.CartesianProduct (
+  SetOps.CartesianProduct
   CartesianProduct_is_specified
   OrderedPair_mem_CartesianProduct
   CartesianProduct_empty_left

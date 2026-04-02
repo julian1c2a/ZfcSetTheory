@@ -14,15 +14,15 @@ import ZfcSetTheory.Axiom.Union
 
 namespace ZFC
   open Classical
-  open ZFC.ExtensionAxiom
-  open ZFC.ExistenceAxiom
-  open ZFC.SpecificationAxiom
-  open ZFC.PairingAxiom
-  open ZFC.UnionAxiom
+  open ZFC.Axiom.Extension
+  open ZFC.Axiom.Existence
+  open ZFC.Axiom.Specification
+  open ZFC.Axiom.Pairing
+  open ZFC.Axiom.Union
   universe u
   variable {U : Type u}
 
-  namespace SetOrder
+  namespace SetOps.SetOrder
 
     /-! ### Propiedades de Orden Parcial Completas ### -/
 
@@ -162,11 +162,11 @@ namespace ZFC
       have hxCA := (BinInter_is_specified C A x).mp hx
       exact (BinInter_is_specified C B x).mpr ⟨hxCA.1, h x hxCA.2⟩
 
-  end SetOrder
+  end SetOps.SetOrder
 
 end ZFC
 
-export ZFC.SetOrder (
+export ZFC.SetOps.SetOrder (
     empty_is_minimum empty_is_unique_minimum
     isUpperBound isLowerBound isSupremum isInfimum
     isBoundedAbove isBoundedBelow any_family_bounded_below

@@ -42,26 +42,26 @@ import PeanoNatLib.PeanoNatSub
 
 namespace ZFC
   open Classical
-  open ZFC.ExtensionAxiom
-  open ZFC.ExistenceAxiom
-  open ZFC.SpecificationAxiom
-  open ZFC.PairingAxiom
-  open ZFC.UnionAxiom
-  open ZFC.PowerSetAxiom
-  open ZFC.OrderedPairExtensions
-  open ZFC.CartesianProduct
-  open ZFC.Relations
-  open ZFC.Functions
-  open ZFC.Cardinality
-  open ZFC.NaturalNumbers
-  open ZFC.InfinityAxiom
-  -- Note: PeanoIsomorphism is NOT opened here to avoid ΠZ notation ambiguity.
-  -- All PeanoIsomorphism exports are available at ZFC level.
+  open ZFC.Axiom.Extension
+  open ZFC.Axiom.Existence
+  open ZFC.Axiom.Specification
+  open ZFC.Axiom.Pairing
+  open ZFC.Axiom.Union
+  open ZFC.Axiom.PowerSet
+  open ZFC.SetOps.OrderedPair
+  open ZFC.SetOps.CartesianProduct
+  open ZFC.SetOps.Relations
+  open ZFC.SetOps.Functions
+  open ZFC.Cardinal.Basic
+  open ZFC.Nat.Basic
+  open ZFC.Axiom.Infinity
+  -- Note: Peano.Import is NOT opened here to avoid ΠZ notation ambiguity.
+  -- All Peano.Import exports are available at ZFC level.
 
   universe u
   variable {U : Type u}
 
-  namespace NaturalNumbersSub
+  namespace Nat.Sub
 
     -- =========================================================================
     -- Section 0: The predecessor set-function ω → ω
@@ -376,9 +376,9 @@ namespace ZFC
         intro h_eq
         exact h_peano_ne (fromPeano_injective h_eq)
 
-  end NaturalNumbersSub
+  end Nat.Sub
 
-  export NaturalNumbersSub (
+  export Nat.Sub (
     -- Section 0: predecessorFn
     predecessorFn
     mem_predecessorFn

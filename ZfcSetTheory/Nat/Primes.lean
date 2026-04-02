@@ -49,7 +49,7 @@ namespace ZFC
   universe u
   variable {U : Type u}
 
-  namespace NaturalNumbersPrimes
+  namespace Nat.Primes
 
     -- =========================================================================
     -- §1  ZFC-native definition of isPrime
@@ -216,9 +216,9 @@ namespace ZFC
       exact unique_prime_factorization ps qs hps hqs
         (fromPeano_injective h_prod) p hp
 
-  end NaturalNumbersPrimes
+  end Nat.Primes
 
-  export NaturalNumbersPrimes (
+  export Nat.Primes (
     -- Definition
     isPrime
     -- Bridge theorem

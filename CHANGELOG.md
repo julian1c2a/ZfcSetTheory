@@ -12,7 +12,19 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ### Cambiado (2026-04-02)
 
-- **Fase 2: Migración de namespace `SetUniverse` → `ZFC`**:
+- **Fase 2b: Alineación de sub-namespaces con estructura de directorios**:
+  - ✅ 42 sub-namespaces renombrados para reflejar la jerarquía de directorios
+  - ✅ Axiom: `ExtensionAxiom` → `Axiom.Extension`, etc. (7 archivos)
+  - ✅ SetOps: `OrderedPairExtensions` → `SetOps.OrderedPair`, `CartesianProduct` → `SetOps.CartesianProduct`, etc. (7 archivos)
+  - ✅ Nat: `NaturalNumbers` → `Nat.Basic`, `NaturalNumbersAdd` → `Nat.Add`, etc. (14 archivos)
+  - ✅ BoolAlg: `BooleanAlgebra` → `BoolAlg.Basic`, `CompleteBooleanAlgebra` → `BoolAlg.Complete`, etc. (8 archivos)
+  - ✅ Peano: `PeanoIsomorphism` → `Peano.Import`, `FiniteSequences` → `Peano.FiniteSequences`, etc. (4 archivos)
+  - ✅ Cardinal: `Cardinality` → `Cardinal.Basic` (1 archivo)
+  - ✅ Induction: `Recursion` → `Induction.Recursion` (1 archivo)
+  - ✅ Actualizada documentación: 12 archivos .md
+  - ✅ Build limpio: 71 jobs, 0 errores, 0 sorry
+
+- **Fase 2a: Migración de namespace `SetUniverse` → `ZFC`**:
   - ✅ Renombrado `namespace SetUniverse` → `namespace ZFC` en 43 archivos .lean
   - ✅ Renombrado `end SetUniverse` → `end ZFC` en todos los archivos
   - ✅ Actualizadas todas las referencias `open ZFC.SubNamespace` y `export ZFC.SubNamespace`
@@ -21,17 +33,17 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ### Añadido (2026-04-01)
 
-- **Nuevo módulo CompleteBooleanAlgebra.lean — Álgebra booleana completa atómica**:
+- **Nuevo módulo BoolAlg.Complete.lean — Álgebra booleana completa atómica**:
   - ✅ `isSupremumIn (L S x : U) : Prop` — supremo de S dentro del retículo L
   - ✅ `isInfimumIn (L S x : U) : Prop` — ínfimo de S dentro del retículo L
   - ✅ `isCompleteLattice (L : U) : Prop` — todo subconjunto de L tiene supremo e ínfimo en L
   - ✅ `isCompleteAtomicBA (A : U) : Prop` — 𝒫(A) es retículo completo y atómico
   - ✅ 11 teoremas: `supremumIn_unique`, `infimumIn_unique`, `UnionSet_subset_of_family`, `UnionSet_mem_PowerSet_of_family`, `UnionSet_is_supremumIn_PowerSet`, `interSet_subset_of_family`, `interSet_mem_PowerSet_of_family`, `interSet_is_infimumIn_PowerSet`, `universe_is_infimumIn_PowerSet_empty`, `PowerSet_is_complete_lattice`, `PowerSet_is_complete_atomic_BA`
-  - ✅ Namespace `ZFC.CompleteBooleanAlgebra` (exportado a `ZFC`, 15 exports)
-  - ✅ Build limpio; 42/43 módulos compilados (módulo añadido antes de FiniteCofinite)
+  - ✅ Namespace `ZFC.BoolAlg.Complete` (exportado a `ZFC`, 15 exports)
+  - ✅ Build limpio; 42/43 módulos compilados (módulo añadido antes de BoolAlg.FiniteCofinite)
   - ⚠️ Proyección en REFERENCE.md: ❌ Pendiente
 
-- **Nuevo módulo FiniteCofinite.lean — Álgebra finita/cofinita, contraejemplo no completo**:
+- **Nuevo módulo BoolAlg.FiniteCofinite.lean — Álgebra finita/cofinita, contraejemplo no completo**:
   - ✅ `isCofinite (A X : U) : Prop` — predicado de cofinitud: A \ X es finito
   - ✅ `isFinCof (A X : U) : Prop` — X ⊆ A y (X finito o X cofinito en A)
   - ✅ `FinCofAlg (A : U) : U` — álgebra de subconjuntos finitos y cofinitos de A
@@ -41,19 +53,19 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
     - Paridad (7): `double_injective`, `even_or_odd`, `even_ne_odd`, `EvenSet_is_specified`, `EvenSet_subset_Omega`, `EvenSet_infinite`, `OddSet_infinite`
     - Estructura de álgebra booleana (7): `FinCofAlg_is_specified`, `FinCofAlg_subset_PowerSet`, `FinCofAlg_empty`, `FinCofAlg_universe`, `FinCofAlg_complement`, `FinCofAlg_union`, `FinCofAlg_inter`
     - No completitud (2): `EvenSet_not_in_FinCofAlg`, `FinCofAlg_not_complete`
-  - ✅ Namespace `ZFC.FiniteCofinite` (exportado a `ZFC`, 22 exports)
+  - ✅ Namespace `ZFC.BoolAlg.FiniteCofinite` (exportado a `ZFC`, 22 exports)
   - ✅ Build limpio; 43/43 módulos compilados correctamente (0 sorry, 0 errores)
   - ✅ Proyectado en REFERENCE.md §3.40, §4.36, §6.37
 
-- **REFERENCE.md — Proyección de FiniteCofinite.lean + registro de CompleteBooleanAlgebra.lean**:
-  - ✅ §1.1: 2 filas añadidas (CompleteBooleanAlgebra ❌ Pendiente, FiniteCofinite ✅ Completo)
-  - ✅ §3.40: 4 definiciones de FiniteCofinite
+- **REFERENCE.md — Proyección de BoolAlg.FiniteCofinite.lean + registro de BoolAlg.Complete.lean**:
+  - ✅ §1.1: 2 filas añadidas (BoolAlg.Complete ❌ Pendiente, BoolAlg.FiniteCofinite ✅ Completo)
+  - ✅ §3.40: 4 definiciones de BoolAlg.FiniteCofinite
   - ✅ §4.36: 19 teoremas en 4 secciones
-  - ✅ §6.37: 22 exports de FiniteCofinite
-  - ✅ §7.2: FiniteCofinite añadido a archivos completos
-  - ✅ §7.5: CompleteBooleanAlgebra listado como pendiente
+  - ✅ §6.37: 22 exports de BoolAlg.FiniteCofinite
+  - ✅ §7.2: BoolAlg.FiniteCofinite añadido a archivos completos
+  - ✅ §7.5: BoolAlg.Complete listado como pendiente
 
-- **Nuevo módulo FiniteSequencesBridge.lean — Puente DList ↔ ZFC y TFA nativo**:
+- **Nuevo módulo Peano.FiniteSequencesBridge.lean — Puente DList ↔ ZFC y TFA nativo**:
   - ✅ `nth (f n i : U) : U` — i-ésimo elemento de secuencia finita ZFC
   - ✅ `dlistToSeq (xs : DList ℕ₀) : U` — conversión DList Peano → secuencia finita ZFC
   - ✅ `dlistLen (xs : DList ℕ₀) : U` — longitud de DList como natural ZFC
@@ -61,11 +73,11 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
   - ✅ 15 teoremas públicos en 7 secciones: nth (5), seqProd recursion (3), seqProd extensionality (1), DList→ZFC bridge (4), seqProd correspondence (1), isPrimeSeq (1), TFA native (2)
   - ✅ `tfa_exists_native` — ∀ n ≥ 2, ∃ secuencia ZFC de primos cuyo producto es n
   - ✅ `tfa_unique_native` — unicidad de la factorización prima ZFC-nativa
-  - ✅ Namespace `ZFC.FiniteSequencesBridge` (exportado a `ZFC`, 23 exports)
+  - ✅ Namespace `ZFC.Peano.FiniteSequencesBridge` (exportado a `ZFC`, 23 exports)
   - ✅ Build limpio; 41/41 módulos compilados correctamente (0 sorry, 0 errores)
 
-- **REFERENCE.md — Proyección completa de FiniteSequencesBridge.lean**:
-  - ✅ §1.1: 1 fila añadida (FiniteSequencesBridge)
+- **REFERENCE.md — Proyección completa de Peano.FiniteSequencesBridge.lean**:
+  - ✅ §1.1: 1 fila añadida (Peano.FiniteSequencesBridge)
   - ✅ §3.39: 4 definiciones (nth, dlistToSeq, dlistLen, isPrimeSeq)
   - ✅ §4.35: 15 teoremas en 7 secciones
   - ✅ §6.36: 23 exports
@@ -73,7 +85,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ### Añadido (2026-03-30)
 
-- **Nuevo módulo FiniteSequencesArith.lean — Aritmética de secuencias finitas en ZFC**:
+- **Nuevo módulo Peano.FiniteSequencesArith.lean — Aritmética de secuencias finitas en ZFC**:
   - ✅ `sumStepFn (f : U) : U` — función de paso para sumación: ⟨k, v⟩ ↦ v + f(k)
   - ✅ `seqSumFn`, `seqSum (f n : U) : U` — Σ_{i<n} f(i) vía recursión ZFC
   - ✅ `prodStepFn (f : U) : U` — función de paso para producto: ⟨k, v⟩ ↦ v · f(k)
@@ -83,11 +95,11 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
   - ✅ `card_product_two` — |A ×ₛ B| = |A| · |B| para conjuntos finitos
   - ✅ `card_familyProduct` — |Π_{i<n} F(i)| = Π_{i<n} |F(i)| (inducción ZFC completa)
   - ✅ 21 lemas privados auxiliares (no exportados)
-  - ✅ Namespace `ZFC.FiniteSequencesArith` (exportado a `ZFC`, 33 exports)
+  - ✅ Namespace `ZFC.Peano.FiniteSequencesArith` (exportado a `ZFC`, 33 exports)
   - ✅ Build limpio; 40/40 módulos compilados correctamente (0 sorry, 0 errores)
 
-- **REFERENCE.md — Proyección completa de FiniteSequencesArith.lean**:
-  - ✅ §1.1: 1 fila añadida (FiniteSequencesArith)
+- **REFERENCE.md — Proyección completa de Peano.FiniteSequencesArith.lean**:
+  - ✅ §1.1: 1 fila añadida (Peano.FiniteSequencesArith)
   - ✅ §3.38: 7 definiciones (sumStepFn, seqSumFn, seqSum, prodStepFn, seqProdFn, seqProd, familyProduct)
   - ✅ §4.34: 18 teoremas en 6 secciones
   - ✅ §6.35: 33 exports
@@ -95,7 +107,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ### Añadido (2026-03-29)
 
-- **Nuevo módulo FiniteSets.lean — Conjuntos finitos en ZFC**:
+- **Nuevo módulo SetOps.FiniteSets.lean — Conjuntos finitos en ZFC**:
   - ✅ `isFiniteSet (A : U) : Prop` — predicado: ∃ n ∈ ω, A ≃ₛ n
   - ✅ Infraestructura de biyecciones (identidad, inversa, composición):
     - `id_is_function`, `id_is_injective`, `id_is_surjective`, `id_is_bijection`
@@ -103,11 +115,11 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
     - `comp_injective`, `comp_surjective`, `comp_bijection`
   - ✅ Equipotencia como relación de equivalencia: `equipotent_refl`, `equipotent_symm`, `equipotent_trans`
   - ✅ Propiedades de finitud: `empty_is_finite`, `nat_is_finite`, `singleton_is_finite`, `finite_equipotent`, `finite_union_singleton`
-  - ✅ Namespace `ZFC.FiniteSets` (exportado a `ZFC`, 22 exports)
+  - ✅ Namespace `ZFC.SetOps.FiniteSets` (exportado a `ZFC`, 22 exports)
   - ✅ Build limpio; 39/39 módulos compilados correctamente (0 sorry, 0 errores)
 
-- **REFERENCE.md — Proyección completa de FiniteSets.lean**:
-  - ✅ §1.1: 1 fila añadida (FiniteSets)
+- **REFERENCE.md — Proyección completa de SetOps.FiniteSets.lean**:
+  - ✅ §1.1: 1 fila añadida (SetOps.FiniteSets)
   - ✅ §3.37: 1 definición (isFiniteSet)
   - ✅ §4.33: 21 teoremas en 7 secciones
   - ✅ §6.34: 22 exports
@@ -115,7 +127,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ### Añadido (2026-03-27 10:00)
 
-- **Nuevo módulo FiniteSequences.lean — Secuencias finitas en ZFC** (Patrón directo, sin bridge):
+- **Nuevo módulo Peano.FiniteSequences.lean — Secuencias finitas en ZFC** (Patrón directo, sin bridge):
   - ✅ `isFinSeq (f n A : U) : Prop` — predicado: n ∈ ω ∧ f : n → A
   - ✅ `FinSeqSet (n A : U) : U` — conjunto de todas las n-secuencias en A (noncomputable)
   - ✅ `appendElem (f n a : U) : U` — extensión f ∪ {⟨n, a⟩} (noncomputable)
@@ -124,11 +136,11 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
   - ✅ 3 teoremas de secuencia vacía: `isFinSeq_empty`, `isFinSeq_zero_unique`, `FinSeqSet_zero`
   - ✅ 5 teoremas de appendElem: `appendElem_is_specified`, `isFinSeq_appendElem`, `appendElem_apply_last`, `appendElem_apply_prev`, `appendElem_inj`
   - ✅ 1 teorema de descomposición: `isFinSeq_restriction`
-  - ✅ Namespace `ZFC.FiniteSequences` (sin export a `ZFC`)
+  - ✅ Namespace `ZFC.Peano.FiniteSequences` (sin export a `ZFC`)
   - ✅ Build limpio; 38/38 módulos compilados correctamente (0 sorry, 0 errores)
 
-- **REFERENCE.md — Proyección completa de FiniteSequences.lean**:
-  - ✅ §1.1: 1 fila añadida (FiniteSequences)
+- **REFERENCE.md — Proyección completa de Peano.FiniteSequences.lean**:
+  - ✅ §1.1: 1 fila añadida (Peano.FiniteSequences)
   - ✅ §3.36: 3 definiciones (isFinSeq, FinSeqSet, appendElem)
   - ✅ §4.32: 15 teoremas en 5 secciones
   - ✅ §6.33: documentación de namespace (sin exports)
@@ -136,7 +148,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ### Añadido (2026-03-26 14:00)
 
-- **Nuevo módulo NaturalNumbersMaxMin.lean — Máximo y mínimo en ω** (Patrón B, bridge-only):
+- **Nuevo módulo Nat.MaxMin.lean — Máximo y mínimo en ω** (Patrón B, bridge-only):
   - ✅ `maxOf (n m : U) : U` — máximo vía `fromPeano (Peano.MaxMin.max (toPeano n _) (toPeano m _))`
   - ✅ `minOf (n m : U) : U` — mínimo vía `fromPeano (Peano.MaxMin.min (toPeano n _) (toPeano m _))`
   - ✅ `fromPeano_max`, `fromPeano_min` — teoremas puente
@@ -144,14 +156,14 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
   - ✅ 31 exports al namespace `ZFC`
   - ✅ Build limpio; 37/37 módulos compilados correctamente
 
-- **Nuevo módulo NaturalNumbersNewtonBinom.lean — Teorema binomial de Newton en ω** (Patrón B, bridge-only, 4 argumentos):
+- **Nuevo módulo Nat.NewtonBinom.lean — Teorema binomial de Newton en ω** (Patrón B, bridge-only, 4 argumentos):
   - ✅ `binomTermOf (a b n k : U) : U` — C(n,k)·a^k·b^(n−k) vía `fromPeano (Peano.NewtonBinom.binomTerm ...)`
   - ✅ `fromPeano_binomTerm` — teorema puente con 4 argumentos (`congr 1` ×4)
   - ✅ 9 teoremas: valores concretos (k=0, k=n), expansión, separación de potencias n^(m+k)=n^m·n^k, Newton's binomial theorem (Peano→ZFC), Σ C(n,k)=2^n (Peano→ZFC), comparación de crecimiento existencial
   - ✅ **Decisión de diseño**: `finSum` (función de orden superior) no se transporta a ZFC; `newton_binom_peano` y `sum_binom_eq_pow_two_peano` usan tipos Peano con resultado aplicado vía `fromPeano`
   - ✅ 12 exports al namespace `ZFC`
 
-- **Nuevo módulo NaturalNumbersWellFounded.lean — Buen fundamento y buena ordenación en ω** (Patrón B, bridge-only):
+- **Nuevo módulo Nat.WellFounded.lean — Buen fundamento y buena ordenación en ω** (Patrón B, bridge-only):
   - ✅ `acc_lt_Omega (n : U)` — accesibilidad bajo ∈ restringido a ω, delegando a `nat_mem_wf.apply n`
   - ✅ `well_ordering_Omega (P : U → Prop)` — principio de buena ordenación con unicidad: todo subconjunto no vacío de ω tiene un mínimo único, transportado desde `Peano.WellFounded.well_ordering_principle`
   - ✅ `well_ordering_Omega_exists` — forma simplificada sin unicidad
@@ -166,41 +178,41 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ### Añadido (2026-03-24 10:00)
 
-- **Nuevo módulo NaturalNumbersFactorial.lean — Factorial en ω** (Patrón B, bridge-only):
+- **Nuevo módulo Nat.Factorial.lean — Factorial en ω** (Patrón B, bridge-only):
   - ✅ `factorial (n : U) : U` — factorial de naturales de von Neumann via `fromPeano (Peano.Factorial.factorial (toPeano n hn))`
   - ✅ `fromPeano_factorial` — teorema puente con `Peano.Factorial.factorial`
   - ✅ 10 teoremas: `factorial_zero`, `factorial_one`, `factorial_two`, `factorial_succ`, `factorial_pos`, `factorial_ne_zero`, `factorial_ge_one`, `factorial_le_succ`, `factorial_le_mono`, `factorial_in_Omega`
   - ✅ Build limpio; 31/31 módulos compilados correctamente
 
 - **REFERENCE.md — Proyección y corrección completa de 7 módulos**:
-  - ✅ `AtomicBooleanAlgebra.lean`: completada proyección parcial; §3.12 (4 def), §4.7 (14 teoremas), §6.25 (19 exports); estado 🔶 Parcial → ✅ Completo
-  - ✅ `GeneralizedDeMorgan.lean`: corregida documentación incorrecta — §3.16 (1 def real vs. 3 ficticias anteriores), §4.11 (10 teoremas reales vs. 8 ficticios), §6.8 (8 exports reales)
-  - ✅ `GeneralizedDistributive.lean`: corregida documentación incorrecta — §3.17 (2 def reales vs. 5 ficticias anteriores), §4.12 (10 teoremas reales), §6.9 (12 exports reales)
-  - ✅ `Recursion.lean`: expandido §6.17 con todos los exports de variantes step e CoV (anteriormente incompleto: ~15 entradas faltaban)
-  - ✅ `SetOrder.lean`, `SetStrictOrder.lean`, `PeanoImport.lean`: verificados correctamente proyectados
+  - ✅ `BoolAlg.Atomic.lean`: completada proyección parcial; §3.12 (4 def), §4.7 (14 teoremas), §6.25 (19 exports); estado 🔶 Parcial → ✅ Completo
+  - ✅ `BoolAlg.GenDeMorgan.lean`: corregida documentación incorrecta — §3.16 (1 def real vs. 3 ficticias anteriores), §4.11 (10 teoremas reales vs. 8 ficticios), §6.8 (8 exports reales)
+  - ✅ `BoolAlg.GenDistributive.lean`: corregida documentación incorrecta — §3.17 (2 def reales vs. 5 ficticias anteriores), §4.12 (10 teoremas reales), §6.9 (12 exports reales)
+  - ✅ `Induction.Recursion.lean`: expandido §6.17 con todos los exports de variantes step e CoV (anteriormente incompleto: ~15 entradas faltaban)
+  - ✅ `SetOps.SetOrder.lean`, `SetOps.SetStrictOrder.lean`, `PeanoImport.lean`: verificados correctamente proyectados
 
 ### Añadido (2026-03-22 12:00)
 
-- **Nuevo módulo NaturalNumbersPow.lean — Potenciación en ω** (Patrón RecursiveFn):
+- **Nuevo módulo Nat.Pow.lean — Potenciación en ω** (Patrón RecursiveFn):
   - ✅ `powFn (m : U) (hm : m ∈ ω) : U` — función de potenciación vía `RecursiveFn ω (σ ∅) (mulFn m hm)`
   - ✅ `pow (m n : U) : U` — potencia de naturales de von Neumann
   - ✅ `fromPeano_pow` — teorema puente con `Peano.Pow.pow`
   - ✅ 13 teoremas: `pow_zero`, `pow_succ`, `pow_eq`, `pow_in_Omega`, `zero_pow_Omega`, `one_pow_Omega`, `pow_one_Omega`, `pow_ne_zero_Omega`, `pow_two_Omega`, `pow_add_eq_mul_pow_Omega`, `mul_pow_Omega`, `pow_pow_eq_pow_mul_Omega`, `powFn_is_function`
   - ✅ 18 exports totales; build limpio
 
-- **Nuevo módulo NaturalNumbersArith.lean — Divisibilidad, GCD, LCM, Bézout** (Patrón RecursiveFn + Patrón B):
+- **Nuevo módulo Nat.Arith.lean — Divisibilidad, GCD, LCM, Bézout** (Patrón RecursiveFn + Patrón B):
   - ✅ `divides (m n : U) : Prop` — predicado ZFC directo: ∃ k ∈ ω, n = m*k
   - ✅ `div (m n : U) : U` — cociente euclídeo nativo ZFC via `divMod_stepFn` (función paso en ω×ω)
   - ✅ `mod (m n : U) : U` — resto euclídeo nativo ZFC (mismo RecursiveFn)
-  - ✅ `div_eq_divOf`/`mod_eq_modOf` — equivalencia con Pattern B de NaturalNumbersDiv
+  - ✅ `div_eq_divOf`/`mod_eq_modOf` — equivalencia con Pattern B de Nat.Div
   - ✅ `gcdOf (m n : U) : U` — MCD Pattern B via `Peano.Arith.gcd`
   - ✅ `lcmOf (m n : U) : U` — MCM Pattern B via `Peano.Arith.lcm`
   - ✅ `bezout_natform_Omega` — Bézout en forma substractiva: ∃ a b, a*m − b*n = gcd(m,n) ∨ a*n − b*m = gcd(m,n)
   - ✅ 13 propiedades de divisibilidad, 8 propiedades de gcd/lcm, 14 propiedades de div/mod nativo
-  - ✅ 43 exports totales; build limpio (tras fix de ambigüedad σ con NaturalNumbers.successor)
+  - ✅ 43 exports totales; build limpio (tras fix de ambigüedad σ con Nat.Basic.successor)
 
 - **REFERENCE.md**: actualización completa
-  - ✅ §1.1: NaturalNumbersPow.lean y NaturalNumbersArith.lean añadidos a tabla
+  - ✅ §1.1: Nat.Pow.lean y Nat.Arith.lean añadidos a tabla
   - ✅ §3.27-§3.28: nuevas secciones de definiciones
   - ✅ §4.23-§4.24: nuevas secciones de teoremas
   - ✅ §6.23-§6.24: nuevas secciones de exports
@@ -208,21 +220,21 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ### Añadido (2026-03-21 12:00)
 
-- **Nuevo módulo NaturalNumbersSub.lean — Sustracción saturada en ω** (Patrón RecursiveFn):
+- **Nuevo módulo Nat.Sub.lean — Sustracción saturada en ω** (Patrón RecursiveFn):
   - ✅ `predecessorFn : U` — función predecesor para Recursión
   - ✅ `subFn (m : U) (hm : m ∈ ω) : U` — función de sustracción vía `RecursiveFn`
   - ✅ `sub (m n : U) : U` — sustracción saturada (monus) de naturales de von Neumann
   - ✅ `fromPeano_sub` — teorema puente con `Peano.Sub.sub`
   - ✅ 13 teoremas algebraicos
 
-- **Nuevo módulo NaturalNumbersDiv.lean — División euclídea en ω** (Patrón B):
+- **Nuevo módulo Nat.Div.lean — División euclídea en ω** (Patrón B):
   - ✅ `divOf (m n : U) : U` — cociente via isomorfismo
   - ✅ `modOf (m n : U) : U` — resto via isomorfismo
   - ✅ `divMod_eq_Omega`, `mod_lt_divisor_Omega`, `div_of_lt_Omega`, `mod_of_lt_Omega`, `div_le_self_Omega`
 
 ### Añadido (2026-03-08 14:00)
 
-- **Nuevo módulo NaturalNumbersAdd.lean — Suma en ω**:
+- **Nuevo módulo Nat.Add.lean — Suma en ω**:
   - ✅ `successorFn : U → U → U` — función sucesor para Recursión (no computable, proposicional)
   - ✅ `addFn (m : U) (hm : m ∈ ω) : U` — función de suma vía `RecursiveFn`
   - ✅ `add (m n : U) : U` — suma de naturales de von Neumann
@@ -230,7 +242,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
   - ✅ 16 teoremas algebraicos: `add_zero_Omega`, `zero_add_Omega`, `add_succ_Omega`, `succ_add_Omega`, `add_comm_Omega`, `add_assoc_Omega`, `add_left_cancel_Omega`, `add_right_cancel_Omega`, `add_pos_left_Omega`, `add_pos_right_Omega`, `le_then_exists_add_Omega`, `add_lt_of_lt_Omega`, `add_le_left_Omega`, `add_le_right_Omega`, `lt_add_of_pos_right_Omega`, `lt_add_of_pos_left_Omega`
   - ✅ Build: 28/28 módulos compilados correctamente
 
-- **Nuevo módulo NaturalNumbersMul.lean — Multiplicación en ω**:
+- **Nuevo módulo Nat.Mul.lean — Multiplicación en ω**:
   - ✅ `mulFn (m : U) (hm : m ∈ ω) : U` — función de multiplicación vía `RecursiveFn`
   - ✅ `mul (m n : U) : U` — multiplicación de naturales de von Neumann
   - ✅ `fromPeano_mul` — teorema puente: `fromPeano (p * q) = mul (fromPeano p) (fromPeano q)`
@@ -249,17 +261,17 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
   - ✅ Estado actualizado en REFERENCE.md: 🔶 Parcial → ✅ Completo
 
 - **REFERENCE.md**: actualización completa
-  - ✅ §1.1: NaturalNumbersAdd.lean y NaturalNumbersMul.lean añadidos
-  - ✅ §3.22: nueva sección NaturalNumbersAdd (3 definiciones)
-  - ✅ §3.23: nueva sección NaturalNumbersMul (2 definiciones)
+  - ✅ §1.1: Nat.Add.lean y Nat.Mul.lean añadidos
+  - ✅ §3.22: nueva sección Nat.Add (3 definiciones)
+  - ✅ §3.23: nueva sección Nat.Mul (2 definiciones)
   - ✅ §4.17: PeanoImport ampliado (+5 teoremas)
-  - ✅ §4.18: nueva sección NaturalNumbersAdd (16 teoremas)
-  - ✅ §4.19: nueva sección NaturalNumbersMul (13 teoremas)
+  - ✅ §4.18: nueva sección Nat.Add (16 teoremas)
+  - ✅ §4.19: nueva sección Nat.Mul (13 teoremas)
   - ✅ §5.11-5.12: notaciones ΠZ/ZΠ, add, mul
-  - ✅ §6.15-6.17: exports PeanoImport, NaturalNumbersAdd, NaturalNumbersMul
+  - ✅ §6.15-6.17: exports PeanoImport, Nat.Add, Nat.Mul
   - ✅ §7.2: Cardinality movido de 7.3 a 7.2
 
-- **ZfcSetTheory.lean** (módulo raíz): `import ZfcSetTheory.NaturalNumbersMul` añadido
+- **ZfcSetTheory.lean** (módulo raíz): `import ZfcSetTheory.Nat.Mul` añadido
 
 - **AIDER-AI-GUIDE.md**: actualizado con requisitos mejorados del proyecto PEANO
   - ✅ §0: documentación técnica (no usuario final)
@@ -286,7 +298,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
   - Estrategia: elementos fuera de ω son vacuosamente accesibles; elementos en ω por inducción fuerte usando `S = SpecSet ω (Acc R)`
   - ✅ Añadido a la lista de exports de `Infinity.lean`
 
-- **NaturalNumbers.lean — exports de predecessor ampliados**:
+- **Nat.Basic.lean — exports de predecessor ampliados**:
   - ✅ `predecessor`, `predecessor_of_successor`, `predecessor_is_nat`, `predecessor_mem` ahora en la lista de exports pública
 
 - **Documentación actualizada (REFERENCE.md)**:
@@ -298,8 +310,8 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ### Actualizado (2026-02-12 18:45)
 
-- **Documentación Completa - Proyección de NaturalNumbers.lean y Actualización de Markdown**:
-  - ✅ NaturalNumbers.lean completamente proyectado en REFERENCE.md (13 definiciones + 36 teoremas + 47 exportaciones)
+- **Documentación Completa - Proyección de Nat.Basic.lean y Actualización de Markdown**:
+  - ✅ Nat.Basic.lean completamente proyectado en REFERENCE.md (13 definiciones + 36 teoremas + 47 exportaciones)
   - ✅ Todos los archivos markdown del proyecto actualizados con timestamps ISO 8601 (YYYY-MM-DD HH:MM)
   - ✅ Información de autoría agregada a todos los archivos de documentación
   - ✅ Cumplimiento total con AIDER-AI-GUIDE.md (requisitos 10-11: timestamps y autoría)
@@ -348,7 +360,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
   - API completa: `.intro`, `.exists`, `.choose`, `.choose_spec`, `.unique`
   - Resuelve incompatibilidades con la implementación estándar de Lean 4
 
-- **Domain y Range para Relaciones** en `Relations.lean`:
+- **Domain y Range para Relaciones** en `SetOps.Relations.lean`:
   - `domain R` - Dominio correcto usando `⋃(⋃ R)` en lugar de `fst R`
   - `range R` - Rango correcto usando `⋃(⋃ R)` en lugar de `snd R`
   - `imag R` - Alias para `range`
@@ -362,7 +374,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 - **Actualización de isFunctionFromTo**:
   - Cambio de estructura ternaria a binaria: `isFunctionFromTo f A B` → `isFunctionFromTo f A`
   - Nueva definición: `(f ⊆ A ×ₛ B) ∧ (∀ x ∈ A, ∃! y, ⟨x,y⟩ ∈ f)`
-  - Actualizadas todas las referencias en `Cardinality.lean`
+  - Actualizadas todas las referencias en `Cardinal.Basic.lean`
 
 - **Reorganización de Relations.lean**:
   - Definiciones correctas (`domain`, `range`) primero
@@ -408,7 +420,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ### Añadido
 
-- **PowerSetAlgebra.lean**: Álgebra del conjunto potencia
+- **BoolAlg.PowerSetAlgebra.lean**: Álgebra del conjunto potencia
   - `Complement A X` - Complemento de X respecto a A (notación: `X^∁[ A ]`)
   - `ComplementFamily A F` - Familia de complementos
   - `double_complement` - (X^∁[A])^∁[A] = X (si X ⊆ A)
@@ -416,18 +428,18 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
   - `complement_full` - A^∁[A] = ∅
   - De Morgan para familias: `DeMorgan_union_family`, `DeMorgan_inter_family`
 
-- **GeneralizedDeMorgan.lean**: Leyes de De Morgan generalizadas
+- **BoolAlg.GenDeMorgan.lean**: Leyes de De Morgan generalizadas
   - `complement_union_eq_inter_complement` - A \ ⋃ F = ⋂ (ComplementFamily A F)
   - `complement_inter_eq_union_complement` - A \ ⋂ F = ⋃ (ComplementFamily A F)
   - Versiones duales e inversas
 
-- **GeneralizedDistributive.lean**: Leyes distributivas generalizadas
+- **BoolAlg.GenDistributive.lean**: Leyes distributivas generalizadas
   - `DistribSet X F op` - Conjunto imagen { op(X, Y) | Y ∈ F }
   - `inter_union_distrib` - X ∩ (⋃ F) = ⋃ { X ∩ Y | Y ∈ F }
   - `union_inter_distrib` - X ∪ (⋂ F) = ⋂ { X ∪ Y | Y ∈ F }
   - Versiones conmutativas
 
-- **AtomicBooleanAlgebra.lean**: Álgebra de Boole atómica
+- **BoolAlg.Atomic.lean**: Álgebra de Boole atómica
   - `isAtom A X` - X es un átomo en 𝒫(A)
   - `Atoms A` - Conjunto de todos los átomos
   - `isAtomic A` - 𝒫(A) es atómica
@@ -452,7 +464,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ### Cambiado
 
-- **CartesianProduct.lean**: Renombrado namespace `CartesianProductAxiom` → `CartesianProduct`
+- **SetOps.CartesianProduct.lean**: Renombrado namespace `CartesianProductAxiom` → `SetOps.CartesianProduct`
   (no es un axioma, es una construcción derivada)
 
 ---
@@ -502,13 +514,13 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ### Añadido
 
-- **SetStrictOrder.lean**: Orden estricto completo
+- **SetOps.SetStrictOrder.lean**: Orden estricto completo
   - `strict_order_irreflexive`: ¬(A ⊂ A)
   - `strict_order_asymmetric`: A ⊂ B → ¬(B ⊂ A)
   - `strict_order_transitive`: A ⊂ B → B ⊂ C → A ⊂ C
   - `partial_to_strict_order`: Conversión de orden parcial a estricto
 
-- **SetOrder.lean**: Estructura de retículo
+- **SetOps.SetOrder.lean**: Estructura de retículo
   - `isUpperBound`, `isLowerBound`, `isSupremum`, `isInfimum`
   - `inter_is_glb`: A ∩ B es el ínfimo
   - `union_is_lub`: A ∪ B es el supremo
@@ -516,7 +528,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ### Mejorado
 
-- **BooleanAlgebra.lean**: Nuevos teoremas de monotonía y equivalencias
+- **BoolAlg.Basic.lean**: Nuevos teoremas de monotonía y equivalencias
 
 ---
 
@@ -524,7 +536,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ### Añadido
 
-- **BooleanAlgebra.lean**: Teoremas de álgebra booleana
+- **BoolAlg.Basic.lean**: Teoremas de álgebra booleana
   - Conmutatividad de ∪ y ∩
   - Idempotencia de ∪ y ∩
   - Identidad con ∅

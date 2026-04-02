@@ -36,40 +36,40 @@ Este proyecto desarrolla los axiomas fundamentales de ZFC de manera progresiva, 
 | Categoría | Módulos | Descripción | Estado |
 |-----------|---------|-------------|--------|
 | **Pares Ordenados** | `OrderedPair.lean` | Par de Kuratowski, teoremas fundamentales | ✅ Completo |
-| **Producto Cartesiano** | `CartesianProduct.lean` | A ×ₛ B, pertenencia, proyecciones | ✅ Completo |
-| **Relaciones** | `Relations.lean` | Equivalencia, orden parcial/lineal, clases | ✅ Completo |
-| **Funciones** | `Functions.lean` | Inyectivas, suryectivas, biyectivas, composición | ✅ Completo |
-| **Números Naturales** | `NaturalNumbers.lean` | ℕ como ordinales de von Neumann | ✅ Completo |
-| **Recursión en ℕ** | `Recursion.lean` | Teorema de recursión sobre naturales | ✅ Completo |
+| **Producto Cartesiano** | `SetOps.CartesianProduct.lean` | A ×ₛ B, pertenencia, proyecciones | ✅ Completo |
+| **Relaciones** | `SetOps.Relations.lean` | Equivalencia, orden parcial/lineal, clases | ✅ Completo |
+| **Funciones** | `SetOps.Functions.lean` | Inyectivas, suryectivas, biyectivas, composición | ✅ Completo |
+| **Números Naturales** | `Nat.Basic.lean` | ℕ como ordinales de von Neumann | ✅ Completo |
+| **Recursión en ℕ** | `Induction.Recursion.lean` | Teorema de recursión sobre naturales | ✅ Completo |
 | **Isomorfismo Von Neumann ↔ Peano** | `PeanoImport.lean` | Biyección ℕ_VN ↔ Peano.ℕ₀ (peanolib) | ✅ Completo |
-| **Suma en ℕ (ZFC)** | `NaturalNumbersAdd.lean` | Suma via Recursión, puente `fromPeano_add`, semianillo | ✅ Completo |
-| **Multiplicación en ℕ (ZFC)** | `NaturalNumbersMul.lean` | Mul via Recursión, puente `fromPeano_mul`, anillo conmutativo | ✅ Completo |
-| **Sustracción saturada en ℕ** | `NaturalNumbersSub.lean` | Monus via Recursión (sustracción truncada), puente `fromPeano_sub` | ✅ Completo |
-| **División euclídea en ℕ** | `NaturalNumbersDiv.lean` | `divOf`/`modOf` via Patrón B (isomorfismo), algoritmo de Euclides | ✅ Completo |
-| **Potenciación en ℕ** | `NaturalNumbersPow.lean` | `pow` via RecursiveFn + mulFn, puente `fromPeano_pow` | ✅ Completo |
-| **Aritmética en ℕ (GCD, LCM, Bézout)** | `NaturalNumbersArith.lean` | `div`/`mod` nativo ZFC, `gcdOf`/`lcmOf` Patrón B, Bézout substractivo | ✅ Completo |
-| **Factorial en ℕ** | `NaturalNumbersFactorial.lean` | `factorial` via Patrón B (peanolib), 10 propiedades | ✅ Completo |
-| **GCD/LCM nativo ZFC** | `NaturalNumbersGcd.lean` | GCD vía algoritmo euclídeo, LCM, propiedades divisibilidad | ✅ Completo |
-| **Primalidad y TFA** | `NaturalNumbersPrimes.lean` | `isPrime` ZFC-nativo, TFA Existencia + Unicidad | ✅ Completo |
-| **Coeficientes binomiales** | `NaturalNumbersBinom.lean` | `binomOf` Patrón B, regla de Pascal, C(n,k)·k!·(n−k)!=n! | ✅ Completo |
-| **Máximo y mínimo** | `NaturalNumbersMaxMin.lean` | `maxOf`/`minOf` Patrón B, 29 teoremas de retículo | ✅ Completo |
-| **Teorema de Newton** | `NaturalNumbersNewtonBinom.lean` | `binomTermOf` Patrón B 4-arg, teorema binomial | ✅ Completo |
-| **Buen fundamento** | `NaturalNumbersWellFounded.lean` | Accesibilidad, buena ordenación de ω | ✅ Completo |
-| **Secuencias finitas** | `FiniteSequences.lean` | `isFinSeq`, `FinSeqSet`, `appendElem`, 15 teoremas | ✅ Completo |
-| **Conjuntos finitos** | `FiniteSets.lean` | `isFiniteSet`, biyecciones, equipotencia refl/symm/trans | ✅ Completo |
-| **Aritmética de secuencias** | `FiniteSequencesArith.lean` | `seqSum`, `seqProd`, `familyProduct`, `card_familyProduct` | ✅ Completo |
-| **Puente DList ↔ ZFC** | `FiniteSequencesBridge.lean` | `nth`, `dlistToSeq`, `isPrimeSeq`, TFA nativo | ✅ Completo |
-| **Álgebra Booleana** | `BooleanAlgebra.lean` | Leyes fundamentales, idempotencia, absorción | ✅ Completo |
-| **Anillo Booleano** | `BooleanRing.lean` | Diferencia simétrica, propiedades de anillo | ✅ Completo |
-| **Álgebra de 𝒫(A)** | `PowerSetAlgebra.lean` | Complemento, De Morgan, distributividad | ✅ Completo |
-| **De Morgan Generalizado** | `GeneralizedDeMorgan.lean` | Leyes para familias arbitrarias | ✅ Completo |
-| **Distributividad Generalizada** | `GeneralizedDistributive.lean` | Leyes para familias arbitrarias | ✅ Completo |
-| **Álgebra Booleana Atómica** | `AtomicBooleanAlgebra.lean` | 𝒫(A) es atómica, representación por átomos | ✅ Completo |
-| **Orden Parcial** | `SetOrder.lean` | Retículos, orden en conjuntos | ✅ Completo |
-| **Orden Estricto** | `SetStrictOrder.lean` | Propiedades de orden estricto | ✅ Completo |
-| **Álgebra Booleana Completa** | `CompleteBooleanAlgebra.lean` | 𝒫(A) es retículo completo y AB completa atómica | ✅ Completo |
-| **Álgebra Finita/Cofinita** | `FiniteCofinite.lean` | FinCofAlg(ω), clausura, contraejemplo completitud | ✅ Completo |
-| **Cardinalidad** | `Cardinality.lean` | Teorema de Cantor, CSB | ✅ Completo |
+| **Suma en ℕ (ZFC)** | `Nat.Add.lean` | Suma via Recursión, puente `fromPeano_add`, semianillo | ✅ Completo |
+| **Multiplicación en ℕ (ZFC)** | `Nat.Mul.lean` | Mul via Recursión, puente `fromPeano_mul`, anillo conmutativo | ✅ Completo |
+| **Sustracción saturada en ℕ** | `Nat.Sub.lean` | Monus via Recursión (sustracción truncada), puente `fromPeano_sub` | ✅ Completo |
+| **División euclídea en ℕ** | `Nat.Div.lean` | `divOf`/`modOf` via Patrón B (isomorfismo), algoritmo de Euclides | ✅ Completo |
+| **Potenciación en ℕ** | `Nat.Pow.lean` | `pow` via RecursiveFn + mulFn, puente `fromPeano_pow` | ✅ Completo |
+| **Aritmética en ℕ (GCD, LCM, Bézout)** | `Nat.Arith.lean` | `div`/`mod` nativo ZFC, `gcdOf`/`lcmOf` Patrón B, Bézout substractivo | ✅ Completo |
+| **Factorial en ℕ** | `Nat.Factorial.lean` | `factorial` via Patrón B (peanolib), 10 propiedades | ✅ Completo |
+| **GCD/LCM nativo ZFC** | `Nat.Gcd.lean` | GCD vía algoritmo euclídeo, LCM, propiedades divisibilidad | ✅ Completo |
+| **Primalidad y TFA** | `Nat.Primes.lean` | `isPrime` ZFC-nativo, TFA Existencia + Unicidad | ✅ Completo |
+| **Coeficientes binomiales** | `Nat.Binom.lean` | `binomOf` Patrón B, regla de Pascal, C(n,k)·k!·(n−k)!=n! | ✅ Completo |
+| **Máximo y mínimo** | `Nat.MaxMin.lean` | `maxOf`/`minOf` Patrón B, 29 teoremas de retículo | ✅ Completo |
+| **Teorema de Newton** | `Nat.NewtonBinom.lean` | `binomTermOf` Patrón B 4-arg, teorema binomial | ✅ Completo |
+| **Buen fundamento** | `Nat.WellFounded.lean` | Accesibilidad, buena ordenación de ω | ✅ Completo |
+| **Secuencias finitas** | `Peano.FiniteSequences.lean` | `isFinSeq`, `FinSeqSet`, `appendElem`, 15 teoremas | ✅ Completo |
+| **Conjuntos finitos** | `SetOps.FiniteSets.lean` | `isFiniteSet`, biyecciones, equipotencia refl/symm/trans | ✅ Completo |
+| **Aritmética de secuencias** | `Peano.FiniteSequencesArith.lean` | `seqSum`, `seqProd`, `familyProduct`, `card_familyProduct` | ✅ Completo |
+| **Puente DList ↔ ZFC** | `Peano.FiniteSequencesBridge.lean` | `nth`, `dlistToSeq`, `isPrimeSeq`, TFA nativo | ✅ Completo |
+| **Álgebra Booleana** | `BoolAlg.Basic.lean` | Leyes fundamentales, idempotencia, absorción | ✅ Completo |
+| **Anillo Booleano** | `BoolAlg.Ring.lean` | Diferencia simétrica, propiedades de anillo | ✅ Completo |
+| **Álgebra de 𝒫(A)** | `BoolAlg.PowerSetAlgebra.lean` | Complemento, De Morgan, distributividad | ✅ Completo |
+| **De Morgan Generalizado** | `BoolAlg.GenDeMorgan.lean` | Leyes para familias arbitrarias | ✅ Completo |
+| **Distributividad Generalizada** | `BoolAlg.GenDistributive.lean` | Leyes para familias arbitrarias | ✅ Completo |
+| **Álgebra Booleana Atómica** | `BoolAlg.Atomic.lean` | 𝒫(A) es atómica, representación por átomos | ✅ Completo |
+| **Orden Parcial** | `SetOps.SetOrder.lean` | Retículos, orden en conjuntos | ✅ Completo |
+| **Orden Estricto** | `SetOps.SetStrictOrder.lean` | Propiedades de orden estricto | ✅ Completo |
+| **Álgebra Booleana Completa** | `BoolAlg.Complete.lean` | 𝒫(A) es retículo completo y AB completa atómica | ✅ Completo |
+| **Álgebra Finita/Cofinita** | `BoolAlg.FiniteCofinite.lean` | FinCofAlg(ω), clausura, contraejemplo completitud | ✅ Completo |
+| **Cardinalidad** | `Cardinal.Basic.lean` | Teorema de Cantor, CSB | ✅ Completo |
 
 ### Total: 43 módulos — 43/43 con 0 sorry
 
@@ -94,7 +94,7 @@ Teoremas clave:
 - `mem_domain`: `x ∈ domain R ↔ ∃ y, ⟨x, y⟩ ∈ R`
 - `mem_range`: `y ∈ range R ↔ ∃ x, ⟨x, y⟩ ∈ R`
 
-*Nota*: Las definiciones legacy `domain`/`range` en `Pairing.lean` tienen limitaciones estructurales. Usar las definiciones de `Relations.lean` para desarrollos nuevos.
+*Nota*: Las definiciones legacy `domain`/`range` en `Pairing.lean` tienen limitaciones estructurales. Usar las definiciones de `SetOps.Relations.lean` para desarrollos nuevos.
 
 ### Álgebras de Boole Atómicas
 
@@ -114,39 +114,39 @@ ZfcSetTheory/
 ├── Union.lean                   # Axioma de Unión + ⋃, ∪, △
 ├── PowerSet.lean                # Axioma de Potencia (𝒫)
 ├── OrderedPair.lean             # Extensiones del par ordenado
-├── CartesianProduct.lean        # Producto Cartesiano A ×ₛ B
+├── SetOps.CartesianProduct.lean        # Producto Cartesiano A ×ₛ B
 ├── Relations.lean               # Relaciones: equivalencia, orden parcial, orden lineal
-├── BooleanAlgebra.lean          # Teoremas de álgebra booleana
-├── PowerSetAlgebra.lean         # Álgebra del conjunto potencia (complemento, De Morgan)
-├── GeneralizedDeMorgan.lean     # Leyes de De Morgan generalizadas para familias
-├── GeneralizedDistributive.lean # Leyes distributivas generalizadas
-├── AtomicBooleanAlgebra.lean    # Álgebra de Boole atómica (𝒫(A) es atómica)
-├── SetOrder.lean                # Orden parcial y retículos
-├── SetStrictOrder.lean          # Orden estricto
+├── BoolAlg.Basic.lean          # Teoremas de álgebra booleana
+├── BoolAlg.PowerSetAlgebra.lean         # Álgebra del conjunto potencia (complemento, De Morgan)
+├── BoolAlg.GenDeMorgan.lean     # Leyes de De Morgan generalizadas para familias
+├── BoolAlg.GenDistributive.lean # Leyes distributivas generalizadas
+├── BoolAlg.Atomic.lean    # Álgebra de Boole atómica (𝒫(A) es atómica)
+├── SetOps.SetOrder.lean                # Orden parcial y retículos
+├── SetOps.SetStrictOrder.lean          # Orden estricto
 ├── Cardinality.lean             # Teoremas de Cantor y Cantor-Schröder-Bernstein
-├── NaturalNumbers.lean          # ℕ como ordinales de von Neumann (predecessor exportado)
+├── Nat.Basic.lean          # ℕ como ordinales de von Neumann (predecessor exportado)
 ├── Infinity.lean                # Axioma del Infinito y ω (nat_mem_wf probado)
 ├── Recursion.lean               # Teorema de recursión sobre ℕ (completo)
 ├── PeanoImport.lean             # Isomorfismo Von Neumann ↔ Peano (peanolib)
-├── NaturalNumbersAdd.lean       # Suma en ω vía Recursión + puente fromPeano_add
-├── NaturalNumbersMul.lean       # Multiplicación en ω vía Recursión + puente fromPeano_mul
-├── NaturalNumbersSub.lean       # Sustracción saturada (monus) + puente fromPeano_sub
-├── NaturalNumbersDiv.lean       # División euclídea (divOf/modOf) via Patrón B
-├── NaturalNumbersPow.lean       # Potenciación en ω vía RecursiveFn + mulFn
-├── NaturalNumbersArith.lean     # Divisibilidad, GCD, LCM, Bézout (nativo ZFC + Patrón B)
-├── NaturalNumbersFactorial.lean # Factorial en ω via Patrón B (peanolib)
-├── NaturalNumbersGcd.lean       # GCD/LCM ZFC-nativo (algoritmo euclídeo)
-├── NaturalNumbersPrimes.lean    # Primalidad ZFC-nativa + TFA
-├── NaturalNumbersBinom.lean     # Coeficientes binomiales Patrón B
-├── NaturalNumbersMaxMin.lean    # Máximo y mínimo en ω Patrón B
-├── NaturalNumbersNewtonBinom.lean # Teorema binomial de Newton
-├── NaturalNumbersWellFounded.lean # Buen fundamento de ω
-├── FiniteSequences.lean         # Secuencias finitas en ZFC
-├── FiniteSequencesArith.lean    # Aritmética de secuencias finitas
-├── FiniteSequencesBridge.lean   # Puente DList ↔ ZFC, nth, TFA nativo
-├── CompleteBooleanAlgebra.lean   # 𝒫(A) es retículo completo + AB completa atómica
-├── FiniteCofinite.lean           # FinCofAlg(ω), paridad, contraejemplo completitud
-├── FiniteSets.lean              # Conjuntos finitos en ZFC
+├── Nat.Add.lean       # Suma en ω vía Recursión + puente fromPeano_add
+├── Nat.Mul.lean       # Multiplicación en ω vía Recursión + puente fromPeano_mul
+├── Nat.Sub.lean       # Sustracción saturada (monus) + puente fromPeano_sub
+├── Nat.Div.lean       # División euclídea (divOf/modOf) via Patrón B
+├── Nat.Pow.lean       # Potenciación en ω vía RecursiveFn + mulFn
+├── Nat.Arith.lean     # Divisibilidad, GCD, LCM, Bézout (nativo ZFC + Patrón B)
+├── Nat.Factorial.lean # Factorial en ω via Patrón B (peanolib)
+├── Nat.Gcd.lean       # GCD/LCM ZFC-nativo (algoritmo euclídeo)
+├── Nat.Primes.lean    # Primalidad ZFC-nativa + TFA
+├── Nat.Binom.lean     # Coeficientes binomiales Patrón B
+├── Nat.MaxMin.lean    # Máximo y mínimo en ω Patrón B
+├── Nat.NewtonBinom.lean # Teorema binomial de Newton
+├── Nat.WellFounded.lean # Buen fundamento de ω
+├── Peano.FiniteSequences.lean         # Secuencias finitas en ZFC
+├── Peano.FiniteSequencesArith.lean    # Aritmética de secuencias finitas
+├── Peano.FiniteSequencesBridge.lean   # Puente DList ↔ ZFC, nth, TFA nativo
+├── BoolAlg.Complete.lean   # 𝒫(A) es retículo completo + AB completa atómica
+├── BoolAlg.FiniteCofinite.lean           # FinCofAlg(ω), paridad, contraejemplo completitud
+├── SetOps.FiniteSets.lean              # Conjuntos finitos en ZFC
 └── ZfcSetTheory.lean            # Módulo raíz
 ```
 
@@ -228,7 +228,7 @@ lake build
 
 - **[CURRENT-STATUS-PROJECT.md](CURRENT-STATUS-PROJECT.md)** - ⭐ **Complete project status**  (updated 2026-04-01)
   - 43 modules, 100% proven, 0 sorry
-  - Recent achievements (FiniteSequencesBridge: nth, dlistToSeq, isPrimeSeq, TFA native)
+  - Recent achievements (Peano.FiniteSequencesBridge: nth, dlistToSeq, isPrimeSeq, TFA native)
   - Architecture and dependency hierarchies
   - Next steps
 - **[REFERENCE.md](REFERENCE.md)** - 📖 **Complete technical reference** (11000+ lines)

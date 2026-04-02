@@ -44,18 +44,18 @@ and strict orders.
 
 namespace ZFC
   open Classical
-  open ZFC.ExtensionAxiom
-  open ZFC.ExistenceAxiom
-  open ZFC.SpecificationAxiom
-  open ZFC.PairingAxiom
-  open ZFC.UnionAxiom
-  open ZFC.PowerSetAxiom
-  open ZFC.OrderedPairExtensions
-  open ZFC.CartesianProduct
+  open ZFC.Axiom.Extension
+  open ZFC.Axiom.Existence
+  open ZFC.Axiom.Specification
+  open ZFC.Axiom.Pairing
+  open ZFC.Axiom.Union
+  open ZFC.Axiom.PowerSet
+  open ZFC.SetOps.OrderedPair
+  open ZFC.SetOps.CartesianProduct
   universe u
   variable {U : Type u}
 
-  namespace Relations
+  namespace SetOps.Relations
 
     /-! ### Basic Relation Definition -/
 
@@ -520,11 +520,11 @@ namespace ZFC
       rw [mem_imag]
       exact ⟨x, h⟩
 
-  end Relations
+  end SetOps.Relations
 
 end ZFC
 
-export ZFC.Relations (
+export ZFC.SetOps.Relations (
     isRelationOn
     isRelationFrom
     Related

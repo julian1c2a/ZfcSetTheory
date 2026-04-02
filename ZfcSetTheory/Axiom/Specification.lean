@@ -11,12 +11,12 @@ import ZfcSetTheory.Axiom.Existence
 
 namespace ZFC
   open Classical
-  open ZFC.ExistenceAxiom
-  open ZFC.ExtensionAxiom
+  open ZFC.Axiom.Existence
+  open ZFC.Axiom.Extension
   universe u
   variable {U : Type u}
 
-  namespace SpecificationAxiom
+  namespace Axiom.Specification
 
 
     /-! ### Axioma de Especificación, Separación o Comprehensión ### -/
@@ -466,10 +466,10 @@ namespace ZFC
         := by
       exact Difference_subseteq A B h_subseteq
 
-  end SpecificationAxiom
+  end Axiom.Specification
 end ZFC
 
-export ZFC.SpecificationAxiom (
+export ZFC.Axiom.Specification (
     Specification SpecificationUnique SpecSet SpecSet_is_specified
     BinInter BinInter_is_specified BinInterUniqueSet
     BinInter_subset BinInter_empty BinInter_empty_left_wc

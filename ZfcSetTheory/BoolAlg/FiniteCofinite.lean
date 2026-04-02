@@ -66,26 +66,26 @@ algebra 𝒫(A).
 
 namespace ZFC
   open Classical
-  open ZFC.ExtensionAxiom
-  open ZFC.ExistenceAxiom
-  open ZFC.SpecificationAxiom
-  open ZFC.PairingAxiom
-  open ZFC.UnionAxiom
-  open ZFC.PowerSetAxiom
-  open ZFC.PowerSetAlgebra
-  open ZFC.BooleanAlgebra
-  open ZFC.SetOrder
-  open ZFC.NaturalNumbers
-  open ZFC.InfinityAxiom
-  open ZFC.FiniteSets
-  open ZFC.NaturalNumbersAdd
-  open ZFC.Functions
-  open ZFC.Cardinality
-  open ZFC.CompleteBooleanAlgebra
+  open ZFC.Axiom.Extension
+  open ZFC.Axiom.Existence
+  open ZFC.Axiom.Specification
+  open ZFC.Axiom.Pairing
+  open ZFC.Axiom.Union
+  open ZFC.Axiom.PowerSet
+  open ZFC.BoolAlg.PowerSetAlgebra
+  open ZFC.BoolAlg.Basic
+  open ZFC.SetOps.SetOrder
+  open ZFC.Nat.Basic
+  open ZFC.Axiom.Infinity
+  open ZFC.SetOps.FiniteSets
+  open ZFC.Nat.Add
+  open ZFC.SetOps.Functions
+  open ZFC.Cardinal.Basic
+  open ZFC.BoolAlg.Complete
   universe u
   variable {U : Type u}
 
-  namespace FiniteCofinite
+  namespace BoolAlg.FiniteCofinite
 
     /-! ============================================================ -/
     /-! ### PART 1: FINITE SET CLOSURE PROPERTIES                  -/
@@ -877,10 +877,10 @@ namespace ZFC
       exact ((Difference_is_specified Z {z} z).mp (hZ_sub_Z' z hz_Z)).2
         ((Singleton_is_specified z z).mpr rfl)
 
-  end FiniteCofinite
+  end BoolAlg.FiniteCofinite
 
   -- Export key definitions and theorems
-  export FiniteCofinite (
+  export BoolAlg.FiniteCofinite (
     -- Finite set closure
     finite_subset finite_union Omega_not_finite
     -- Parity

@@ -48,17 +48,17 @@ This file establishes that the power set forms a Boolean algebra.
 
 namespace ZFC
   open Classical
-  open ZFC.ExtensionAxiom
-  open ZFC.ExistenceAxiom
-  open ZFC.SpecificationAxiom
-  open ZFC.PairingAxiom
-  open ZFC.UnionAxiom
-  open ZFC.PowerSetAxiom
-  open ZFC.BooleanAlgebra
+  open ZFC.Axiom.Extension
+  open ZFC.Axiom.Existence
+  open ZFC.Axiom.Specification
+  open ZFC.Axiom.Pairing
+  open ZFC.Axiom.Union
+  open ZFC.Axiom.PowerSet
+  open ZFC.BoolAlg.Basic
   universe u
   variable {U : Type u}
 
-  namespace PowerSetAlgebra
+  namespace BoolAlg.PowerSetAlgebra
 
     /-! ### The Complement Operation -/
 
@@ -419,11 +419,11 @@ namespace ZFC
       unfold Complement
       exact Difference_self_empty A
 
-  end PowerSetAlgebra
+  end BoolAlg.PowerSetAlgebra
 
 end ZFC
 
-export ZFC.PowerSetAlgebra (
+export ZFC.BoolAlg.PowerSetAlgebra (
     Complement
     Complement_is_specified
     union_mem_PowerSet

@@ -32,24 +32,24 @@ import ZfcSetTheory.Nat.Add
 
 namespace ZFC
   open Classical
-  open ZFC.ExtensionAxiom
-  open ZFC.ExistenceAxiom
-  open ZFC.SpecificationAxiom
-  open ZFC.PairingAxiom
-  open ZFC.UnionAxiom
-  open ZFC.PowerSetAxiom
-  open ZFC.OrderedPairExtensions
-  open ZFC.CartesianProduct
-  open ZFC.Relations
-  open ZFC.Functions
-  open ZFC.Cardinality
-  open ZFC.NaturalNumbers
-  open ZFC.InfinityAxiom
-  open ZFC.NaturalNumbersAdd
+  open ZFC.Axiom.Extension
+  open ZFC.Axiom.Existence
+  open ZFC.Axiom.Specification
+  open ZFC.Axiom.Pairing
+  open ZFC.Axiom.Union
+  open ZFC.Axiom.PowerSet
+  open ZFC.SetOps.OrderedPair
+  open ZFC.SetOps.CartesianProduct
+  open ZFC.SetOps.Relations
+  open ZFC.SetOps.Functions
+  open ZFC.Cardinal.Basic
+  open ZFC.Nat.Basic
+  open ZFC.Axiom.Infinity
+  open ZFC.Nat.Add
   universe u
   variable {U : Type u}
 
-  namespace FiniteSequences
+  namespace Peano.FiniteSequences
 
     /-! ============================================================ -/
     /-! ### SECTION 1: CORE PREDICATE ### -/
@@ -554,9 +554,9 @@ namespace ZFC
         | inr h => exact absurd h (EmptySet_is_empty x)
       · intro h; exact Or.inl h
 
-  end FiniteSequences
+  end Peano.FiniteSequences
 
-  export FiniteSequences (
+  export Peano.FiniteSequences (
     -- Section 1: Core predicate
     isFinSeq
     isFinSeq_in_Omega

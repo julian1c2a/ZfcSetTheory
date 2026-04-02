@@ -120,21 +120,21 @@ import ZfcSetTheory.Cardinal.Basic
 
 namespace ZFC
   open Classical
-  open ZFC.ExtensionAxiom
-  open ZFC.ExistenceAxiom
-  open ZFC.SpecificationAxiom
-  open ZFC.PairingAxiom
-  open ZFC.UnionAxiom
-  open ZFC.PowerSetAxiom
-  open ZFC.OrderedPairExtensions
-  open ZFC.CartesianProduct
-  open ZFC.Relations
-  open ZFC.Functions
-  open ZFC.Cardinality
+  open ZFC.Axiom.Extension
+  open ZFC.Axiom.Existence
+  open ZFC.Axiom.Specification
+  open ZFC.Axiom.Pairing
+  open ZFC.Axiom.Union
+  open ZFC.Axiom.PowerSet
+  open ZFC.SetOps.OrderedPair
+  open ZFC.SetOps.CartesianProduct
+  open ZFC.SetOps.Relations
+  open ZFC.SetOps.Functions
+  open ZFC.Cardinal.Basic
   universe u
   variable {U : Type u}
 
-  namespace NaturalNumbers
+  namespace Nat.Basic
 
     /-! ============================================================ -/
     /-! ### DEFINICIONES BÁSICAS ### -/
@@ -1934,7 +1934,7 @@ namespace ZFC
 
     /- ## CONTINUACIÓN EN ARCHIVOS ESPECÍFICOS
 
-    Este archivo (NaturalNumbers.lean) establece los fundamentos teóricos de los
+    Este archivo (Nat.Basic.lean) establece los fundamentos teóricos de los
     números naturales como ordinales de von Neumann, *sin* usar el Axioma de Infinito.
 
     Los desarrollos que requieren conceptos adicionales continúan en:
@@ -2030,7 +2030,7 @@ namespace ZFC
        - Conexión con cardinalidad
        - ~1500-2000 líneas estimadas
 
-    Este archivo (NaturalNumbers.lean) constituye la base teórica fundamental
+    Este archivo (Nat.Basic.lean) constituye la base teórica fundamental
     que permite construir toda la teoría de naturales sin circular dependencies.
 
     -/
@@ -2074,9 +2074,9 @@ namespace ZFC
         _ = σ k                    := by rw [predecessor_of_successor hk_nat]
         _ = n                      := hk.symm
 
-  end NaturalNumbers
+  end Nat.Basic
 
-  export NaturalNumbers (
+  export Nat.Basic (
     -- Core definitions
     successor
     successor_is_specified

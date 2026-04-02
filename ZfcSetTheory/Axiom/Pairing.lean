@@ -12,13 +12,13 @@ import ZfcSetTheory.Axiom.Specification
 
 namespace ZFC
   open Classical
-  open ZFC.ExtensionAxiom
-  open ZFC.ExistenceAxiom
-  open ZFC.SpecificationAxiom
+  open ZFC.Axiom.Extension
+  open ZFC.Axiom.Existence
+  open ZFC.Axiom.Specification
   universe u
   variable {U : Type u}
 
-  namespace PairingAxiom
+  namespace Axiom.Pairing
 
     /-! ### Axioma de Pares (No Ordenados) ### -/
     @[simp]
@@ -680,10 +680,10 @@ namespace ZFC
     noncomputable def isBijectiveFunction (A B R : U) : Prop :=
       isFunction A R ∧ isInyective R ∧ isSurjectiveFunction A B R
 
-  end PairingAxiom
+  end Axiom.Pairing
 end ZFC
 
-export ZFC.PairingAxiom (
+export ZFC.Axiom.Pairing (
     Pairing
     PairingUniqueSet
     PairSet

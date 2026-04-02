@@ -33,18 +33,18 @@ This file establishes the generalized distributive laws for arbitrary families o
 
 namespace ZFC
   open Classical
-  open ZFC.ExtensionAxiom
-  open ZFC.ExistenceAxiom
-  open ZFC.SpecificationAxiom
-  open ZFC.PairingAxiom
-  open ZFC.UnionAxiom
-  open ZFC.PowerSetAxiom
-  open ZFC.PowerSetAlgebra
-  open ZFC.GeneralizedDeMorgan
+  open ZFC.Axiom.Extension
+  open ZFC.Axiom.Existence
+  open ZFC.Axiom.Specification
+  open ZFC.Axiom.Pairing
+  open ZFC.Axiom.Union
+  open ZFC.Axiom.PowerSet
+  open ZFC.BoolAlg.PowerSetAlgebra
+  open ZFC.BoolAlg.GenDeMorgan
   universe u
   variable {U : Type u}
 
-  namespace GeneralizedDistributive
+  namespace BoolAlg.GenDistributive
 
     /-! ### The Intersection Family Operation -/
 
@@ -217,10 +217,10 @@ namespace ZFC
       calc BinUnion (⋂ F) A = BinUnion A (⋂ F) := BinUnion_comm (⋂ F) A
         _ = (⋂ (UnionFamily A F)) := h
 
-  end GeneralizedDistributive
+  end BoolAlg.GenDistributive
 
   -- Export key theorems
-  export GeneralizedDistributive (IntersectFamily IntersectFamily_is_specified
+  export BoolAlg.GenDistributive (IntersectFamily IntersectFamily_is_specified
     intersect_mem_IntersectFamily UnionFamily UnionFamily_is_specified
     union_mem_UnionFamily IntersectFamily_nonempty UnionFamily_nonempty
     inter_distrib_union union_distrib_inter union_inter_distrib inter_union_distrib)

@@ -37,23 +37,23 @@ import ZfcSetTheory.Axiom.Infinity
 
 namespace ZFC
   open Classical
-  open ZFC.ExtensionAxiom
-  open ZFC.ExistenceAxiom
-  open ZFC.SpecificationAxiom
-  open ZFC.PairingAxiom
-  open ZFC.UnionAxiom
-  open ZFC.PowerSetAxiom
-  open ZFC.OrderedPairExtensions
-  open ZFC.Functions
-  open ZFC.NaturalNumbers
-  open ZFC.InfinityAxiom
-  open ZFC.Relations
-  open ZFC.CartesianProduct
+  open ZFC.Axiom.Extension
+  open ZFC.Axiom.Existence
+  open ZFC.Axiom.Specification
+  open ZFC.Axiom.Pairing
+  open ZFC.Axiom.Union
+  open ZFC.Axiom.PowerSet
+  open ZFC.SetOps.OrderedPair
+  open ZFC.SetOps.Functions
+  open ZFC.Nat.Basic
+  open ZFC.Axiom.Infinity
+  open ZFC.SetOps.Relations
+  open ZFC.SetOps.CartesianProduct
 
   universe u
   variable {U : Type u}
 
-  namespace Recursion
+  namespace Induction.Recursion
 
     /-! ============================================================ -/
     /-! ### 0. LEMAS AUXILIARES ### -/
@@ -1668,9 +1668,9 @@ namespace ZFC
       rw [hRF_eq_F]
       exact hF_unique G hG_prop
 
-  end Recursion
+  end Induction.Recursion
 
-  export Recursion (
+  export Induction.Recursion (
     -- Auxiliary lemmas
     function_domain_eq
     mem_succ_iff_local
@@ -1720,7 +1720,7 @@ namespace ZFC
 
 end ZFC
 
-export ZFC.Recursion (
+export ZFC.Induction.Recursion (
   isComputation
   computation_uniqueness
   areCompatible

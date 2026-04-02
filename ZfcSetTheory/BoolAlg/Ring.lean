@@ -40,17 +40,17 @@ This file establishes that the power set forms a Boolean ring with:
 
 namespace ZFC
   open Classical
-  open ZFC.ExtensionAxiom
-  open ZFC.ExistenceAxiom
-  open ZFC.SpecificationAxiom
-  open ZFC.PairingAxiom
-  open ZFC.UnionAxiom
-  open ZFC.PowerSetAxiom
-  open ZFC.PowerSetAlgebra
+  open ZFC.Axiom.Extension
+  open ZFC.Axiom.Existence
+  open ZFC.Axiom.Specification
+  open ZFC.Axiom.Pairing
+  open ZFC.Axiom.Union
+  open ZFC.Axiom.PowerSet
+  open ZFC.BoolAlg.PowerSetAlgebra
   universe u
   variable {U : Type u}
 
-  namespace BooleanRing
+  namespace BoolAlg.Ring
 
     /-! ### Basic SymDiff Properties -/
 
@@ -331,11 +331,11 @@ namespace ZFC
         rw [hY]
         exact SymDiff_empty_identity X
 
-  end BooleanRing
+  end BoolAlg.Ring
 
 end ZFC
 
-export ZFC.BooleanRing (
+export ZFC.BoolAlg.Ring (
     SymDiff_is_comm
     SymDiff_empty_identity
     SymDiff_identity_empty

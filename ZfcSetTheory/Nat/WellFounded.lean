@@ -34,7 +34,7 @@ namespace ZFC
   universe u
   variable {U : Type u}
 
-  namespace NaturalNumbersWellFounded
+  namespace Nat.WellFounded
 
     -- =========================================================================
     -- §0  Well-foundedness via Peano bridge
@@ -96,9 +96,9 @@ namespace ZFC
       obtain ⟨n, hn_mem, hPn, hLeast, _⟩ := well_ordering_Omega P h_nonempty
       exact ⟨n, hn_mem, hPn, hLeast⟩
 
-  end NaturalNumbersWellFounded
+  end Nat.WellFounded
 
-  export NaturalNumbersWellFounded (
+  export Nat.WellFounded (
     -- §0: well-foundedness
     acc_lt_Omega
     -- §1: well-ordering principle
