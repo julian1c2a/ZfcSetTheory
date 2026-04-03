@@ -145,6 +145,66 @@ Además el functor asignará a $\mathbf{0}_R$ el elemento $\mathbf{0}_B$, y a $\
 
 *[6.]* Todo lo dicho quedaría en un nuevo proyecto, que podría llamarse algo así como "Fundamentos de la Matemática en Lean", o algo por el estilo, que unificaría todos los proyectos anteriores y que tendría una organización mucho más clara y sistematizada. Este nuevo proyecto sería el que se mantendría a largo plazo, y en el que se irían añadiendo nuevos temas y resultados a medida que se vayan desarrollando. El proyecto actual de ZFC quedaría como un subproyecto dentro de este nuevo proyecto más amplio, y se iría integrando poco a poco con los demás subproyectos (Peano, Aczel, MKplusCAC, etc) para crear una visión unificada de los fundamentos de la matemática en Lean.
 
+**INMEDIATO: ENTEROS**
+
+[1.] En $ω×ω$ establecemos la relación de equivalencia $(a,b)∼ω×ω(c,d)⟺a+d=b+c$. Entonces, los enteros se definen como las clases de equivalencia de esta relación. Hay que demostrar que $∼ω×ω$ es una relación de equivalencia, que es transitiva, simétrica y reflexiva.
+
+[2.] Definimos los enteros $\bZ := (ω×ω)/∼ω×ω$ como el conjunto de las clases de equivalencia de la relación $∼ω×ω$. ¿Usamos el setoid? Cada entero se representa como una clase de equivalencia de pares ordenados de naturales, donde el primer componente representa la parte positiva y el segundo componente representa la parte negativa. Por ejemplo, el entero $0_z$ se representa como la clase de equivalencia que contiene al par $(0,0)$, el entero $1_z$ se representa como la clase de equivalencia que contiene al par $(1,0)$, el entero $-1_z$ se representa como la clase de equivalencia que contiene al par $(0,1)$, etc. De esta forma, cada entero se puede representar de forma única como un par ordenado de naturales, con uno de los componentes igual a cero. Esto nos permite trabajar con los enteros dentro del marco de ZFC utilizando solo los números naturales y las operaciones definidas sobre ellos. El elemento neutro aditivo es $0_z := [(0,0)]$, el elemento neutro multiplicativo es $1_z = [(1,0)]$, y el inverso aditivo de $[(a,b)]$ es $-[(a,b)]=[(b,a)]$.
+
+[3.] Cogeremos siempre el representante canónico de cada clase de equivalencia, que será concretamente el representante de la clase de equivalencia que tiene la forma $[(a,0)]$ para $a≥0$, y $[(0,b)]$ para $b>0$. De esta forma, cada entero se representa de forma única como un par ordenado de naturales, con uno de los componentes igual a cero.
+
+[4.] Establecemos la relación de orden total en los enteros, definiendo $[(a,b)] ≤ [(c,d)]$ si y solo si $a + d ≤ b + c$. Hay que demostrar que esta relación es un orden total, es decir, que es reflexiva, antisimétrica, transitiva y total.
+
+[5.] Establecemos una biyección entre los enteros y los naturales de Von Neumann, definiendo la función $f : \bZ \to ω$ como $f([(a,b)]) = a - b$ si $a ≥ b$, y $f([(a,b)]) = -(b - a)$ si $b > a$. Hay que demostrar que esta función es una biyección, es decir, que es inyectiva y sobreyectiva.
+
+[6.] Establecemos una biyección entre los enteros y los números de Peano, definiendo la función $g : \bZ \to \mathbb{N}_{Peano}$ como $g([(a,b)]) = S^a(0)$ si $a ≥ b$, y $g([(a,b)]) = -S^b(0)$ si $b > a$. Hay que demostrar que esta función es una biyección, es decir, que es inyectiva y sobreyectiva.
+
+[7.] La suma y el producto se definen de la forma habitual: $[(a,b)]+[(c,d)]=[(a+c,b+d)]$ y $[(a,b)]⋅[(c,d)]=[(ac+bd,ad+bc)]$. Hay que demostrar que estas operaciones están bien definidas.
+
+[58.] Hay que demostrar que con estas operaciones, los enteros forman un anillo conmutativo con identidad, y que además cumplen las propiedades habituales de los enteros, como por ejemplo que la suma es conmutativa y asociativa, que el producto es conmutativo y asociativo, que el producto distribuye sobre la suma, etc.
+
+[9.] También tendremos la exponenciación con exponente natural, la definimos como en los naturales. 
+
+[10.] Hay que traer todo lo demostrado en el módulo de los naturales: igualdad de Bezout, y TFA, etc. para demostrar que los enteros también cumplen estas propiedades.
+
+[11.] Nos traeremos todo el sistema de inducción, para trabajar ágilmente con los enteros, y para demostrar propiedades de los enteros por inducción.
+
+[12.] Volvemos a traer la operaciones de números binomiales, los factoriales, el binomio de Newton, etc. para trabajar con los enteros de forma más ágil y para demostrar propiedades de los enteros relacionadas con estas operaciones.
+
+[13.] Finalmente, también podríamos definir la función valor absoluto, y demostrar sus propiedades habituales, como por ejemplo que el valor absoluto de un entero es siempre un número natural, que el valor absoluto de un producto es el producto de los valores absolutos, etc. También definiremos la función signo, y demostraremos sus propiedades habituales, como por ejemplo que el signo de un producto es el producto de los signos, etc.
+
+[14.] Propiedades de crecimiento de las funciones de argumentos enteros y retorno entero. Por ejemplo, que la multiplicación crece más que la suma, que la exponenciación crece más que la multiplicación,que el valor absoluto de un producto es el producto de los valores absolutos, etc. *[Esto debería estar ya en los naturales y traerlo aquí]*
+
+**INMEDIATO 2: RACIONALES**
+
+[1.] Establecemos el conjunto $\mathbb{Z}^{*} := \mathbb{Z} ⧵ \{0_z\}$, y el conjunto base $\mathbb{Z}\times\mathbb{Z}^{*}$.
+
+[2.] Establecemos en $\mathbb{Z}\times\mathbb{Z}^{*}$ la relación de equivalencia $(a,b)∼\mathbb{Z}\times\mathbb{Z}^{*}(c,d)⟺a⋅d=b⋅c$. Entonces, los racionales se definen como las clases de equivalencia de esta relación. [¿usamos setoid?] Hay que demostrar que $∼\mathbb{Z}\times\mathbb{Z}^{*}$ es una relación de equivalencia, que es transitiva, simétrica y reflexiva.
+
+[3.] Definimos los racionales $\bQ := (\mathbb{Z}\times\mathbb{Z}^{*})/∼\mathbb{Z}\times\mathbb{Z}^{*}$ como el conjunto de las clases de equivalencia de la relación $∼\mathbb{Z}\times\mathbb{Z}^{*}$. Cada racional se representa como una clase de equivalencia de pares ordenados de enteros, donde el primer componente representa el numerador y el segundo componente representa el denominador. Por ejemplo, el racional $0_q$ se representa como la clase de equivalencia que contiene al par $(0_z,1_z)$, el racional $1_q$ se representa como la clase de equivalencia que contiene al par $(1_z,1_z)$, el racional $-1_q$ se representa como la clase de equivalencia que contiene al par $(-1_z,1_z)$, etc. De esta forma, cada racional se puede representar de forma única como un par ordenado de enteros, con el segundo componente distinto de cero. Esto nos permite trabajar con los racionales dentro del marco de ZFC utilizando solo los números enteros y las operaciones definidas sobre ellos. El elemento neutro aditivo es $0_q := [(0_z,1_z)]$, el elemento neutro multiplicativo es $1_q = [(1_z,1_z)]$, y el inverso aditivo de $[(a,b)]$ es $-[(a,b)]=[(-a,b)]$, y el inverso multiplicativo de $[(a,b)]$ es $[(b,a)]$ si $a≠0_z$.
+
+[4.] Cogeremos siempre el representante canónico de cada clase de equivalencia, que será concretamente el representante de la clase de equivalencia que tiene la forma $[(a,b)]$ con $a$ y $b$ coprimos, y $b>0$. De esta forma, cada racional se representa de forma única como un par ordenado de enteros, con el segundo componente distinto de cero.
+
+[5.] Establecemos la relación de orden total en los racionales, definiendo $[(a,b)] ≤ [(c,d)]$ si y solo si $a⋅d ≤ b⋅c$. Hay que demostrar que esta relación es un orden total, es decir, que es reflexiva, antisimétrica, transitiva y total. También que no depende del representante de la clase de equivalencia que elijamos.
+
+[6.] Establecemos una biyección entre los racionales y los naturales de Peano, definiendo la función $f : \bQ \to \mathbb{N}_{Peano}$ como $f([(a,b)]) = S^n(0)$ si $a/b ≥ 0$, y $f([(a,b)]) = -S^n(0)$ si $a/b < 0$, donde $n$ es el valor absoluto del cociente $a/b$. Hay que demostrar que esta función es una biyección, es decir, que es inyectiva y sobreyectiva. La cardinalidad de los racionales es la misma que la de los naturales.
+
+[7.] La suma y el producto se definen de la forma habitual: $[(a,b)]+[(c,d)]=[(ad+bc,bd)]$ y $[(a,b)]⋅[(c,d)]=[(ac,bd)]$. Hay que demostrar que estas operaciones están bien definidas.
+
+[8.] Hay que demostrar que con estas operaciones, los racionales forman un cuerpo conmutativo con identidad, y que además cumplen las propiedades habituales de los racionales, como por ejemplo que la suma es conmutativa y asociativa, que el producto es conmutativo y asociativo, que el producto distribuye sobre la suma, etc.
+
+[9.] También tendremos la exponenciación con exponente entero. Demostramos que está bien definida, y que cumple las propiedades habituales de la exponenciación, como por ejemplo que $x^0=1_q$ para todo $x≠0_q$, que $x^{m+n}=x^m⋅x^n$ para todo $m,n∈\bZ$, que $(x⋅y)^n=x^n⋅y^n$ para todo $n∈\bZ$, etc. 
+
+[10.] Defininimos las sucesiones de los racionales, y definimos las sucesiones de Cauchy y las sucesiones con límite.
+
+[11.] Entre cualquier dos racionales distintos, hay un racional distinto de los anteriores. Entre cualquiera dos racionales distintos, existe una cantidad infinita de racionales distintos de los anteriores. Esto muestra que los racionales son densos.
+
+[12.] Sucesiones monótonas crecientes/decrecientes acotadas no tienen necesariamente límite en los racionales. Dar ejemplos de sucesiones monótonas crecientes/decrecientes acotadas que no tienen límite en los racionales, como por ejemplo alguna subsucesión concreta de $\{a_n ∈ \bQ ∣ a_n^2 < 2\}$ estrictamente creciente , que es monótonamente creciente y acotada por $2$, pero que no tiene límite dentro de los racionales.
+
+[13.] ¿Merece la pena definir las series de racionales? ¿O es mejor esperar a tener los reales para definir las series de números reales? Creo que es mejor esperar a tener los reales, ya que las series de racionales no tienen tantas propiedades interesantes como las series de números reales, y además pueden ser un poco más complicadas de manejar debido a la densidad de los racionales. Por ejemplo, una serie de racionales puede converger a un número irracional, lo que puede complicar un poco las cosas. Por tanto, creo que es mejor esperar a tener los reales para definir las series de números reales, y así poder aprovechar todas las propiedades interesantes que tienen las series de números reales.
+
+**INMEDIATO 3: REALES**
+
 **UNA IDEA DE IMPLEMENTACIÓN DE LOS NOVÍSIMOS**
 
 0. El sistema de puentes entre sistemas axiomáticos

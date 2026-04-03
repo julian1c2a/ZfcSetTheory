@@ -1,6 +1,6 @@
 # Next Steps — ZfcSetTheory Project
 
-**Last updated**: 2026-04-08
+**Last updated**: 2026-04-10
 
 ---
 
@@ -19,12 +19,15 @@ All major development through Boolean algebra theory is complete:
 
 ---
 
-## 1. Phase 4: Annotation System — Next
+## 1. Phase 4: Annotation System — ✅ Complete
 
-Add metadata annotations to all 47 modules:
+Metadata annotations added to REFERENCE.md:
 
-- `@importance`: high/medium/low for each theorem
-- `@axiom_system`: which ZFC axioms are used
+- ✅ `@axiom_system`: §1.2 "Axiomas ZFC por Módulo" — 47 módulos clasificados por axiomas usados transitivamente
+- ✅ `@importance`: high/medium/low para todos los teoremas
+  - §4.1–§4.18 (NEW §4): anotaciones per-theorem inline (~280+ teoremas)
+  - §4.19–§4.41 (NEW §4): bloques module-level por sección/teorema (23 módulos)
+  - §4.1–§4.7 (OLD §4): bloques per-theorem para Nat.Basic (7 subsecciones)
 
 ---
 
@@ -44,10 +47,10 @@ Per ReflexionesParaLaIA.md [5], [12]. Rosser's strengthened form. Requires encod
 
 | Priority | Task | Status |
 |----------|------|--------|
-| **1** | Phase 4: annotation system | 🔄 Next |
+| **1** | Phase 4: annotation system | ✅ Complete |
 | **2** | Integers ℤ in ZFC | 📋 Future |
 | **3** | Gödel's Incompleteness | 📋 Future |
 
 ---
 
-*Updated 2026-04-09. 47 modules, 0 sorry. All Boolean algebra items complete (11 modules). All peanolib bridges complete. Reorganization Phases 1–3 complete. REFERENCE.md: 47/47 modules projected. Next: Phase 4 annotations.*
+*Updated 2026-04-10. 47 modules, 0 sorry. All Boolean algebra items complete (11 modules). All peanolib bridges complete. Reorganization Phases 1–3 complete. REFERENCE.md: 47/47 modules projected. Phase 4 annotation system complete: axiom mapping (§1.2) + importance annotations (§4).*

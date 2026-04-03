@@ -235,12 +235,15 @@ lake build
 
 ### Status and Development
 
-- **[REFERENCE.md](REFERENCE.md)** - 📖 **Complete technical reference** (11000+ lines)
-  - 45/47 modules documented (Representation, FinitePowerSet pending)
+- **[REFERENCE.md](REFERENCE.md)** - 📖 **Complete technical reference** (13000+ lines)
+  - 47/47 modules fully documented
   - All definitions, theorems, and exports with Lean4 signatures
   - Dependency tracking and namespace organization
+  - §1.2: ZFC axiom dependency mapping for all 47 modules
+  - §4: Importance annotations (high/medium/low) for all theorems
 - [CHANGELOG.md](CHANGELOG.md) - Detailed change history
 - [DEPENDENCIES.md](DEPENDENCIES.md) - Dependency diagrams and module relationships
+- [NEXT-STEPS.md](NEXT-STEPS.md) - Project roadmap and future plans
 
 ## 📄 Licencia
 
@@ -281,4 +284,4 @@ Este proyecto se desarrolló basándose en las siguientes fuentes:
 ---
 
 **Autor**: Julián Calderón Almendros
-*Last updated: 2026-04-08*
+*Last updated: 2026-04-10*

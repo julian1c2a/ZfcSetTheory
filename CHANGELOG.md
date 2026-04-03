@@ -1,6 +1,6 @@
 # Changelog
 
-**Última actualización:** 2026-04-01
+**Última actualización:** 2026-04-10
 **Autor**: Julián Calderón Almendros
 
 Todos los cambios notables de este proyecto serán documentados en este archivo.
@@ -9,6 +9,17 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Añadido (2026-04-10)
+
+- **Phase 4: Sistema de Anotaciones en REFERENCE.md — Completado**:
+  - ✅ `@axiom_system` — §1.2 "Axiomas ZFC por Módulo": tabla completa de 47 módulos clasificados por axiomas ZFC usados transitivamente (7 axiomas: Ext, Vac, Sep, Par, Uni, Pot, Inf)
+  - ✅ `@importance` — Anotaciones high/medium/low para todos los teoremas:
+    - §4.1–§4.18 (NEW §4): anotaciones per-theorem inline (`**Importancia**: high/medium/low`) — ~280+ teoremas
+    - §4.19–§4.41 (NEW §4): bloques module-level (`**Importancia por sección/teorema**:`) — 23 módulos
+    - §4.1–§4.7 (OLD §4): bloques per-theorem para Nat.Basic — 7 subsecciones, 22 teoremas
+  - ✅ Criterios de importancia: high = resultado principal o usado por 3+ módulos; medium = usado por 1-2 módulos; low = auxiliar/interno
+  - ✅ NEXT-STEPS.md actualizado: Phase 4 marcada como ✅ Complete
 
 ### Cambiado (2026-04-02)
 

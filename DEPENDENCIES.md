@@ -1,6 +1,6 @@
 # Diagrama de Dependencias - ZfcSetTheory
 
-**Última actualización:** 2026-04-08
+**Última actualización:** 2026-04-10
 **Autor**: Julián Calderón Almendros
 
 > **Nota (Fase 3, 2026-04-02):** Los identificadores del proyecto han sido renombrados según convenciones Mathlib. Los nombres en las secciones "Exports por Módulo" pueden reflejar nombres anteriores; consultar REFERENCE.md §0 para la tabla completa de renombramientos.
@@ -177,7 +177,7 @@ graph TD
     Pot --> GDD
     
     %% Nivel 10: Cardinalidad
-    Func --> Card[Cardinality.lean]
+    Func --> Card[Cardinal.Basic.lean]
     Pot --> Card
     
     %% Nivel 11: Módulo principal
