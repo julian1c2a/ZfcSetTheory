@@ -161,19 +161,21 @@ Además el functor asignará a $\mathbf{0}_R$ el elemento $\mathbf{0}_B$, y a $\
 
 [7.] La suma y el producto se definen de la forma habitual: $[(a,b)]+[(c,d)]=[(a+c,b+d)]$ y $[(a,b)]⋅[(c,d)]=[(ac+bd,ad+bc)]$. Hay que demostrar que estas operaciones están bien definidas.
 
-[58.] Hay que demostrar que con estas operaciones, los enteros forman un anillo conmutativo con identidad, y que además cumplen las propiedades habituales de los enteros, como por ejemplo que la suma es conmutativa y asociativa, que el producto es conmutativo y asociativo, que el producto distribuye sobre la suma, etc.
+[8.] Hay que demostrar que con estas operaciones, los enteros forman un anillo conmutativo con identidad, y que además cumplen las propiedades habituales de los enteros, como por ejemplo que la suma es conmutativa y asociativa, que el producto es conmutativo y asociativo, que el producto distribuye sobre la suma, etc.
 
-[9.] También tendremos la exponenciación con exponente natural, la definimos como en los naturales. 
+[9.] Establecemos una inyección canónica de los naturales de Von Neumann en los enteros, definiendo la función $h : ω \to \bZ$ como $h(n) = [(n,0)]$. Hay que demostrar que esta función es una inyección, es decir, que es inyectiva y que su imagen es un subconjunto de los enteros. Demostramos que esta función preserva la suma y el producto. También demostramos que preserva el orden, es decir, que si $m ≤ n$ en $ω$, entonces $h(m) ≤ h(n)$ en $\bZ$.
 
-[10.] Hay que traer todo lo demostrado en el módulo de los naturales: igualdad de Bezout, y TFA, etc. para demostrar que los enteros también cumplen estas propiedades.
+[10.] También tendremos la exponenciación con exponente natural, la definimos como en los naturales. 
 
-[11.] Nos traeremos todo el sistema de inducción, para trabajar ágilmente con los enteros, y para demostrar propiedades de los enteros por inducción.
+[11.] Hay que traer todo lo demostrado en el módulo de los naturales: igualdad de Bezout, y TFA, etc. para demostrar que los enteros también cumplen estas propiedades.
 
-[12.] Volvemos a traer la operaciones de números binomiales, los factoriales, el binomio de Newton, etc. para trabajar con los enteros de forma más ágil y para demostrar propiedades de los enteros relacionadas con estas operaciones.
+[12.] Nos traeremos todo el sistema de inducción, para trabajar ágilmente con los enteros, y para demostrar propiedades de los enteros por inducción.
 
-[13.] Finalmente, también podríamos definir la función valor absoluto, y demostrar sus propiedades habituales, como por ejemplo que el valor absoluto de un entero es siempre un número natural, que el valor absoluto de un producto es el producto de los valores absolutos, etc. También definiremos la función signo, y demostraremos sus propiedades habituales, como por ejemplo que el signo de un producto es el producto de los signos, etc.
+[13.] Volvemos a traer la operaciones de números binomiales, los factoriales, el binomio de Newton, etc. para trabajar con los enteros de forma más ágil y para demostrar propiedades de los enteros relacionadas con estas operaciones.
 
-[14.] Propiedades de crecimiento de las funciones de argumentos enteros y retorno entero. Por ejemplo, que la multiplicación crece más que la suma, que la exponenciación crece más que la multiplicación,que el valor absoluto de un producto es el producto de los valores absolutos, etc. *[Esto debería estar ya en los naturales y traerlo aquí]*
+[14.] Finalmente, también podríamos definir la función valor absoluto, y demostrar sus propiedades habituales, como por ejemplo que el valor absoluto de un entero es siempre un número natural, que el valor absoluto de un producto es el producto de los valores absolutos, etc. También definiremos la función signo, y demostraremos sus propiedades habituales, como por ejemplo que el signo de un producto es el producto de los signos, etc.
+
+[15.] Propiedades de crecimiento de las funciones de argumentos enteros y retorno entero. Por ejemplo, que la multiplicación crece más que la suma, que la exponenciación crece más que la multiplicación,que el valor absoluto de un producto es el producto de los valores absolutos, etc. *[Esto debería estar ya en los naturales y traerlo aquí]*
 
 **INMEDIATO 2: RACIONALES**
 
@@ -191,19 +193,63 @@ Además el functor asignará a $\mathbf{0}_R$ el elemento $\mathbf{0}_B$, y a $\
 
 [7.] La suma y el producto se definen de la forma habitual: $[(a,b)]+[(c,d)]=[(ad+bc,bd)]$ y $[(a,b)]⋅[(c,d)]=[(ac,bd)]$. Hay que demostrar que estas operaciones están bien definidas.
 
-[8.] Hay que demostrar que con estas operaciones, los racionales forman un cuerpo conmutativo con identidad, y que además cumplen las propiedades habituales de los racionales, como por ejemplo que la suma es conmutativa y asociativa, que el producto es conmutativo y asociativo, que el producto distribuye sobre la suma, etc.
+[8.] Establecemos la inyección de los números enteros en los racionales, definiendo la función $g : \bZ \to \bQ$ como $g([(a,b)]) = [(a,1_z)]$. Hay que demostrar que esta función es una inyección, es decir, que es inyectiva. Demostramos que se conservan todas las operaciones de los enteros dentro de los racionales. También demostramos que se conserva el orden de los enteros dentro de los racionales.
 
-[9.] También tendremos la exponenciación con exponente entero. Demostramos que está bien definida, y que cumple las propiedades habituales de la exponenciación, como por ejemplo que $x^0=1_q$ para todo $x≠0_q$, que $x^{m+n}=x^m⋅x^n$ para todo $m,n∈\bZ$, que $(x⋅y)^n=x^n⋅y^n$ para todo $n∈\bZ$, etc. 
+[9.] Hay que demostrar que con estas operaciones, los racionales forman un cuerpo conmutativo con identidad, y que además cumplen las propiedades habituales de los racionales, como por ejemplo que la suma es conmutativa y asociativa, que el producto es conmutativo y asociativo, que el producto distribuye sobre la suma, etc.
 
-[10.] Defininimos las sucesiones de los racionales, y definimos las sucesiones de Cauchy y las sucesiones con límite.
+[10.] También tendremos la exponenciación con exponente entero. Demostramos que está bien definida, y que cumple las propiedades habituales de la exponenciación, como por ejemplo que $x^0=1_q$ para todo $x≠0_q$, que $x^{m+n}=x^m⋅x^n$ para todo $m,n∈\bZ$, que $(x⋅y)^n=x^n⋅y^n$ para todo $n∈\bZ$, etc. 
 
-[11.] Entre cualquier dos racionales distintos, hay un racional distinto de los anteriores. Entre cualquiera dos racionales distintos, existe una cantidad infinita de racionales distintos de los anteriores. Esto muestra que los racionales son densos.
+[11.] Defininimos las sucesiones de los racionales, y definimos las sucesiones de Cauchy y las sucesiones con límite.
 
-[12.] Sucesiones monótonas crecientes/decrecientes acotadas no tienen necesariamente límite en los racionales. Dar ejemplos de sucesiones monótonas crecientes/decrecientes acotadas que no tienen límite en los racionales, como por ejemplo alguna subsucesión concreta de $\{a_n ∈ \bQ ∣ a_n^2 < 2\}$ estrictamente creciente , que es monótonamente creciente y acotada por $2$, pero que no tiene límite dentro de los racionales.
+[12.] Entre cualquier dos racionales distintos, hay un racional distinto de los anteriores. Entre cualquiera dos racionales distintos, existe una cantidad infinita de racionales distintos de los anteriores. Esto muestra que los racionales son densos.
 
-[13.] ¿Merece la pena definir las series de racionales? ¿O es mejor esperar a tener los reales para definir las series de números reales? Creo que es mejor esperar a tener los reales, ya que las series de racionales no tienen tantas propiedades interesantes como las series de números reales, y además pueden ser un poco más complicadas de manejar debido a la densidad de los racionales. Por ejemplo, una serie de racionales puede converger a un número irracional, lo que puede complicar un poco las cosas. Por tanto, creo que es mejor esperar a tener los reales para definir las series de números reales, y así poder aprovechar todas las propiedades interesantes que tienen las series de números reales.
+[13.] Sucesiones monótonas crecientes/decrecientes acotadas no tienen necesariamente límite en los racionales. Dar ejemplos de sucesiones monótonas crecientes/decrecientes acotadas que no tienen límite en los racionales, como por ejemplo alguna subsucesión concreta de $\{a_n ∈ \bQ ∣ a_n^2 < 2\}$ estrictamente creciente , que es monótonamente creciente y acotada por $2$, pero que no tiene límite dentro de los racionales.
+
+[14.] ¿Merece la pena definir las series de racionales? ¿O es mejor esperar a tener los reales para definir las series de números reales? Creo que es mejor esperar a tener los reales, ya que las series de racionales no tienen tantas propiedades interesantes como las series de números reales, y además pueden ser un poco más complicadas de manejar debido a la densidad de los racionales. Por ejemplo, una serie de racionales puede converger a un número irracional, lo que puede complicar un poco las cosas. Por tanto, creo que es mejor esperar a tener los reales para definir las series de números reales, y así poder aprovechar todas las propiedades interesantes que tienen las series de números reales.
 
 **INMEDIATO 3: REALES**
+
+[1.] Establecemos el conjunto base de las sucesiones de racionales, es decir, el conjunto $\bQ^{\bN}$ de todas las funciones $f : \bN \to \bQ$.
+
+[2.] Definimos la relación de equivalencia en $\bQ^{\bN}$ que identifica dos sucesiones de racionales $f$ y $g$ si y solo si la sucesión de diferencias $f(n) - g(n)$ converge a $0_q$. Es decir, $f ∼ g$ si y solo si para todo $\epsilon > 0_q$, existe un número natural $N$ tal que para todo $n ≥ N$, se cumple que $|f(n) - g(n)| < \epsilon$. Hay que demostrar que esta relación es una relación de equivalencia, es decir, que es reflexiva, simétrica y transitiva.
+
+[3.] Definimos los números reales $\bR := \bQ^{\bN}/∼$ como el conjunto de las clases de equivalencia de la relación $∼$. Cada número real se representa como una clase de equivalencia de sucesiones de racionales. Por ejemplo, el número real $0_r$ se representa como la clase de equivalencia que contiene a la sucesión constante $f(n) = 0_q$ para todo $n$, el número real $1_r$ se representa como la clase de equivalencia que contiene a la sucesión constante $f(n) = 1_q$ para todo $n$, etc. De esta forma, cada número real se puede representar de forma única como una clase de equivalencia de sucesiones de racionales. Esto nos permite trabajar con los números reales dentro del marco de ZFC utilizando solo los números racionales y las operaciones definidas sobre ellos. El elemento neutro aditivo es $0_r := [f]$ donde $f(n) = 0_q$ para todo $n$, el elemento neutro multiplicativo es $1_r = [g]$ donde $g(n) = 1_q$ para todo $n$, el inverso aditivo de $[f]$ es $-[f] = [-f]$ donde $-f(n) = -f(n)$ para todo $n$, y el inverso multiplicativo de $[f]$ es $[h]$ donde $h(n) = 1/f(n)$ si $f(n) ≠ 0_q$ para todo $n$, y $h(n) = 0_q$ si $f(n) = 0_q$ para algún $n$.
+
+[4.] Cogeremos el representante canónico de cada clase de equivalencia que represente un número racional por la función constante ese número racional.
+
+[5.] Establecemos la relación de orden total en los números reales, definiendo $[f] ≤ [g]$ si y solo si la sucesión de diferencias $f(n) - g(n)$ converge a un número real menor o igual a $0_r$. Es decir, $[f] ≤ [g]$ si y solo si para todo $\epsilon > 0_r$, existe un número natural $N$ tal que para todo $n ≥ N$, se cumple que $f(n) - g(n) < \epsilon$. Hay que demostrar que esta relación es un orden total, es decir, que es reflexiva, antisimétrica, transitiva y total. También que no depende del representante de la clase de equivalencia que elijamos.
+
+[6.] La suma y el producto se definen de la forma habitual: $[f]+[g]=[f+g]$ donde $(f+g)(n) = f(n) + g(n)$ para todo $n$, y $[f]⋅[g]=[f⋅g]$ donde $(f⋅g)(n) = f(n) ⋅ g(n)$ para todo $n$. Hay que demostrar que estas operaciones están bien definidas.
+
+[7.] Hay que demostrar que con estas operaciones, los números reales forman un cuerpo conmutativo con identidad, y que además cumplen las propiedades habituales de los números reales, como por ejemplo que la suma es conmutativa y asociativa, que el producto es conmutativo y asociativo, que el producto distribuye sobre la suma, etc.
+
+[8.] Establecemos la inyección de los números racionales en los números reales, de forma que se conserven todas las operaciones de números racionales y su orden dentro de los números reales. Esto se puede hacer definiendo la función $f : \bQ \to \bR$ como $f(q) = [g]$ donde $g(n) = q$ para todo $n$. Hay que demostrar que esta función es una inyección, es decir, que es inyectiva y que conserva todas las operaciones de números racionales y su orden dentro de los números reales.
+
+[9.] También tendremos la exponenciación con exponente real. Demostramos que está bien definida, y que cumple las propiedades habituales de la exponenciación, como por ejemplo que $x^0=1_r$ para todo $x≠0_r$, que $x^{m+n}=x^m⋅x^n$ para todo $m,n∈\bR$, que $(x⋅y)^n=x^n⋅y^n$ para todo $n∈\bR$, etc. 
+
+[10.] Definimos las sucesiones de los números reales, y definimos las sucesiones de Cauchy y las sucesiones con límite.
+
+[11.] Entre cualquier dos números reales distintos, hay un número racional distinto de los anteriores. Entre cualquiera dos números reales distintos, existe una cantidad infinita de números racionales distintos de los anteriores. Esto muestra que los números racionales son densos en los números reales.
+
+[12.] Sucesiones monótonas crecientes/decrecientes acotadas tienen límite en los números reales. Dar ejemplos demostrar que las sucesiones monótonas crecientes/decrecientes acotadas tienen límite en los números reales, como por ejemplo alguna subsucesión concreta de $\{a_n ∈ \bQ ∣ a_n^2 < 2\}$ estrictamente creciente , que es monótonamente creciente y acotada por $2$, y que tiene límite dentro de los números reales, concretamente el número real $√2$.
+
+[13.] Completitud de los números reales: todo subconjunto no vacío de los números reales que está acotado superiormente tiene un supremo.
+
+[14.] Definimos las funciones continuas y todas las propiedades habituales de las funciones continuas, como por ejemplo que la suma y el producto de funciones continuas es continua, que la composición de funciones continuas es continua, etc. También definimos las funciones derivables y todas las propiedades habituales de las funciones derivables, como por ejemplo que la suma y el producto de funciones derivables es derivable, que la composición de funciones derivables es derivable, etc.
+
+[15.] Definimos las series de números reales con base en las sucesiones de números reales, y definimos la convergencia de las series de números reales. También definimos las propiedades habituales de las series de números reales, como por ejemplo que la suma de una serie de números reales es conmutativa y asociativa, que el producto de una serie de números reales es conmutativo y asociativo, que el producto distribuye sobre la suma, etc.
+
+[16.] Convergencia absoluta y relativa de las series de números reales, y todas las propiedades habituales de la convergencia absoluta y relativa, como por ejemplo que una serie de números reales que converge absolutamente también converge relativamente, pero que una serie de números reales que converge relativamente no necesariamente converge absolutamente, etc.
+
+[17.] Definimos la integración de funciones continuas al estilo Riemann, y todas las propiedades habituales de la integración de funciones continuas, como por ejemplo que la suma y el producto de funciones integrables es integrable, que la composición de funciones integrables es integrable, etc.
+
+[18.] Definimos la derivación de funciones continuas, y todas las propiedades habituales de la derivación de funciones continuas, como por ejemplo que la suma y el producto de funciones derivables es derivable, que la composición de funciones derivables es derivable, etc.
+
+[19.] Definimos las funciones exponenciales, logarítmicas, trigonométricas, etc. y todas las propiedades habituales de estas funciones, como por ejemplo que la función exponencial es continua y derivable, que la función logarítmica es continua y derivable, que las funciones trigonométricas son continuas y derivables, etc.
+
+[20.] Definimos las funciones hiperbólicas, y todas las propiedades habituales de las funciones hiperbólicas, como por ejemplo que las funciones hiperbólicas son continuas y derivables, etc.
+
+[21.] Teorema fundamental del cálculo: la derivación y la integración son operaciones inversas entre sí, es decir, que si $f$ es una función continua en un intervalo cerrado $[a,b]$, entonces la función $F$ definida por $F(x) = \int_a^x f(t) dt$ para todo $x ∈ [a,b]$ es una función derivable en el intervalo abierto $(a,b)$, y su derivada es igual a $f$, es decir, que $F'(x) = f(x)$ para todo $x ∈ (a,b)$.
 
 **UNA IDEA DE IMPLEMENTACIÓN DE LOS NOVÍSIMOS**
 
