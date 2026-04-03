@@ -47,7 +47,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
   - ✅ `subseteq_antisymmetric` eliminado (redundante con `subset_antisymm`)
   - ✅ Todas las notaciones preservadas: ⊆ ⊂ ⊇ ⊃ ∩ \ ∪ △ 𝒫 ⋃
   - ✅ Build limpio: 71 jobs, 0 errores, 0 sorry
-  - ⚠️ Proyección en REFERENCE.md: ❌ Pendiente
+  - ✅ Proyección en REFERENCE.md: Completada (nombres Mathlib reflejados en 47/47 módulos)
 
 - **Fase 2b: Alineación de sub-namespaces con estructura de directorios**:
   - ✅ 42 sub-namespaces renombrados para reflejar la jerarquía de directorios
@@ -78,7 +78,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
   - ✅ 11 teoremas: `supremumIn_unique`, `infimumIn_unique`, `UnionSet_subset_of_family`, `UnionSet_mem_PowerSet_of_family`, `UnionSet_is_supremumIn_PowerSet`, `interSet_subset_of_family`, `interSet_mem_PowerSet_of_family`, `interSet_is_infimumIn_PowerSet`, `universe_is_infimumIn_PowerSet_empty`, `PowerSet_is_complete_lattice`, `PowerSet_is_complete_atomic_BA`
   - ✅ Namespace `ZFC.BoolAlg.Complete` (exportado a `ZFC`, 15 exports)
   - ✅ Build limpio; 42/43 módulos compilados (módulo añadido antes de BoolAlg.FiniteCofinite)
-  - ⚠️ Proyección en REFERENCE.md: ❌ Pendiente
+  - ✅ Proyección en REFERENCE.md: Completada (§3.41 definiciones, §4.37 teoremas, §1.1 ✅ Completo)
 
 - **Nuevo módulo BoolAlg.FiniteCofinite.lean — Álgebra finita/cofinita, contraejemplo no completo**:
   - ✅ `isCofinite (A X : U) : Prop` — predicado de cofinitud: A \ X es finito
@@ -95,12 +95,13 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
   - ✅ Proyectado en REFERENCE.md §3.40, §4.36, §6.37
 
 - **REFERENCE.md — Proyección de BoolAlg.FiniteCofinite.lean + registro de BoolAlg.Complete.lean**:
-  - ✅ §1.1: 2 filas añadidas (BoolAlg.Complete ❌ Pendiente, BoolAlg.FiniteCofinite ✅ Completo)
+  - ✅ §1.1: 2 filas añadidas (BoolAlg.Complete ✅ Completo, BoolAlg.FiniteCofinite ✅ Completo)
   - ✅ §3.40: 4 definiciones de BoolAlg.FiniteCofinite
+  - ✅ §3.41: 4 definiciones de BoolAlg.Complete
   - ✅ §4.36: 19 teoremas en 4 secciones
+  - ✅ §4.37: 11 teoremas de BoolAlg.Complete
   - ✅ §6.37: 22 exports de BoolAlg.FiniteCofinite
-  - ✅ §7.2: BoolAlg.FiniteCofinite añadido a archivos completos
-  - ✅ §7.5: BoolAlg.Complete listado como pendiente
+  - ✅ §7.2: BoolAlg.FiniteCofinite y BoolAlg.Complete añadidos a archivos completos
 
 - **Nuevo módulo Peano.FiniteSequencesBridge.lean — Puente DList ↔ ZFC y TFA nativo**:
   - ✅ `nth (f n i : U) : U` — i-ésimo elemento de secuencia finita ZFC
