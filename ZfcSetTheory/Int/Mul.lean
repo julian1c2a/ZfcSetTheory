@@ -105,14 +105,14 @@ namespace ZFC
         exact add_in_Omega _ _ (mul_in_Omega _ _ hp_fst hq_snd)
                                (mul_in_Omega _ _ hp_snd hq_fst)
 
-    /-- mulZ_op respects IntEquivRel.
+    /-- mulZ_op respects IntEquivRel (compatibility for QuotientLift₂).
 
-    This is the key technical lemma. Given:
-      h₁ : a + d = b + c       (meaning (a,b) ~ (c,d))
-      h₂ : e + h = f + g       (meaning (e,f) ~ (g,h))
-    We must show:
-      (ae+bf) + (ch+dg) = (af+be) + (cg+dh)
-    i.e., the multiplication formula preserves the equivalence relation. -/
+    Given (a,b)~(c,d) i.e. a+d=b+c, and (e,f)~(g,h) i.e. e+h=f+g,
+    we must show (ae+bf, af+be) ~ (cg+dh, ch+dg), i.e.
+    (ae+bf)+(ch+dg) = (af+be)+(cg+dh).
+
+    Strategy: cancel (de+cf) from both sides, then transform LHS to RHS
+    via a chain of rewrites using h₁–h₄ and add_add_comm. -/
     private theorem mulZ_op_compat (p₁ p₂ q₁ q₂ : U)
         (hp₁ : p₁ ∈ (ω : U) ×ₛ ω) (hp₂ : p₂ ∈ (ω : U) ×ₛ ω)
         (hq₁ : q₁ ∈ (ω : U) ×ₛ ω) (hq₂ : q₂ ∈ (ω : U) ×ₛ ω)
@@ -127,15 +127,13 @@ namespace ZFC
       obtain ⟨⟨g, h, hq₂_eq⟩, hg, hh⟩ := hq₂
       subst hp₁_eq; subst hp₂_eq; subst hq₁_eq; subst hq₂_eq
       simp only [fst_of_ordered_pair, snd_of_ordered_pair] at *
-      -- Extract equivalence hypotheses
       rw [mem_IntEquivRel] at hR₁ hR₂
-      obtain ⟨_, _, _, _, hR₁_eq⟩ := hR₁  -- hR₁_eq : add a d = add b c
-      obtain ⟨_, _, _, _, hR₂_eq⟩ := hR₂  -- hR₂_eq : add e h = add f g
-      -- Unfold mulZ_op and build goal
+      obtain ⟨_, _, _, _, hR₁_eq⟩ := hR₁  -- add a d = add b c
+      obtain ⟨_, _, _, _, hR₂_eq⟩ := hR₂  -- add e h = add f g
       unfold mulZ_op
       simp only [fst_of_ordered_pair, snd_of_ordered_pair]
       rw [mem_IntEquivRel]
-      -- Membership goals
+      -- Membership proofs for all products
       have hae := mul_in_Omega a e ha he
       have hbf := mul_in_Omega b f hb hf
       have haf := mul_in_Omega a f ha hf
@@ -144,93 +142,91 @@ namespace ZFC
       have hdh := mul_in_Omega d h hd hh
       have hch := mul_in_Omega c h hc hh
       have hdg := mul_in_Omega d g hd hg
+      have hde := mul_in_Omega d e hd he
+      have hcf := mul_in_Omega c f hc hf
+      have hce := mul_in_Omega c e hc he
+      have hdf := mul_in_Omega d f hd hf
       refine ⟨add_in_Omega _ _ hae hbf, add_in_Omega _ _ haf hbe,
               add_in_Omega _ _ hcg hdh, add_in_Omega _ _ hch hdg, ?_⟩
-      -- Goal: add (add (ae) (bf)) (add (ch) (dg))
-      --     = add (add (af) (be)) (add (cg) (dh))
-      --
-      -- Strategy: multiply both sides of hR₁ by e and by f separately,
-      -- then combine. From hR₁: a+d = b+c, so:
-      --   (a+d)*e = (b+c)*e  →  ae+de = be+ce
-      --   (a+d)*f = (b+c)*f  →  af+df = bf+cf
-      -- From hR₂: e+h = f+g, so:
-      --   c*(e+h) = c*(f+g)  →  ce+ch = cf+cg
-      --   d*(e+h) = d*(f+g)  →  de+dh = df+dg
-      -- We use these to rearrange.
-      have hde := mul_in_Omega d e hd he
-      have hce := mul_in_Omega c e hc he
-      have hcf := mul_in_Omega c f hc hf
-      have hdf := mul_in_Omega d f hd hf
-      -- From hR₁: (a+d)*e = (b+c)*e and (a+d)*f = (b+c)*f
+      -- Goal: add (ae+bf) (ch+dg) = add (af+be) (cg+dh)
+      -- Derived equations from hR₁ and hR₂:
       have h1 : add (mul a e) (mul d e) = add (mul b e) (mul c e) := by
         rw [← mul_rdistr_Omega a d e ha hd he, ← mul_rdistr_Omega b c e hb hc he, hR₁_eq]
       have h2 : add (mul a f) (mul d f) = add (mul b f) (mul c f) := by
         rw [← mul_rdistr_Omega a d f ha hd hf, ← mul_rdistr_Omega b c f hb hc hf, hR₁_eq]
-      -- From hR₂: c*(e+h) = c*(f+g) and d*(e+h) = d*(f+g)
       have h3 : add (mul c e) (mul c h) = add (mul c f) (mul c g) := by
         rw [← mul_ldistr_Omega c e h hc he hh, ← mul_ldistr_Omega c f g hc hf hg, hR₂_eq]
       have h4 : add (mul d e) (mul d h) = add (mul d f) (mul d g) := by
         rw [← mul_ldistr_Omega d e h hd he hh, ← mul_ldistr_Omega d f g hd hf hg, hR₂_eq]
-      -- Now we need: (ae+bf) + (ch+dg) = (af+be) + (cg+dh)
-      -- From h1: ae + de = be + ce  →  ae = be + ce - de (conceptually)
-      -- From h3: ce + ch = cf + cg  →  ch = cf + cg - ce (conceptually)
-      -- From h4: de + dh = df + dg  →  dg = de + dh - df (conceptually)
-      -- Let's use additive cancellation approach.
-      -- Add both sides of h1 and h4:
-      -- (ae + de) + (de + dh) = (be + ce) + (df + dg)
-      -- No, let's try a more systematic approach.
-      -- We want to show:
-      --   (ae + bf) + (ch + dg) = (af + be) + (cg + dh)
-      -- Add (de + cf) to both sides. Enough to show:
-      --   (ae + bf) + (ch + dg) + (de + cf) = (af + be) + (cg + dh) + (de + cf)
-      -- LHS rearranges using h1, h3, h4...
-
-      -- Clean approach: use add_right_cancel with a suitable sum.
-      -- Actually, let's just rearrange and use h1, h2, h3, h4.
-      -- LHS: (ae+bf) + (ch+dg)
-      -- RHS: (af+be) + (cg+dh)
-
-      -- From h1: ae + de = be + ce  →  ae - be = ce - de
-      -- From h2: af + df = bf + cf  →  bf - af = bf - af... hmm
-      -- Let me try: add (de+cf) to both sides as "cancellation witness"
-
-      -- Use cancellation with (de + cf).
-      apply add_right_cancel_Omega (add hde hcf)
-        (add_in_Omega _ _ hae hbf |> fun x => add_in_Omega _ _ x (add_in_Omega _ _ hch hdg))
-        (add_in_Omega _ _ haf hbe |> fun x => add_in_Omega _ _ x (add_in_Omega _ _ hcg hdh))
+      -- Cancel (de+cf) from both sides
+      apply add_right_cancel_Omega (add (mul d e) (mul c f))
+        (add (add (mul a e) (mul b f)) (add (mul c h) (mul d g)))
+        (add (add (mul a f) (mul b e)) (add (mul c g) (mul d h)))
         (add_in_Omega _ _ hde hcf)
-      -- Goal: add (add (ae+bf) (ch+dg)) (de+cf) = add (add (af+be) (cg+dh)) (de+cf)
-      -- Rearrange LHS: (ae+bf) + (ch+dg) + (de+cf)
-      --   = ae + (bf + ch) + (dg + de) + cf   ... complicated
-      -- Let me try a different approach: rearrange both sides to the same form.
-
-      -- LHS: (ae+bf) + (ch+dg) + (de+cf)
-      -- Rearrange to: (ae+de) + (bf+cf) + (ch+dg)
-      -- = (be+ce) + (bf+cf) + (ch+dg)    by h1
-      -- = (be+ce) + (bf+cf) + (ch+dg)
-      --
-      -- RHS: (af+be) + (cg+dh) + (de+cf)
-      -- Rearrange to: (af+df) + (be+de) + (cg+dh) - df ... too messy
-
-      -- Actually let me try the simplest approach: just rearrange using commutativity
-      -- and associativity to convert both sides to the same sum.
-      -- Both sides have 6 terms total (after expanding). Let me be more systematic.
-
-      -- Actually, the cleanest proof: show both sides equal the same thing.
-      -- Note: add (de+cf) to LHS:
-      -- (ae+bf+ch+dg) + (de+cf) = ae+de + bf+cf + ch+dg
-      -- Use h1: ae+de = be+ce
-      -- Use h2 reversed: bf+cf = af+df  (from h2: af+df = bf+cf)
-      -- So: be+ce + af+df + ch+dg
-      -- Now rearrange: af+be + ce+df + ch+dg
-      -- Use h3: ce+ch = cf+cg, so ch = cf+cg-ce... not quite.
-      -- Use h4: de+dh = df+dg, so dg = df+dg-... hmm.
-
-      -- Let me try yet another approach. Add (de + cf) to both sides:
-      sorry
-
-    -- The above proof is too complex inline. Let me use a clean algebraic approach
-    -- by proving the compatibility directly using intClass_eq_iff instead.
+        (add_in_Omega _ _ (add_in_Omega _ _ hae hbf) (add_in_Omega _ _ hch hdg))
+        (add_in_Omega _ _ (add_in_Omega _ _ haf hbe) (add_in_Omega _ _ hcg hdh))
+      -- Goal: add ((ae+bf)+(ch+dg)) (de+cf) = add ((af+be)+(cg+dh)) (de+cf)
+      -- Chain of rewrites transforming LHS to RHS:
+      -- Step 1: assoc — move (de+cf) inward to join (ae+bf)
+      rw [add_assoc_Omega (add (mul a e) (mul b f)) (add (mul c h) (mul d g))
+          (add (mul d e) (mul c f))
+          (add_in_Omega _ _ hae hbf) (add_in_Omega _ _ hch hdg)
+          (add_in_Omega _ _ hde hcf)]
+      rw [add_comm_Omega (add (mul c h) (mul d g)) (add (mul d e) (mul c f))
+          (add_in_Omega _ _ hch hdg) (add_in_Omega _ _ hde hcf)]
+      rw [← add_assoc_Omega (add (mul a e) (mul b f)) (add (mul d e) (mul c f))
+          (add (mul c h) (mul d g))
+          (add_in_Omega _ _ hae hbf) (add_in_Omega _ _ hde hcf)
+          (add_in_Omega _ _ hch hdg)]
+      -- Now: ((ae+bf)+(de+cf)) + (ch+dg)
+      -- Step 2: add_add_comm on (ae+bf)+(de+cf) → (ae+de)+(bf+cf)
+      rw [add_add_comm (mul a e) (mul b f) (mul d e) (mul c f) hae hbf hde hcf]
+      -- Now: ((ae+de)+(bf+cf)) + (ch+dg)
+      -- Step 3: h1 and h2.symm
+      rw [h1, ← h2]
+      -- Now: ((be+ce)+(af+df)) + (ch+dg)   ... wait, ← h2 gives bf+cf → af+df?
+      -- h2: af+df = bf+cf, so ← h2 rewrites bf+cf → af+df. But after h1,
+      -- we had (be+ce)+(bf+cf). The ← h2 should rewrite bf+cf to af+df.
+      -- Actually no: ← h2 goes from bf+cf to af+df (rw ← h2 replaces RHS by LHS).
+      -- h2 says add (mul a f) (mul d f) = add (mul b f) (mul c f).
+      -- rw [← h2] replaces add (mul b f) (mul c f) by add (mul a f) (mul d f). ✓
+      -- Now: ((be+ce)+(af+df)) + (ch+dg)
+      -- Step 4: add_add_comm on (be+ce)+(af+df) → (be+af)+(ce+df)
+      rw [add_add_comm (mul b e) (mul c e) (mul a f) (mul d f) hbe hce haf hdf]
+      -- Now: ((be+af)+(ce+df)) + (ch+dg)
+      -- Step 5: comm on be+af → af+be
+      rw [add_comm_Omega (mul b e) (mul a f) hbe haf]
+      -- Now: ((af+be)+(ce+df)) + (ch+dg)
+      -- Step 6: assoc — move (ch+dg) inward to join (ce+df)
+      rw [add_assoc_Omega (add (mul a f) (mul b e)) (add (mul c e) (mul d f))
+          (add (mul c h) (mul d g))
+          (add_in_Omega _ _ haf hbe) (add_in_Omega _ _ hce hdf)
+          (add_in_Omega _ _ hch hdg)]
+      -- Now: (af+be) + ((ce+df)+(ch+dg))
+      -- Step 7: add_add_comm on (ce+df)+(ch+dg) → (ce+ch)+(df+dg)
+      rw [add_add_comm (mul c e) (mul d f) (mul c h) (mul d g) hce hdf hch hdg]
+      -- Now: (af+be) + ((ce+ch)+(df+dg))
+      -- Step 8: h3 and h4.symm
+      rw [h3, ← h4]
+      -- h3: ce+ch = cf+cg. rw [h3] replaces ce+ch by cf+cg. ✓
+      -- h4: de+dh = df+dg. ← h4 replaces df+dg by de+dh. ✓
+      -- Now: (af+be) + ((cf+cg)+(de+dh))
+      -- Step 9: add_add_comm on (cf+cg)+(de+dh) → (cf+de)+(cg+dh)
+      rw [add_add_comm (mul c f) (mul c g) (mul d e) (mul d h) hcf hcg hde hdh]
+      -- Now: (af+be) + ((cf+de)+(cg+dh))
+      -- Step 10: comm on cf+de → de+cf
+      rw [add_comm_Omega (mul c f) (mul d e) hcf hde]
+      -- Now: (af+be) + ((de+cf)+(cg+dh))
+      -- Step 11: comm on (de+cf)+(cg+dh) → (cg+dh)+(de+cf)
+      rw [add_comm_Omega (add (mul d e) (mul c f)) (add (mul c g) (mul d h))
+          (add_in_Omega _ _ hde hcf) (add_in_Omega _ _ hcg hdh)]
+      -- Now: (af+be) + ((cg+dh)+(de+cf))
+      -- Step 12: assoc — pull (de+cf) out
+      rw [← add_assoc_Omega (add (mul a f) (mul b e)) (add (mul c g) (mul d h))
+          (add (mul d e) (mul c f))
+          (add_in_Omega _ _ haf hbe) (add_in_Omega _ _ hcg hdh)
+          (add_in_Omega _ _ hde hcf)]
+      -- Now: ((af+be)+(cg+dh)) + (de+cf)  ✓
 
     /-! ### Definition of multiplication on ℤ -/
 
@@ -241,6 +237,224 @@ namespace ZFC
     /-- Multiplication on ℤ -/
     noncomputable def mulZ (x y : U) : U :=
       mulZ_graph⦅⟨x, y⟩⦆
+
+    /-! ### Function property -/
+
+    /-- The multiplication graph is a function from ℤ × ℤ to ℤ -/
+    theorem mulZ_graph_is_function :
+        IsFunction (mulZ_graph : U) ((IntSet : U) ×ₛ IntSet) IntSet := by
+      unfold mulZ_graph IntSet
+      exact QuotientLift₂_well_defined mulZ_op IntEquivRel ((ω : U) ×ₛ ω)
+        IntEquivRel_is_equivalence mulZ_op_closed mulZ_op_compat
+
+    /-! ### Computation rule -/
+
+    /-- mulZ [(a,b)] [(c,d)] = [(ac+bd, ad+bc)] -/
+    theorem mulZ_class (a b c d : U)
+        (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U))
+        (hc : c ∈ (ω : U)) (hd : d ∈ (ω : U)) :
+        mulZ (intClass a b) (intClass c d) =
+          intClass (add (mul a c) (mul b d)) (add (mul a d) (mul b c)) := by
+      unfold mulZ mulZ_graph
+      have h1 : intClass a b = EqClass (⟨a, b⟩ : U) IntEquivRel ((ω : U) ×ₛ ω) := rfl
+      have h2 : intClass c d = EqClass (⟨c, d⟩ : U) IntEquivRel ((ω : U) ×ₛ ω) := rfl
+      rw [h1, h2]
+      rw [QuotientLift₂_apply mulZ_op IntEquivRel ((ω : U) ×ₛ ω) ⟨a, b⟩ ⟨c, d⟩
+          IntEquivRel_is_equivalence mulZ_op_closed mulZ_op_compat
+          ((OrderedPair_mem_CartesianProduct a b ω ω).mpr ⟨ha, hb⟩)
+          ((OrderedPair_mem_CartesianProduct c d ω ω).mpr ⟨hc, hd⟩)]
+      unfold mulZ_op
+      simp only [fst_of_ordered_pair, snd_of_ordered_pair]
+
+    /-! ### Well-definedness -/
+
+    /-- If [(a,b)] = [(c,d)] then mulZ preserves this equality -/
+    theorem mulZ_well_defined (a b c d e f g h : U)
+        (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U))
+        (hc : c ∈ (ω : U)) (hd : d ∈ (ω : U))
+        (he : e ∈ (ω : U)) (hf : f ∈ (ω : U))
+        (hg : g ∈ (ω : U)) (hh : h ∈ (ω : U))
+        (h₁ : intClass a b = intClass c d)
+        (h₂ : intClass e f = intClass g h) :
+        intClass (add (mul a e) (mul b f)) (add (mul a f) (mul b e)) =
+          intClass (add (mul c g) (mul d h)) (add (mul c h) (mul d g)) := by
+      rw [← mulZ_class a b e f ha hb he hf, ← mulZ_class c d g h hc hd hg hh, h₁, h₂]
+
+    /-! ### Closure -/
+
+    /-- Multiplication is closed on ℤ -/
+    theorem mulZ_in_IntSet (x y : U)
+        (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) :
+        mulZ x y ∈ (IntSet : U) := by
+      obtain ⟨a, b, ha, hb, hx_eq⟩ := intClass_exists x hx
+      obtain ⟨c, d, hc, hd, hy_eq⟩ := intClass_exists y hy
+      subst hx_eq; subst hy_eq
+      rw [mulZ_class a b c d ha hb hc hd]
+      exact intClass_mem_IntSet _ _
+        (add_in_Omega _ _ (mul_in_Omega a c ha hc) (mul_in_Omega b d hb hd))
+        (add_in_Omega _ _ (mul_in_Omega a d ha hd) (mul_in_Omega b c hb hc))
+
+    /-! ### Algebraic properties -/
+
+    /-- Commutativity: mulZ x y = mulZ y x -/
+    theorem mulZ_comm (x y : U)
+        (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) :
+        mulZ x y = mulZ y x := by
+      obtain ⟨a, b, ha, hb, hx_eq⟩ := intClass_exists x hx
+      obtain ⟨c, d, hc, hd, hy_eq⟩ := intClass_exists y hy
+      subst hx_eq; subst hy_eq
+      rw [mulZ_class a b c d ha hb hc hd]
+      rw [mulZ_class c d a b hc hd ha hb]
+      rw [mul_comm_Omega a c ha hc, mul_comm_Omega b d hb hd]
+      rw [mul_comm_Omega c b hc hb, mul_comm_Omega d a hd ha]
+      rw [add_comm_Omega (mul b c) (mul a d) (mul_in_Omega b c hb hc) (mul_in_Omega a d ha hd)]
+
+    /-- Associativity: mulZ (mulZ x y) z = mulZ x (mulZ y z) -/
+    theorem mulZ_assoc (x y z : U)
+        (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) (hz : z ∈ (IntSet : U)) :
+        mulZ (mulZ x y) z = mulZ x (mulZ y z) := by
+      obtain ⟨a, b, ha, hb, hx_eq⟩ := intClass_exists x hx
+      obtain ⟨c, d, hc, hd, hy_eq⟩ := intClass_exists y hy
+      obtain ⟨e, f, he, hf, hz_eq⟩ := intClass_exists z hz
+      subst hx_eq; subst hy_eq; subst hz_eq
+      rw [mulZ_class a b c d ha hb hc hd]
+      have hac_bd := add_in_Omega _ _ (mul_in_Omega a c ha hc) (mul_in_Omega b d hb hd)
+      have had_bc := add_in_Omega _ _ (mul_in_Omega a d ha hd) (mul_in_Omega b c hb hc)
+      rw [mulZ_class (add (mul a c) (mul b d)) (add (mul a d) (mul b c)) e f
+          hac_bd had_bc he hf]
+      rw [mulZ_class c d e f hc hd he hf]
+      have hce_df := add_in_Omega _ _ (mul_in_Omega c e hc he) (mul_in_Omega d f hd hf)
+      have hcf_de := add_in_Omega _ _ (mul_in_Omega c f hc hf) (mul_in_Omega d e hd he)
+      rw [mulZ_class a b (add (mul c e) (mul d f)) (add (mul c f) (mul d e))
+          ha hb hce_df hcf_de]
+      -- LHS 1st component: (ac+bd)e + (ad+bc)f = ace+bde+adf+bcf
+      -- RHS 1st component: a(ce+df) + b(cf+de) = ace+adf+bcf+bde
+      -- LHS 2nd component: (ac+bd)f + (ad+bc)e = acf+bdf+ade+bce
+      -- RHS 2nd component: a(cf+de) + b(ce+df) = acf+ade+bce+bdf
+      -- Both are equal after rearranging via add_add_comm.
+      -- First component:
+      have hac := mul_in_Omega a c ha hc
+      have hbd := mul_in_Omega b d hb hd
+      have had := mul_in_Omega a d ha hd
+      have hbc := mul_in_Omega b c hb hc
+      have hce := mul_in_Omega c e hc he
+      have hdf := mul_in_Omega d f hd hf
+      have hcf := mul_in_Omega c f hc hf
+      have hde := mul_in_Omega d e hd he
+      congr 1
+      · congr 1
+        · -- (ac+bd)*e = a*(ce) + a*(df) ... no
+          -- mul (add (ac) (bd)) e = add (mul ac e) (mul bd e) by rdistr
+          -- = add (mul a (mul c e)) (mul b (mul d e)) ... no, assoc gives mul (mul a c) e = mul a (mul c e)
+          -- Actually direction: mul_assoc_Omega : mul (mul m n) k = mul m (mul n k)
+          -- So mul (ac) e = mul a (ce), mul (bd) e = mul b (de)
+          -- LHS: mul (ac+bd) e + mul (ad+bc) f
+          -- = (mul ac e + mul bd e) + (mul ad f + mul bc f) by rdistr × 2
+          -- = (mul a (ce) + mul b (de)) + (mul a (df) + mul b (cf)) by assoc × 4
+          -- RHS: mul a (ce+df) + mul b (cf+de)
+          -- = (mul a ce + mul a df) + (mul b cf + mul b de) by ldistr × 2
+          -- So LHS = (a(ce) + b(de)) + (a(df) + b(cf)) and
+          --    RHS = (a(ce) + a(df)) + (b(cf) + b(de))
+          -- Use add_add_comm: (a(ce) + b(de)) + (a(df) + b(cf))
+          --                 = (a(ce) + a(df)) + (b(de) + b(cf))
+          -- Then swap b(de) and b(cf): b(de)+b(cf) = b(cf)+b(de)
+          rw [mul_rdistr_Omega (mul a c) (mul b d) e hac hbd he]
+          rw [mul_rdistr_Omega (mul a d) (mul b c) f had hbc hf]
+          rw [mul_assoc_Omega a c e ha hc he]
+          rw [mul_assoc_Omega b d e hb hd he]
+          rw [mul_assoc_Omega a d f ha hd hf]
+          rw [mul_assoc_Omega b c f hb hc hf]
+          rw [mul_ldistr_Omega a (mul c e) (mul d f) ha hce hdf]
+          rw [mul_ldistr_Omega b (mul c f) (mul d e) hb hcf hde]
+          have hace := mul_in_Omega a (mul c e) ha hce
+          have hbde := mul_in_Omega b (mul d e) hb hde
+          have hadf := mul_in_Omega a (mul d f) ha hdf
+          have hbcf := mul_in_Omega b (mul c f) hb hcf
+          rw [add_add_comm (mul a (mul c e)) (mul b (mul d e))
+              (mul a (mul d f)) (mul b (mul c f)) hace hbde hadf hbcf]
+          rw [add_comm_Omega (mul b (mul d e)) (mul b (mul c f)) hbde hbcf]
+        · -- Second argument of ordered pair first component matches:
+          -- mul (ac+bd) f + mul (ad+bc) e vs mul a (cf+de) + mul b (ce+df)
+          -- Similar to above
+          rw [mul_rdistr_Omega (mul a c) (mul b d) f hac hbd hf]
+          rw [mul_rdistr_Omega (mul a d) (mul b c) e had hbc he]
+          rw [mul_assoc_Omega a c f ha hc hf]
+          rw [mul_assoc_Omega b d f hb hd hf]
+          rw [mul_assoc_Omega a d e ha hd he]
+          rw [mul_assoc_Omega b c e hb hc he]
+          rw [mul_ldistr_Omega a (mul c f) (mul d e) ha hcf hde]
+          rw [mul_ldistr_Omega b (mul c e) (mul d f) hb hce hdf]
+          have hacf := mul_in_Omega a (mul c f) ha hcf
+          have hbdf := mul_in_Omega b (mul d f) hb hdf
+          have hade := mul_in_Omega a (mul d e) ha hde
+          have hbce := mul_in_Omega b (mul c e) hb hce
+          rw [add_add_comm (mul a (mul c f)) (mul b (mul d f))
+              (mul a (mul d e)) (mul b (mul c e)) hacf hbdf hade hbce]
+          rw [add_comm_Omega (mul b (mul d f)) (mul b (mul c e)) hbdf hbce]
+
+    /-- Right multiplicative identity: mulZ x oneZ = x -/
+    theorem mulZ_one_right (x : U) (hx : x ∈ (IntSet : U)) :
+        mulZ x (oneZ : U) = x := by
+      obtain ⟨a, b, ha, hb, hx_eq⟩ := intClass_exists x hx
+      subst hx_eq
+      unfold oneZ
+      rw [mulZ_class a b (σ ∅) ∅ ha hb (succ_in_Omega ∅ zero_in_Omega) zero_in_Omega]
+      -- Goal: intClass (add (mul a (σ ∅)) (mul b ∅)) (add (mul a ∅) (mul b (σ ∅))) = intClass a b
+      rw [mul_one_Omega a ha, mul_zero b hb, add_zero a ha]
+      rw [mul_zero a ha, mul_one_Omega b hb, zero_add b hb]
+
+    /-- Left multiplicative identity: mulZ oneZ x = x -/
+    theorem mulZ_one_left (x : U) (hx : x ∈ (IntSet : U)) :
+        mulZ (oneZ : U) x = x := by
+      rw [mulZ_comm oneZ x oneZ_mem_IntSet hx]
+      exact mulZ_one_right x hx
+
+    /-- Right absorbing element: mulZ x zeroZ = zeroZ -/
+    theorem mulZ_zero_right (x : U) (hx : x ∈ (IntSet : U)) :
+        mulZ x (zeroZ : U) = (zeroZ : U) := by
+      obtain ⟨a, b, ha, hb, hx_eq⟩ := intClass_exists x hx
+      subst hx_eq
+      unfold zeroZ
+      rw [mulZ_class a b ∅ ∅ ha hb zero_in_Omega zero_in_Omega]
+      rw [mul_zero a ha, mul_zero b hb, mul_zero a ha, mul_zero b hb]
+      -- intClass (add ∅ ∅) (add ∅ ∅) = intClass ∅ ∅
+      rw [add_zero ∅ zero_in_Omega]
+
+    /-- Left absorbing element: mulZ zeroZ x = zeroZ -/
+    theorem mulZ_zero_left (x : U) (hx : x ∈ (IntSet : U)) :
+        mulZ (zeroZ : U) x = (zeroZ : U) := by
+      rw [mulZ_comm zeroZ x zeroZ_mem_IntSet hx]
+      exact mulZ_zero_right x hx
+
+    /-- Interaction with negation (left): mulZ (negZ x) y = negZ (mulZ x y) -/
+    theorem mulZ_negZ_left (x y : U)
+        (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) :
+        mulZ (negZ x) y = negZ (mulZ x y) := by
+      obtain ⟨a, b, ha, hb, hx_eq⟩ := intClass_exists x hx
+      obtain ⟨c, d, hc, hd, hy_eq⟩ := intClass_exists y hy
+      subst hx_eq; subst hy_eq
+      rw [negZ_class a b ha hb]
+      rw [mulZ_class b a c d hb ha hc hd]
+      rw [mulZ_class a b c d ha hb hc hd]
+      rw [negZ_class (add (mul a c) (mul b d)) (add (mul a d) (mul b c))
+          (add_in_Omega _ _ (mul_in_Omega a c ha hc) (mul_in_Omega b d hb hd))
+          (add_in_Omega _ _ (mul_in_Omega a d ha hd) (mul_in_Omega b c hb hc))]
+
+    /-- Interaction with negation (right): mulZ x (negZ y) = negZ (mulZ x y) -/
+    theorem mulZ_negZ_right (x y : U)
+        (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) :
+        mulZ x (negZ y) = negZ (mulZ x y) := by
+      rw [mulZ_comm x (negZ y) hx (negZ_in_IntSet y hy)]
+      rw [mulZ_negZ_left y x hy hx]
+      rw [mulZ_comm y x hy hx]
+
+    /-- Negation cancellation: mulZ (negZ x) (negZ y) = mulZ x y -/
+    theorem negZ_mulZ_negZ (x y : U)
+        (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) :
+        mulZ (negZ x) (negZ y) = mulZ x y := by
+      rw [mulZ_negZ_left x (negZ y) hx (negZ_in_IntSet y hy)]
+      rw [mulZ_negZ_right x y hx hy]
+      rw [negZ_negZ (mulZ x y) (mulZ_in_IntSet x y hx hy)]
 
   end Int.Mul
 
