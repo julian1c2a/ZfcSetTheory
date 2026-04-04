@@ -520,6 +520,106 @@ namespace ZFC
       rw [mem_imag]
       exact ⟨x, h⟩
 
+    /-! ### Quotient Set Infrastructure (§2.0.1) -/
+
+    /-- Equivalence classes are subsets of A -/
+    theorem EqClass_subset (a R A : U) :
+        EqClass a R A ⊆ A := by
+      intro x hx
+      rw [mem_EqClass] at hx
+      exact hx.1
+
+    /-- Characterization of membership in the quotient set:
+        C ∈ A/R iff C is the equivalence class of some element of A -/
+    theorem mem_QuotientSet (A R C : U) :
+        C ∈ QuotientSet A R ↔ ∃ a : U, a ∈ A ∧ C = EqClass a R A := by
+      unfold QuotientSet
+      rw [mem_sep_iff]
+      constructor
+      · intro h; exact h.2
+      · intro h; obtain ⟨a, haA, hC⟩ := h
+        refine ⟨?_, a, haA, hC⟩
+        rw [mem_powerset_iff]
+        subst hC
+        exact EqClass_subset a R A
+
+    /-- Every equivalence class belongs to the quotient set -/
+    theorem EqClass_mem_QuotientSet (R A a : U) (haA : a ∈ A) :
+        EqClass a R A ∈ QuotientSet A R := by
+      rw [mem_QuotientSet]
+      exact ⟨a, haA, rfl⟩
+
+    /-- Equivalence classes are non-empty for equivalence relations -/
+    theorem EqClass_nonempty (R A a : U)
+        (hEq : isEquivalenceOn R A) (haA : a ∈ A) :
+        EqClass a R A ≠ ∅ := by
+      intro h_empty
+      have ha_in := EqClass_mem_self R A a hEq haA
+      rw [h_empty] at ha_in
+      exact EmptySet_is_empty a ha_in
+
+    /-- Every element of A belongs to some equivalence class in the quotient -/
+    theorem QuotientSet_covers (R A a : U)
+        (hEq : isEquivalenceOn R A) (haA : a ∈ A) :
+        ∃ C : U, C ∈ QuotientSet A R ∧ a ∈ C :=
+      ⟨EqClass a R A, EqClass_mem_QuotientSet R A a haA,
+        EqClass_mem_self R A a hEq haA⟩
+
+    /-- The quotient set partitions A: ⋃(A/R) = A -/
+    theorem QuotientSet_is_partition (R A : U)
+        (hEq : isEquivalenceOn R A) :
+        ⋃ (QuotientSet A R) = A := by
+      apply ExtSet
+      intro x
+      constructor
+      · -- x ∈ ⋃(A/R) → x ∈ A
+        intro hx
+        rw [mem_sUnion_iff] at hx
+        obtain ⟨C, hC_in_Q, hx_in_C⟩ := hx
+        rw [mem_QuotientSet] at hC_in_Q
+        obtain ⟨a, _, hC_eq⟩ := hC_in_Q
+        subst hC_eq
+        exact EqClass_subset a R A x hx_in_C
+      · -- x ∈ A → x ∈ ⋃(A/R)
+        intro hxA
+        rw [mem_sUnion_iff]
+        exact ⟨EqClass x R A, EqClass_mem_QuotientSet R A x hxA,
+          EqClass_mem_self R A x hEq hxA⟩
+
+    /-- Every member of the quotient set has a representative element -/
+    theorem EqClass_representative_exists (R A C : U)
+        (hEq : isEquivalenceOn R A) (hC : C ∈ QuotientSet A R) :
+        ∃ a : U, a ∈ A ∧ a ∈ C ∧ C = EqClass a R A := by
+      rw [mem_QuotientSet] at hC
+      obtain ⟨a, haA, hC_eq⟩ := hC
+      exact ⟨a, haA, hC_eq ▸ EqClass_mem_self R A a hEq haA, hC_eq⟩
+
+    /-- If x belongs to two equivalence classes, those classes are equal -/
+    theorem EqClass_eq_of_mem_both (R A a b x : U)
+        (hEq : isEquivalenceOn R A)
+        (hxa : x ∈ EqClass a R A) (hxb : x ∈ EqClass b R A) :
+        EqClass a R A = EqClass b R A := by
+      have hSym := hEq.2.2.1
+      have hTrans := hEq.2.2.2
+      have hRel := hEq.1
+      rw [mem_EqClass] at hxa hxb
+      have hxA := hxa.1
+      have hax := hxa.2
+      have hbx := hxb.2
+      -- Derive a ∈ A from ⟨a, x⟩ ∈ R and R ⊆ A ×ₛ A
+      have hax_prod := hRel _ hax
+      rw [OrderedPair_mem_CartesianProduct] at hax_prod
+      have haA := hax_prod.1
+      -- Derive b ∈ A from ⟨b, x⟩ ∈ R
+      have hbx_prod := hRel _ hbx
+      rw [OrderedPair_mem_CartesianProduct] at hbx_prod
+      have hbA := hbx_prod.1
+      -- ⟨x, b⟩ ∈ R by symmetry of R
+      have hxb' : ⟨x, b⟩ ∈ R := hSym b x hbA hxA hbx
+      -- ⟨a, b⟩ ∈ R by transitivity: a→x→b
+      have hab : ⟨a, b⟩ ∈ R := hTrans a x b haA hxA hbA hax hxb'
+      exact (EqClass_eq_iff R A a b hEq haA hbA).mpr hab
+
   end SetOps.Relations
 
 end ZFC

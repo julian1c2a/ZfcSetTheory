@@ -381,6 +381,161 @@ namespace ZFC
       simp only [fst_of_ordered_pair, snd_of_ordered_pair] at h1 h2
       exact hf y z x h1.2 h2.2
 
+    /-! ============================================================ -/
+    /-! ### QUOTIENT LIFT INFRASTRUCTURE (§2.0.2) ### -/
+    /-! ============================================================ -/
+
+    /-- Graph of a Lean-level function f : A → B lifted to the quotient A/R → B.
+        QuotientLiftGraph f R A B = {⟨C, y⟩ ∈ (A/R) ×ₛ B | ∃ a ∈ A, C = [a]_R ∧ y = f a} -/
+    noncomputable def QuotientLiftGraph (f : U → U) (R A B : U) : U :=
+      sep ((QuotientSet A R) ×ₛ B)
+        (fun p => ∃ a : U, a ∈ A ∧ fst p = EqClass a R A ∧ snd p = f a)
+
+    /-- If f respects the equivalence R, then the lift is a well-defined function A/R → B -/
+    theorem QuotientLift_well_defined (f : U → U) (R A B : U)
+        (hEq : isEquivalenceOn R A)
+        (hf_closed : ∀ a, a ∈ A → f a ∈ B)
+        (hf_compat : ∀ x y, x ∈ A → y ∈ A → ⟨x, y⟩ ∈ R → f x = f y) :
+        IsFunction (QuotientLiftGraph f R A B) (QuotientSet A R) B := by
+      constructor
+      · -- Subset: graph ⊆ (Q ×ₛ B)
+        intro p hp
+        unfold QuotientLiftGraph at hp
+        rw [mem_sep_iff] at hp
+        exact hp.1
+      · -- Total and unique
+        intro C hC
+        obtain ⟨a, haA, _, hC_eq⟩ := EqClass_representative_exists R A C hEq hC
+        have h_mem : ⟨C, f a⟩ ∈ QuotientLiftGraph f R A B := by
+          unfold QuotientLiftGraph
+          rw [mem_sep_iff]
+          refine ⟨?_, a, haA, ?_, ?_⟩
+          · rw [OrderedPair_mem_CartesianProduct]
+            exact ⟨hC_eq ▸ EqClass_mem_QuotientSet R A a haA, hf_closed a haA⟩
+          · rw [fst_of_ordered_pair]; exact hC_eq
+          · rw [snd_of_ordered_pair]
+        have h_unique : ∀ y', ⟨C, y'⟩ ∈ QuotientLiftGraph f R A B → y' = f a := by
+          intro y' hy'
+          unfold QuotientLiftGraph at hy'
+          rw [mem_sep_iff] at hy'
+          obtain ⟨_, a', ha'A, h_fst, h_snd⟩ := hy'
+          rw [fst_of_ordered_pair] at h_fst
+          rw [snd_of_ordered_pair] at h_snd
+          have h_class_eq : EqClass a R A = EqClass a' R A := by
+            rw [← hC_eq]; exact h_fst
+          have hab : ⟨a, a'⟩ ∈ R := (EqClass_eq_iff R A a a' hEq haA ha'A).mp h_class_eq
+          rw [h_snd, hf_compat a a' haA ha'A hab]
+        exact ⟨f a, h_mem, h_unique⟩
+
+    /-- Computation rule: the lift applied to [a] equals f a -/
+    theorem QuotientLift_apply (f : U → U) (R A B a : U)
+        (hEq : isEquivalenceOn R A)
+        (hf_closed : ∀ a, a ∈ A → f a ∈ B)
+        (hf_compat : ∀ x y, x ∈ A → y ∈ A → ⟨x, y⟩ ∈ R → f x = f y)
+        (haA : a ∈ A) :
+        (QuotientLiftGraph f R A B)⦅EqClass a R A⦆ = f a := by
+      have h_func := QuotientLift_well_defined f R A B hEq hf_closed hf_compat
+      have h_mem_Q := EqClass_mem_QuotientSet R A a haA
+      have h_in : ⟨EqClass a R A, f a⟩ ∈ QuotientLiftGraph f R A B := by
+        unfold QuotientLiftGraph
+        rw [mem_sep_iff]
+        refine ⟨?_, a, haA, ?_, ?_⟩
+        · rw [OrderedPair_mem_CartesianProduct]
+          exact ⟨h_mem_Q, hf_closed a haA⟩
+        · rw [fst_of_ordered_pair]
+        · rw [snd_of_ordered_pair]
+      exact apply_eq _ _ _ (h_func.2 _ h_mem_Q) h_in
+
+    /-- Graph of a binary operation op : A → A → A lifted to the quotient.
+        Maps pairs of equivalence classes to equivalence classes:
+        {⟨⟨C₁, C₂⟩, C₃⟩ ∈ ((A/R ×ₛ A/R) ×ₛ A/R) |
+          ∃ a b ∈ A, C₁ = [a]_R ∧ C₂ = [b]_R ∧ C₃ = [op a b]_R} -/
+    noncomputable def QuotientLift₂Graph (op : U → U → U) (R A : U) : U :=
+      sep (((QuotientSet A R) ×ₛ (QuotientSet A R)) ×ₛ (QuotientSet A R))
+        (fun p => ∃ a b : U, a ∈ A ∧ b ∈ A ∧
+          fst (fst p) = EqClass a R A ∧
+          snd (fst p) = EqClass b R A ∧
+          snd p = EqClass (op a b) R A)
+
+    /-- If op respects R in both arguments and is closed, then the
+        binary lift is a well-defined function (Q ×ₛ Q) → Q -/
+    theorem QuotientLift₂_well_defined (op : U → U → U) (R A : U)
+        (hEq : isEquivalenceOn R A)
+        (hop_closed : ∀ a b, a ∈ A → b ∈ A → op a b ∈ A)
+        (hop_compat : ∀ a₁ a₂ b₁ b₂, a₁ ∈ A → a₂ ∈ A → b₁ ∈ A → b₂ ∈ A →
+            ⟨a₁, a₂⟩ ∈ R → ⟨b₁, b₂⟩ ∈ R → ⟨op a₁ b₁, op a₂ b₂⟩ ∈ R) :
+        IsFunction (QuotientLift₂Graph op R A)
+          ((QuotientSet A R) ×ₛ (QuotientSet A R)) (QuotientSet A R) := by
+      constructor
+      · -- Subset: graph ⊆ ((Q ×ₛ Q) ×ₛ Q)
+        intro p hp
+        unfold QuotientLift₂Graph at hp
+        rw [mem_sep_iff] at hp
+        exact hp.1
+      · -- Total and unique
+        intro q hq
+        rw [CartesianProduct_is_specified] at hq
+        obtain ⟨hq_pair, hq_fst, hq_snd⟩ := hq
+        obtain ⟨a, haA, _, h_fst_eq⟩ := EqClass_representative_exists R A (fst q) hEq hq_fst
+        obtain ⟨b, hbA, _, h_snd_eq⟩ := EqClass_representative_exists R A (snd q) hEq hq_snd
+        have hop_mem := hop_closed a b haA hbA
+        have h_mem : ⟨q, EqClass (op a b) R A⟩ ∈ QuotientLift₂Graph op R A := by
+          unfold QuotientLift₂Graph
+          rw [mem_sep_iff]
+          constructor
+          · rw [OrderedPair_mem_CartesianProduct]
+            constructor
+            · rw [CartesianProduct_is_specified]
+              exact ⟨hq_pair, hq_fst, hq_snd⟩
+            · exact EqClass_mem_QuotientSet R A (op a b) hop_mem
+          · refine ⟨a, b, haA, hbA, ?_, ?_, ?_⟩
+            · simp only [fst_of_ordered_pair]; exact h_fst_eq
+            · rw [fst_of_ordered_pair]; exact h_snd_eq
+            · simp only [snd_of_ordered_pair]
+        have h_unique : ∀ y', ⟨q, y'⟩ ∈ QuotientLift₂Graph op R A →
+            y' = EqClass (op a b) R A := by
+          intro y' hy'
+          unfold QuotientLift₂Graph at hy'
+          rw [mem_sep_iff] at hy'
+          obtain ⟨_, a', b', ha'A, hb'A, h_fst', h_snd_fst', h_snd'⟩ := hy'
+          simp only [fst_of_ordered_pair, snd_of_ordered_pair] at h_fst' h_snd_fst' h_snd'
+          have ha_eq : EqClass a R A = EqClass a' R A := by rw [← h_fst_eq]; exact h_fst'
+          have hab_R : ⟨a, a'⟩ ∈ R := (EqClass_eq_iff R A a a' hEq haA ha'A).mp ha_eq
+          have hb_eq : EqClass b R A = EqClass b' R A := by rw [← h_snd_eq]; exact h_snd_fst'
+          have hbb_R : ⟨b, b'⟩ ∈ R := (EqClass_eq_iff R A b b' hEq hbA hb'A).mp hb_eq
+          have hop_R := hop_compat a a' b b' haA ha'A hbA hb'A hab_R hbb_R
+          rw [h_snd']
+          exact ((EqClass_eq_iff R A (op a b) (op a' b') hEq
+            hop_mem (hop_closed a' b' ha'A hb'A)).mpr hop_R).symm
+        exact ⟨EqClass (op a b) R A, h_mem, h_unique⟩
+
+    /-- Computation rule: the binary lift applied to ([a], [b]) equals [op a b] -/
+    theorem QuotientLift₂_apply (op : U → U → U) (R A a b : U)
+        (hEq : isEquivalenceOn R A)
+        (hop_closed : ∀ a b, a ∈ A → b ∈ A → op a b ∈ A)
+        (hop_compat : ∀ a₁ a₂ b₁ b₂, a₁ ∈ A → a₂ ∈ A → b₁ ∈ A → b₂ ∈ A →
+            ⟨a₁, a₂⟩ ∈ R → ⟨b₁, b₂⟩ ∈ R → ⟨op a₁ b₁, op a₂ b₂⟩ ∈ R)
+        (haA : a ∈ A) (hbA : b ∈ A) :
+        (QuotientLift₂Graph op R A)⦅⟨EqClass a R A, EqClass b R A⟩⦆ =
+          EqClass (op a b) R A := by
+      have h_func := QuotientLift₂_well_defined op R A hEq hop_closed hop_compat
+      have h_mem_Q : ⟨EqClass a R A, EqClass b R A⟩ ∈
+          (QuotientSet A R) ×ₛ (QuotientSet A R) := by
+        rw [OrderedPair_mem_CartesianProduct]
+        exact ⟨EqClass_mem_QuotientSet R A a haA, EqClass_mem_QuotientSet R A b hbA⟩
+      have h_in : ⟨⟨EqClass a R A, EqClass b R A⟩, EqClass (op a b) R A⟩ ∈
+          QuotientLift₂Graph op R A := by
+        unfold QuotientLift₂Graph
+        rw [mem_sep_iff]
+        constructor
+        · rw [OrderedPair_mem_CartesianProduct]
+          exact ⟨h_mem_Q, EqClass_mem_QuotientSet R A (op a b) (hop_closed a b haA hbA)⟩
+        · refine ⟨a, b, haA, hbA, ?_, ?_, ?_⟩
+          · simp only [fst_of_ordered_pair]
+          · simp only [fst_of_ordered_pair, snd_of_ordered_pair]
+          · simp only [snd_of_ordered_pair]
+      exact apply_eq _ _ _ (h_func.2 _ h_mem_Q) h_in
+
   end SetOps.Functions
 
   export SetOps.Functions (
@@ -395,6 +550,8 @@ namespace ZFC
     isInjective isSurjectiveOnto isBijection
     isEquipotent isDominatedBy isStrictlyDominatedBy
     injective_inverse_single_valued
+    QuotientLiftGraph QuotientLift_well_defined QuotientLift_apply
+    QuotientLift₂Graph QuotientLift₂_well_defined QuotientLift₂_apply
   )
 
 end ZFC
