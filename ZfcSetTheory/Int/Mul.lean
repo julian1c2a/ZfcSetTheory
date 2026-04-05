@@ -445,6 +445,28 @@ namespace ZFC
       rw [mulZ_negZ_right x y hx hy]
       rw [negZ_negZ (mulZ x y) (mulZ_in_IntSet x y hx hy)]
 
+    /-- Natural multiplication is zero iff a factor is zero, lifted from Peano. -/
+    theorem mul_eq_zero_iff (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) :
+        mul m n = (∅ : U) ↔ m = ∅ ∨ n = ∅ := by
+      obtain ⟨p, hp⟩ := fromPeano_surjective m (mem_Omega_is_Nat m hm)
+      obtain ⟨q, hq⟩ := fromPeano_surjective n (mem_Omega_is_Nat n hn)
+      subst hp; subst hq
+      change mul (fromPeano p) (fromPeano q) = (fromPeano Peano.ℕ₀.zero : U) ↔
+             (fromPeano p : U) = fromPeano Peano.ℕ₀.zero ∨
+             (fromPeano q : U) = fromPeano Peano.ℕ₀.zero
+      rw [← fromPeano_mul p q]
+      constructor
+      · intro h
+        rcases (Peano.Mul.mul_eq_zero p q).mp (fromPeano_injective h) with rfl | rfl
+        · exact Or.inl rfl
+        · exact Or.inr rfl
+      · intro h
+        rcases h with h | h
+        · have := fromPeano_injective h; subst this
+          exact congrArg fromPeano (Peano.Mul.zero_mul q)
+        · have := fromPeano_injective h; subst this
+          exact congrArg fromPeano (Peano.Mul.mul_zero p)
+
   end Int.Mul
 
 end ZFC
@@ -464,4 +486,5 @@ export ZFC.Int.Mul (
   mulZ_negZ_left
   mulZ_negZ_right
   negZ_mulZ_negZ
+  mul_eq_zero_iff
 )

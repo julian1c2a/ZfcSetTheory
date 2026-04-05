@@ -17,6 +17,11 @@ License: MIT
   * `subZ_addZ_cancel` — (x + y) - y = x
   * `addZ_subZ_cancel` — (x - y) + y = x
   * `subZ_eq_zero_iff` — x - y = 0 ↔ x = y
+  * `subZ_subZ` — (x - y) - z = x - (y + z)
+  * `addZ_subZ_assoc` — x + (y - z) = (x + y) - z
+  * `subZ_negZ_left` — (-x) - y = -(x + y)
+  * `subZ_addZ_left_cancel` — x - (x + y) = -y
+  * `subZ_addZ_right_cancel` — (x + y) - x = y
 -/
 
 import ZfcSetTheory.Int.Neg
@@ -105,6 +110,53 @@ namespace ZFC
         rw [h]
         exact subZ_self y hy
 
+    /-- (x - y) - z = x - (y + z) -/
+    theorem subZ_subZ (x y z : U)
+        (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U))
+        (hz : z ∈ (IntSet : U)) :
+        subZ (subZ x y) z = subZ x (addZ y z) := by
+      unfold subZ
+      rw [addZ_assoc x (negZ y) (negZ z) hx (negZ_in_IntSet y hy)
+            (negZ_in_IntSet z hz)]
+      rw [← negZ_addZ y z hy hz]
+
+    /-- x + (y - z) = (x + y) - z -/
+    theorem addZ_subZ_assoc (x y z : U)
+        (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U))
+        (hz : z ∈ (IntSet : U)) :
+        addZ x (subZ y z) = subZ (addZ x y) z := by
+      unfold subZ
+      exact (addZ_assoc x y (negZ z) hx hy (negZ_in_IntSet z hz)).symm
+
+    /-- (-x) - y = -(x + y) -/
+    theorem subZ_negZ_left (x y : U)
+        (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) :
+        subZ (negZ x) y = negZ (addZ x y) := by
+      unfold subZ
+      rw [negZ_addZ x y hx hy]
+
+    /-- x - (x + y) = -y -/
+    theorem subZ_addZ_left_cancel (x y : U)
+        (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) :
+        subZ x (addZ x y) = negZ y := by
+      unfold subZ
+      rw [negZ_addZ x y hx hy]
+      rw [← addZ_assoc x (negZ x) (negZ y) hx (negZ_in_IntSet x hx)
+            (negZ_in_IntSet y hy)]
+      rw [addZ_negZ_right x hx]
+      exact addZ_zero_left (negZ y) (negZ_in_IntSet y hy)
+
+    /-- (x + y) - x = y -/
+    theorem subZ_addZ_right_cancel (x y : U)
+        (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) :
+        subZ (addZ x y) x = y := by
+      unfold subZ
+      rw [addZ_assoc x y (negZ x) hx hy (negZ_in_IntSet x hx)]
+      rw [addZ_comm y (negZ x) hy (negZ_in_IntSet x hx)]
+      rw [← addZ_assoc x (negZ x) y hx (negZ_in_IntSet x hx) hy]
+      rw [addZ_negZ_right x hx]
+      exact addZ_zero_left y hy
+
   end Int.Sub
 
   export Int.Sub (
@@ -115,6 +167,11 @@ namespace ZFC
     subZ_addZ_cancel
     addZ_subZ_cancel
     subZ_eq_zero_iff
+    subZ_subZ
+    addZ_subZ_assoc
+    subZ_negZ_left
+    subZ_addZ_left_cancel
+    subZ_addZ_right_cancel
   )
 
 end ZFC

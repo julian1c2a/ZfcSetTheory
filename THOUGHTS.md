@@ -203,25 +203,76 @@ Además el functor asignará a $\mathbf{0}_R$ el elemento $\mathbf{0}_B$, y a $\
 
 [7.] La suma y el producto se definen de la forma habitual: $[(a,b)] + [(c,d)] = [(ad+bc, bd)]$ y $[(a,b)] \cdot [(c,d)] = [(ac, bd)]$. Hay que demostrar que estas operaciones están bien definidas (mediante `QuotientLift₂`).
 
-[8.] Establecemos la inyección de los números enteros en los racionales, definiendo la función $\iota : \mathbb{Z} \to \mathbb{Q}$ como $\iota(z) = [(z, 1_z)]$. Hay que demostrar que esta función es una inyección, y que se conservan todas las operaciones (suma, producto, orden) de los enteros dentro de los racionales.
+[8.] *Extensión* de las operaciones de números binomiales, factoriales, etc. a los racionales, para trabajar con ellos de forma más ágil y para demostrar propiedades de los racionales relacionadas con estas operaciones.
 
-[9.] Hay que demostrar que con estas operaciones, los racionales forman un cuerpo conmutativo con identidad (en particular, todo racional no nulo tiene inverso multiplicativo), y que además cumplen las propiedades habituales.
+[9.] *Extensión* de las funciones valor absoluto y signo a los racionales, definiendo $|[(a,b)]| := |a| / |b|$ y $\operatorname{sgn}([(a,b)]) := \operatorname{sgn}(a) \cdot \operatorname{sgn}(b)$, y demostrando sus propiedades habituales.
 
-[10.] También tendremos la exponenciación con exponente entero. Demostramos que está bien definida, y que cumple las propiedades habituales de la exponenciación, como por ejemplo que $x^0 = 1_q$ para todo $x \neq 0_q$, que $x^{m+n} = x^m \cdot x^n$ para todo $m, n \in \mathbb{Z}$, que $(x \cdot y)^n = x^n \cdot y^n$ para todo $n \in \mathbb{Z}$, etc.
+[10.] *Nuevo* Propiedades de crecimiento de las funciones de argumentos racionales y retorno racional. Por ejemplo, que la multiplicación crece más que la suma, que la exponenciación crece más que la multiplicación, que el valor absoluto de un producto es el producto de los valores absolutos, etc. *[Esto debería estar ya en los enteros y traerlo aquí]*
 
-[11.] Definimos las sucesiones de racionales (como funciones $\omega \to \mathbb{Q}$), y definimos las sucesiones de Cauchy en $\mathbb{Q}$ y las sucesiones convergentes en $\mathbb{Q}$.
+[11.] *Extensión* De los operadores sumatorio y productorio, a los racionales, ya no solo finitos sino también infinitos. Podríamos ampliar los racionales con $(\omega, 0_q)$ y $(0_q, \omega)$ como valores infnito positivo e infinito negativo, y luego definir sumatorios y productorios infinitos de racionales como límites de sucesiones de sumatorios/productorios finitos. Esto es algo que se puede hacer sin problemas y que hará que la definición de sumatorios y productorios infinitos sea más clara y más fácil de entender.
 
-[12.] Entre cualquier dos racionales distintos, hay un racional distinto de los anteriores (densidad). Entre cualesquiera dos racionales distintos, existe una cantidad infinita de racionales distintos.
+[12.] Establecemos la inyección de los números enteros en los racionales, definiendo la función $\iota : \mathbb{Z} \to \mathbb{Q}$ como $\iota(z) = [(z, 1_z)]$. Hay que demostrar que esta función es una inyección, y que se conservan todas las operaciones (suma, producto, orden) de los enteros dentro de los racionales.
 
-[13.] Sucesiones monótonas crecientes/decrecientes acotadas no tienen necesariamente límite en los racionales. Dar ejemplos de sucesiones monótonas crecientes acotadas que no tienen límite en $\mathbb{Q}$, como por ejemplo alguna subsucesión concreta de $\{a_n \in \mathbb{Q} \mid a_n^2 < 2\}$ estrictamente creciente, que es monótonamente creciente y acotada por $2$, pero que no tiene límite dentro de los racionales.
+[13.] Hay que demostrar que con estas operaciones, los racionales forman un cuerpo conmutativo con identidad (en particular, todo racional no nulo tiene inverso multiplicativo), y que además cumplen las propiedades habituales.
 
-[14.] ¿Merece la pena definir las series de racionales? ¿O es mejor esperar a tener los reales para definir las series de números reales? Creo que es mejor esperar a tener los reales, ya que las series de racionales no tienen tantas propiedades interesantes como las series de números reales, y además una serie de racionales puede converger a un número irracional. Por tanto, es mejor esperar a tener los reales.
+[14.] También tendremos la exponenciación con exponente entero. Demostramos que está bien definida, y que cumple las propiedades habituales de la exponenciación, como por ejemplo que $x^0 = 1_q$ para todo $x \neq 0_q$, que $x^{m+n} = x^m \cdot x^n$ para todo $m, n \in \mathbb{Z}$, que $(x \cdot y)^n = x^n \cdot y^n$ para todo $n \in \mathbb{Z}$, etc.
 
-[15.] **Propiedad Arquimediana de $\mathbb{Q}$:** para todo $q \in \mathbb{Q}$ con $q > 0_q$, y para todo $r \in \mathbb{Q}$, existe un $n \in \omega$ tal que $n \cdot q > r$. Equivalentemente, no existe un racional infinitamente grande ni infinitesimal positivo.
+[15.] Definimos las sucesiones de racionales (como funciones $\omega \to \mathbb{Q}$), y definimos las sucesiones de Cauchy en $\mathbb{Q}$ y las sucesiones convergentes en $\mathbb{Q}$.
 
-[16.] **No existe mínimo positivo en $\mathbb{Q}$:** para todo $q \in \mathbb{Q}$ con $q > 0_q$, existe $r \in \mathbb{Q}$ tal que $0_q < r < q$ (por ejemplo, $r = q / 2$). Esto es consecuencia de la densidad.
+[16.] Entre cualquier dos racionales distintos, hay un racional distinto de los anteriores (densidad). Entre cualesquiera dos racionales distintos, existe una cantidad infinita de racionales distintos.
 
-[17.] **$\mathbb{Q}$ como cuerpo ordenado:** la relación de orden es compatible con las operaciones del cuerpo. Es decir: (i) si $a \leq b$ entonces $a + c \leq b + c$; (ii) si $a \leq b$ y $0 \leq c$ entonces $a \cdot c \leq b \cdot c$. Demostramos que $\mathbb{Q}$ es un cuerpo totalmente ordenado.
+[17.] Sucesiones monótonas crecientes/decrecientes acotadas no tienen necesariamente límite en los racionales. Dar ejemplos de sucesiones monótonas crecientes acotadas que no tienen límite en $\mathbb{Q}$, como por ejemplo alguna subsucesión concreta de $\{a_n \in \mathbb{Q} \mid a_n^2 < 2\}$ estrictamente creciente, que es monótonamente creciente y acotada por $2$, pero que no tiene límite dentro de los racionales.
+
+[18.] ¿Merece la pena definir las series de racionales? ¿O es mejor esperar a tener los reales para definir las series de números reales? Creo que es mejor esperar a tener los reales, ya que las series de racionales no tienen tantas propiedades interesantes como las series de números reales, y además una serie de racionales puede converger a un número irracional. Por tanto, es mejor esperar a tener los reales.
+
+[19.] **Propiedad Arquimediana de $\mathbb{Q}$:** para todo $q \in \mathbb{Q}$ con $q > 0_q$, y para todo $r \in \mathbb{Q}$, existe un $n \in \omega$ tal que $n \cdot q > r$. Equivalentemente, no existe un racional infinitamente grande ni infinitesimal positivo.
+
+[20.] **No existe mínimo positivo en $\mathbb{Q}$:** para todo $q \in \mathbb{Q}$ con $q > 0_q$, existe $r \in \mathbb{Q}$ tal que $0_q < r < q$ (por ejemplo, $r = q / 2$). Esto es consecuencia de la densidad.
+
+[21.] **$\mathbb{Q}$ como cuerpo ordenado:** la relación de orden es compatible con las operaciones del cuerpo. Es decir: (i) si $a \leq b$ entonces $a + c \leq b + c$; (ii) si $a \leq b$ y $0 \leq c$ entonces $a \cdot c \leq b \cdot c$. Demostramos que $\mathbb{Q}$ es un cuerpo totalmente ordenado.
+
+[22.] **Racionales extendidos $\overline{\mathbb{Q}}$:** definimos $\overline{\mathbb{Q}} := \mathbb{Q} \cup \{-\infty_q, +\infty_q\}$ añadiendo dos nuevos elementos formales (por ejemplo, $+\infty_q := \langle \mathbb{Q}, 0_q \rangle$ y $-\infty_q := \langle 0_q, \mathbb{Q} \rangle$, eligiendo pares que no pertenezcan a $\mathbb{Q}$). Extendemos el orden total: $-\infty_q < q < +\infty_q$ para todo $q \in \mathbb{Q}$. Extendemos la aritmética donde sea posible (por ejemplo, $q + (+\infty_q) = +\infty_q$ para $q \neq -\infty_q$, $q \cdot (+\infty_q) = +\infty_q$ si $q > 0_q$, etc.), dejando indefinidas las formas indeterminadas ($0_q \cdot \infty_q$, $\infty_q - \infty_q$, etc.). Esto proporciona los puntos necesarios para definir semirectas y la recta racional completa.
+
+[23.] **Intervalos en $\mathbb{Q}$ (usando $\overline{\mathbb{Q}}$ para los extremos):** definimos los cuatro tipos de intervalos acotados para $a, b \in \mathbb{Q}$ con $a \leq b$:
+
+- Intervalo abierto: $(a, b)_q := \{q \in \mathbb{Q} \mid a <_q q <_q b\}$
+- Intervalo cerrado: $[a, b]_q := \{q \in \mathbb{Q} \mid a \leq_q q \leq_q b\}$
+- Abierto-izquierda, cerrado-derecha: $(a, b]_q := \{q \in \mathbb{Q} \mid a <_q q \leq_q b\}$
+- Cerrado-izquierda, abierto-derecha: $[a, b)_q := \{q \in \mathbb{Q} \mid a \leq_q q <_q b\}$
+
+Usando los puntos extendidos, definimos las **semirectas** para $a \in \mathbb{Q}$:
+
+- $(-\infty_q, a)_q := \{q \in \mathbb{Q} \mid q <_q a\}$
+- $(-\infty_q, a]_q := \{q \in \mathbb{Q} \mid q \leq_q a\}$
+- $(a, +\infty_q)_q := \{q \in \mathbb{Q} \mid a <_q q\}$
+- $[a, +\infty_q)_q := \{q \in \mathbb{Q} \mid a \leq_q q\}$
+
+Y la **recta racional completa**: $(-\infty_q, +\infty_q)_q := \mathbb{Q}$.
+
+Demostramos que un intervalo acotado cerrado $[a, b]_q$ con $a, b \in \mathbb{Q}$, $a \leq b$ es no vacío, y que $(a, b)_q$ es no vacío si y solo si $a < b$ (usando la densidad de $\mathbb{Q}$).
+
+[24.] **Particiones de un intervalo $[a, b]_q$:** una partición de $[a, b]_q$ es una sucesión finita estrictamente creciente $P = (x_0, x_1, \ldots, x_n) \in \mathbb{Q}^{n+1}$ tal que $x_0 = a$, $x_n = b$, y $x_i <_q x_{i+1}$ para todo $0 \leq i < n$. Formalmente, una partición es una función $P : k \to \mathbb{Q}$ con $k \in \omega$, $k \geq \sigma(\sigma(\varnothing))$ (al menos dos puntos), que es estrictamente creciente, con $P(\varnothing) = a$ y $P(\text{pred}(k)) = b$.
+
+Definimos:
+
+- El **número de subintervalos** de $P$ como $n := \text{pred}(k)$.
+- La **norma** (o **mesh**) de $P$ como $\|P\| := \max_{0 \leq i < n} (x_{i+1} - x_i)$, usando el máximo de un conjunto finito no vacío de racionales positivos.
+- El $i$-ésimo **subintervalo** de $P$ como $[x_i, x_{i+1}]_q$.
+
+[25.] **Refinamiento de particiones:** dadas dos particiones $P$ y $P'$ de un mismo intervalo $[a, b]_q$, decimos que $P'$ **es más fina que** $P$ (o que $P'$ **refina** a $P$), notación $P \preceq P'$, si todo punto de $P$ es también punto de $P'$ (es decir, la imagen de $P$ está contenida en la imagen de $P'$). Demostramos:
+
+- $\preceq$ es un **preorden** (reflexivo y transitivo) sobre las particiones de $[a, b]_q$.
+- Si identificamos particiones con la misma imagen (mismo conjunto de puntos), $\preceq$ se convierte en un **orden parcial**.
+- Dados $P$ y $P'$, su **refinamiento común** $P \vee P' := P \cup P'$ (ordenado de forma creciente) es una partición que refina tanto a $P$ como a $P'$; es decir, $\preceq$ es un **semirretículo superior dirigido**.
+- Si $P'$ refina a $P$, entonces $\|P'\| \leq \|P\|$ (la norma del refinamiento es menor o igual).
+
+[26.] **Motivación para los reales:** las particiones y su estructura de refinamiento son fundamentales para la construcción posterior de la integral de Riemann en $\mathbb{R}$ (INMEDIATO 3, [20.]). Al definir estos conceptos ya en $\mathbb{Q}$, obtenemos:
+
+- Una infraestructura reutilizable para $\mathbb{R}$ (heredada por la inyección $\mathbb{Q} \hookrightarrow \mathbb{R}$).
+- La posibilidad de definir las **sumas de Darboux** (sumas superior e inferior) ya sobre funciones $f : [a, b]_q \to \mathbb{Q}$, y luego extender a $\mathbb{R}$.
+- Una demostración concreta de que $\mathbb{Q}$ **no es completo**: la sucesión de particiones cada vez más finas del intervalo $[1, 2]_q$ cuyas sumas de Darboux encierran $\sqrt{2}$ no converge a ningún racional, motivando la necesidad de completar $\mathbb{Q}$.
+
+[27.] **Extensión planeada:** la definición de intervalos, particiones y refinamientos se generalizará después a $\mathbb{R}$ y a $\overline{\mathbb{R}} = \mathbb{R} \cup \{-\infty_r, +\infty_r\}$ (reales extendidos), con la misma estructura formal pero sobre el cuerpo completo. Los reales extendidos $\overline{\mathbb{R}}$ serán esenciales para la teoría de la medida e integración de Lebesgue (si se llega a incluir en el proyecto).
 
 **INMEDIATO 3: REALES**
 

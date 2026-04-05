@@ -103,8 +103,8 @@ namespace ZFC
           intro y hy
           rw [mem_natToInt_graph] at hy
           obtain ⟨_, m, _, h_eq⟩ := hy
-          have := (OrderedPair_eq_iff n y m (intClass m ∅)).mp h_eq
-          exact this.2
+          have h_pair := (OrderedPair_eq_iff n y m (intClass m ∅)).mp h_eq
+          rw [h_pair.2, h_pair.1]
 
     /-- natToInt_graph is injective. -/
     theorem natToInt_injective :
@@ -138,10 +138,10 @@ namespace ZFC
         natToInt (mul m n) = mulZ (natToInt m) (natToInt n) := by
       unfold natToInt
       rw [mulZ_class m ∅ n ∅ hm zero_in_Omega hn zero_in_Omega]
-      rw [mul_zero m hm, mul_zero n hn,
-          zero_mul_Omega n hn, zero_mul_Omega m hm]
+      rw [mul_zero m hm, zero_mul_Omega n hn,
+          zero_mul_Omega (∅ : U) zero_in_Omega]
       rw [add_zero (mul m n) (mul_in_Omega m n hm hn)]
-      rw [add_zero ∅ zero_in_Omega]
+      rw [add_zero (∅ : U) zero_in_Omega]
 
     -- =========================================================================
     -- Section 3: Preservation of order
@@ -190,18 +190,21 @@ namespace ZFC
         ¬ isSurjectiveOnto (natToInt_graph : U) IntSet := by
       intro h_surj
       -- intClass ∅ (σ ∅) ∈ IntSet is a negative integer with no preimage
-      have h_neg_in : intClass (∅ : U) (σ ∅) ∈ (IntSet : U) :=
-        intClass_mem_IntSet ∅ (σ ∅) zero_in_Omega (succ_in_Omega ∅ zero_in_Omega)
-      obtain ⟨x, hx⟩ := h_surj (intClass (∅ : U) (σ ∅)) h_neg_in
+      have h_neg_in : intClass (∅ : U) (σ (∅ : U)) ∈ (IntSet : U) :=
+        intClass_mem_IntSet (∅ : U) (σ (∅ : U)) zero_in_Omega
+          (succ_in_Omega (∅ : U) zero_in_Omega)
+      obtain ⟨x, hx⟩ := h_surj (intClass (∅ : U) (σ (∅ : U))) h_neg_in
       rw [mem_natToInt_graph] at hx
       obtain ⟨_, n, hn, h_eq⟩ := hx
-      have h_pair := (OrderedPair_eq_iff x (intClass (∅ : U) (σ ∅)) n (intClass n ∅)).mp h_eq
-      have h_class_eq : intClass n ∅ = intClass (∅ : U) (σ ∅) := h_pair.2.symm
+      have h_pair := (OrderedPair_eq_iff x (intClass (∅ : U) (σ (∅ : U)))
+        n (intClass n (∅ : U))).mp h_eq
+      have h_class_eq : intClass n (∅ : U) = intClass (∅ : U) (σ (∅ : U)) :=
+        h_pair.2.symm
       -- intClass_eq_iff: add n (σ ∅) = add ∅ ∅
-      rw [intClass_eq_iff n ∅ ∅ (σ ∅) hn zero_in_Omega zero_in_Omega
-          (succ_in_Omega ∅ zero_in_Omega)] at h_class_eq
-      rw [add_zero ∅ zero_in_Omega] at h_class_eq
-      rw [add_succ n ∅ hn zero_in_Omega, add_zero n hn] at h_class_eq
+      rw [intClass_eq_iff n (∅ : U) (∅ : U) (σ (∅ : U)) hn zero_in_Omega
+          zero_in_Omega (succ_in_Omega (∅ : U) zero_in_Omega)] at h_class_eq
+      rw [add_zero (∅ : U) zero_in_Omega] at h_class_eq
+      rw [add_succ n (∅ : U) hn zero_in_Omega, add_zero n hn] at h_class_eq
       -- h_class_eq : σ n = ∅, contradicts succ_nonempty
       exact absurd h_class_eq (succ_nonempty n)
 
@@ -253,15 +256,15 @@ namespace ZFC
     private theorem double_ne_succ_double (n : U) (hn : n ∈ (ω : U)) :
         ∀ k, k ∈ (ω : U) → add n n ≠ σ (add k k) := by
       -- Induction on n
-      let S := sep ω (fun n => ∀ k, k ∈ (ω : U) → add n n ≠ σ (add k k))
+      let S := sep ω (fun m => ∀ k, k ∈ (ω : U) → add m m ≠ σ (add k k))
       have h_S_eq_ω : S = ω := by
         apply induction_principle S
         · intro x hx; rw [mem_sep_iff] at hx; exact hx.1
         · -- Base: add ∅ ∅ = ∅ ≠ σ (add k k) for any k
           rw [mem_sep_iff]
           exact ⟨zero_in_Omega, fun k _ h_eq => by
-            rw [add_zero ∅ zero_in_Omega] at h_eq
-            exact absurd h_eq.symm (succ_nonempty (add k k))⟩
+            rw [add_zero (∅ : U) zero_in_Omega] at h_eq
+            exact absurd h_eq (succ_nonempty (add k k) |>.symm)⟩
         · -- Step: j → σ j
           intro j hj_in_S
           rw [mem_sep_iff] at hj_in_S
@@ -276,26 +279,28 @@ namespace ZFC
             have h_eq' := succ_injective (σ (add j j)) (add k k)
               (mem_Omega_is_Nat _ (succ_in_Omega _ (add_in_Omega j j hj_ω hj_ω)))
               (mem_Omega_is_Nat _ (add_in_Omega k k hk hk)) h_eq
-            -- add k k = σ (add j j), so k ≠ ∅
+            -- k = ∅ leads to contradiction
             by_cases hk_zero : k = ∅
-            · rw [hk_zero, add_zero ∅ zero_in_Omega] at h_eq'
-              exact absurd h_eq'.symm (succ_nonempty (add j j))
+            · rw [hk_zero, add_zero (∅ : U) zero_in_Omega] at h_eq'
+              exact absurd h_eq' (succ_nonempty (add j j))
             · -- k ≠ ∅ → k = σ l for some l
-              have ⟨hk_nat⟩ := Nat_iff_mem_Omega k
-              have hk_is_nat := hk_nat hk
+              have hk_is_nat := mem_Omega_is_Nat k hk
               have hl_eq := succ_predecessorPos k hk_is_nat hk_zero
-              set l := predecessorPos k hk_zero
               have hl_nat := predecessorPos_is_nat k hk_is_nat hk_zero
-              have hl_ω := (Nat_iff_mem_Omega l).mp hl_nat
+              have hl_ω := (Nat_iff_mem_Omega (predecessorPos k hk_zero)).mp hl_nat
               -- k = σ l, so add k k = add (σ l) (σ l) = σ (σ (add l l))
-              rw [← hl_eq] at h_eq'
-              rw [double_succ l hl_ω] at h_eq'
-              -- σ (σ (add l l)) = σ (add j j) → σ (add l l) = add j j
-              have h_eq'' := succ_injective (σ (add l l)) (add j j)
-                (mem_Omega_is_Nat _ (succ_in_Omega _ (add_in_Omega l l hl_ω hl_ω)))
-                (mem_Omega_is_Nat _ (add_in_Omega j j hj_ω hj_ω)) h_eq'
-              -- add j j = σ (add l l), contradicts IH with k := l
-              exact absurd h_eq''.symm (h_ih l hl_ω)
+              rw [← hl_eq, double_succ (predecessorPos k hk_zero) hl_ω] at h_eq'
+              -- σ (add j j) = σ (σ (add l l)) → add j j = σ (add l l)
+              have h_eq'' := succ_injective
+                (add j j)
+                (σ (add (predecessorPos k hk_zero) (predecessorPos k hk_zero)))
+                (mem_Omega_is_Nat _ (add_in_Omega j j hj_ω hj_ω))
+                (mem_Omega_is_Nat _ (succ_in_Omega _
+                  (add_in_Omega _ _ hl_ω hl_ω)))
+                h_eq'
+              -- add j j = σ (add l l), contradicts IH
+              exact absurd h_eq''
+                (h_ih (predecessorPos k hk_zero) hl_ω)
       have : n ∈ S := h_S_eq_ω ▸ hn
       rw [mem_sep_iff] at this
       exact this.2
@@ -372,9 +377,10 @@ namespace ZFC
         obtain ⟨m, hm, hm_ne, h_eq⟩ := h_neg
         have hm_nat := mem_Omega_is_Nat m hm
         have h_succ := succ_predecessorPos m hm_nat hm_ne
-        set k := predecessorPos m hm_ne
-        have hk_ω := (Nat_iff_mem_Omega k).mp (predecessorPos_is_nat m hm_nat hm_ne)
-        exact Or.inr ⟨k, hk_ω, by rw [h_eq, ← h_succ]⟩
+        have hk_ω := (Nat_iff_mem_Omega (predecessorPos m hm_ne)).mp
+          (predecessorPos_is_nat m hm_nat hm_ne)
+        exact Or.inr ⟨predecessorPos m hm_ne, hk_ω, by
+          rw [h_eq]; congr 1; exact h_succ.symm⟩
 
     /-- Uniqueness helper: intClass n ∅ ≠ intClass ∅ (σ k) for all n, k ∈ ω. -/
     private theorem intClass_pos_ne_intClass_neg_succ (n k : U)
@@ -411,16 +417,22 @@ namespace ZFC
             obtain ⟨_, h_cases⟩ := hw
             cases h_cases with
             | inl h_even =>
-              obtain ⟨m, _, h_p_eq⟩ := h_even
-              have h_pair := (OrderedPair_eq_iff z w m (add m m)).mp h_p_eq
-              exact h_pair.2
+              obtain ⟨m, hm, h_p_eq⟩ := h_even
+              have h_pair := (OrderedPair_eq_iff z w
+                (intClass m (∅ : U)) (add m m)).mp h_p_eq
+              -- z = intClass m ∅ and z = intClass n ∅ → m = n
+              have h_mn : m = n :=
+                intClass_pos_injective m n hm hn
+                  (h_pair.1.symm.trans hz_eq)
+              rw [h_pair.2, h_mn]
             | inr h_odd =>
               obtain ⟨j, hj, h_p_eq⟩ := h_odd
-              have h_pair := (OrderedPair_eq_iff z w (intClass ∅ (σ j)) (σ (add j j))).mp h_p_eq
+              have h_pair := (OrderedPair_eq_iff z w
+                (intClass (∅ : U) (σ j)) (σ (add j j))).mp h_p_eq
               -- z = intClass ∅ (σ j), but z = intClass n ∅ → contradiction
               exfalso
               exact intClass_pos_ne_intClass_neg_succ n j hn hj
-                (by rw [hz_eq, h_pair.1])
+                (hz_eq.symm.trans h_pair.1)
         · -- z = intClass ∅ (σ k), image = σ (add k k)
           apply ExistsUnique.intro (σ (add k k))
           · -- Membership
@@ -435,15 +447,24 @@ namespace ZFC
             cases h_cases with
             | inl h_even =>
               obtain ⟨m, hm, h_p_eq⟩ := h_even
-              have h_pair := (OrderedPair_eq_iff z w m (add m m)).mp h_p_eq
+              have h_pair := (OrderedPair_eq_iff z w
+                (intClass m (∅ : U)) (add m m)).mp h_p_eq
               -- z = intClass m ∅, but z = intClass ∅ (σ k) → contradiction
               exfalso
               exact intClass_pos_ne_intClass_neg_succ m k hm hk
-                (by rw [← h_pair.1, hz_eq])
+                (h_pair.1.symm.trans hz_eq)
             | inr h_odd =>
-              obtain ⟨j, _, h_p_eq⟩ := h_odd
-              have h_pair := (OrderedPair_eq_iff z w (intClass ∅ (σ j)) (σ (add j j))).mp h_p_eq
-              exact h_pair.2
+              obtain ⟨j, hj, h_p_eq⟩ := h_odd
+              have h_pair := (OrderedPair_eq_iff z w
+                (intClass (∅ : U) (σ j)) (σ (add j j))).mp h_p_eq
+              -- z = intClass ∅ (σ j) and z = intClass ∅ (σ k) → j = k
+              have h_jk : j = k :=
+                succ_injective j k (mem_Omega_is_Nat j hj)
+                  (mem_Omega_is_Nat k hk)
+                  (intClass_neg_injective (σ j) (σ k)
+                    (succ_in_Omega j hj) (succ_in_Omega k hk)
+                    (h_pair.1.symm.trans hz_eq))
+              rw [h_pair.2, h_jk]
 
     /-- intToNat_zigzag is injective. -/
     theorem intToNat_zigzag_injective :
@@ -455,12 +476,14 @@ namespace ZFC
       cases h₁ with
       | inl h₁_even =>
         obtain ⟨n₁, hn₁, hp₁⟩ := h₁_even
-        have hpair₁ := (OrderedPair_eq_iff z₁ w n₁ (add n₁ n₁)).mp hp₁
+        have hpair₁ := (OrderedPair_eq_iff z₁ w
+          (intClass n₁ (∅ : U)) (add n₁ n₁)).mp hp₁
         cases h₂ with
         | inl h₂_even =>
           -- Both even: add n₁ n₁ = add n₂ n₂ → n₁ = n₂
           obtain ⟨n₂, hn₂, hp₂⟩ := h₂_even
-          have hpair₂ := (OrderedPair_eq_iff z₂ w n₂ (add n₂ n₂)).mp hp₂
+          have hpair₂ := (OrderedPair_eq_iff z₂ w
+            (intClass n₂ (∅ : U)) (add n₂ n₂)).mp hp₂
           have h_w_eq : add n₁ n₁ = add n₂ n₂ := by
             rw [← hpair₁.2, ← hpair₂.2]
           have h_n_eq := double_injective n₁ n₂ hn₁ hn₂ h_w_eq
@@ -468,19 +491,22 @@ namespace ZFC
         | inr h₂_odd =>
           -- Even = Odd: contradiction
           obtain ⟨k₂, hk₂, hp₂⟩ := h₂_odd
-          have hpair₂ := (OrderedPair_eq_iff z₂ w (intClass ∅ (σ k₂)) (σ (add k₂ k₂))).mp hp₂
+          have hpair₂ := (OrderedPair_eq_iff z₂ w
+            (intClass (∅ : U) (σ k₂)) (σ (add k₂ k₂))).mp hp₂
           exfalso
           have h_w_eq : add n₁ n₁ = σ (add k₂ k₂) := by
             rw [← hpair₁.2, ← hpair₂.2]
           exact double_ne_succ_double n₁ hn₁ k₂ hk₂ h_w_eq
       | inr h₁_odd =>
         obtain ⟨k₁, hk₁, hp₁⟩ := h₁_odd
-        have hpair₁ := (OrderedPair_eq_iff z₁ w (intClass ∅ (σ k₁)) (σ (add k₁ k₁))).mp hp₁
+        have hpair₁ := (OrderedPair_eq_iff z₁ w
+          (intClass (∅ : U) (σ k₁)) (σ (add k₁ k₁))).mp hp₁
         cases h₂ with
         | inl h₂_even =>
           -- Odd = Even: contradiction
           obtain ⟨n₂, hn₂, hp₂⟩ := h₂_even
-          have hpair₂ := (OrderedPair_eq_iff z₂ w n₂ (add n₂ n₂)).mp hp₂
+          have hpair₂ := (OrderedPair_eq_iff z₂ w
+            (intClass n₂ (∅ : U)) (add n₂ n₂)).mp hp₂
           exfalso
           have h_w_eq : add n₂ n₂ = σ (add k₁ k₁) := by
             rw [← hpair₂.2, ← hpair₁.2]
@@ -488,7 +514,8 @@ namespace ZFC
         | inr h₂_odd =>
           -- Both odd: σ (add k₁ k₁) = σ (add k₂ k₂) → k₁ = k₂
           obtain ⟨k₂, hk₂, hp₂⟩ := h₂_odd
-          have hpair₂ := (OrderedPair_eq_iff z₂ w (intClass ∅ (σ k₂)) (σ (add k₂ k₂))).mp hp₂
+          have hpair₂ := (OrderedPair_eq_iff z₂ w
+            (intClass (∅ : U) (σ k₂)) (σ (add k₂ k₂))).mp hp₂
           have h_w_eq : σ (add k₁ k₁) = σ (add k₂ k₂) := by
             rw [← hpair₁.2, ← hpair₂.2]
           have h_kk_eq := succ_injective (add k₁ k₁) (add k₂ k₂)

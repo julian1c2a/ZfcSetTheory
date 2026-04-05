@@ -21,6 +21,11 @@ License: MIT
   * `dividesZ_negZ_left` — a | b ↔ (-a) | b
   * `dividesZ_mulZ_left` — a | (a · b)
   * `dividesZ_mulZ_right` — a | b → a | (b · c)
+  * `one_dividesZ` — 1 | a
+  * `dividesZ_add` — a | b → a | c → a | (b + c)
+  * `dividesZ_sub` — a | b → a | c → a | (b - c)
+  * `dividesZ_mulZ_right_factor` — a | (c · a)
+  * `dividesZ_negZ_left_right` — a | b ↔ a | (-b)
 -/
 
 import ZfcSetTheory.Int.Ring
@@ -120,6 +125,45 @@ namespace ZFC
       exact ⟨mulZ k c, mulZ_in_IntSet k c hk hc, by
         rw [h_eq, mulZ_assoc a k c ha hk hc]⟩
 
+    /-- 1 divides any element: 1 | a for a ∈ ℤ. -/
+    theorem one_dividesZ (a : U) (ha : a ∈ (IntSet : U)) :
+        dividesZ (oneZ : U) a := by
+      exact ⟨a, ha, (mulZ_one_left a ha).symm⟩
+
+    /-- If a | b and a | c then a | (b + c). -/
+    theorem dividesZ_add (a b c : U)
+        (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U)) (hc : c ∈ (IntSet : U)) :
+        dividesZ a b → dividesZ a c → dividesZ a (addZ b c) := by
+      intro ⟨k₁, hk₁, h₁⟩ ⟨k₂, hk₂, h₂⟩
+      exact ⟨addZ k₁ k₂, addZ_in_IntSet k₁ k₂ hk₁ hk₂, by
+        rw [h₁, h₂, ← mulZ_addZ_distrib_left a k₁ k₂ ha hk₁ hk₂]⟩
+
+    /-- If a | b and a | c then a | (b - c). -/
+    theorem dividesZ_sub (a b c : U)
+        (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U)) (hc : c ∈ (IntSet : U)) :
+        dividesZ a b → dividesZ a c → dividesZ a (subZ b c) := by
+      intro h_ab h_ac
+      have h_neg : dividesZ a (negZ c) := dividesZ_negZ_right a c ha hc h_ac
+      exact dividesZ_add a b (negZ c) ha hb (negZ_in_IntSet c hc)
+        h_ab h_neg
+
+    /-- a divides c · a (right factor). -/
+    theorem dividesZ_mulZ_right_factor (a c : U)
+        (ha : a ∈ (IntSet : U)) (hc : c ∈ (IntSet : U)) :
+        dividesZ a (mulZ c a) := by
+      exact ⟨c, hc, (mulZ_comm a c ha hc).symm⟩
+
+    /-- a | b ↔ a | (-b). -/
+    theorem dividesZ_negZ_left_right (a b : U)
+        (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U)) :
+        dividesZ a b ↔ dividesZ a (negZ b) := by
+      constructor
+      · exact dividesZ_negZ_right a b ha hb
+      · intro h
+        have h2 := dividesZ_negZ_right a (negZ b) ha (negZ_in_IntSet b hb) h
+        rw [negZ_negZ b hb] at h2
+        exact h2
+
   end Int.DivMod
 
   export Int.DivMod (
@@ -132,6 +176,11 @@ namespace ZFC
     dividesZ_negZ_left
     dividesZ_mulZ_left
     dividesZ_mulZ_right
+    one_dividesZ
+    dividesZ_add
+    dividesZ_sub
+    dividesZ_mulZ_right_factor
+    dividesZ_negZ_left_right
   )
 
 end ZFC
