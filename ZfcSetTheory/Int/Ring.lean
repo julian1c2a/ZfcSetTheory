@@ -21,6 +21,7 @@ License: MIT
 
 import ZfcSetTheory.Int.Mul
 import ZfcSetTheory.Nat.Mul
+import PeanoNatLib.PeanoNatPrimes
 
 namespace ZFC
   open Classical
@@ -239,9 +240,10 @@ namespace ZFC
       constructor
       · -- Forward: mulZ x y = zeroZ → x = zeroZ ∨ y = zeroZ (contrapositive)
         intro h_mul_zero
-        by_contra h_neg
-        push_neg at h_neg
-        obtain ⟨hx_ne, hy_ne⟩ := h_neg
+        apply Classical.byContradiction
+        intro h_neg
+        have hx_ne : x ≠ (zeroZ : U) := fun h' => h_neg (Or.inl h')
+        have hy_ne : y ≠ (zeroZ : U) := fun h' => h_neg (Or.inr h')
         obtain ⟨a, b, ha, hb, hx_eq⟩ := intClass_exists x hx
         obtain ⟨c, d, hc, hd, hy_eq⟩ := intClass_exists y hy
         subst hx_eq; subst hy_eq
@@ -322,7 +324,8 @@ namespace ZFC
       have h1 := add_succ n ∅ hn zero_in_Omega
       rw [add_zero n hn] at h1
       -- h1 : add n (σ ∅) = σ n
-      rw [← h1, ← add_zero n hn] at h
+      rw [← h1] at h
+      conv at h => lhs; rw [← add_zero n hn]
       -- h : add n ∅ = add n (σ ∅)
       exact succ_nonempty ∅
         (add_left_cancel_Omega n ∅ (σ ∅) hn zero_in_Omega
@@ -334,7 +337,8 @@ namespace ZFC
       intro h
       have h1 := add_succ n m hn hm
       -- h1 : add n (σ m) = σ (add n m)
-      rw [← h1, ← add_zero n hn] at h
+      rw [← h1] at h
+      conv at h => lhs; rw [← add_zero n hn]
       -- h : add n ∅ = add n (σ m)
       exact succ_nonempty m
         (add_left_cancel_Omega n ∅ (σ m) hn zero_in_Omega
@@ -350,8 +354,8 @@ namespace ZFC
       have h_one : (σ (∅ : U)) = (fromPeano (Peano.ℕ₀.succ Peano.ℕ₀.zero) : U) := by
         simp only [fromPeano]
       rw [h_one] at h
-      have ⟨hp, hq⟩ := Peano.Mul.mul_eq_one (fromPeano_injective h)
-      exact ⟨by rw [hp, ← h_one], by rw [hq, ← h_one]⟩
+      obtain ⟨hp, hq⟩ := Peano.Primes.mul_eq_one (fromPeano_injective h)
+      exact ⟨by rw [hp]; exact h_one.symm, by rw [hq]; exact h_one.symm⟩
 
     /-! ### Units -/
 
@@ -378,8 +382,8 @@ namespace ZFC
         have hacbd := add_in_Omega _ _ hac hbd
         have hadbc := add_in_Omega _ _ had hbc
         -- Convert h_uv to: ac + bd = σ(ad + bc)
-        rw [intClass_eq_iff _ _ (σ ∅) ∅ hacbd hadbc
-            (succ_in_Omega ∅ zero_in_Omega) zero_in_Omega,
+        rw [intClass_eq_iff _ _ (σ (∅ : U)) (∅ : U) hacbd hadbc
+            (succ_in_Omega (∅ : U) zero_in_Omega) zero_in_Omega,
             add_zero _ hacbd,
             add_succ _ _ hadbc zero_in_Omega,
             add_zero _ hadbc] at h_uv
@@ -401,9 +405,9 @@ namespace ZFC
           -- Rearrange σ-arg to: (ac + ad) + kc
           rw [add_comm_Omega (mul a d) (add (mul a c) (mul k c)) had
               (add_in_Omega _ _ hac hkc),
-              add_assoc_Omega (mul a c) (mul k c) (mul a d) hac hkc had,
+              ← add_assoc_Omega (mul a c) (mul k c) (mul a d) hac hkc had,
               add_comm_Omega (mul k c) (mul a d) hkc had,
-              ← add_assoc_Omega (mul a c) (mul a d) (mul k c) hac had hkc] at h_uv
+              add_assoc_Omega (mul a c) (mul a d) (mul k c) hac had hkc] at h_uv
           -- h_uv : (ac + ad) + kd = σ((ac + ad) + kc)
           -- Rewrite σ((ac+ad) + kc) as (ac+ad) + σ(kc)
           have hacad := add_in_Omega _ _ hac had
@@ -420,17 +424,18 @@ namespace ZFC
             rw [hd_eq, mul_ldistr_Omega k c j hk hc hj] at h_kd_eq
             -- h_kd_eq : kc + kj = σ(kc)
             have hkj := mul_in_Omega k j hk hj
-            rw [← add_succ (mul k c) ∅ hkc zero_in_Omega,
-                add_zero (mul k c) hkc] at h_kd_eq
+            have h_succ_eq : σ (mul k c) = add (mul k c) (σ (∅ : U)) := by
+              rw [add_succ (mul k c) ∅ hkc zero_in_Omega, add_zero (mul k c) hkc]
+            rw [h_succ_eq] at h_kd_eq
             have h_kj_eq := add_left_cancel_Omega _ _ _
-              hkc hkj (succ_in_Omega ∅ zero_in_Omega) h_kd_eq
+              hkc hkj (succ_in_Omega (∅ : U) zero_in_Omega) h_kd_eq
             -- h_kj_eq : mul k j = σ ∅
-            have ⟨hk_one, hj_one⟩ := mul_eq_one_Omega k j hk hj h_kj_eq
+            obtain ⟨hk_one, hj_one⟩ := mul_eq_one_Omega k j hk hj h_kj_eq
             -- b = add a k = add a (σ ∅) = σ a, d = add c j = σ c
             right
             rw [hk_one]
             -- Goal: intClass a (add a (σ ∅)) = negZ (intClass (σ ∅) ∅)
-            rw [negZ_class (σ ∅) ∅ (succ_in_Omega ∅ zero_in_Omega) zero_in_Omega]
+            rw [negZ_class (σ (∅ : U)) (∅ : U) (succ_in_Omega (∅ : U) zero_in_Omega) zero_in_Omega]
             -- Goal: intClass a (add a (σ ∅)) = intClass ∅ (σ ∅)
             rw [intClass_eq_iff a (add a (σ ∅)) ∅ (σ ∅)
                 ha (add_in_Omega a (σ ∅) ha (succ_in_Omega ∅ zero_in_Omega))
@@ -493,19 +498,20 @@ namespace ZFC
             rw [hc_eq, mul_ldistr_Omega k d j hk hd hj] at h_kc_eq
             -- h_kc_eq : kd + kj = σ(kd)
             have hkj := mul_in_Omega k j hk hj
-            rw [← add_succ (mul k d) ∅ hkd zero_in_Omega,
-                add_zero (mul k d) hkd] at h_kc_eq
+            have h_succ_eq : σ (mul k d) = add (mul k d) (σ (∅ : U)) := by
+              rw [add_succ (mul k d) ∅ hkd zero_in_Omega, add_zero (mul k d) hkd]
+            rw [h_succ_eq] at h_kc_eq
             have h_kj_eq := add_left_cancel_Omega _ _ _
-              hkd hkj (succ_in_Omega ∅ zero_in_Omega) h_kc_eq
+              hkd hkj (succ_in_Omega (∅ : U) zero_in_Omega) h_kc_eq
             -- h_kj_eq : mul k j = σ ∅
-            have ⟨hk_one, hj_one⟩ := mul_eq_one_Omega k j hk hj h_kj_eq
+            obtain ⟨hk_one, hj_one⟩ := mul_eq_one_Omega k j hk hj h_kj_eq
             -- a = add b k = add b (σ ∅) = σ b, c = add d j = σ d
             left
             rw [hk_one]
             -- Goal: intClass (add b (σ ∅)) b = intClass (σ ∅) ∅
-            rw [intClass_eq_iff (add b (σ ∅)) b (σ ∅) ∅
-                (add_in_Omega b (σ ∅) hb (succ_in_Omega ∅ zero_in_Omega))
-                hb (succ_in_Omega ∅ zero_in_Omega) zero_in_Omega]
+            rw [intClass_eq_iff (add b (σ (∅ : U))) b (σ (∅ : U)) (∅ : U)
+                (add_in_Omega b (σ (∅ : U)) hb (succ_in_Omega (∅ : U) zero_in_Omega))
+                hb (succ_in_Omega (∅ : U) zero_in_Omega) zero_in_Omega]
             -- Goal: add (add b (σ ∅)) ∅ = add b (σ ∅)
             rw [add_zero (add b (σ ∅))
                 (add_in_Omega b (σ ∅) hb (succ_in_Omega ∅ zero_in_Omega))]

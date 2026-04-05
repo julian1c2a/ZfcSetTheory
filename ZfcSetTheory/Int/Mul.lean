@@ -168,13 +168,13 @@ namespace ZFC
       -- Goal: add ((ae+bf)+(ch+dg)) (de+cf) = add ((af+be)+(cg+dh)) (de+cf)
       -- Chain of rewrites transforming LHS to RHS:
       -- Step 1: assoc — move (de+cf) inward to join (ae+bf)
-      rw [add_assoc_Omega (add (mul a e) (mul b f)) (add (mul c h) (mul d g))
+      rw [← add_assoc_Omega (add (mul a e) (mul b f)) (add (mul c h) (mul d g))
           (add (mul d e) (mul c f))
           (add_in_Omega _ _ hae hbf) (add_in_Omega _ _ hch hdg)
           (add_in_Omega _ _ hde hcf)]
       rw [add_comm_Omega (add (mul c h) (mul d g)) (add (mul d e) (mul c f))
           (add_in_Omega _ _ hch hdg) (add_in_Omega _ _ hde hcf)]
-      rw [← add_assoc_Omega (add (mul a e) (mul b f)) (add (mul d e) (mul c f))
+      rw [add_assoc_Omega (add (mul a e) (mul b f)) (add (mul d e) (mul c f))
           (add (mul c h) (mul d g))
           (add_in_Omega _ _ hae hbf) (add_in_Omega _ _ hde hcf)
           (add_in_Omega _ _ hch hdg)]
@@ -198,7 +198,7 @@ namespace ZFC
       rw [add_comm_Omega (mul b e) (mul a f) hbe haf]
       -- Now: ((af+be)+(ce+df)) + (ch+dg)
       -- Step 6: assoc — move (ch+dg) inward to join (ce+df)
-      rw [add_assoc_Omega (add (mul a f) (mul b e)) (add (mul c e) (mul d f))
+      rw [← add_assoc_Omega (add (mul a f) (mul b e)) (add (mul c e) (mul d f))
           (add (mul c h) (mul d g))
           (add_in_Omega _ _ haf hbe) (add_in_Omega _ _ hce hdf)
           (add_in_Omega _ _ hch hdg)]
@@ -222,7 +222,7 @@ namespace ZFC
           (add_in_Omega _ _ hde hcf) (add_in_Omega _ _ hcg hdh)]
       -- Now: (af+be) + ((cg+dh)+(de+cf))
       -- Step 12: assoc — pull (de+cf) out
-      rw [← add_assoc_Omega (add (mul a f) (mul b e)) (add (mul c g) (mul d h))
+      rw [add_assoc_Omega (add (mul a f) (mul b e)) (add (mul c g) (mul d h))
           (add (mul d e) (mul c f))
           (add_in_Omega _ _ haf hbe) (add_in_Omega _ _ hcg hdh)
           (add_in_Omega _ _ hde hcf)]
@@ -265,6 +265,7 @@ namespace ZFC
           ((OrderedPair_mem_CartesianProduct c d ω ω).mpr ⟨hc, hd⟩)]
       unfold mulZ_op
       simp only [fst_of_ordered_pair, snd_of_ordered_pair]
+      exact rfl
 
     /-! ### Well-definedness -/
 
@@ -341,56 +342,42 @@ namespace ZFC
       have hdf := mul_in_Omega d f hd hf
       have hcf := mul_in_Omega c f hc hf
       have hde := mul_in_Omega d e hd he
-      congr 1
-      · congr 1
-        · -- (ac+bd)*e = a*(ce) + a*(df) ... no
-          -- mul (add (ac) (bd)) e = add (mul ac e) (mul bd e) by rdistr
-          -- = add (mul a (mul c e)) (mul b (mul d e)) ... no, assoc gives mul (mul a c) e = mul a (mul c e)
-          -- Actually direction: mul_assoc_Omega : mul (mul m n) k = mul m (mul n k)
-          -- So mul (ac) e = mul a (ce), mul (bd) e = mul b (de)
-          -- LHS: mul (ac+bd) e + mul (ad+bc) f
-          -- = (mul ac e + mul bd e) + (mul ad f + mul bc f) by rdistr × 2
-          -- = (mul a (ce) + mul b (de)) + (mul a (df) + mul b (cf)) by assoc × 4
-          -- RHS: mul a (ce+df) + mul b (cf+de)
-          -- = (mul a ce + mul a df) + (mul b cf + mul b de) by ldistr × 2
-          -- So LHS = (a(ce) + b(de)) + (a(df) + b(cf)) and
-          --    RHS = (a(ce) + a(df)) + (b(cf) + b(de))
-          -- Use add_add_comm: (a(ce) + b(de)) + (a(df) + b(cf))
-          --                 = (a(ce) + a(df)) + (b(de) + b(cf))
-          -- Then swap b(de) and b(cf): b(de)+b(cf) = b(cf)+b(de)
-          rw [mul_rdistr_Omega (mul a c) (mul b d) e hac hbd he]
-          rw [mul_rdistr_Omega (mul a d) (mul b c) f had hbc hf]
-          rw [mul_assoc_Omega a c e ha hc he]
-          rw [mul_assoc_Omega b d e hb hd he]
-          rw [mul_assoc_Omega a d f ha hd hf]
-          rw [mul_assoc_Omega b c f hb hc hf]
-          rw [mul_ldistr_Omega a (mul c e) (mul d f) ha hce hdf]
-          rw [mul_ldistr_Omega b (mul c f) (mul d e) hb hcf hde]
-          have hace := mul_in_Omega a (mul c e) ha hce
-          have hbde := mul_in_Omega b (mul d e) hb hde
-          have hadf := mul_in_Omega a (mul d f) ha hdf
-          have hbcf := mul_in_Omega b (mul c f) hb hcf
-          rw [add_add_comm (mul a (mul c e)) (mul b (mul d e))
-              (mul a (mul d f)) (mul b (mul c f)) hace hbde hadf hbcf]
-          rw [add_comm_Omega (mul b (mul d e)) (mul b (mul c f)) hbde hbcf]
-        · -- Second argument of ordered pair first component matches:
-          -- mul (ac+bd) f + mul (ad+bc) e vs mul a (cf+de) + mul b (ce+df)
-          -- Similar to above
-          rw [mul_rdistr_Omega (mul a c) (mul b d) f hac hbd hf]
-          rw [mul_rdistr_Omega (mul a d) (mul b c) e had hbc he]
-          rw [mul_assoc_Omega a c f ha hc hf]
-          rw [mul_assoc_Omega b d f hb hd hf]
-          rw [mul_assoc_Omega a d e ha hd he]
-          rw [mul_assoc_Omega b c e hb hc he]
-          rw [mul_ldistr_Omega a (mul c f) (mul d e) ha hcf hde]
-          rw [mul_ldistr_Omega b (mul c e) (mul d f) hb hce hdf]
-          have hacf := mul_in_Omega a (mul c f) ha hcf
-          have hbdf := mul_in_Omega b (mul d f) hb hdf
-          have hade := mul_in_Omega a (mul d e) ha hde
-          have hbce := mul_in_Omega b (mul c e) hb hce
-          rw [add_add_comm (mul a (mul c f)) (mul b (mul d f))
-              (mul a (mul d e)) (mul b (mul c e)) hacf hbdf hade hbce]
-          rw [add_comm_Omega (mul b (mul d f)) (mul b (mul c e)) hbdf hbce]
+      -- Prove both components separately, then combine
+      have h_comp1 : add (mul (add (mul a c) (mul b d)) e) (mul (add (mul a d) (mul b c)) f)
+          = add (mul a (add (mul c e) (mul d f))) (mul b (add (mul c f) (mul d e))) := by
+        rw [mul_rdistr_Omega (mul a c) (mul b d) e hac hbd he]
+        rw [mul_rdistr_Omega (mul a d) (mul b c) f had hbc hf]
+        rw [mul_assoc_Omega a c e ha hc he]
+        rw [mul_assoc_Omega b d e hb hd he]
+        rw [mul_assoc_Omega a d f ha hd hf]
+        rw [mul_assoc_Omega b c f hb hc hf]
+        rw [mul_ldistr_Omega a (mul c e) (mul d f) ha hce hdf]
+        rw [mul_ldistr_Omega b (mul c f) (mul d e) hb hcf hde]
+        have hace := mul_in_Omega a (mul c e) ha hce
+        have hbde := mul_in_Omega b (mul d e) hb hde
+        have hadf := mul_in_Omega a (mul d f) ha hdf
+        have hbcf := mul_in_Omega b (mul c f) hb hcf
+        rw [add_add_comm (mul a (mul c e)) (mul b (mul d e))
+            (mul a (mul d f)) (mul b (mul c f)) hace hbde hadf hbcf]
+        rw [add_comm_Omega (mul b (mul d e)) (mul b (mul c f)) hbde hbcf]
+      have h_comp2 : add (mul (add (mul a c) (mul b d)) f) (mul (add (mul a d) (mul b c)) e)
+          = add (mul a (add (mul c f) (mul d e))) (mul b (add (mul c e) (mul d f))) := by
+        rw [mul_rdistr_Omega (mul a c) (mul b d) f hac hbd hf]
+        rw [mul_rdistr_Omega (mul a d) (mul b c) e had hbc he]
+        rw [mul_assoc_Omega a c f ha hc hf]
+        rw [mul_assoc_Omega b d f hb hd hf]
+        rw [mul_assoc_Omega a d e ha hd he]
+        rw [mul_assoc_Omega b c e hb hc he]
+        rw [mul_ldistr_Omega a (mul c f) (mul d e) ha hcf hde]
+        rw [mul_ldistr_Omega b (mul c e) (mul d f) hb hce hdf]
+        have hacf := mul_in_Omega a (mul c f) ha hcf
+        have hbdf := mul_in_Omega b (mul d f) hb hdf
+        have hade := mul_in_Omega a (mul d e) ha hde
+        have hbce := mul_in_Omega b (mul c e) hb hce
+        rw [add_add_comm (mul a (mul c f)) (mul b (mul d f))
+            (mul a (mul d e)) (mul b (mul c e)) hacf hbdf hade hbce]
+        rw [add_comm_Omega (mul b (mul d f)) (mul b (mul c e)) hbdf hbce]
+      rw [h_comp1, h_comp2]
 
     /-- Right multiplicative identity: mulZ x oneZ = x -/
     theorem mulZ_one_right (x : U) (hx : x ∈ (IntSet : U)) :
@@ -416,7 +403,7 @@ namespace ZFC
       subst hx_eq
       unfold zeroZ
       rw [mulZ_class a b ∅ ∅ ha hb zero_in_Omega zero_in_Omega]
-      rw [mul_zero a ha, mul_zero b hb, mul_zero a ha, mul_zero b hb]
+      rw [mul_zero a ha, mul_zero b hb]
       -- intClass (add ∅ ∅) (add ∅ ∅) = intClass ∅ ∅
       rw [add_zero ∅ zero_in_Omega]
 
@@ -439,6 +426,8 @@ namespace ZFC
       rw [negZ_class (add (mul a c) (mul b d)) (add (mul a d) (mul b c))
           (add_in_Omega _ _ (mul_in_Omega a c ha hc) (mul_in_Omega b d hb hd))
           (add_in_Omega _ _ (mul_in_Omega a d ha hd) (mul_in_Omega b c hb hc))]
+      rw [add_comm_Omega (mul b c) (mul a d) (mul_in_Omega b c hb hc) (mul_in_Omega a d ha hd),
+          add_comm_Omega (mul b d) (mul a c) (mul_in_Omega b d hb hd) (mul_in_Omega a c ha hc)]
 
     /-- Interaction with negation (right): mulZ x (negZ y) = negZ (mulZ x y) -/
     theorem mulZ_negZ_right (x y : U)
