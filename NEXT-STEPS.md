@@ -1,6 +1,6 @@
 # Next Steps — ZfcSetTheory Project
 
-**Last updated**: 2026-04-10
+**Last updated**: 2026-04-06
 
 ---
 
@@ -14,8 +14,9 @@ All major development through Boolean algebra theory is complete:
 - ✅ **Cardinalidad** (2 módulos): Cantor, CSB, |𝒫(F)|=2^n
 - ✅ **Álgebras de Boole** (11 módulos): Basic, Ring, PowerSetAlgebra, GenDeMorgan, GenDistributive, Atomic, Complete, Representation, FiniteCofinite, FiniteBA, BoolRingBA — los 6 items de §3.1 completos
 - ✅ **Reorganización Fases 1–3**: directorios, namespaces `ZFC`, convenciones Mathlib (185 renames)
+- ✅ **Enteros ℤ** (15 módulos): Equiv, Basic, Add, Neg, Mul, Ring, Sub, DivMod, Order, Embedding, Abs, Div, Pow, Induction — 183 exports, 0 sorry
 
-**Estado**: 47 módulos, 0 sorry, 0 errores de compilación.
+**Estado**: 75 jobs, 0 sorry, 0 errores de compilación.
 
 ---
 
@@ -696,16 +697,116 @@ Listado de errores/omisiones encontrados en THOUGHTS.md que este plan corrige:
 
 ---
 
+## 2.14. Estado actual de Phase 5 (ℤ) — 2026-04-06
+
+**Estado global**: 15 archivos (1 hub + 14 implementación), **183 exports**, 0 `sorry`, 0 errores.
+
+### Archivos implementados y completos
+
+| Archivo | Exports | Temas cubiertos |
+|---------|---------|-----------------|
+| Equiv | 7 | IntEquivRel, reflexividad, simetría, transitividad, equivalencia |
+| Basic | 15 | IntSet, intClass, zeroZ, oneZ, pertenencia, igualdad de clases, representantes canónicos, inyectividad, tricotomía |
+| Add | 9 | addZ, grafo funcional, buena definición, clase, clausura, conmutatividad, asociatividad, identidades |
+| Neg | 12 | negZ, subZ, buena definición, clausura, clase, inversos aditivos, involución, negZ_zero, homomorfismo, subZ_self |
+| Mul | 15 | mulZ, grafo funcional, buena definición, clase, clausura, conmutatividad, asociatividad, identidades, absorbente, negación×producto, mul_eq_zero_iff |
+| Ring | 9 | distributividad izq/der (× sobre + y −), mulZ_eq_zero_iff, cancelación izq/der, isUnitZ, unitZ_iff |
+| Sub | 12 | subZ con identidades, inversos, cancelaciones, asociatividad mixta |
+| DivMod | 14 | dividesZ, reflexividad, transitividad, zero, negación, multiplicación, one_dividesZ, add, sub |
+| Order | 21 | leZ, ltZ, representantes, buena definición, reflexividad, transitividad, antisimetría, totalidad, ltZ_iff, compatibilidad +/×, isPositiveZ, isNegativeZ, tricotomía, signo de productos |
+| Embedding | 16 | natToInt, grafo, clausura, función, inyectividad, preserva +/×/≤, refleja ≤, no suryectiva, zigzag biyección, equipotencia |
+| Abs | 17 | absZ, signZ, zero, intClass pos/neg, clausura ω, eq_zero_iff, negZ, mulZ, sign values/closure/decomposition, mulZ sign, absZ_addZ_le (triangular) |
+| Div | 16 | gcdZ, modZ, lcmZ, clausura ω, conmutatividad, zero, modZ_lt_absZ, gcdZ divide izq/der, gcdZ_is_greatest, dividesZ_antisymm/antisymm_abs |
+| Pow | 16 | mulZLeftFn, powZFn, powZ, eq/clausura/zero/succ/one, oneZ_powZ, zeroZ_powZ, powZ_add_exp, powZ_mul_base, powZ_negZ_sq |
+| Induction | 4 | int_induction_abs, int_strong_induction_abs, int_well_ordering_abs, int_induction_nonneg |
+
+### Items pendientes por archivo
+
+#### Order.lean — 6 items
+
+| # | Nombre | Enunciado | Dificultad |
+|---|--------|-----------|------------|
+| 1 | `ltZ_irrefl` | `x ∈ IntSet → ¬ ltZ x x` | Baja |
+| 2 | `ltZ_trans` | `ltZ x y → ltZ y z → ltZ x z` | Media |
+| 3 | `leZ_iff_ltZ_or_eq` | `leZ x y ↔ ltZ x y ∨ x = y` | Baja |
+| 4 | `ltZ_addZ_ltZ` | `ltZ x y → ltZ (addZ x z) (addZ y z)` | Baja |
+| 5 | `mulZ_le_mulZ_nonpos` | `leZ x y → leZ z zeroZ → leZ (mulZ z y) (mulZ z x)` (invierte) | Media |
+| 6 | `mulZ_ltZ_mulZ_pos` | `ltZ x y → ltZ zeroZ z → ltZ (mulZ z x) (mulZ z y)` | Media |
+
+#### Abs.lean — 3 items
+
+| # | Nombre | Enunciado | Dificultad |
+|---|--------|-----------|------------|
+| 1 | `absZ_pos` | `x ∈ IntSet → x ≠ zeroZ → absZ x ≠ (∅ : U)` (alternativa a absZ_eq_zero_iff) | Baja |
+| 2 | `absZ_subZ_le` | `absZ (subZ x y) ⊆ add (absZ x) (absZ y)` o equivalente | Media |
+| 3 | `absZ_mulZ_nonneg` | `leZ zeroZ (natToInt (absZ x))` | Baja |
+
+#### Div.lean — 6 items
+
+| # | Nombre | Enunciado | Dificultad | Notas |
+|---|--------|-----------|------------|-------|
+| 1 | `quotZ` | `noncomputable def quotZ (a b : U) : U` — cociente entero euclidiano | Baja | Definir vía `mulZ (mulZ (signZ a) (signZ b)) (natToInt (divOf (absZ a) (absZ b)))` |
+| 2 | `euclidean_divisionZ` | `b ≠ zeroZ → a = addZ (mulZ (quotZ a b) b) (mulZ (signZ a) (natToInt (modZ a b)))` | Media-Baja | Levantar `divMod_eq_Omega` sobre `absZ a`, `absZ b`; usar `signZ_mulZ_absZ` + `natToInt_preserves_add/mul`; fontanería de signos (~40-60 líneas) |
+| 3 | `bezoutZ` | `∃ s t ∈ IntSet, natToInt (gcdZ a b) = addZ (mulZ s a) (mulZ t b)` — Bézout | Media-Baja | Levantar `bezout_natform_Omega` sobre `absZ m`, `absZ n`; convertir `sub` → `addZ + negZ` vía `natToInt` |
+| 4 | `gcdZ_assoc` | `gcdZ a (gcdZ b c) = gcdZ (gcdZ a b) c` (vía gcd_assoc en ω) | Baja | Directo de `gcd_assoc_Omega` + definición `gcdZ` |
+| 5 | `lcmZ_zero` | `lcmZ a zeroZ = (∅ : U)` y `lcmZ zeroZ b = (∅ : U)` | Baja | |
+| 6 | `tfa_Z` | Todo `z ∈ IntSet` con `z ≠ zeroZ`, `¬isUnitZ z` es `mulZ u (natToInt (product_list ps))` con `u` unidad y `ps` lista prima; único salvo orden | Media-Baja | Usar `signZ_mulZ_absZ` + `exists/unique_prime_factorization_ZFC` sobre `absZ z` |
+
+#### Pow.lean — 2 items
+
+| # | Nombre | Enunciado | Dificultad |
+|---|--------|-----------|------------|
+| 1 | `powZ_powZ` | `powZ (powZ x m) n = powZ x (mul m n)` — (x^m)^n = x^(mn) | Media |
+| 2 | `powZ_negZ_odd` | `powZ (negZ x) (σ (mul (σ(σ ∅)) n)) = negZ (powZ x (...))` | Media |
+
+#### Ring.lean — 2 items
+
+| # | Nombre | Enunciado | Dificultad |
+|---|--------|-----------|------------|
+| 1 | `square_nonneg` | `x ∈ IntSet → leZ zeroZ (mulZ x x)` (x² ≥ 0) | Media |
+| 2 | `difference_of_squares` | `subZ (mulZ x x) (mulZ y y) = mulZ (addZ x y) (subZ x y)` | Baja |
+
+#### Induction.lean — 2 items
+
+| # | Nombre | Enunciado | Dificultad |
+|---|--------|-----------|------------|
+| 1 | `int_descent` | Descenso infinito: si P(x) → ∃ y, P(y) ∧ absZ y ∈ absZ x, entonces ¬ ∃ x ∈ IntSet, P(x) | Media |
+| 2 | `int_induction_neg` | Inducción restringida a ℤ⁻ (negativos) | Baja |
+
+### Resumen pendiente
+
+| Área | Items pendientes | Dificultad dominante |
+|------|-----------------|---------------------|
+| Order | 6 | Media |
+| Abs | 3 | Baja-Media |
+| Div | 6 | Media-Baja (gracias a puentes Peano/ω) |
+| Pow | 2 | Media |
+| Ring | 2 | Baja-Media |
+| Induction | 2 | Baja-Media |
+| **Total** | **21** | |
+
+**Nota sobre dificultades en Div**: `bezoutZ`, `euclidean_divisionZ` y `tfa_Z` parecen de dificultad alta a priori, pero la maquinaria pesada (Euclides, factorización prima, unicidad) ya está completamente resuelta en Peano/ω (`bezout_natform_Omega`, `exists/unique_prime_factorization_ZFC`, `divMod_eq`). El trabajo restante es "fontanería de signos": descomponer `z = signZ z · natToInt (absZ z)`, aplicar el resultado de ω sobre `absZ`, y traducir restas truncadas (`sub`) a sumas con negaciones (`addZ + negZ`) vía `natToInt`. Esto reduce las tres a dificultad **media-baja** (~50-80 líneas cada una).
+
+**Prioridad recomendada**: Order (ltZ infraestructura) → Ring (square_nonneg) → Div (bezoutZ + euclidean_divisionZ + tfa_Z) → Pow (powZ_powZ) → Abs → Induction.
+
+Los 3 items de mayor impacto matemático son:
+
+1. **`bezoutZ`** — identidad de Bézout, clave para ℚ y primalidad en ℤ
+2. **`tfa_Z`** — TFA en ℤ, cierra la teoría aritmética de enteros
+3. **`ltZ_trans` + `ltZ_irrefl`** — infraestructura de orden estricto, usada en todo ℚ y ℝ
+
+---
+
 ## Summary
 
 | Priority | Task | Status | Módulos |
 |----------|------|--------|---------|
 | **1** | Phase 4: annotation system | ✅ Complete | — |
-| **2** | Phase 5: Enteros ℤ | 📋 Planificado | 12 nuevos + 2 extensiones |
+| **2** | Phase 5: Enteros ℤ | ✅ 183 exports, 0 sorry — 20 items opcionales pendientes | 15 archivos completos |
 | **3** | Phase 6: Racionales ℚ | 📋 Planificado | ~9 nuevos |
 | **4** | Phase 7: Reales ℝ | 📋 Esquemático | ~8-15 nuevos |
 | **5** | Gödel's Incompleteness | 📋 Futuro | TBD |
 
 ---
 
-*Updated 2026-04-10. 47 modules, 0 sorry. All Boolean algebra items complete (11 modules). All peanolib bridges complete. Reorganization Phases 1–3 complete. REFERENCE.md: 47/47 modules projected. Phase 4 annotation system complete. Phase 5 (ℤ) fully planned: 12 new modules + 2 file extensions.*
+*Updated 2026-04-06. 75 build jobs, 0 sorry, 0 errores. Phase 5 (ℤ) sustancialmente completa: 15 archivos, 183 exports. 21 items opcionales pendientes (§2.14), la mayoría de dificultad baja-media gracias a puentes Peano/ω existentes. Next: completar ltZ infraestructura + bezoutZ + tfa_Z, o comenzar Phase 6 (ℚ).*
