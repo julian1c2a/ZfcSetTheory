@@ -677,4 +677,12 @@ export ZFC.SetOps.Relations (
     pair_mem_implies_fst_in_domain
     pair_mem_implies_snd_in_range
     pair_mem_implies_snd_in_imag
+    EqClass_subset
+    mem_QuotientSet
+    EqClass_mem_QuotientSet
+    EqClass_nonempty
+    QuotientSet_covers
+    QuotientSet_is_partition
+    EqClass_representative_exists
+    EqClass_eq_of_mem_both
 )

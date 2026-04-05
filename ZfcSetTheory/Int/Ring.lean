@@ -530,3 +530,15 @@ namespace ZFC
   end Int.Ring
 
 end ZFC
+
+export ZFC.Int.Ring (
+  mulZ_addZ_distrib_left
+  mulZ_addZ_distrib_right
+  mulZ_subZ_distrib_left
+  mulZ_subZ_distrib_right
+  mulZ_eq_zero_iff
+  mulZ_cancel_left
+  mulZ_cancel_right
+  isUnitZ
+  unitZ_iff
+)

@@ -448,3 +448,20 @@ namespace ZFC
   end Int.Mul
 
 end ZFC
+
+export ZFC.Int.Mul (
+  mulZ
+  mulZ_graph_is_function
+  mulZ_well_defined
+  mulZ_class
+  mulZ_in_IntSet
+  mulZ_comm
+  mulZ_assoc
+  mulZ_one_right
+  mulZ_one_left
+  mulZ_zero_right
+  mulZ_zero_left
+  mulZ_negZ_left
+  mulZ_negZ_right
+  negZ_mulZ_negZ
+)

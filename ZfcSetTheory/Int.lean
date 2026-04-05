@@ -7,3 +7,5 @@ import ZfcSetTheory.Int.Ring
 import ZfcSetTheory.Int.Pow
 import ZfcSetTheory.Int.Sub
 import ZfcSetTheory.Int.DivMod
+import ZfcSetTheory.Int.Order
+import ZfcSetTheory.Int.Embedding
