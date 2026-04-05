@@ -409,6 +409,127 @@ namespace ZFC
             · exact hn_ne rfl
             · exact hm_ne rfl)
 
+    -- =========================================================================
+    -- Section 4: Triangle Inequality
+    -- =========================================================================
+
+    /-- Helper: for n,m ∈ ω with n,m ≠ ∅, the absolute value of
+        intClass n m is ≤ add n m in ω. -/
+    private theorem absZ_intClass_le_add (n m : U)
+        (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U)) (hn_ne : n ≠ ∅) (hm_ne : m ≠ ∅) :
+        absZ (intClass n m) ∈ add n m ∨ absZ (intClass n m) = add n m := by
+      have hn_nat := mem_Omega_is_Nat n hn
+      have hm_nat := mem_Omega_is_Nat m hm
+      have hnm := add_in_Omega n m hn hm
+      have hnm_nat := mem_Omega_is_Nat _ hnm
+      rcases natLt_trichotomy n m hn_nat hm_nat with h_lt | rfl | h_gt
+      · -- n < m: intClass n m = intClass ∅ k where m = add n k
+        obtain ⟨k, hk, hm_eq⟩ := le_then_exists_add_Omega n m hn hm (Or.inl h_lt)
+        have hk_ne : k ≠ (∅ : U) := by
+          intro h_eq
+          have h := h_lt
+          rw [hm_eq, h_eq, add_zero n hn] at h
+          exact not_mem_self n hn_nat h
+        have h_class_eq : intClass n m = intClass (∅ : U) k := by
+          rw [intClass_eq_iff n m (∅ : U) k hn hm zero_in_Omega hk]
+          rw [hm_eq, add_zero (add n k) (add_in_Omega n k hn hk)]
+        rw [h_class_eq, absZ_intClass_neg k hk]
+        -- Need: k ∈ add n m ∨ k = add n m
+        have hk_in_m : k ∈ m := by
+          have := add_pos_left_Omega n k hn hk hn_ne
+          rw [add_comm_Omega k n hk hn, ← hm_eq] at this
+          exact this
+        have hm_in_nm : m ∈ add n m := by
+          have := add_pos_left_Omega n m hn hm hn_ne
+          rw [add_comm_Omega m n hm hn] at this
+          exact this
+        exact Or.inl (mem_trans k m (add n m)
+          (mem_Omega_is_Nat k hk) hm_nat hnm_nat hk_in_m hm_in_nm)
+      · -- n = m: intClass n n = zeroZ, absZ = ∅
+        have h_class_eq : intClass n n = (zeroZ : U) := by
+          show intClass n n = intClass (∅ : U) (∅ : U)
+          exact (intClass_eq_iff n n (∅ : U) (∅ : U) hn hn zero_in_Omega zero_in_Omega).mpr rfl
+        rw [h_class_eq, absZ_zero]
+        -- Need: ∅ ∈ add n n ∨ ∅ = add n n
+        have hnn_ne : add n n ≠ (∅ : U) := by
+          intro h_eq
+          have h_n_in : n ∈ add n n := add_pos_left_Omega n n hn hn hn_ne
+          rw [h_eq] at h_n_in
+          exact absurd h_n_in (EmptySet_is_empty n)
+        rcases eq_zero_or_exists_succ (add n n) (mem_Omega_is_Nat _ (add_in_Omega n n hn hn))
+            with h_eq | ⟨j, h_succ⟩
+        · exact absurd h_eq hnn_ne
+        · rw [h_succ]
+          have h_sj := h_succ ▸ add_in_Omega n n hn hn
+          have hj := Nat_in_Omega j (nat_element_is_nat (σ j) j
+            (mem_Omega_is_Nat _ h_sj) (mem_succ_self j))
+          exact Or.inl (zero_in_succ_nat j hj)
+      · -- m < n: intClass n m = intClass k ∅ where n = add m k
+        obtain ⟨k, hk, hn_eq⟩ := le_then_exists_add_Omega m n hm hn (Or.inl h_gt)
+        have hk_ne : k ≠ (∅ : U) := by
+          intro h_eq
+          have h := h_gt
+          rw [hn_eq, h_eq, add_zero m hm] at h
+          exact not_mem_self m hm_nat h
+        have h_class_eq : intClass n m = intClass k (∅ : U) := by
+          rw [intClass_eq_iff n m k (∅ : U) hn hm hk zero_in_Omega]
+          rw [hn_eq, add_zero (add m k) (add_in_Omega m k hm hk)]
+        rw [h_class_eq, absZ_intClass_pos k hk]
+        -- Need: k ∈ add n m ∨ k = add n m
+        have hk_in_n : k ∈ n := by
+          have := add_pos_left_Omega m k hm hk hm_ne
+          rw [add_comm_Omega k m hk hm] at this
+          rw [hn_eq]; exact this
+        have hn_in_nm : n ∈ add n m := add_pos_left_Omega m n hm hn hm_ne
+        exact Or.inl (mem_trans k n (add n m)
+          (mem_Omega_is_Nat k hk) hn_nat hnm_nat hk_in_n hn_in_nm)
+
+    /-- **Triangle inequality**: |x + y| ≤ |x| + |y| for x, y ∈ ℤ.
+        Here ≤ is the natural number order (∈ or = in ω). -/
+    theorem absZ_addZ_le (x y : U) (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) :
+        absZ (addZ x y) ∈ add (absZ x) (absZ y) ∨
+        absZ (addZ x y) = add (absZ x) (absZ y) := by
+      rcases int_trichotomy x hx with rfl | ⟨n, hn, hn_ne, rfl⟩ | ⟨n, hn, hn_ne, rfl⟩
+      · -- x = zeroZ
+        rw [addZ_zero_left y hy, absZ_zero,
+            zero_add (absZ y) (absZ_in_omega y hy)]
+        exact Or.inr rfl
+      · -- x = intClass n ∅ (positive)
+        rcases int_trichotomy y hy with rfl | ⟨m, hm, hm_ne, rfl⟩ | ⟨m, hm, hm_ne, rfl⟩
+        · -- y = zeroZ
+          rw [addZ_zero_right _ hx, absZ_zero,
+              add_zero (absZ (intClass n (∅ : U))) (absZ_in_omega _ hx)]
+          exact Or.inr rfl
+        · -- y = intClass m ∅ (pos + pos): equality
+          rw [addZ_class n ∅ m ∅ hn zero_in_Omega hm zero_in_Omega,
+              add_zero ∅ zero_in_Omega,
+              absZ_intClass_pos (add n m) (add_in_Omega n m hn hm),
+              absZ_intClass_pos n hn, absZ_intClass_pos m hm]
+          exact Or.inr rfl
+        · -- y = intClass ∅ m (pos + neg): mixed sign
+          rw [addZ_class n ∅ ∅ m hn zero_in_Omega zero_in_Omega hm,
+              add_zero n hn, zero_add m hm,
+              absZ_intClass_pos n hn, absZ_intClass_neg m hm]
+          exact absZ_intClass_le_add n m hn hm hn_ne hm_ne
+      · -- x = intClass ∅ n (negative)
+        rcases int_trichotomy y hy with rfl | ⟨m, hm, hm_ne, rfl⟩ | ⟨m, hm, hm_ne, rfl⟩
+        · -- y = zeroZ
+          rw [addZ_zero_right _ hx, absZ_zero,
+              add_zero (absZ (intClass (∅ : U) n)) (absZ_in_omega _ hx)]
+          exact Or.inr rfl
+        · -- y = intClass m ∅ (neg + pos): mixed sign
+          rw [addZ_class ∅ n m ∅ zero_in_Omega hn hm zero_in_Omega,
+              zero_add m hm, add_zero n hn,
+              absZ_intClass_neg n hn, absZ_intClass_pos m hm]
+          have h := absZ_intClass_le_add m n hm hn hm_ne hn_ne
+          rwa [add_comm_Omega m n hm hn] at h
+        · -- y = intClass ∅ m (neg + neg): equality
+          rw [addZ_class (∅ : U) n (∅ : U) m zero_in_Omega hn zero_in_Omega hm,
+              add_zero (∅ : U) zero_in_Omega,
+              absZ_intClass_neg (add n m) (add_in_Omega n m hn hm),
+              absZ_intClass_neg n hn, absZ_intClass_neg m hm]
+          exact Or.inr rfl
+
   end Int.Abs
 
   export Int.Abs (
@@ -428,6 +549,7 @@ namespace ZFC
     signZ_in_IntSet
     signZ_mulZ_absZ
     signZ_mulZ
+    absZ_addZ_le
   )
 
 end ZFC

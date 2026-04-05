@@ -22,9 +22,12 @@ License: MIT
   * `gcdZ_zero_left` — gcdZ 0 b = absZ b
   * `gcdZ_dividesZ_left` — natToInt (gcdZ a b) | a
   * `gcdZ_dividesZ_right` — natToInt (gcdZ a b) | b
-  * `gcdZ_greatest` — d | a → d | b → d | natToInt (gcdZ a b)
+  * `gcdZ_is_greatest` — d | a → d | b → d | natToInt (gcdZ a b)
   * `modZ_in_omega` — modZ a b ∈ ω
   * `dividesZ_antisymm_abs` — a | b → b | a → absZ a = absZ b
+  * `dividesZ_antisymm` — a | b → b | a → a = b ∨ a = negZ b
+  * `lcmZ_in_omega` — lcmZ a b ∈ ω
+  * `lcmZ_comm` — lcmZ a b = lcmZ b a
 -/
 
 import ZfcSetTheory.Int.Abs
@@ -278,20 +281,122 @@ namespace ZFC
         rw [h_eq1, h_q1_one.1,
             mul_one_Omega (absZ a) (absZ_in_omega a ha)]
 
+    -- =========================================================================
+    -- Section 5: gcdZ is greatest
+    -- =========================================================================
+
+    /-- Helper: dividesZ (natToInt (absZ d)) x → dividesZ d x, for d,x ∈ ℤ. -/
+    private theorem dividesZ_natToInt_abs (d x : U)
+        (hd : d ∈ (IntSet : U)) (hx : x ∈ (IntSet : U))
+        (h : dividesZ (natToInt (absZ d)) x) :
+        dividesZ d x := by
+      rcases int_trichotomy d hd with rfl | ⟨n, hn, _, rfl⟩ | ⟨m, hm, _, rfl⟩
+      · -- d = zeroZ: absZ d = ∅, natToInt ∅ = zeroZ = d
+        rwa [absZ_zero, natToInt_zero] at h
+      · -- d = intClass n ∅ (positive): natToInt (absZ d) = natToInt n = d
+        rwa [absZ_intClass_pos n hn] at h
+      · -- d = intClass ∅ m (negative): natToInt (absZ d) = natToInt m = negZ d
+        rw [absZ_intClass_neg m hm] at h
+        have h_neg : (intClass (∅ : U) m : U) = negZ (natToInt m) := by
+          unfold natToInt
+          exact (negZ_class m (∅ : U) hm zero_in_Omega).symm
+        rw [h_neg]
+        exact (dividesZ_negZ_left (natToInt m) x
+          (natToInt_mem_IntSet m hm) hx).mp h
+
+    /-- gcdZ is the greatest common divisor: if d | a and d | b then d | natToInt (gcdZ a b). -/
+    theorem gcdZ_is_greatest (a b d : U)
+        (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U)) (hd : d ∈ (IntSet : U))
+        (hda : dividesZ d a) (hdb : dividesZ d b) :
+        dividesZ d (natToInt (gcdZ a b)) := by
+      -- Bridge to ω
+      have h1 := dividesZ_to_divides_abs d a hd ha hda
+      have h2 := dividesZ_to_divides_abs d b hd hb hdb
+      have h_gcd := gcd_greatest_Omega (absZ a) (absZ b) (absZ d)
+        (absZ_in_omega a ha) (absZ_in_omega b hb) (absZ_in_omega d hd) h1 h2
+      -- divides (absZ d) (gcdZ a b) in ω → dividesZ in ℤ
+      have hg := gcdZ_in_omega a b ha hb
+      have h_bridge := divides_natToInt (absZ d) (gcdZ a b)
+        (absZ_in_omega d hd) hg h_gcd
+      exact dividesZ_natToInt_abs d (natToInt (gcdZ a b)) hd
+        (natToInt_mem_IntSet _ hg) h_bridge
+
+    -- =========================================================================
+    -- Section 6: lcmZ — LCM on ℤ
+    -- =========================================================================
+
+    /-- LCM on ℤ, defined as lcm of absolute values. Result is in ω. -/
+    noncomputable def lcmZ (a b : U) : U := lcm (absZ a) (absZ b)
+
+    /-- lcmZ a b ∈ ω for a, b ∈ ℤ. -/
+    theorem lcmZ_in_omega (a b : U)
+        (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U)) :
+        lcmZ a b ∈ (ω : U) := by
+      unfold lcmZ
+      exact lcm_in_Omega (absZ a) (absZ b) (absZ_in_omega a ha) (absZ_in_omega b hb)
+
+    /-- lcmZ is commutative: lcmZ a b = lcmZ b a. -/
+    theorem lcmZ_comm (a b : U)
+        (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U)) :
+        lcmZ a b = lcmZ b a := by
+      unfold lcmZ
+      exact lcm_comm_Omega (absZ a) (absZ b) (absZ_in_omega a ha) (absZ_in_omega b hb)
+
+    -- =========================================================================
+    -- Section 7: Full divisibility antisymmetry
+    -- =========================================================================
+
+    /-- Helper: x ∈ ℤ implies x = natToInt (absZ x) or x = negZ (natToInt (absZ x)). -/
+    private theorem int_eq_natToInt_abs_or_neg (x : U) (hx : x ∈ (IntSet : U)) :
+        x = natToInt (absZ x) ∨ x = negZ (natToInt (absZ x)) := by
+      rcases int_trichotomy x hx with rfl | ⟨n, hn, _, rfl⟩ | ⟨m, hm, _, rfl⟩
+      · -- x = zeroZ
+        left; rw [absZ_zero, natToInt_zero]
+      · -- x = intClass n ∅ (positive)
+        left; rw [absZ_intClass_pos n hn]; rfl
+      · -- x = intClass ∅ m (negative)
+        right
+        rw [absZ_intClass_neg m hm]
+        unfold natToInt
+        exact (negZ_class m (∅ : U) hm zero_in_Omega).symm
+
+    /-- Full antisymmetry: a | b and b | a implies a = b or a = negZ b. -/
+    theorem dividesZ_antisymm (a b : U)
+        (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U))
+        (hab : dividesZ a b) (hba : dividesZ b a) :
+        a = b ∨ a = negZ b := by
+      have h_abs_eq := dividesZ_antisymm_abs a b ha hb hab hba
+      -- a = natToInt n or a = negZ (natToInt n), same for b, where n = absZ a = absZ b
+      rcases int_eq_natToInt_abs_or_neg a ha with ha_eq | ha_eq <;>
+        rcases int_eq_natToInt_abs_or_neg b hb with hb_eq | hb_eq
+      · -- a = natToInt n, b = natToInt n
+        left; rw [ha_eq, hb_eq, h_abs_eq]
+      · -- a = natToInt n, b = negZ (natToInt n)
+        right; rw [ha_eq, hb_eq, h_abs_eq]
+      · -- a = negZ (natToInt n), b = natToInt n
+        right; rw [ha_eq, hb_eq, h_abs_eq]
+      · -- a = negZ (natToInt n), b = negZ (natToInt n)
+        left; rw [ha_eq, hb_eq, h_abs_eq]
+
   end Int.Div
 
   export Int.Div (
     gcdZ
     modZ
+    lcmZ
     gcdZ_in_omega
     modZ_in_omega
+    lcmZ_in_omega
     gcdZ_comm
     gcdZ_zero_right
     gcdZ_zero_left
+    lcmZ_comm
     modZ_lt_absZ
     gcdZ_dividesZ_left
     gcdZ_dividesZ_right
+    gcdZ_is_greatest
     dividesZ_antisymm_abs
+    dividesZ_antisymm
   )
 
 end ZFC

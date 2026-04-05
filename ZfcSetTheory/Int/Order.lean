@@ -19,6 +19,8 @@ License: MIT
 
   * `leZ` — non-strict order on ℤ: leZ x y
   * `ltZ` — strict order on ℤ: ltZ x y
+  * `isPositiveZ` — x is positive: ltZ zeroZ x
+  * `isNegativeZ` — x is negative: ltZ x zeroZ
 
   ## Main Theorems
 
@@ -28,11 +30,18 @@ License: MIT
   * `leZ_antisymm` — antisymmetry: x ≤ y → y ≤ x → x = y
   * `leZ_total` — totality: x ≤ y ∨ y ≤ x
   * `ltZ_iff_leZ_and_ne` — x < y ↔ x ≤ y ∧ x ≠ y
-  * `addZ_leZ_addZ` — compatibility with addition
+  * `addZ_leZ_addZ` — right-compatibility with addition
+  * `addZ_leZ_addZ_left` — left-compatibility with addition
   * `leZ_negZ` — x ≤ y → negZ y ≤ negZ x
+  * `int_trichotomy_order` — every integer is positive, zero, or negative
+  * `mulZ_le_mulZ_nonneg` — multiplication by non-negative preserves order
+  * `positiveZ_mul_closed` — positive × positive = positive
+  * `negativeZ_mul_positive` — negative × negative = positive
+  * `positiveZ_negativeZ_mul_negative` — positive × negative = negative
 -/
 
-import ZfcSetTheory.Int.Neg
+import ZfcSetTheory.Int.Mul
+import ZfcSetTheory.Nat.Mul
 
 namespace ZFC
   open Classical
@@ -49,10 +58,12 @@ namespace ZFC
   open ZFC.SetOps.Functions
   open ZFC.Nat.Basic
   open ZFC.Nat.Add
+  open ZFC.Nat.Mul
   open ZFC.Int.Equiv
   open ZFC.Int.Basic
   open ZFC.Int.Add
   open ZFC.Int.Neg
+  open ZFC.Int.Mul
 
   universe u
   variable {U : Type u}
@@ -505,6 +516,247 @@ namespace ZFC
       exact (leZ_repr_well_defined d c d' c' b a b' a'
              hd hc hd' hc' hb ha hb' ha' h₁ h₂).mp h_base
 
+    /-! ### Definitions: positivity and negativity -/
+
+    /-- An integer is positive when it is strictly greater than zero -/
+    def isPositiveZ (x : U) : Prop := ltZ (zeroZ : U) x
+
+    /-- An integer is negative when it is strictly less than zero -/
+    def isNegativeZ (x : U) : Prop := ltZ x (zeroZ : U)
+
+    /-! ### Trichotomy via order -/
+
+    /-- Helper: intClass n ∅ with n ≠ ∅ is positive -/
+    private theorem intClass_pos_is_positive (n : U) (hn : n ∈ (ω : U)) (hn_ne : n ≠ ∅) :
+        isPositiveZ (intClass n (∅ : U)) := by
+      unfold isPositiveZ ltZ
+      constructor
+      · -- leZ zeroZ (intClass n ∅)
+        unfold zeroZ
+        intro a b c d ha hb hc hd h_zero h_n
+        unfold leZ_repr
+        have h_eq1 : intClass (∅ : U) ∅ = intClass a b := h_zero
+        have h_eq2 : intClass n (∅ : U) = intClass c d := h_n
+        have h_base : leZ_repr (∅ : U) ∅ n ∅ := by
+          unfold leZ_repr
+          rw [zero_add (∅ : U) zero_in_Omega, zero_add n hn]
+          -- Need: ∅ ∈ n ∨ ∅ = n. Since n ≠ ∅ and n ∈ ω, n = σ m, so ∅ ∈ n
+          have h_isNat := mem_Omega_is_Nat n hn
+          rcases eq_zero_or_exists_succ n h_isNat with rfl | ⟨m, rfl⟩
+          · exact absurd rfl hn_ne
+          · have hm_nat := nat_element_is_nat (σ m) m h_isNat (mem_succ_self m)
+            exact Or.inl (zero_in_succ_nat m (Nat_in_Omega m hm_nat))
+        exact (leZ_repr_well_defined (∅ : U) ∅ a b n ∅ c d
+               zero_in_Omega zero_in_Omega ha hb hn zero_in_Omega hc hd
+               h_eq1 h_eq2).mp h_base
+      · -- zeroZ ≠ intClass n ∅
+        unfold zeroZ
+        intro h_eq
+        have := (intClass_eq_iff (∅ : U) ∅ n ∅ zero_in_Omega zero_in_Omega hn zero_in_Omega).mp h_eq
+        -- add ∅ ∅ = add ∅ n → ∅ = n
+        rw [add_zero (∅ : U) zero_in_Omega, zero_add n hn] at this
+        exact hn_ne this.symm
+
+    /-- Helper: intClass ∅ m with m ≠ ∅ is negative -/
+    private theorem intClass_neg_is_negative (m : U) (hm : m ∈ (ω : U)) (hm_ne : m ≠ ∅) :
+        isNegativeZ (intClass (∅ : U) m) := by
+      unfold isNegativeZ ltZ
+      constructor
+      · -- leZ (intClass ∅ m) zeroZ
+        unfold zeroZ
+        intro a b c d ha hb hc hd h_neg h_zero
+        unfold leZ_repr
+        have h_eq1 : intClass (∅ : U) m = intClass a b := h_neg
+        have h_eq2 : intClass (∅ : U) ∅ = intClass c d := h_zero
+        have h_base : leZ_repr (∅ : U) m ∅ ∅ := by
+          unfold leZ_repr
+          rw [add_zero (∅ : U) zero_in_Omega, add_zero m hm]
+          have h_isNat := mem_Omega_is_Nat m hm
+          rcases eq_zero_or_exists_succ m h_isNat with rfl | ⟨k, rfl⟩
+          · exact absurd rfl hm_ne
+          · have hk_nat := nat_element_is_nat (σ k) k h_isNat (mem_succ_self k)
+            exact Or.inl (zero_in_succ_nat k (Nat_in_Omega k hk_nat))
+        exact (leZ_repr_well_defined (∅ : U) m a b (∅ : U) ∅ c d
+               zero_in_Omega hm ha hb zero_in_Omega zero_in_Omega hc hd
+               h_eq1 h_eq2).mp h_base
+      · -- intClass ∅ m ≠ zeroZ
+        unfold zeroZ
+        intro h_eq
+        have := (intClass_eq_iff (∅ : U) m ∅ ∅ zero_in_Omega hm zero_in_Omega zero_in_Omega).mp h_eq
+        rw [add_zero (∅ : U) zero_in_Omega, add_zero m hm] at this
+        exact hm_ne this.symm
+
+    /-- Every integer is positive, zero, or negative -/
+    theorem int_trichotomy_order (x : U) (hx : x ∈ (IntSet : U)) :
+        isPositiveZ x ∨ x = (zeroZ : U) ∨ isNegativeZ x := by
+      rcases int_trichotomy x hx with rfl | ⟨n, hn, hn_ne, rfl⟩ | ⟨m, hm, hm_ne, rfl⟩
+      · exact Or.inr (Or.inl rfl)
+      · exact Or.inl (intClass_pos_is_positive n hn hn_ne)
+      · exact Or.inr (Or.inr (intClass_neg_is_negative m hm hm_ne))
+
+    /-! ### Left-compatibility with addition -/
+
+    /-- Order is compatible with left-addition: x ≤ y → addZ z x ≤ addZ z y -/
+    theorem addZ_leZ_addZ_left (x y z : U)
+        (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) (hz : z ∈ (IntSet : U))
+        (h_le : leZ x y) : leZ (addZ z x) (addZ z y) := by
+      rw [addZ_comm z x hz hx, addZ_comm z y hz hy]
+      exact addZ_leZ_addZ x y z hx hy hz h_le
+
+    /-! ### Multiplication and order -/
+
+    /-- Bridge: multiplication monotonicity from PeanoNatLib.
+        If n ≤ m in ω, then mul n k ≤ mul m k in ω. -/
+    private theorem mul_le_mono_right_Omega (k n m : U)
+        (hk : k ∈ (ω : U)) (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U))
+        (h : n ∈ m ∨ n = m) : mul n k ∈ mul m k ∨ mul n k = mul m k := by
+      obtain ⟨p, rfl⟩ := fromPeano_surjective k (mem_Omega_is_Nat k hk)
+      obtain ⟨q, rfl⟩ := fromPeano_surjective n (mem_Omega_is_Nat n hn)
+      obtain ⟨r, rfl⟩ := fromPeano_surjective m (mem_Omega_is_Nat m hm)
+      rw [← fromPeano_mul q p, ← fromPeano_mul r p]
+      have h_le : Peano.Order.Le q r := (fromPeano_le_iff q r).mpr h
+      exact (fromPeano_le_iff (Peano.Mul.mul q p) (Peano.Mul.mul r p)).mp
+        (Peano.Mul.mul_le_mono_right p h_le)
+
+    /-- Multiplication by a non-negative integer preserves order:
+        x ≤ y → 0 ≤ z → mulZ z x ≤ mulZ z y -/
+    theorem mulZ_le_mulZ_nonneg (x y z : U)
+        (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) (hz : z ∈ (IntSet : U))
+        (h_le : leZ x y) (h_z_nonneg : leZ (zeroZ : U) z) :
+        leZ (mulZ z x) (mulZ z y) := by
+      -- Case split on z via trichotomy
+      rcases int_trichotomy z hz with rfl | ⟨e, he, he_ne, rfl⟩ | ⟨m, hm, hm_ne, rfl⟩
+      · -- z = zeroZ
+        rw [mulZ_zero_left x hx, mulZ_zero_left y hy]
+        exact leZ_refl zeroZ zeroZ_mem_IntSet
+      · -- z = intClass e ∅, e ∈ ω, e ≠ ∅ (positive)
+        obtain ⟨a, b, ha, hb, hx_eq⟩ := intClass_exists x hx
+        obtain ⟨c, d, hc, hd, hy_eq⟩ := intClass_exists y hy
+        have h_le_repr := h_le a b c d ha hb hc hd hx_eq hy_eq
+        subst hx_eq; subst hy_eq
+        -- mulZ (intClass e ∅) (intClass a b) = intClass (mul e a) (mul e b)
+        rw [mulZ_class e ∅ a b he zero_in_Omega ha hb,
+            zero_mul_Omega b hb, zero_mul_Omega a ha,
+            add_zero (mul e a) (mul_in_Omega e a he ha),
+            add_zero (mul e b) (mul_in_Omega e b he hb)]
+        -- mulZ (intClass e ∅) (intClass c d) = intClass (mul e c) (mul e d)
+        rw [mulZ_class e ∅ c d he zero_in_Omega hc hd,
+            zero_mul_Omega d hd, zero_mul_Omega c hc,
+            add_zero (mul e c) (mul_in_Omega e c he hc),
+            add_zero (mul e d) (mul_in_Omega e d he hd)]
+        -- Show: leZ_repr (mul e a) (mul e b) (mul e c) (mul e d)
+        intro a' b' c' d' ha' hb' hc' hd' hx_eq' hy_eq'
+        have hea := mul_in_Omega e a he ha
+        have heb := mul_in_Omega e b he hb
+        have hec := mul_in_Omega e c he hc
+        have hed := mul_in_Omega e d he hd
+        have h_base : leZ_repr (mul e a) (mul e b) (mul e c) (mul e d) := by
+          unfold leZ_repr
+          -- Rewrite using distributivity: add (mul e a) (mul e d) = mul e (add a d)
+          rw [← mul_ldistr_Omega e a d he ha hd,
+              ← mul_ldistr_Omega e b c he hb hc]
+          -- Use monotonicity: (add a d) ≤ (add b c) → mul e (add a d) ≤ mul e (add b c)
+          -- via: mul (add a d) e ≤ mul (add b c) e, then commutativity
+          have had := add_in_Omega a d ha hd
+          have hbc := add_in_Omega b c hb hc
+          have h_mono := mul_le_mono_right_Omega e (add a d) (add b c) he had hbc h_le_repr
+          rw [mul_comm_Omega (add a d) e had he,
+              mul_comm_Omega (add b c) e hbc he] at h_mono
+          exact h_mono
+        exact (leZ_repr_well_defined (mul e a) (mul e b) a' b' (mul e c) (mul e d) c' d'
+               hea heb ha' hb' hec hed hc' hd' hx_eq' hy_eq').mp h_base
+      · -- z = intClass ∅ m, m ≠ ∅ (negative): contradicts z ≥ 0
+        exfalso
+        have h_neg := intClass_neg_is_negative m hm hm_ne
+        exact h_neg.2 (leZ_antisymm (intClass (∅ : U) m) zeroZ
+          (intClass_mem_IntSet ∅ m zero_in_Omega hm) zeroZ_mem_IntSet
+          h_neg.1 h_z_nonneg)
+
+    /-! ### Sign-product closure -/
+
+    /-- Positive times positive is positive -/
+    theorem positiveZ_mul_closed (x y : U)
+        (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U))
+        (h_px : isPositiveZ x) (h_py : isPositiveZ y) :
+        isPositiveZ (mulZ x y) := by
+      rcases int_trichotomy x hx with rfl | ⟨n, hn, hn_ne, rfl⟩ | ⟨n, hn, hn_ne, rfl⟩
+      · -- x = zeroZ: contradicts h_px
+        exact absurd rfl h_px.2
+      · -- x = intClass n ∅ (positive)
+        rcases int_trichotomy y hy with rfl | ⟨m, hm, hm_ne, rfl⟩ | ⟨m, hm, hm_ne, rfl⟩
+        · exact absurd rfl h_py.2
+        · -- Both positive: mulZ (intClass n ∅) (intClass m ∅) = intClass (mul n m) ∅
+          rw [mulZ_class n ∅ m ∅ hn zero_in_Omega hm zero_in_Omega,
+              mul_zero n hn, zero_mul_Omega m hm, zero_mul_Omega ∅ zero_in_Omega,
+              add_zero (mul n m) (mul_in_Omega n m hn hm),
+              zero_add (∅ : U) zero_in_Omega]
+          exact intClass_pos_is_positive (mul n m) (mul_in_Omega n m hn hm)
+            (fun h => by
+              rcases (mul_eq_zero_iff n m hn hm).mp h with rfl | rfl
+              · exact hn_ne rfl
+              · exact hm_ne rfl)
+        · -- y = intClass ∅ m (negative): contradicts h_py
+          have h_neg_y := intClass_neg_is_negative m hm hm_ne
+          exact absurd (leZ_antisymm _ zeroZ hy zeroZ_mem_IntSet h_neg_y.1 h_py.1).symm h_py.2
+      · -- x = intClass ∅ n (negative): contradicts h_px
+        have h_neg := intClass_neg_is_negative n hn hn_ne
+        exact absurd (leZ_antisymm _ zeroZ hx zeroZ_mem_IntSet h_neg.1 h_px.1).symm h_px.2
+
+    /-- Negative times negative is positive -/
+    theorem negativeZ_mul_positive (x y : U)
+        (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U))
+        (h_nx : isNegativeZ x) (h_ny : isNegativeZ y) :
+        isPositiveZ (mulZ x y) := by
+      rcases int_trichotomy x hx with rfl | ⟨n, hn, hn_ne, rfl⟩ | ⟨n, hn, hn_ne, rfl⟩
+      · -- x = zeroZ: contradicts h_nx
+        exact absurd rfl h_nx.2
+      · -- x = intClass n ∅ (positive): contradicts h_nx
+        have h_pos := intClass_pos_is_positive n hn hn_ne
+        exact absurd (leZ_antisymm _ zeroZ hx zeroZ_mem_IntSet h_nx.1 h_pos.1) h_nx.2
+      · -- x = intClass ∅ n (negative): actual case
+        rcases int_trichotomy y hy with rfl | ⟨m, hm, hm_ne, rfl⟩ | ⟨m, hm, hm_ne, rfl⟩
+        · exact absurd rfl h_ny.2
+        · -- y = intClass m ∅ (positive): contradicts h_ny
+          have h_pos := intClass_pos_is_positive m hm hm_ne
+          exact absurd (leZ_antisymm _ zeroZ hy zeroZ_mem_IntSet h_ny.1 h_pos.1) h_ny.2
+        · -- Both negative: mulZ (intClass ∅ n) (intClass ∅ m) = intClass (mul n m) ∅
+          rw [mulZ_class ∅ n ∅ m zero_in_Omega hn zero_in_Omega hm,
+              zero_mul_Omega ∅ zero_in_Omega, zero_mul_Omega m hm, mul_zero n hn,
+              zero_add (mul n m) (mul_in_Omega n m hn hm),
+              zero_add (∅ : U) zero_in_Omega]
+          exact intClass_pos_is_positive (mul n m) (mul_in_Omega n m hn hm)
+            (fun h => by
+              rcases (mul_eq_zero_iff n m hn hm).mp h with rfl | rfl
+              · exact hn_ne rfl
+              · exact hm_ne rfl)
+
+    /-- Positive times negative is negative -/
+    theorem positiveZ_negativeZ_mul_negative (x y : U)
+        (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U))
+        (h_px : isPositiveZ x) (h_ny : isNegativeZ y) :
+        isNegativeZ (mulZ x y) := by
+      rcases int_trichotomy x hx with rfl | ⟨n, hn, hn_ne, rfl⟩ | ⟨n, hn, hn_ne, rfl⟩
+      · exact absurd rfl h_px.2
+      · -- x = intClass n ∅ (positive)
+        rcases int_trichotomy y hy with rfl | ⟨m, hm, hm_ne, rfl⟩ | ⟨m, hm, hm_ne, rfl⟩
+        · exact absurd rfl h_ny.2
+        · -- y = intClass m ∅ (positive): contradicts h_ny
+          have h_pos := intClass_pos_is_positive m hm hm_ne
+          exact absurd (leZ_antisymm _ zeroZ hy zeroZ_mem_IntSet h_ny.1 h_pos.1) h_ny.2
+        · -- mulZ (intClass n ∅) (intClass ∅ m) = intClass ∅ (mul n m)
+          rw [mulZ_class n ∅ ∅ m hn zero_in_Omega zero_in_Omega hm,
+              mul_zero n hn, zero_mul_Omega m hm, zero_mul_Omega ∅ zero_in_Omega,
+              zero_add (∅ : U) zero_in_Omega,
+              add_zero (mul n m) (mul_in_Omega n m hn hm)]
+          exact intClass_neg_is_negative (mul n m) (mul_in_Omega n m hn hm)
+            (fun h => by
+              rcases (mul_eq_zero_iff n m hn hm).mp h with rfl | rfl
+              · exact hn_ne rfl
+              · exact hm_ne rfl)
+      · -- x = intClass ∅ n (negative): contradicts h_px
+        have h_neg := intClass_neg_is_negative n hn hn_ne
+        exact absurd (leZ_antisymm _ zeroZ hx zeroZ_mem_IntSet h_neg.1 h_px.1).symm h_px.2
+
   end Int.Order
 
 end ZFC
@@ -523,4 +775,12 @@ export ZFC.Int.Order (
   ltZ_iff_leZ_and_ne
   addZ_leZ_addZ
   leZ_negZ
+  isPositiveZ
+  isNegativeZ
+  int_trichotomy_order
+  addZ_leZ_addZ_left
+  mulZ_le_mulZ_nonneg
+  positiveZ_mul_closed
+  negativeZ_mul_positive
+  positiveZ_negativeZ_mul_negative
 )

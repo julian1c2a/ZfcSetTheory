@@ -9,3 +9,5 @@ import ZfcSetTheory.Int.Sub
 import ZfcSetTheory.Int.DivMod
 import ZfcSetTheory.Int.Order
 import ZfcSetTheory.Int.Embedding
+import ZfcSetTheory.Int.Abs
+import ZfcSetTheory.Int.Div
