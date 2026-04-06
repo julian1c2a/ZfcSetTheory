@@ -1,39 +1,51 @@
-import ZfcSetTheory
-import ZfcSetTheory.Int.Div
+import ZfcSetTheory.Peano.Import
+import ZfcSetTheory.Nat.Div
+import ZfcSetTheory.Nat.Gcd
 
 open ZFC
-open Peano
 
-theorem gcdZ_assoc (a b c : U) (ha : a ∈ IntSet) (hb : b ∈ IntSet) (hc : c ∈ IntSet) :
-    gcdZ a (gcdZ b c) = gcdZ (gcdZ a b) c := by
-  unfold gcdZ
-  have hab : gcdZ a b ∈ ω := gcdZ_in_omega a b ha hb
-  have hbc : gcdZ b c ∈ ω := gcdZ_in_omega b c hb hc
-  have hgcd_ab : absZ (natToInt (gcdZ a b)) = gcd (absZ a) (absZ b) := Int.Div.absZ_natToInt _ hab
-  have hgcd_bc : absZ (natToInt (gcdZ b c)) = gcd (absZ b) (absZ c) := Int.Div.absZ_natToInt _ hbc
-  congr 1
-  rw [hgcd_bc, hgcd_ab]
-  exact Nat.Gcd.gcd_assoc_Omega (absZ a) (absZ b) (absZ c)
-    (absZ_in_omega a ha) (absZ_in_omega b hb) (absZ_in_omega c hc)
+variable {U : Type _}
 
-theorem lcmZ_zero_right (a : U) (ha : a ∈ IntSet) :
-    lcmZ a zeroZ = ∅ := by
-  unfold lcmZ
-  rw [absZ_zero]
-  exact Nat.Gcd.lcm_zero_right_Omega (absZ a) (absZ_in_omega a ha)
+theorem divOf_zero (a : U) (ha : a ∈ (ω:U)) : divOf (∅:U) a = ∅ := by
+  have h_p : (∅ : U) = fromPeano 𝟘 := rfl
+  have hna : IsNat a := mem_Omega_is_Nat a ha
+  have ha_p : a = fromPeano (toPeano a hna) := by
+    exact (fromPeano_toPeano a hna).symm
+  have h_div : fromPeano ((𝟘 / toPeano a hna) : ℕ₀) = divOf (fromPeano 𝟘 : U) (fromPeano (toPeano a hna)) := by
+    exact fromPeano_div 𝟘 (toPeano a hna)
+  rw [← ha_p] at h_div
+  have h_p_eq : (fromPeano 𝟘 : U) = (∅:U) := rfl
+  rw [h_p_eq] at h_div
+  rw [← h_div]
+  let q := toPeano a hna
+  have h_cases : q = 𝟘 ∨ q ≠ 𝟘 := by exact Classical.em (q = 𝟘)
+  cases h_cases with
+  | inl hq =>
+    have hq_typed : toPeano a hna = 𝟘 := hq
+    rw [hq_typed]
+    have h0 : ((𝟘 / 𝟘) : ℕ₀) = 𝟘 := by
+      unfold Peano.Div.div
+      rw [Peano.Div.divMod]
+      rw [dif_pos rfl]
+    rw [h0]
+    rfl
+  | inr hq =>
+    have h_p_q : toPeano a hna = q := rfl
+    rw [h_p_q]
+    have h_lt : Lt 𝟘 q := lt_0_n q hq
+    have h0 : ((𝟘 / q) : ℕ₀) = 𝟘 := div_of_lt 𝟘 q h_lt
+    rw [h0]
+    rfl
 
-theorem lcmZ_zero_left (b : U) (hb : b ∈ IntSet) :
-    lcmZ zeroZ b = ∅ := by
-  unfold lcmZ
-  rw [absZ_zero]
-  exact Nat.Gcd.lcm_zero_left_Omega (absZ b) (absZ_in_omega b hb)
+theorem lcm_zero_right_Omega (a : U) (ha : a ∈ (ω:U)) : (ZFC.lcm a ∅) = ∅ := by
+  unfold ZFC.lcm
+  rw [dif_pos ha, dif_pos (zero_in_Omega : (∅:U) ∈ (ω:U))]
+  have mul_0 : @ZFC.mul U a ∅ = ∅ := mul_zero a ha
+  rw [mul_0]
+  have gcd_0 : @ZFC.gcd U a ∅ = a := gcd_zero a ha
+  rw [gcd_0]
+  exact divOf_zero a ha
 
-theorem bezoutZ (a b : U) (ha : a ∈ IntSet) (hb : b ∈ IntSet) :
-    ∃ s t : U, s ∈ IntSet ∧ t ∈ IntSet ∧
-      natToInt (gcdZ a b) = addZ (mulZ s a) (mulZ t b) := by
-  have ha_omega := absZ_in_omega a ha
-  have hb_omega := absZ_in_omega b hb
-  obtain ⟨n, m, hn, hm, h_bez⟩ := Nat.Gcd.bezout_natform_Omega (absZ a) (absZ b) ha_omega hb_omega
-  -- We know gcd (absZ a) (absZ b) = sub (mul n (absZ a)) (mul m (absZ b)) OR sub (mul n (absZ b)) (mul m (absZ a))
-  sorry
-
+theorem lcm_zero_left_Omega (a : U) (ha : a ∈ (ω:U)) : (ZFC.lcm ∅ a) = ∅ := by
+  rw [lcm_comm_Omega (∅:U) a zero_in_Omega ha]
+  exact lcm_zero_right_Omega a ha

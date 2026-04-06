@@ -25,7 +25,6 @@ ZfcSetTheory/Nat/Basic.lean
 ZfcSetTheory/Induction/Recursion.lean
 ZfcSetTheory/Core/Prelim.lean
 ZfcSetTheory/Nat/Sub.lean
-ZfcSetTheory/Nat/Div.lean
 ZfcSetTheory/Nat/Pow.lean
 ZfcSetTheory/Nat/Arith.lean
 ZfcSetTheory/Nat/Factorial.lean
@@ -45,5 +44,4 @@ ZfcSetTheory/BoolAlg/BoolRingBA.lean
 ZfcSetTheory/BoolAlg/Representation.lean
 ZfcSetTheory/Cardinal/FinitePowerSet.lean
 ZfcSetTheory/Int/Abs.lean
-ZfcSetTheory/Int/Div.lean
 ZfcSetTheory/Int/Order.lean

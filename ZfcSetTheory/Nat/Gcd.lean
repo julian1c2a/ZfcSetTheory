@@ -545,6 +545,19 @@ namespace ZFC
       rw [lcm_eq_lcmOf a b ha hb, lcm_eq_lcmOf b a hb ha]
       exact lcmOf_comm_Omega a b ha hb
 
+    theorem lcm_zero_right_Omega (a : U) (ha : a ∈ (ω:U)) : lcm a ∅ = ∅ := by
+      unfold lcm
+      rw [dif_pos ha, dif_pos (zero_in_Omega : (∅:U) ∈ (ω:U))]
+      have mul_0 : mul a ∅ = ∅ := mul_zero a ha
+      rw [mul_0]
+      have gcd_0 : gcd a ∅ = a := gcd_zero a ha
+      rw [gcd_0]
+      exact divOf_zero_Omega a ha
+
+    theorem lcm_zero_left_Omega (a : U) (ha : a ∈ (ω:U)) : lcm ∅ a = ∅ := by
+      rw [lcm_comm_Omega (∅:U) a zero_in_Omega ha]
+      exact lcm_zero_right_Omega a ha
+
   end Nat.Gcd
 
   export Nat.Gcd (
@@ -569,6 +582,8 @@ namespace ZFC
     lcm_multiple_left_Omega
     lcm_multiple_right_Omega
     lcm_comm_Omega
+    lcm_zero_right_Omega
+    lcm_zero_left_Omega
   )
 
 end ZFC

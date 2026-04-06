@@ -212,6 +212,38 @@ namespace ZFC
       exact (congrArg (fromPeano : Peano.ℕ₀ → U)
                (Peano.Div.div_of_lt p q h_lt_peano)).trans fromPeano_zero_is_empty
 
+    /-- **Zero Dividend Quotient**: `divOf ∅ a = ∅` natively in ZFC, matching Peano rules. -/
+    theorem divOf_zero_Omega (a : U) (ha : a ∈ (ω:U)) : divOf (∅:U) a = ∅ := by
+      have h_p : (∅ : U) = fromPeano 𝟘 := rfl
+      have hna : IsNat a := mem_Omega_is_Nat a ha
+      have ha_p : a = fromPeano (toPeano a hna) := by
+        exact (fromPeano_toPeano a hna).symm
+      have h_div : fromPeano ((𝟘 / toPeano a hna) : ℕ₀) = divOf (fromPeano 𝟘 : U) (fromPeano (toPeano a hna)) := by
+        exact fromPeano_div 𝟘 (toPeano a hna)
+      rw [← ha_p] at h_div
+      have h_p_eq : (fromPeano 𝟘 : U) = (∅:U) := rfl
+      rw [h_p_eq] at h_div
+      rw [← h_div]
+      let q := toPeano a hna
+      have h_cases : q = 𝟘 ∨ q ≠ 𝟘 := by exact Classical.em (q = 𝟘)
+      cases h_cases with
+      | inl hq =>
+        have hq_typed : toPeano a hna = 𝟘 := hq
+        rw [hq_typed]
+        have h0 : ((𝟘 / 𝟘) : ℕ₀) = 𝟘 := by
+          unfold Peano.Div.div
+          rw [Peano.Div.divMod]
+          rw [dif_pos rfl]
+        rw [h0]
+        rfl
+      | inr hq =>
+        have h_p_q : toPeano a hna = q := rfl
+        rw [h_p_q]
+        have h_lt : Lt 𝟘 q := lt_0_n q hq
+        have h0 : ((𝟘 / q) : ℕ₀) = 𝟘 := div_of_lt 𝟘 q h_lt
+        rw [h0]
+        rfl
+
     /-- **Remainder of lesser**: `m ∈ n → modOf m n = m` (when dividend < divisor, remainder is dividend),
         lifted from Peano (`mod_of_lt`). -/
     theorem mod_of_lt_Omega (m n : U) (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U))
@@ -612,6 +644,7 @@ namespace ZFC
     divMod_eq_Omega
     mod_lt_divisor_Omega
     div_of_lt_Omega
+    divOf_zero_Omega
     mod_of_lt_Omega
     div_le_self_Omega
     -- Section 4: native step function

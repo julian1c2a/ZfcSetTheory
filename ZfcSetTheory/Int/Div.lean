@@ -478,7 +478,40 @@ namespace ZFC
       rw [t1, t2] at h_a_eq
       exact h_a_eq
 
+
+    /-- gcdZ is "associative": gcdZ a (natToInt (gcdZ b c)) = gcdZ (natToInt (gcdZ a b)) c -/
+    theorem gcdZ_assoc (a b c : U) (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U)) (hc : c ∈ (IntSet : U)) :
+        gcdZ a (natToInt (gcdZ b c)) = gcdZ (natToInt (gcdZ a b)) c := by
+      have hab1 : gcdZ a b ∈ (ω : U) := gcdZ_in_omega a b ha hb
+      have hab2 : gcdZ b c ∈ (ω : U) := gcdZ_in_omega b c hb hc
+      have habs_ab : absZ (natToInt (gcdZ a b)) = gcdZ a b := absZ_natToInt _ hab1
+      have habs_bc : absZ (natToInt (gcdZ b c)) = gcdZ b c := absZ_natToInt _ hab2
+      unfold gcdZ
+      rw [habs_bc, habs_ab]
+      exact ZFC.Nat.Gcd.gcd_assoc_Omega (absZ a) (absZ b) (absZ c) (absZ_in_omega a ha) (absZ_in_omega b hb) (absZ_in_omega c hc)
+
+    /-- lcmZ a 0 = 0 -/
+    theorem lcmZ_zero_right (a : U) (ha : a ∈ (IntSet : U)) :
+        lcmZ a zeroZ = (∅ : U) := by
+      unfold lcmZ
+      rw [absZ_zero]
+      exact Nat.Gcd.lcm_zero_right_Omega (absZ a) (absZ_in_omega a ha)
+
+    /-- lcmZ 0 b = 0 -/
+    theorem lcmZ_zero_left (b : U) (hb : b ∈ (IntSet : U)) :
+        lcmZ zeroZ b = (∅ : U) := by
+      unfold lcmZ
+      rw [absZ_zero]
+      exact Nat.Gcd.lcm_zero_left_Omega (absZ b) (absZ_in_omega b hb)
+
+    /-- Bezout's identity on ℤ. -/
+    theorem bezoutZ (a b : U) (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U)) :
+        ∃ s t : U, s ∈ (IntSet : U) ∧ t ∈ (IntSet : U) ∧
+          natToInt (gcdZ a b) = addZ (mulZ s a) (mulZ t b) := by
+      sorry
+
   end Int.Div
+
 
   export Int.Div (
     gcdZ
@@ -486,10 +519,6 @@ namespace ZFC
     lcmZ
     quotZ
     absZ_natToInt
-    gcdZ_assoc
-    lcmZ_zero_right
-    lcmZ_zero_left
-    bezoutZ
     gcdZ_in_omega
     modZ_in_omega
     quotZ_in_IntSet
@@ -508,10 +537,3 @@ namespace ZFC
   )
 
 end ZFC
-
-
-
-
-
-
-
