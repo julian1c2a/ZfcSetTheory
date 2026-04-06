@@ -41,6 +41,8 @@ License: MIT
 -/
 
 import ZfcSetTheory.Int.Mul
+import ZfcSetTheory.Int.Sub
+import ZfcSetTheory.Int.Ring
 import ZfcSetTheory.Nat.Mul
 
 namespace ZFC
@@ -447,6 +449,24 @@ namespace ZFC
         ltZ x y ↔ leZ x y ∧ x ≠ y := by
       rfl
 
+    theorem ltZ_irrefl (x : U) (_hx : x ∈ (IntSet : U)) : ¬ ltZ x x :=
+      fun h => h.2 rfl
+
+    theorem ltZ_trans (x y z : U)
+        (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) (hz : z ∈ (IntSet : U))
+        (h_xy : ltZ x y) (h_yz : ltZ y z) : ltZ x z :=
+      ⟨leZ_trans x y z hx hy hz h_xy.1 h_yz.1,
+       fun h_eq => h_xy.2 (leZ_antisymm x y hx hy h_xy.1 (h_eq ▸ h_yz.1))⟩
+
+    theorem leZ_iff_ltZ_or_eq (x y : U)
+        (hx : x ∈ (IntSet : U)) (_hy : y ∈ (IntSet : U)) :
+        leZ x y ↔ ltZ x y ∨ x = y :=
+      ⟨fun h => by
+        by_cases h_eq : x = y
+        · exact Or.inr h_eq
+        · exact Or.inl ⟨h, h_eq⟩,
+       fun h => h.elim (fun hlt => hlt.1) (fun heq => heq ▸ leZ_refl x hx)⟩
+
     /-! ### Compatibility with addition -/
 
     /-- Order is compatible with addition: x ≤ y → addZ x z ≤ addZ y z -/
@@ -494,6 +514,16 @@ namespace ZFC
           exact Or.inr (congrArg (add · (add e f)) h_eq)
       exact (leZ_repr_well_defined (add a e) (add b f) a' b' (add c e) (add d f) c' d'
              hae hbf ha' hb' hce hdf hc' hd' h₁ h₂).mp h_base
+
+    /-- Strict order is compatible with addition: x < y → addZ x z < addZ y z -/
+    theorem ltZ_addZ_ltZ (x y z : U)
+        (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) (hz : z ∈ (IntSet : U))
+        (h_lt : ltZ x y) : ltZ (addZ x z) (addZ y z) :=
+      ⟨addZ_leZ_addZ x y z hx hy hz h_lt.1, fun h_eq =>
+        have h1 : Int.Sub.subZ (addZ x z) z = Int.Sub.subZ (addZ y z) z := by rw [h_eq]
+        have h2 : Int.Sub.subZ (addZ x z) z = x := Int.Sub.subZ_addZ_cancel x z hx hz
+        have h3 : Int.Sub.subZ (addZ y z) z = y := Int.Sub.subZ_addZ_cancel y z hy hz
+        h_lt.2 (h2.symm.trans (h1.trans h3))⟩
 
     /-! ### Compatibility with negation -/
 
@@ -672,6 +702,33 @@ namespace ZFC
           (intClass_mem_IntSet ∅ m zero_in_Omega hm) zeroZ_mem_IntSet
           h_neg.1 h_z_nonneg)
 
+    /-- Multiplication by nonpositive flips order: leZ x y → leZ z 0 → leZ (mulZ z y) (mulZ z x) -/
+    theorem mulZ_le_mulZ_nonpos (x y z : U)
+        (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) (hz : z ∈ (IntSet : U))
+        (h_le : leZ x y) (hz_nonpos : leZ z zeroZ) : leZ (mulZ z y) (mulZ z x) := by
+      have hz_neg : negZ z ∈ (IntSet : U) := negZ_in_IntSet z hz
+      have h1 : leZ zeroZ (negZ z) := by
+        have h : leZ (negZ zeroZ) (negZ z) := leZ_negZ z zeroZ hz zeroZ_mem_IntSet hz_nonpos
+        rwa [negZ_zero] at h
+      have h2 : leZ (mulZ (negZ z) x) (mulZ (negZ z) y) :=
+        mulZ_le_mulZ_nonneg x y (negZ z) hx hy hz_neg h_le h1
+      rw [mulZ_negZ_left z x hz hx] at h2
+      rw [mulZ_negZ_left z y hz hy] at h2
+      have h3 : leZ (negZ (negZ (mulZ z y))) (negZ (negZ (mulZ z x))) :=
+        leZ_negZ _ _ (negZ_in_IntSet (mulZ z x) (mulZ_in_IntSet z x hz hx))
+                 (negZ_in_IntSet (mulZ z y) (mulZ_in_IntSet z y hz hy)) h2
+      rwa [negZ_negZ (mulZ z y) (mulZ_in_IntSet z y hz hy),
+           negZ_negZ (mulZ z x) (mulZ_in_IntSet z x hz hx)] at h3
+
+    /-- Strict multiplication by positive preserves strict order: ltZ x y → ltZ 0 z → ltZ (mulZ z x) (mulZ z y) -/
+    theorem mulZ_ltZ_mulZ_pos (x y z : U)
+        (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) (hz : z ∈ (IntSet : U))
+        (h_lt : ltZ x y) (hz_pos : ltZ zeroZ z) : ltZ (mulZ z x) (mulZ z y) := by
+      have h_le : leZ (mulZ z x) (mulZ z y) :=
+        mulZ_le_mulZ_nonneg x y z hx hy hz h_lt.1 hz_pos.1
+      refine ⟨h_le, fun h_eq => h_lt.2 ?_⟩
+      exact Int.Ring.mulZ_cancel_left x y z hx hy hz hz_pos.2.symm h_eq
+
     /-! ### Sign-product closure -/
 
     /-- Positive times positive is positive -/
@@ -773,13 +830,19 @@ export ZFC.Int.Order (
   leZ_antisymm
   leZ_total
   ltZ_iff_leZ_and_ne
+  ltZ_irrefl
+  ltZ_trans
+  leZ_iff_ltZ_or_eq
   addZ_leZ_addZ
+  ltZ_addZ_ltZ
   leZ_negZ
   isPositiveZ
   isNegativeZ
   int_trichotomy_order
   addZ_leZ_addZ_left
   mulZ_le_mulZ_nonneg
+  mulZ_le_mulZ_nonpos
+  mulZ_ltZ_mulZ_pos
   positiveZ_mul_closed
   negativeZ_mul_positive
   positiveZ_negativeZ_mul_negative

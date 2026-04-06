@@ -713,7 +713,7 @@ Listado de errores/omisiones encontrados en THOUGHTS.md que este plan corrige:
 | Ring | 9 | distributividad izq/der (× sobre + y −), mulZ_eq_zero_iff, cancelación izq/der, isUnitZ, unitZ_iff |
 | Sub | 12 | subZ con identidades, inversos, cancelaciones, asociatividad mixta |
 | DivMod | 14 | dividesZ, reflexividad, transitividad, zero, negación, multiplicación, one_dividesZ, add, sub |
-| Order | 21 | leZ, ltZ, representantes, buena definición, reflexividad, transitividad, antisimetría, totalidad, ltZ_iff, compatibilidad +/×, isPositiveZ, isNegativeZ, tricotomía, signo de productos |
+| Order | 27 | leZ, ltZ, representantes, buena definición, reflexividad, transitividad, antisimetría, totalidad, ltZ_iff, compatibilidad +/×, isPositiveZ, isNegativeZ, tricotomía, signo de productos, ltZ_irrefl, ltZ_trans, etc. |
 | Embedding | 16 | natToInt, grafo, clausura, función, inyectividad, preserva +/×/≤, refleja ≤, no suryectiva, zigzag biyección, equipotencia |
 | Abs | 17 | absZ, signZ, zero, intClass pos/neg, clausura ω, eq_zero_iff, negZ, mulZ, sign values/closure/decomposition, mulZ sign, absZ_addZ_le (triangular) |
 | Div | 16 | gcdZ, modZ, lcmZ, clausura ω, conmutatividad, zero, modZ_lt_absZ, gcdZ divide izq/der, gcdZ_is_greatest, dividesZ_antisymm/antisymm_abs |
@@ -721,17 +721,6 @@ Listado de errores/omisiones encontrados en THOUGHTS.md que este plan corrige:
 | Induction | 4 | int_induction_abs, int_strong_induction_abs, int_well_ordering_abs, int_induction_nonneg |
 
 ### Items pendientes por archivo
-
-#### Order.lean — 6 items
-
-| # | Nombre | Enunciado | Dificultad |
-|---|--------|-----------|------------|
-| 1 | `ltZ_irrefl` | `x ∈ IntSet → ¬ ltZ x x` | Baja |
-| 2 | `ltZ_trans` | `ltZ x y → ltZ y z → ltZ x z` | Media |
-| 3 | `leZ_iff_ltZ_or_eq` | `leZ x y ↔ ltZ x y ∨ x = y` | Baja |
-| 4 | `ltZ_addZ_ltZ` | `ltZ x y → ltZ (addZ x z) (addZ y z)` | Baja |
-| 5 | `mulZ_le_mulZ_nonpos` | `leZ x y → leZ z zeroZ → leZ (mulZ z y) (mulZ z x)` (invierte) | Media |
-| 6 | `mulZ_ltZ_mulZ_pos` | `ltZ x y → ltZ zeroZ z → ltZ (mulZ z x) (mulZ z y)` | Media |
 
 #### Abs.lean — 3 items
 
@@ -777,23 +766,21 @@ Listado de errores/omisiones encontrados en THOUGHTS.md que este plan corrige:
 
 | Área | Items pendientes | Dificultad dominante |
 |------|-----------------|---------------------|
-| Order | 6 | Media |
 | Abs | 3 | Baja-Media |
 | Div | 6 | Media-Baja (gracias a puentes Peano/ω) |
 | Pow | 2 | Media |
 | Ring | 2 | Baja-Media |
 | Induction | 2 | Baja-Media |
-| **Total** | **21** | |
+| **Total** | **15** | |
 
 **Nota sobre dificultades en Div**: `bezoutZ`, `euclidean_divisionZ` y `tfa_Z` parecen de dificultad alta a priori, pero la maquinaria pesada (Euclides, factorización prima, unicidad) ya está completamente resuelta en Peano/ω (`bezout_natform_Omega`, `exists/unique_prime_factorization_ZFC`, `divMod_eq`). El trabajo restante es "fontanería de signos": descomponer `z = signZ z · natToInt (absZ z)`, aplicar el resultado de ω sobre `absZ`, y traducir restas truncadas (`sub`) a sumas con negaciones (`addZ + negZ`) vía `natToInt`. Esto reduce las tres a dificultad **media-baja** (~50-80 líneas cada una).
 
-**Prioridad recomendada**: Order (ltZ infraestructura) → Ring (square_nonneg) → Div (bezoutZ + euclidean_divisionZ + tfa_Z) → Pow (powZ_powZ) → Abs → Induction.
+**Prioridad recomendada**: Div (quotZ + euclidean_divisionZ + bezoutZ + tfa_Z) → Ring (square_nonneg) → Pow (powZ_powZ) → Abs → Induction.
 
-Los 3 items de mayor impacto matemático son:
+Los 2 items de mayor impacto matemático son:
 
 1. **`bezoutZ`** — identidad de Bézout, clave para ℚ y primalidad en ℤ
 2. **`tfa_Z`** — TFA en ℤ, cierra la teoría aritmética de enteros
-3. **`ltZ_trans` + `ltZ_irrefl`** — infraestructura de orden estricto, usada en todo ℚ y ℝ
 
 ---
 
@@ -802,11 +789,11 @@ Los 3 items de mayor impacto matemático son:
 | Priority | Task | Status | Módulos |
 |----------|------|--------|---------|
 | **1** | Phase 4: annotation system | ✅ Complete | — |
-| **2** | Phase 5: Enteros ℤ | ✅ 183 exports, 0 sorry — 20 items opcionales pendientes | 15 archivos completos |
+| **2** | Phase 5: Enteros ℤ | ✅ 189 exports, 0 sorry — 15 items opcionales pendientes | 15 archivos completos |
 | **3** | Phase 6: Racionales ℚ | 📋 Planificado | ~9 nuevos |
 | **4** | Phase 7: Reales ℝ | 📋 Esquemático | ~8-15 nuevos |
 | **5** | Gödel's Incompleteness | 📋 Futuro | TBD |
 
 ---
 
-*Updated 2026-04-06. 75 build jobs, 0 sorry, 0 errores. Phase 5 (ℤ) sustancialmente completa: 15 archivos, 183 exports. 21 items opcionales pendientes (§2.14), la mayoría de dificultad baja-media gracias a puentes Peano/ω existentes. Next: completar ltZ infraestructura + bezoutZ + tfa_Z, o comenzar Phase 6 (ℚ).*
+*Updated 2026-04-06. 75 build jobs, 0 sorry, 0 errores. Phase 5 (ℤ) sustancialmente completa: 15 archivos, 189 exports. 15 items opcionales pendientes (§2.14), la mayoría de dificultad baja-media gracias a puentes Peano/ω existentes. Next: completar euclidean_divisionZ + bezoutZ + tfa_Z, o comenzar Phase 6 (ℚ).*
