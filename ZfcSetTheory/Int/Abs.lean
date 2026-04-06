@@ -30,6 +30,7 @@ License: MIT
   * `signZ_values` — sign(x) ∈ {1, −1, 0}
   * `signZ_mulZ_absZ` — x = sign(x) · natToInt(|x|)
   * `signZ_mulZ` — sign(x · y) = sign(x) · sign(y)
+  * `signZ_square` — sign(x) · sign(x) = 1 if x ≠ 0
 -/
 
 import ZfcSetTheory.Int.Order
@@ -409,6 +410,24 @@ namespace ZFC
             · exact hn_ne rfl
             · exact hm_ne rfl)
 
+    /-- signZ a * signZ a = 1 if a ≠ 0. -/
+    theorem signZ_square (a : U) (ha : a ∈ (IntSet : U)) (ha_ne : a ≠ zeroZ) :
+        mulZ (signZ a) (signZ a) = (oneZ : U) := by
+      have hs := signZ_values a ha
+      rcases hs with h1 | h2 | h3
+      · rw [h1]
+        exact mulZ_one_left (oneZ : U) oneZ_mem_IntSet
+      · rw [h2]
+        have eq1 : mulZ (negZ (oneZ : U)) (negZ (oneZ : U)) = mulZ (oneZ : U) (oneZ : U) := negZ_mulZ_negZ (oneZ : U) (oneZ : U) oneZ_mem_IntSet oneZ_mem_IntSet
+        rw [eq1]
+        exact mulZ_one_left (oneZ : U) oneZ_mem_IntSet
+      · exfalso
+        have e1 : a = mulZ (signZ a) (natToInt (absZ a)) := signZ_mulZ_absZ a ha
+        rw [h3] at e1
+        have e2 : mulZ zeroZ (natToInt (absZ a)) = zeroZ := mulZ_zero_left _ (natToInt_mem_IntSet _ (absZ_in_omega a ha))
+        rw [e2] at e1
+        exact ha_ne e1
+
     -- =========================================================================
     -- Section 4: Triangle Inequality
     -- =========================================================================
@@ -549,6 +568,7 @@ namespace ZFC
     signZ_in_IntSet
     signZ_mulZ_absZ
     signZ_mulZ
+    signZ_square
     absZ_addZ_le
   )
 

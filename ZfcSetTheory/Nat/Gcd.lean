@@ -455,6 +455,53 @@ namespace ZFC
       rw [gcd_eq_gcdOf a b ha hb, gcd_eq_gcdOf b a hb ha]
       exact gcdOf_comm_Omega a b ha hb
 
+    theorem gcd_assoc_Omega (a b c : U) (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U)) (hc : c ∈ (ω : U)) :
+        gcd a (gcd b c) = gcd (gcd a b) c := by
+      let g1 := gcd a (gcd b c)
+      let g2 := gcd (gcd a b) c
+      have hg1 : g1 ∈ (ω : U) := gcd_in_Omega a (gcd b c) ha (gcd_in_Omega b c hb hc)
+      have hg2 : g2 ∈ (ω : U) := gcd_in_Omega (gcd a b) c (gcd_in_Omega a b ha hb) hc
+      apply antisymm_divides_Omega g1 g2 hg1 hg2
+      · apply gcd_greatest_Omega (gcd a b) c g1 (gcd_in_Omega a b ha hb) hc hg1
+        · apply gcd_greatest_Omega a b g1 ha hb hg1
+          · exact gcd_divides_left_Omega a (gcd b c) ha (gcd_in_Omega b c hb hc)
+          · have h1 := gcd_divides_right_Omega a (gcd b c) ha (gcd_in_Omega b c hb hc)
+            have h2 := gcd_divides_left_Omega b c hb hc
+            exact divides_trans_Omega g1 (gcd b c) b hg1 (gcd_in_Omega b c hb hc) hb h1 h2
+        · have h1 := gcd_divides_right_Omega a (gcd b c) ha (gcd_in_Omega b c hb hc)
+          have h2 := gcd_divides_right_Omega b c hb hc
+          exact divides_trans_Omega g1 (gcd b c) c hg1 (gcd_in_Omega b c hb hc) hc h1 h2
+      · apply gcd_greatest_Omega a (gcd b c) g2 ha (gcd_in_Omega b c hb hc) hg2
+        · have h1 := gcd_divides_left_Omega (gcd a b) c (gcd_in_Omega a b ha hb) hc
+          have h2 := gcd_divides_left_Omega a b ha hb
+          exact divides_trans_Omega g2 (gcd a b) a hg2 (gcd_in_Omega a b ha hb) ha h1 h2
+        · apply gcd_greatest_Omega b c g2 hb hc hg2
+          · have h1 := gcd_divides_left_Omega (gcd a b) c (gcd_in_Omega a b ha hb) hc
+            have h2 := gcd_divides_right_Omega a b ha hb
+            exact divides_trans_Omega g2 (gcd a b) b hg2 (gcd_in_Omega a b ha hb) hb h1 h2
+          · exact gcd_divides_right_Omega (gcd a b) c (gcd_in_Omega a b ha hb) hc
+
+    theorem bezout_natform_Omega (a b : U) (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U)) :
+        ∃ n m : U, n ∈ (ω : U) ∧ m ∈ (ω : U) ∧
+          (gcd a b = sub (mul n a) (mul m b) ∨ gcd a b = sub (mul n b) (mul m a)) := by
+      obtain ⟨p, hp⟩ := fromPeano_surjective a (mem_Omega_is_Nat a ha)
+      obtain ⟨q, hq⟩ := fromPeano_surjective b (mem_Omega_is_Nat b hb)
+      subst hp; subst hq
+      obtain ⟨n_peano, m_peano, h_bez⟩ := Peano.Arith.bezout_natform p q
+      exact ⟨fromPeano n_peano, fromPeano m_peano, Nat_in_Omega _ (fromPeano_is_nat n_peano), Nat_in_Omega _ (fromPeano_is_nat m_peano), by
+        rw [← fromPeano_mul, ← fromPeano_mul, ← fromPeano_mul, ← fromPeano_mul]
+        rw [← fromPeano_sub, ← fromPeano_sub]
+        rw [gcd_eq_gcdOf]
+        · change gcdOf (fromPeano p) (fromPeano q) = fromPeano (Peano.Sub.sub (Peano.Mul.mul n_peano p) (Peano.Mul.mul m_peano q)) ∨
+                 gcdOf (fromPeano p) (fromPeano q) = fromPeano (Peano.Sub.sub (Peano.Mul.mul n_peano q) (Peano.Mul.mul m_peano p))
+          rw [← fromPeano_gcd]
+          cases h_bez with
+          | inl h => left; rw [h]
+          | inr h => right; rw [h]
+        · exact Nat_in_Omega _ (fromPeano_is_nat p)
+        · exact Nat_in_Omega _ (fromPeano_is_nat q)
+      ⟩
+
     -- =========================================================================
     -- §10  LCM
     -- =========================================================================
@@ -514,6 +561,8 @@ namespace ZFC
     gcd_divides_right_Omega
     gcd_greatest_Omega
     gcd_comm_Omega
+    gcd_assoc_Omega
+    bezout_natform_Omega
     -- LCM properties
     lcm_in_Omega
     lcm_eq_lcmOf

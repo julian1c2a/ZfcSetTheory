@@ -24,6 +24,8 @@ License: MIT
   * `gcdZ_dividesZ_right` — natToInt (gcdZ a b) | b
   * `gcdZ_is_greatest` — d | a → d | b → d | natToInt (gcdZ a b)
   * `modZ_in_omega` — modZ a b ∈ ω
+  * `quotZ_in_IntSet` — quotZ a b ∈ ℤ
+  * `euclidean_divisionZ` — a = addZ (mulZ (quotZ a b) b) (mulZ (signZ a) (natToInt (modZ a b)))
   * `dividesZ_antisymm_abs` — a | b → b | a → absZ a = absZ b
   * `dividesZ_antisymm` — a | b → b | a → a = b ∨ a = negZ b
   * `lcmZ_in_omega` — lcmZ a b ∈ ω
@@ -56,6 +58,7 @@ namespace ZFC
   open ZFC.Nat.Gcd
   open ZFC.Int.Equiv
   open ZFC.Int.Basic
+  open ZFC.Int.Abs
   open ZFC.Int.Add
   open ZFC.Int.Neg
   open ZFC.Int.Mul
@@ -80,6 +83,10 @@ namespace ZFC
     /-- Remainder on ℤ, defined as modOf of absolute values. Result is in ω. -/
     noncomputable def modZ (a b : U) : U := modOf (absZ a) (absZ b)
 
+    /-- Quotient on ℤ, using the sign rule. Result is in ℤ. -/
+    noncomputable def quotZ (a b : U) : U :=
+      mulZ (mulZ (signZ a) (signZ b)) (natToInt (divOf (absZ a) (absZ b)))
+
     /-! ### Closure -/
 
     /-- gcdZ a b ∈ ω for a, b ∈ ℤ. -/
@@ -95,6 +102,15 @@ namespace ZFC
         modZ a b ∈ (ω : U) := by
       unfold modZ
       exact modOf_in_Omega (absZ a) (absZ b) (absZ_in_omega a ha) (absZ_in_omega b hb)
+
+    /-- quotZ a b ∈ ℤ for a, b ∈ ℤ. -/
+    theorem quotZ_in_IntSet (a b : U)
+        (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U)) :
+        quotZ a b ∈ (IntSet : U) := by
+      unfold quotZ
+      exact mulZ_in_IntSet (mulZ (signZ a) (signZ b)) (natToInt (divOf (absZ a) (absZ b)))
+        (mulZ_in_IntSet (signZ a) (signZ b) (signZ_in_IntSet a ha) (signZ_in_IntSet b hb))
+        (natToInt_mem_IntSet (divOf (absZ a) (absZ b)) (divOf_in_Omega (absZ a) (absZ b) (absZ_in_omega a ha) (absZ_in_omega b hb)))
 
     /-! ### Basic properties -/
 
@@ -146,7 +162,7 @@ namespace ZFC
         rw [h_eq, natToInt_preserves_mul k q hk hq]⟩
 
     /-- absZ (natToInt n) = n for n ∈ ω. -/
-    private theorem absZ_natToInt (n : U) (hn : n ∈ (ω : U)) :
+      theorem absZ_natToInt (n : U) (hn : n ∈ (ω : U)) :
         absZ (natToInt n) = n := by
       unfold natToInt
       exact absZ_intClass_pos n hn
@@ -373,10 +389,94 @@ namespace ZFC
         left; rw [ha_eq, hb_eq, h_abs_eq]
       · -- a = natToInt n, b = negZ (natToInt n)
         right; rw [ha_eq, hb_eq, h_abs_eq]
+        exact (negZ_negZ _ (natToInt_mem_IntSet _ (absZ_in_omega _ hb))).symm
       · -- a = negZ (natToInt n), b = natToInt n
         right; rw [ha_eq, hb_eq, h_abs_eq]
       · -- a = negZ (natToInt n), b = negZ (natToInt n)
         left; rw [ha_eq, hb_eq, h_abs_eq]
+
+    -- =========================================================================
+    -- Section 8: Euclidean Division on ℤ
+    -- =========================================================================
+
+    /-- Euclidean division theorem on ℤ. -/
+    theorem euclidean_divisionZ (a b : U)
+        (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U))
+        (h_b_neq_zero : b ≠ zeroZ) :
+        a = addZ (mulZ (quotZ a b) b) (mulZ (signZ a) (natToInt (modZ a b))) := by
+      have ha_omega := absZ_in_omega a ha
+      have hb_omega := absZ_in_omega b hb
+      have h_ab_ne : absZ b ≠ (∅ : U) := fun heq => h_b_neq_zero ((absZ_eq_zero_iff b hb).mp heq)
+      have h_euclid := divMod_eq_Omega (absZ a) (absZ b) ha_omega hb_omega h_ab_ne
+      have hn_euclid := congrArg natToInt h_euclid
+      have h_q_om := divOf_in_Omega (absZ a) (absZ b) ha_omega hb_omega
+      have h_r_om := modOf_in_Omega (absZ a) (absZ b) ha_omega hb_omega
+      have h_prod_om := mul_in_Omega (divOf (absZ a) (absZ b)) (absZ b) h_q_om hb_omega
+      have h_qo_in := natToInt_mem_IntSet _ h_q_om
+      have h_bo_in := natToInt_mem_IntSet _ hb_omega
+      have h_ro_in := natToInt_mem_IntSet _ h_r_om
+      have h_sa_in := signZ_in_IntSet a ha
+      have h_sb_in := signZ_in_IntSet b hb
+
+      -- Rewrite in hn_euclid:
+      have eq1 : natToInt (add (mul (divOf (absZ a) (absZ b)) (absZ b)) (modOf (absZ a) (absZ b))) =
+                 addZ (mulZ (natToInt (divOf (absZ a) (absZ b))) (natToInt (absZ b))) (natToInt (modOf (absZ a) (absZ b))) := by
+        rw [natToInt_preserves_add _ _ h_prod_om h_r_om]
+        rw [natToInt_preserves_mul _ _ h_q_om hb_omega]
+      rw [eq1] at hn_euclid
+      have hmodZ_eq : natToInt (modZ a b) = natToInt (modOf (absZ a) (absZ b)) := by rfl
+      rw [← hmodZ_eq] at hn_euclid
+
+      -- Start with a = signZ a * (absZ a) via signZ_mulZ_absZ
+      have h_a_eq := signZ_mulZ_absZ a ha
+      rw [hn_euclid] at h_a_eq
+      have eq2 : mulZ (signZ a) (addZ (mulZ (natToInt (divOf (absZ a) (absZ b))) (natToInt (absZ b))) (natToInt (modZ a b))) =
+                 addZ (mulZ (signZ a) (mulZ (natToInt (divOf (absZ a) (absZ b))) (natToInt (absZ b))))
+                      (mulZ (signZ a) (natToInt (modZ a b))) := by
+        exact mulZ_addZ_distrib_left (signZ a) _ _ h_sa_in (mulZ_in_IntSet _ _ h_qo_in h_bo_in) h_ro_in
+      rw [eq2] at h_a_eq
+
+      have h_b_eq := signZ_mulZ_absZ b hb
+      have h_absb : natToInt (absZ b) = mulZ (signZ b) b := by
+        have tmp : mulZ (signZ b) b = mulZ (signZ b) (mulZ (signZ b) (natToInt (absZ b))) := by
+          exact congrArg (mulZ (signZ b)) h_b_eq
+        have eq3 : mulZ (signZ b) (mulZ (signZ b) (natToInt (absZ b))) =
+                   mulZ (mulZ (signZ b) (signZ b)) (natToInt (absZ b)) :=
+          Eq.symm (mulZ_assoc (signZ b) (signZ b) _ h_sb_in h_sb_in h_bo_in)
+        have step2 : mulZ (signZ b) b = mulZ (mulZ (signZ b) (signZ b)) (natToInt (absZ b)) := by
+          rw [tmp, eq3]
+        have step3 : mulZ (mulZ (signZ b) (signZ b)) (natToInt (absZ b)) = mulZ oneZ (natToInt (absZ b)) := by
+          rw [signZ_square b hb h_b_neq_zero]
+        have step4 : mulZ oneZ (natToInt (absZ b)) = natToInt (absZ b) := by
+          rw [mulZ_one_left _ h_bo_in]
+        rw [step2, step3, step4]
+
+      -- Now substitute h_absb into the quotient term:
+      have t1 : mulZ (signZ a) (mulZ (natToInt (divOf (absZ a) (absZ b))) (natToInt (absZ b))) =
+                mulZ (signZ a) (mulZ (natToInt (divOf (absZ a) (absZ b))) (mulZ (signZ b) b)) := by
+        rw [h_absb]
+
+      -- Rearrange to get quotZ a b = signZ a * signZ b * qx
+      have t2 : mulZ (signZ a) (mulZ (natToInt (divOf (absZ a) (absZ b))) (mulZ (signZ b) b)) =
+                mulZ (mulZ (mulZ (signZ a) (signZ b)) (natToInt (divOf (absZ a) (absZ b)))) b := by
+        have e1 : mulZ (natToInt (divOf (absZ a) (absZ b))) (mulZ (signZ b) b) =
+                  mulZ (mulZ (natToInt (divOf (absZ a) (absZ b))) (signZ b)) b :=
+          Eq.symm (mulZ_assoc _ _ _ h_qo_in h_sb_in hb)
+        rw [e1]
+        have e2 : mulZ (signZ a) (mulZ (mulZ (natToInt (divOf (absZ a) (absZ b))) (signZ b)) b) =
+                  mulZ (mulZ (signZ a) (mulZ (natToInt (divOf (absZ a) (absZ b))) (signZ b))) b :=
+          Eq.symm (mulZ_assoc _ _ _ h_sa_in (mulZ_in_IntSet _ _ h_qo_in h_sb_in) hb)
+        rw [e2]
+        have e3 : mulZ (natToInt (divOf (absZ a) (absZ b))) (signZ b) = mulZ (signZ b) (natToInt (divOf (absZ a) (absZ b))) :=
+          mulZ_comm _ _ h_qo_in h_sb_in
+        rw [e3]
+        have e4 : mulZ (signZ a) (mulZ (signZ b) (natToInt (divOf (absZ a) (absZ b)))) =
+                  mulZ (mulZ (signZ a) (signZ b)) (natToInt (divOf (absZ a) (absZ b))) :=
+          Eq.symm (mulZ_assoc _ _ _ h_sa_in h_sb_in h_qo_in)
+        rw [e4]
+
+      rw [t1, t2] at h_a_eq
+      exact h_a_eq
 
   end Int.Div
 
@@ -384,8 +484,16 @@ namespace ZFC
     gcdZ
     modZ
     lcmZ
+    quotZ
+    absZ_natToInt
+    gcdZ_assoc
+    lcmZ_zero_right
+    lcmZ_zero_left
+    bezoutZ
     gcdZ_in_omega
     modZ_in_omega
+    quotZ_in_IntSet
+    euclidean_divisionZ
     lcmZ_in_omega
     gcdZ_comm
     gcdZ_zero_right
@@ -400,3 +508,10 @@ namespace ZFC
   )
 
 end ZFC
+
+
+
+
+
+
+

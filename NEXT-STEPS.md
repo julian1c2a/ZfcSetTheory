@@ -730,12 +730,12 @@ Listado de errores/omisiones encontrados en THOUGHTS.md que este plan corrige:
 | 2 | `absZ_subZ_le` | `absZ (subZ x y) ⊆ add (absZ x) (absZ y)` o equivalente | Media |
 | 3 | `absZ_mulZ_nonneg` | `leZ zeroZ (natToInt (absZ x))` | Baja |
 
-#### Div.lean — 6 items
+#### Div.lean — 4 items
 
 | # | Nombre | Enunciado | Dificultad | Notas |
 |---|--------|-----------|------------|-------|
-| 1 | `quotZ` | `noncomputable def quotZ (a b : U) : U` — cociente entero euclidiano | Baja | Definir vía `mulZ (mulZ (signZ a) (signZ b)) (natToInt (divOf (absZ a) (absZ b)))` |
-| 2 | `euclidean_divisionZ` | `b ≠ zeroZ → a = addZ (mulZ (quotZ a b) b) (mulZ (signZ a) (natToInt (modZ a b)))` | Media-Baja | Levantar `divMod_eq_Omega` sobre `absZ a`, `absZ b`; usar `signZ_mulZ_absZ` + `natToInt_preserves_add/mul`; fontanería de signos (~40-60 líneas) |
+| 1 | `quotZ`          | Completado                                                  | ✅ Completo |
+| 2 | `euclidean_divisionZ`| Completado                                                  | ✅ Completo |
 | 3 | `bezoutZ` | `∃ s t ∈ IntSet, natToInt (gcdZ a b) = addZ (mulZ s a) (mulZ t b)` — Bézout | Media-Baja | Levantar `bezout_natform_Omega` sobre `absZ m`, `absZ n`; convertir `sub` → `addZ + negZ` vía `natToInt` |
 | 4 | `gcdZ_assoc` | `gcdZ a (gcdZ b c) = gcdZ (gcdZ a b) c` (vía gcd_assoc en ω) | Baja | Directo de `gcd_assoc_Omega` + definición `gcdZ` |
 | 5 | `lcmZ_zero` | `lcmZ a zeroZ = (∅ : U)` y `lcmZ zeroZ b = (∅ : U)` | Baja | |

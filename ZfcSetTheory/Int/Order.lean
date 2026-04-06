@@ -520,9 +520,9 @@ namespace ZFC
         (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) (hz : z ∈ (IntSet : U))
         (h_lt : ltZ x y) : ltZ (addZ x z) (addZ y z) :=
       ⟨addZ_leZ_addZ x y z hx hy hz h_lt.1, fun h_eq =>
-        have h1 : Int.Sub.subZ (addZ x z) z = Int.Sub.subZ (addZ y z) z := by rw [h_eq]
-        have h2 : Int.Sub.subZ (addZ x z) z = x := Int.Sub.subZ_addZ_cancel x z hx hz
-        have h3 : Int.Sub.subZ (addZ y z) z = y := Int.Sub.subZ_addZ_cancel y z hy hz
+        have h1 : subZ (addZ x z) z = subZ (addZ y z) z := by rw [h_eq]
+        have h2 : subZ (addZ x z) z = x := subZ_addZ_cancel x z hx hz
+        have h3 : subZ (addZ y z) z = y := subZ_addZ_cancel y z hy hz
         h_lt.2 (h2.symm.trans (h1.trans h3))⟩
 
     /-! ### Compatibility with negation -/
@@ -847,3 +847,5 @@ export ZFC.Int.Order (
   negativeZ_mul_positive
   positiveZ_negativeZ_mul_negative
 )
+
+
