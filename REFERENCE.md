@@ -3724,15 +3724,15 @@ noncomputable def pow (m n : U) : U :=
 
 ### 3.28 Nat.Arith.lean
 
-**Módulo**: `ZfcSetTheory.Nat.Arith`
+**Módulo**: `ZFC.Nat.Arith`
 **Namespace**: `ZFC.Nat.Arith`
 **Dependencias**: `Nat.Basic`, `Infinity`, `Recursion`, `PeanoImport`, `Nat.Add`, `Nat.Mul`, `Nat.Sub`, `Nat.Div`, `PeanoNatLib.PeanoNatArith`
-**Actualizado**: 2026-03-22
+**Actualizado**: 2026-04-22
 **Descripción**: Define divisibilidad en ZFC directamente y construye `div`/`mod` nativos con Patrón RecursiveFn (función de paso `divMod_stepFn`). Conecta con `divOf`/`modOf` mediante unicidad de la división euclídea. Define `gcdOf`/`lcmOf` con Patrón B (bridge-only). Prueba el teorema de Bézout (forma substractiva). No incluye Teorema Fundamental de la Aritmética (FTA se aplaza para módulo futuro de primalidad).
 
 #### Predicado de divisibilidad (divides)
 
-**Ubicación**: `Nat.Arith.lean`, línea 68
+**Ubicación**: `Nat.Arith.lean`, línea 73
 **Orden**: 1ª definición
 
 **Enunciado Matemático**: `divides m n` iff ∃ k ∈ ω tal que n = m * k.
@@ -3747,7 +3747,7 @@ def divides (m n : U) : Prop := ∃ k : U, k ∈ (ω : U) ∧ n = mul m k
 
 #### División euclídea nativa ZFC (div)
 
-**Ubicación**: `Nat.Arith.lean`, línea 377
+**Ubicación**: `Nat.Arith.lean`, línea 383
 **Orden**: 2ª definición pública
 
 **Enunciado Matemático**: `div m n = ⌊m / n⌋` definido vía `RecursiveFn` en ω×ω con función de paso `divMod_stepFn n`.
@@ -3766,7 +3766,7 @@ noncomputable def div (m n : U) : U :=
 
 #### Resto euclídeo nativo ZFC (mod)
 
-**Ubicación**: `Nat.Arith.lean`, línea 385
+**Ubicación**: `Nat.Arith.lean`, línea 391
 **Orden**: 3ª definición pública
 
 **Firma Lean4**:
@@ -3783,7 +3783,7 @@ noncomputable def mod (m n : U) : U :=
 
 #### MCD (gcdOf)
 
-**Ubicación**: `Nat.Arith.lean`, línea 640
+**Ubicación**: `Nat.Arith.lean`, línea 644
 **Orden**: 4ª definición pública
 
 **Enunciado Matemático**: `gcdOf m n = mcd(m, n)` definido por Patrón B vía isomorfismo.
@@ -3805,7 +3805,7 @@ noncomputable def gcdOf (m n : U) : U :=
 
 #### MCM (lcmOf)
 
-**Ubicación**: `Nat.Arith.lean`, línea 649
+**Ubicación**: `Nat.Arith.lean`, línea 653
 **Orden**: 5ª definición pública
 
 **Firma Lean4**:
@@ -9815,7 +9815,7 @@ theorem fromPeano_le_iff (p q : Peano.ℕ₀) :
 | `lcmOf_multiple_left_Omega` | m ∣ lcm(m,n) | `theorem lcmOf_multiple_left_Omega (m n : U) (hm hn) : divides m (lcmOf m n)` |
 | `lcmOf_multiple_right_Omega` | n ∣ lcm(m,n) | `theorem lcmOf_multiple_right_Omega (m n : U) (hm hn) : divides n (lcmOf m n)` |
 | `lcmOf_comm_Omega` | lcm(m,n) = lcm(n,m) | `theorem lcmOf_comm_Omega (m n : U) (hm hn) : lcmOf m n = lcmOf n m` |
-| `bezout_natform_Omega` | ∃ a b, a*m − b*n = gcd(m,n) ∨ a*n − b*m = gcd(m,n) | `theorem bezout_natform_Omega (m n : U) (hm hn) : ∃ mp np : U, (mp ∈ ω ∧ np ∈ ω) ∧ (sub (mul mp m) (mul np n) = gcdOf m n ∨ sub (mul np n) (mul mp m) = gcdOf m n)` |
+| `bezout_natform_Omega` | ∃ a b, gcd(m,n) = a·m − b·n ∨ gcd(m,n) = a·n − b·m | `theorem bezout_natform_Omega (m n : U) (hm hn) : ∃ a b : U, (a ∈ (ω : U)) ∧ (b ∈ (ω : U)) ∧ (gcdOf m n = sub (mul a m) (mul b n) ∨ gcdOf m n = sub (mul a n) (mul b m))` |
 
 **Dependencias**: `fromPeano_surjective`, `fromPeano_injective`, `fromPeano_mul`, `fromPeano_add`, `fromPeano_sub`, `fromPeano_mod`, `fromPeano_le_iff`, `fromPeano_lt_iff`, `Peano.Arith.*`, `divides`, `mul`, `add`, `sub`, `modOf`, `gcdOf`, `lcmOf`
 
@@ -12798,7 +12798,7 @@ export Nat.Pow (
 ### 6.24 Nat.Arith.lean
 
 **Namespace**: `ZFC.Nat.Arith` (exportado a `ZFC`)
-**Última modificación**: 2026-03-22
+**Última modificación**: 2026-04-22
 **Dependencias**: `Nat.Basic`, `Infinity`, `Recursion`, `PeanoImport`, `Nat.Add`, `Nat.Mul`, `Nat.Sub`, `Nat.Div`, `PeanoNatLib.PeanoNatArith`
 
 ```lean
