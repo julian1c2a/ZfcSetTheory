@@ -504,11 +504,175 @@ namespace ZFC
       rw [absZ_zero]
       exact Nat.Gcd.lcm_zero_left_Omega (absZ b) (absZ_in_omega b hb)
 
-    /-- Bezout's identity on ℤ. -/
+    -- =========================================================================
+    -- Section 5: Bezout's identity on ℤ
+    -- =========================================================================
+
+    /-- Bridge: `natToInt (absZ a) = signZ a * a`. -/
+    private theorem bezout_natToInt_absZ_eq (a : U) (ha : a ∈ (IntSet : U)) :
+        natToInt (absZ a) = mulZ (signZ a) a := by
+      have habs_mem := natToInt_mem_IntSet (absZ a) (absZ_in_omega a ha)
+      have hsign_mem := signZ_in_IntSet a ha
+      have h_eq := signZ_mulZ_absZ a ha  -- a = mulZ (signZ a) (natToInt (absZ a))
+      by_cases h_zero : a = zeroZ
+      · rw [h_zero, signZ_zero, absZ_zero, mulZ_zero_left zeroZ zeroZ_mem_IntSet]
+        rfl
+      · have hsq := signZ_square a ha h_zero
+        calc natToInt (absZ a)
+            = mulZ oneZ (natToInt (absZ a))                        := (mulZ_one_left _ habs_mem).symm
+          _ = mulZ (mulZ (signZ a) (signZ a)) (natToInt (absZ a)) := by rw [hsq]
+          _ = mulZ (signZ a) (mulZ (signZ a) (natToInt (absZ a))) :=
+                mulZ_assoc _ _ _ hsign_mem hsign_mem habs_mem
+          _ = mulZ (signZ a) a                                     := by rw [← h_eq]
+
+    /-- Bridge: `natToInt (sub x y) = subZ (natToInt x) (natToInt y)` when `y ≤ x`. -/
+    private theorem bezout_natToInt_sub_eq (x y : U) (hx : x ∈ ω) (hy : y ∈ ω)
+        (hle : y ∈ x ∨ y = x) :
+        natToInt (sub x y) = subZ (natToInt x) (natToInt y) := by
+      have hs_mem := sub_in_Omega x y hx hy
+      have h_int_s := natToInt_mem_IntSet (sub x y) hs_mem
+      have h_int_y := natToInt_mem_IntSet y hy
+      -- addZ (natToInt (sub x y)) (natToInt y) = natToInt x
+      have h1 : addZ (natToInt (sub x y)) (natToInt y) = natToInt x := by
+        rw [← natToInt_preserves_add (sub x y) y hs_mem hy,
+            add_k_sub_k_Omega x y hx hy hle]
+      -- Cancel natToInt y: add negZ (natToInt y) to both sides, then simplify
+      have h2 : addZ (addZ (natToInt (sub x y)) (natToInt y)) (negZ (natToInt y)) =
+                addZ (natToInt x) (negZ (natToInt y)) := by rw [h1]
+      rw [addZ_assoc _ _ _ h_int_s h_int_y (negZ_in_IntSet _ h_int_y),
+          addZ_negZ_right _ h_int_y, addZ_zero_right _ h_int_s] at h2
+      exact h2
+
+    /-- Bezout case 1: gcd = n·|a| - m·|b|. Witnesses: s = n·sign(a), t = -m·sign(b). -/
+    private theorem bezout_case1 (a b : U) (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U))
+        (n m : U) (hn : n ∈ ω) (hm : m ∈ ω)
+        (heq : gcd (absZ a) (absZ b) = sub (mul n (absZ a)) (mul m (absZ b)))
+        (hle : mul m (absZ b) ∈ mul n (absZ a) ∨ mul m (absZ b) = mul n (absZ a)) :
+        ∃ s t : U, s ∈ (IntSet : U) ∧ t ∈ (IntSet : U) ∧
+          natToInt (gcdZ a b) = addZ (mulZ s a) (mulZ t b) := by
+      have habs_a := absZ_in_omega a ha
+      have habs_b := absZ_in_omega b hb
+      have h_na := mul_in_Omega n (absZ a) hn habs_a
+      have h_mb := mul_in_Omega m (absZ b) hm habs_b
+      have h_in := natToInt_mem_IntSet n hn
+      have h_im := natToInt_mem_IntSet m hm
+      have h_sa := signZ_in_IntSet a ha
+      have h_sb := signZ_in_IntSet b hb
+      have h_ns : mulZ (natToInt n) (signZ a) ∈ (IntSet : U) := mulZ_in_IntSet _ _ h_in h_sa
+      have h_ms : mulZ (natToInt m) (signZ b) ∈ (IntSet : U) := mulZ_in_IntSet _ _ h_im h_sb
+      -- Build h1 step by step using rewrite lemmas
+      have h1 : natToInt (gcdZ a b) =
+                addZ (mulZ (mulZ (natToInt n) (signZ a)) a)
+                     (mulZ (negZ (mulZ (natToInt m) (signZ b))) b) := by
+        unfold gcdZ
+        rw [heq,
+            bezout_natToInt_sub_eq (mul n (absZ a)) (mul m (absZ b)) h_na h_mb hle,
+            natToInt_preserves_mul n (absZ a) hn habs_a,
+            natToInt_preserves_mul m (absZ b) hm habs_b,
+            bezout_natToInt_absZ_eq a ha,
+            bezout_natToInt_absZ_eq b hb,
+            ← mulZ_assoc (natToInt n) (signZ a) a h_in h_sa ha,
+            ← mulZ_assoc (natToInt m) (signZ b) b h_im h_sb hb,
+            show subZ (mulZ (mulZ (natToInt n) (signZ a)) a)
+                      (mulZ (mulZ (natToInt m) (signZ b)) b) =
+                 addZ (mulZ (mulZ (natToInt n) (signZ a)) a)
+                      (negZ (mulZ (mulZ (natToInt m) (signZ b)) b)) from rfl,
+            ← mulZ_negZ_left (mulZ (natToInt m) (signZ b)) b h_ms hb]
+      exact ⟨_, _, h_ns, negZ_in_IntSet _ h_ms, h1⟩
+
+    /-- Bezout case 2: gcd = n·|b| - m·|a|. Witnesses: s = -m·sign(a), t = n·sign(b). -/
+    private theorem bezout_case2 (a b : U) (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U))
+        (n m : U) (hn : n ∈ ω) (hm : m ∈ ω)
+        (heq : gcd (absZ a) (absZ b) = sub (mul n (absZ b)) (mul m (absZ a)))
+        (hle : mul m (absZ a) ∈ mul n (absZ b) ∨ mul m (absZ a) = mul n (absZ b)) :
+        ∃ s t : U, s ∈ (IntSet : U) ∧ t ∈ (IntSet : U) ∧
+          natToInt (gcdZ a b) = addZ (mulZ s a) (mulZ t b) := by
+      have habs_a := absZ_in_omega a ha
+      have habs_b := absZ_in_omega b hb
+      have h_nb := mul_in_Omega n (absZ b) hn habs_b
+      have h_ma := mul_in_Omega m (absZ a) hm habs_a
+      have h_in := natToInt_mem_IntSet n hn
+      have h_im := natToInt_mem_IntSet m hm
+      have h_sa := signZ_in_IntSet a ha
+      have h_sb := signZ_in_IntSet b hb
+      have h_ns : mulZ (natToInt n) (signZ b) ∈ (IntSet : U) := mulZ_in_IntSet _ _ h_in h_sb
+      have h_ms : mulZ (natToInt m) (signZ a) ∈ (IntSet : U) := mulZ_in_IntSet _ _ h_im h_sa
+      have h1 : natToInt (gcdZ a b) =
+                addZ (mulZ (negZ (mulZ (natToInt m) (signZ a))) a)
+                     (mulZ (mulZ (natToInt n) (signZ b)) b) := by
+        unfold gcdZ
+        rw [heq,
+            bezout_natToInt_sub_eq (mul n (absZ b)) (mul m (absZ a)) h_nb h_ma hle,
+            natToInt_preserves_mul n (absZ b) hn habs_b,
+            natToInt_preserves_mul m (absZ a) hm habs_a,
+            bezout_natToInt_absZ_eq b hb,
+            bezout_natToInt_absZ_eq a ha,
+            ← mulZ_assoc (natToInt n) (signZ b) b h_in h_sb hb,
+            ← mulZ_assoc (natToInt m) (signZ a) a h_im h_sa ha,
+            show subZ (mulZ (mulZ (natToInt n) (signZ b)) b)
+                      (mulZ (mulZ (natToInt m) (signZ a)) a) =
+                 addZ (mulZ (mulZ (natToInt n) (signZ b)) b)
+                      (negZ (mulZ (mulZ (natToInt m) (signZ a)) a)) from rfl,
+            ← mulZ_negZ_left (mulZ (natToInt m) (signZ a)) a h_ms ha,
+            addZ_comm _ _ (mulZ_in_IntSet _ _ h_ns hb) (mulZ_in_IntSet _ _ (negZ_in_IntSet _ h_ms) ha)]
+      exact ⟨_, _, negZ_in_IntSet _ h_ms, h_ns, h1⟩
+
+    /-- Bezout's identity on ℤ:
+        ∃ s t ∈ ℤ, natToInt (gcdZ a b) = s·a + t·b. -/
     theorem bezoutZ (a b : U) (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U)) :
         ∃ s t : U, s ∈ (IntSet : U) ∧ t ∈ (IntSet : U) ∧
           natToInt (gcdZ a b) = addZ (mulZ s a) (mulZ t b) := by
-      sorry
+      have habs_a := absZ_in_omega a ha
+      have habs_b := absZ_in_omega b hb
+      obtain ⟨n, m, hn, hm, hor⟩ := Nat.Gcd.bezout_natform_Omega (absZ a) (absZ b) habs_a habs_b
+      -- Lemma: if gcd(|a|,|b|) = 0 then a = b = 0, trivial witnesses s=t=0
+      have trivial_case : gcd (absZ a) (absZ b) = (∅ : U) →
+          ∃ s t : U, s ∈ (IntSet : U) ∧ t ∈ (IntSet : U) ∧
+            natToInt (gcdZ a b) = addZ (mulZ s a) (mulZ t b) := by
+        intro h_gcd_zero
+        have ha0 : a = zeroZ := (absZ_eq_zero_iff a ha).mp
+          ((zero_divides_iff_Omega _ habs_a).mp
+            (h_gcd_zero ▸ gcd_divides_left_Omega (absZ a) (absZ b) habs_a habs_b))
+        have hb0 : b = zeroZ := (absZ_eq_zero_iff b hb).mp
+          ((zero_divides_iff_Omega _ habs_b).mp
+            (h_gcd_zero ▸ gcd_divides_right_Omega (absZ a) (absZ b) habs_a habs_b))
+        have hgcd_eq : gcdZ a b = (∅ : U) := by
+          unfold gcdZ; rw [ha0, hb0, absZ_zero]
+          exact gcd_zero (∅ : U) zero_in_Omega
+        refine ⟨zeroZ, zeroZ, zeroZ_mem_IntSet, zeroZ_mem_IntSet, ?_⟩
+        rw [mulZ_zero_left a ha, mulZ_zero_left b hb,
+            addZ_zero_right zeroZ zeroZ_mem_IntSet, hgcd_eq]
+        -- natToInt ∅ = zeroZ, both definitionally intClass ∅ ∅
+        rfl
+      rcases hor with h1 | h2
+      · -- Case: gcd = n·|a| - m·|b|
+        have h_na := mul_in_Omega n (absZ a) hn habs_a
+        have h_mb := mul_in_Omega m (absZ b) hm habs_b
+        -- Trichotomy on mul m (absZ b) vs mul n (absZ a)
+        rcases trichotomy (mul m (absZ b)) (mul n (absZ a))
+            (mem_Omega_is_Nat _ h_mb) (mem_Omega_is_Nat _ h_na) with hlt | heq | hgt
+        · exact bezout_case1 a b ha hb n m hn hm h1 (Or.inl hlt)
+        · exact bezout_case1 a b ha hb n m hn hm h1 (Or.inr heq)
+        · -- mul n (absZ a) ∈ mul m (absZ b): sub truncates to 0, gcd = 0
+          apply trivial_case
+          have h_sub0 : sub (mul n (absZ a)) (mul m (absZ b)) = (∅ : U) := by
+            apply Classical.byContradiction; intro hne
+            have hmem := (sub_pos_iff_lt_Omega (mul n (absZ a)) (mul m (absZ b)) h_na h_mb).mp hne
+            exact absurd hgt (mem_asymm (mul m (absZ b)) (mul n (absZ a)) (mem_Omega_is_Nat _ h_mb) (mem_Omega_is_Nat _ h_na) hmem)
+          rw [h1, h_sub0]
+      · -- Case: gcd = n·|b| - m·|a|
+        have h_nb := mul_in_Omega n (absZ b) hn habs_b
+        have h_ma := mul_in_Omega m (absZ a) hm habs_a
+        rcases trichotomy (mul m (absZ a)) (mul n (absZ b))
+            (mem_Omega_is_Nat _ h_ma) (mem_Omega_is_Nat _ h_nb) with hlt | heq | hgt
+        · exact bezout_case2 a b ha hb n m hn hm h2 (Or.inl hlt)
+        · exact bezout_case2 a b ha hb n m hn hm h2 (Or.inr heq)
+        · apply trivial_case
+          have h_sub0 : sub (mul n (absZ b)) (mul m (absZ a)) = (∅ : U) := by
+            apply Classical.byContradiction; intro hne
+            have hmem := (sub_pos_iff_lt_Omega (mul n (absZ b)) (mul m (absZ a)) h_nb h_ma).mp hne
+            exact absurd hgt (mem_asymm (mul m (absZ a)) (mul n (absZ b)) (mem_Omega_is_Nat _ h_ma) (mem_Omega_is_Nat _ h_nb) hmem)
+          rw [h2, h_sub0]
 
   end Int.Div
 
@@ -534,6 +698,7 @@ namespace ZFC
     gcdZ_is_greatest
     dividesZ_antisymm_abs
     dividesZ_antisymm
+    bezoutZ
   )
 
 end ZFC
