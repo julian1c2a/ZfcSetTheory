@@ -1,0 +1,14 @@
+import ZFC.Nat.Basic
+import ZFC.Nat.Add
+import ZFC.Nat.Mul
+import ZFC.Nat.Sub
+import ZFC.Nat.Div
+import ZFC.Nat.Pow
+import ZFC.Nat.Arith
+import ZFC.Nat.Factorial
+import ZFC.Nat.Gcd
+import ZFC.Nat.Primes
+import ZFC.Nat.Binom
+import ZFC.Nat.MaxMin
+import ZFC.Nat.NewtonBinom
+import ZFC.Nat.WellFounded

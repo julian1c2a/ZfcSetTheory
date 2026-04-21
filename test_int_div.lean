@@ -1,6 +1,6 @@
-import ZfcSetTheory.Peano.Import
-import ZfcSetTheory.Nat.Div
-import ZfcSetTheory.Nat.Gcd
+import ZFC.Peano.Import
+import ZFC.Nat.Div
+import ZFC.Nat.Gcd
 
 open ZFC
 

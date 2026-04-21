@@ -9,4 +9,4 @@ require peanolib from git
 
 
 @[default_target]
-lean_lib «ZfcSetTheory» where
+lean_lib «ZFC» where

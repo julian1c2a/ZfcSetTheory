@@ -1,2 +1,0 @@
-import ZfcSetTheory.Cardinal.Basic
-import ZfcSetTheory.Cardinal.FinitePowerSet

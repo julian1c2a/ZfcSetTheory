@@ -1,6 +1,6 @@
-import ZfcSetTheory.Int.Div
-import ZfcSetTheory.Nat.Div
-import ZfcSetTheory.Int.Ring
+import ZFC.Int.Div
+import ZFC.Nat.Div
+import ZFC.Int.Ring
 open ZFC
 open ZFC.Int.Div
 open ZFC.Nat.Div

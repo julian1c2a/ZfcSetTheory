@@ -1,5 +1,5 @@
-import ZfcSetTheory.Int.Div
-import ZfcSetTheory.Int.Sub
+import ZFC.Int.Div
+import ZFC.Int.Sub
 
 open ZFC
 open ZFC.Axiom.Infinity
