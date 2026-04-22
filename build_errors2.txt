@@ -1,0 +1,29 @@
+ÔÜá [27/34] Replayed PeanoNatLib.PeanoNatSub
+warning: PeanoNatLib/PeanoNatSub.lean:478:14: This simp argument is unused:
+  Nat.sub
+
+Hint: Omit it from the simp argument list.
+  simp [N╠Áa╠Át╠Á.╠Ás╠Áu╠Áb╠Á,╠Á ╠Á╬ø, sub_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+Ô£û [34/34] Building ZFC.Nat.Arith (1.0s)
+trace: .> LEAN_PATH=E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\packages\peanolib\.lake\build\lib\lean;E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean c:\Users\julia\.elan\toolchains\leanprover--lean4---v4.29.0\bin\lean.exe E:\Dropbox\GitHub\lean4\ZfcSetTheory\ZFC\Nat\Arith.lean -o E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZFC\Nat\Arith.olean -i E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZFC\Nat\Arith.ilean -c E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZFC\Nat\Arith.c --setup E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZFC\Nat\Arith.setup.json --json
+error: ZFC/Nat/Arith.lean:761:11: unknown tactic
+error: ZFC/Nat/Arith.lean:760:29: unsolved goals
+p q k : ÔäòÔéÇ
+hk : q = gcd p q*k
+hg : ┬¼gcd p q = ­Øƒÿ
+hmul : p*q = gcd p q*(p*k)
+Ôèó ((p*q) % gcd p q) = ­Øƒÿ
+error: ZFC/Nat/Arith.lean:746:6: unsolved goals
+case neg
+p q k : ÔäòÔéÇ
+hk : q = gcd p q*k
+hg : ┬¼gcd p q = ­Øƒÿ
+hmul : p*q = gcd p q*(p*k)
+hmod_zero : ((p*q) % gcd p q) = ­Øƒÿ
+Ôèó p Ôêú (p*q) / gcd p q
+error: Lean exited with code 1
+Some required targets logged failures:
+- ZFC.Nat.Arith
+error: build failed

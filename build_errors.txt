@@ -1,0 +1,78 @@
+ÔÜá [27/34] Replayed PeanoNatLib.PeanoNatSub
+warning: PeanoNatLib/PeanoNatSub.lean:478:14: This simp argument is unused:
+  Nat.sub
+
+Hint: Omit it from the simp argument list.
+  simp [N╠Áa╠Át╠Á.╠Ás╠Áu╠Áb╠Á,╠Á ╠Á╬ø, sub_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+Ô£û [34/34] Building ZFC.Nat.Arith (2.1s)
+trace: .> LEAN_PATH=E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\packages\peanolib\.lake\build\lib\lean;E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean c:\Users\julia\.elan\toolchains\leanprover--lean4---v4.29.0\bin\lean.exe E:\Dropbox\GitHub\lean4\ZfcSetTheory\ZFC\Nat\Arith.lean -o E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZFC\Nat\Arith.olean -i E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZFC\Nat\Arith.ilean -c E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZFC\Nat\Arith.c --setup E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZFC\Nat\Arith.setup.json --json
+error: ZFC/Nat/Arith.lean:534:16: Ambiguous term
+  Nat.Basic.succ (mod (fromPeano p') (fromPeano q)) Ôêê Nat.Basic.succ (fromPeano q)
+Possible interpretations:
+  ¤â mod (╬áZ p') (╬áZ q) Ôêê ¤â ╬áZ q : Prop
+  
+  ¤â mod (╬áZ p') (╬áZ q) Ôêê ¤â ╬áZ q : Prop
+error: ZFC/Nat/Arith.lean:709:7: unknown tactic
+error: ZFC/Nat/Arith.lean:707:57: unsolved goals
+b : ÔäòÔéÇ
+Ôèó (if h_b_is_zero : b = ­Øƒÿ then (­Øƒÿ, ­Øƒÿ)
+      else
+        if h_a_is_zero : ­Øƒÿ = ­Øƒÿ then (­Øƒÿ, ­Øƒÿ)
+        else
+          if h_b_is_one : b = ­ØƒÖ then (­Øƒÿ, ­Øƒÿ)
+          else
+            if h_a_lt_b : Lt ­Øƒÿ b then (­Øƒÿ, ­Øƒÿ)
+            else
+              if h_a_eq_b : ­Øƒÿ = b then (­ØƒÖ, ­Øƒÿ)
+              else
+                have h_b_lt_a := Ôï»;
+                have h_le_b_a := Ôï»;
+                have h_sub_a_b_lt_a := Ôï»;
+                match divMod (­Øƒÿ - b) b with
+                | (a', b') => (¤â a', b')).fst =
+    ­Øƒÿ
+error: ZFC/Nat/Arith.lean:760:11: unknown tactic
+error: ZFC/Nat/Arith.lean:750:75: unsolved goals
+p q k : ÔäòÔéÇ
+hk : q = gcd p q*k
+hg : ┬¼gcd p q = ­Øƒÿ
+Ôèó p*(gcd p q*k) = p*(gcd p (gcd p q*k)*k)
+error: ZFC/Nat/Arith.lean:759:29: unsolved goals
+p q k : ÔäòÔéÇ
+hk : q = gcd p q*k
+hg : ┬¼gcd p q = ­Øƒÿ
+hmul : p*q = gcd p q*(p*k)
+Ôèó ((p*q) % gcd p q) = ­Øƒÿ
+error: ZFC/Nat/Arith.lean:746:6: unsolved goals
+case neg
+p q k : ÔäòÔéÇ
+hk : q = gcd p q*k
+hg : ┬¼gcd p q = ­Øƒÿ
+hmul : p*q = gcd p q*(p*k)
+hmod_zero : ((p*q) % gcd p q) = ­Øƒÿ
+Ôèó p Ôêú (p*q) / gcd p q
+error: ZFC/Nat/Arith.lean:885:19: overloaded, errors 
+  885:23 Application type mismatch: The argument
+    ¤ë
+error: build failed
+  has type
+    U
+  of sort `Type u` but is expected to have type
+    Prop
+  of sort `Type` in the application
+    And ¤ë
+  
+  885:23 Application type mismatch: The argument
+    ¤ë
+  has type
+    U
+  of sort `Type u` but is expected to have type
+    Prop
+  of sort `Type` in the application
+    And ¤ë
+error: ZFC/Nat/Arith.lean:895:6: No goals to be solved
+error: Lean exited with code 1
+Some required targets logged failures:
+- ZFC.Nat.Arith
