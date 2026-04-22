@@ -195,6 +195,46 @@ namespace ZFC
       have : n ∈ S := by rw [hS_eq]; exact hn
       rw [mem_sep_iff] at this; exact this.2
 
+    -- =========================================================================
+    -- Section 5: Induction for negative integers
+    -- =========================================================================
+
+    /-- **Induction for negative integers**: if P(-1) and
+        P(intClass ∅ (σ n)) → P(intClass ∅ (σ (σ n))) for all n ∈ ω,
+        then P holds for all intClass ∅ (σ n) with n ∈ ω. -/
+    theorem int_induction_neg (P : U → Prop)
+        (h_neg_one : P (intClass (∅ : U) (σ (∅ : U))))
+        (h_neg_succ : ∀ n : U, n ∈ (ω : U) →
+          P (intClass (∅ : U) (σ n)) → P (intClass (∅ : U) (σ (σ n)))) :
+        ∀ n : U, n ∈ (ω : U) → P (intClass (∅ : U) (σ n)) := by
+      let S := sep (ω : U) (fun n => P (intClass (∅ : U) (σ n)))
+      have hS_zero : (∅ : U) ∈ S := by
+        rw [mem_sep_iff]; exact ⟨zero_in_Omega, h_neg_one⟩
+      have hS_succ : ∀ k, k ∈ S → σ k ∈ S := by
+        intro k hk; rw [mem_sep_iff] at hk ⊢
+        exact ⟨succ_in_Omega k hk.1, h_neg_succ k hk.1 hk.2⟩
+      have hS_eq : S = (ω : U) :=
+        induction_principle S (fun z hz => by rw [mem_sep_iff] at hz; exact hz.1)
+          hS_zero hS_succ
+      intro n hn
+      have : n ∈ S := by rw [hS_eq]; exact hn
+      rw [mem_sep_iff] at this; exact this.2
+
+    -- =========================================================================
+    -- Section 6: Infinite descent
+    -- =========================================================================
+
+    /-- **Infinite descent**: if P implies a "smaller" solution (by |·|),
+        then P has no solutions in ℤ. -/
+    theorem int_descent (P : U → Prop)
+        (h_descent : ∀ x : U, x ∈ (IntSet : U) → P x →
+          ∃ y : U, y ∈ (IntSet : U) ∧ P y ∧ absZ y ∈ absZ x) :
+        ∀ x : U, x ∈ (IntSet : U) → ¬ P x := by
+      apply int_strong_induction_abs (fun x => ¬ P x)
+      intro x hx ih hPx
+      obtain ⟨y, hy, hPy, hy_lt⟩ := h_descent x hx hPx
+      exact ih y hy hy_lt hPy
+
   end Int.Induction
 
   export Int.Induction (
@@ -202,6 +242,8 @@ namespace ZFC
     int_strong_induction_abs
     int_well_ordering_abs
     int_induction_nonneg
+    int_induction_neg
+    int_descent
   )
 
 end ZFC

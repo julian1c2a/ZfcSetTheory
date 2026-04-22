@@ -305,6 +305,78 @@ namespace ZFC
       rw [powZ_zero x hx]
       rw [mulZ_one_right x hx]
 
+    /-- **Even power of negation**: (-x)^(2n) = x^(2n) for all n ∈ ω.
+        Proved by induction on n using negZ_mulZ_negZ. -/
+    theorem powZ_negZ_even (x : U) (hx : x ∈ (IntSet : U)) :
+        ∀ n : U, n ∈ (ω : U) → powZ (negZ x) (add n n) = powZ x (add n n) := by
+      let S := sep (ω : U) (fun n => powZ (negZ x) (add n n) = powZ x (add n n))
+      have h_S_eq_ω : S = (ω : U) := by
+        apply induction_principle S (fun z hz => by rw [mem_sep_iff] at hz; exact hz.1)
+        · -- Base: n = ∅
+          rw [mem_sep_iff]
+          exact ⟨zero_in_Omega, by
+            rw [add_zero (∅ : U) zero_in_Omega,
+                powZ_zero (negZ x) (negZ_in_IntSet x hx),
+                powZ_zero x hx]⟩
+        · -- Step: n → σ n
+          intro k hk_in_S
+          rw [mem_sep_iff] at hk_in_S
+          obtain ⟨hk_ω, h_ih⟩ := hk_in_S
+          rw [mem_sep_iff]
+          refine ⟨succ_in_Omega k hk_ω, ?_⟩
+          have hnn := add_in_Omega k k hk_ω hk_ω
+          have hpxnn := powZ_in_IntSet x (add k k) hx hnn
+          rw [succ_add_Omega k (σ k) hk_ω (succ_in_Omega k hk_ω),
+              add_succ k k hk_ω hk_ω,
+              powZ_succ (negZ x) (σ (add k k)) (negZ_in_IntSet x hx) (succ_in_Omega _ hnn),
+              powZ_succ (negZ x) (add k k) (negZ_in_IntSet x hx) hnn,
+              h_ih,
+              ← mulZ_assoc (negZ x) (negZ x) (powZ x (add k k))
+                  (negZ_in_IntSet x hx) (negZ_in_IntSet x hx) hpxnn,
+              negZ_mulZ_negZ x x hx hx,
+              mulZ_assoc x x (powZ x (add k k)) hx hx hpxnn,
+              ← powZ_succ x (add k k) hx hnn,
+              ← powZ_succ x (σ (add k k)) hx (succ_in_Omega _ hnn)]
+      intro n hn
+      have : n ∈ S := h_S_eq_ω ▸ hn
+      rw [mem_sep_iff] at this; exact this.2
+
+    /-- **Odd power of negation**: (-x)^(2n+1) = -(x^(2n+1)) for all n ∈ ω. -/
+    theorem powZ_negZ_odd (x : U) (hx : x ∈ (IntSet : U)) (n : U) (hn : n ∈ (ω : U)) :
+        powZ (negZ x) (σ (add n n)) = negZ (powZ x (σ (add n n))) := by
+      have hnn := add_in_Omega n n hn hn
+      have hpxnn := powZ_in_IntSet x (add n n) hx hnn
+      rw [powZ_succ (negZ x) (add n n) (negZ_in_IntSet x hx) hnn,
+          powZ_negZ_even x hx n hn,
+          mulZ_negZ_left x (powZ x (add n n)) hx hpxnn,
+          ← powZ_succ x (add n n) hx hnn]
+
+    /-- **(x^m)^n = x^(mn)**: tower law for integer powers. -/
+    theorem powZ_powZ (x : U) (hx : x ∈ (IntSet : U)) (m n : U)
+        (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) :
+        powZ (powZ x m) n = powZ x (mul m n) := by
+      let S := sep (ω : U) (fun n => powZ (powZ x m) n = powZ x (mul m n))
+      have h_S_eq_ω : S = (ω : U) := by
+        apply induction_principle S (fun z hz => by rw [mem_sep_iff] at hz; exact hz.1)
+        · -- Base: n = ∅
+          rw [mem_sep_iff]
+          exact ⟨zero_in_Omega, by
+            rw [powZ_zero (powZ x m) (powZ_in_IntSet x m hx hm),
+                mul_zero m hm, powZ_zero x hx]⟩
+        · -- Step: n → σ n
+          intro k hk_in_S
+          rw [mem_sep_iff] at hk_in_S
+          obtain ⟨hk_ω, h_ih⟩ := hk_in_S
+          rw [mem_sep_iff]
+          refine ⟨succ_in_Omega k hk_ω, ?_⟩
+          have hpxm := powZ_in_IntSet x m hx hm
+          have hmk := mul_in_Omega m k hm hk_ω
+          rw [powZ_succ (powZ x m) k hpxm hk_ω, h_ih,
+              mul_succ m k hm hk_ω,
+              ← powZ_add_exp x m (mul m k) hx hm hmk]
+      have : n ∈ S := h_S_eq_ω ▸ hn
+      rw [mem_sep_iff] at this; exact this.2
+
   end Int.Pow
 
   export Int.Pow (
@@ -324,6 +396,9 @@ namespace ZFC
     powZ_add_exp
     powZ_mul_base
     powZ_negZ_sq
+    powZ_negZ_even
+    powZ_negZ_odd
+    powZ_powZ
   )
 
 end ZFC

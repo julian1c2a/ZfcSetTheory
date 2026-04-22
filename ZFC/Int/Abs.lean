@@ -549,6 +549,33 @@ namespace ZFC
               absZ_intClass_neg n hn, absZ_intClass_neg m hm]
           exact Or.inr rfl
 
+    -- =========================================================================
+    -- Section 6: Additional absolute value lemmas
+    -- =========================================================================
+
+    /-- **Positivity of absolute value**: if x ≠ 0 then |x| ≠ 0 in ω. -/
+    theorem absZ_pos (x : U) (hx : x ∈ (IntSet : U)) (hx_ne : x ≠ (zeroZ : U)) :
+        absZ x ≠ (∅ : U) := by
+      intro h
+      exact hx_ne ((absZ_eq_zero_iff x hx).mp h)
+
+    /-- **Non-negativity of |x| in ℤ**: leZ 0 (natToInt (absZ x)) for x ∈ ℤ. -/
+    theorem absZ_mulZ_nonneg (x : U) (hx : x ∈ (IntSet : U)) :
+        leZ zeroZ (natToInt (absZ x)) := by
+      have h := natToInt_preserves_le (∅ : U) (absZ x)
+                  zero_in_Omega (absZ_in_omega x hx)
+                  (EmptySet_subseteq_any (absZ x))
+      have h_zero : natToInt (∅ : U) = (zeroZ : U) := rfl
+      rwa [h_zero] at h
+
+    /-- **Subtractive triangle inequality**: |x - y| ≤ |x| + |y| for x, y ∈ ℤ. -/
+    theorem absZ_subZ_le (x y : U) (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) :
+        absZ (subZ x y) ∈ add (absZ x) (absZ y) ∨
+        absZ (subZ x y) = add (absZ x) (absZ y) := by
+      unfold subZ
+      have h := absZ_addZ_le x (negZ y) hx (negZ_in_IntSet y hy)
+      rwa [absZ_negZ y hy] at h
+
   end Int.Abs
 
   export Int.Abs (
@@ -570,6 +597,9 @@ namespace ZFC
     signZ_mulZ
     signZ_square
     absZ_addZ_le
+    absZ_pos
+    absZ_mulZ_nonneg
+    absZ_subZ_le
   )
 
 end ZFC

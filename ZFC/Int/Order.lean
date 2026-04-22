@@ -814,9 +814,17 @@ namespace ZFC
         have h_neg := intClass_neg_is_negative n hn hn_ne
         exact absurd (leZ_antisymm _ zeroZ hx zeroZ_mem_IntSet h_neg.1 h_px.1).symm h_px.2
 
-  end Int.Order
+    /-- x² ≥ 0 for all integers x -/
+    theorem square_nonneg (x : U) (hx : x ∈ (IntSet : U)) : leZ zeroZ (mulZ x x) := by
+      rcases leZ_total zeroZ x zeroZ_mem_IntSet hx with h_pos | h_neg
+      · -- x ≥ 0: use mulZ_le_mulZ_nonneg with y=x, z=x
+        have h := mulZ_le_mulZ_nonneg zeroZ x x zeroZ_mem_IntSet hx hx h_pos h_pos
+        rwa [mulZ_zero_right x hx] at h
+      · -- x ≤ 0: use mulZ_le_mulZ_nonpos with y=0, z=x
+        have h := mulZ_le_mulZ_nonpos x zeroZ x hx zeroZ_mem_IntSet hx h_neg h_neg
+        rwa [mulZ_zero_right x hx] at h
 
-end ZFC
+  end Int.Order
 
 export ZFC.Int.Order (
   leZ_repr
@@ -846,6 +854,5 @@ export ZFC.Int.Order (
   positiveZ_mul_closed
   negativeZ_mul_positive
   positiveZ_negativeZ_mul_negative
+  square_nonneg
 )
-
-
