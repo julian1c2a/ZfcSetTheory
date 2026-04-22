@@ -1,4 +1,7 @@
-/-
+import ZFC.Int.Abs
+import ZFC.Nat.WellFounded
+
+/-!
 Copyright (c) 2025. All rights reserved.
 Author: Julián Calderón Almendros
 License: MIT
@@ -20,10 +23,7 @@ License: MIT
       any nonempty predicate on ℤ has a minimal element w.r.t. |·|.
   * `int_induction_nonneg` — Induction for non-negative integers
       via the embedding natToInt.
--/
-
-import ZFC.Int.Abs
-import ZFC.Nat.WellFounded
+¡-/
 
 namespace ZFC
   open Classical
