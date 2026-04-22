@@ -12,3 +12,4 @@ import ZFC.Int.Embedding
 import ZFC.Int.Abs
 import ZFC.Int.Div
 import ZFC.Int.Induction
+import ZFC.Int.Units

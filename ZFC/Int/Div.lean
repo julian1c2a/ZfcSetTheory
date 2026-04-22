@@ -36,6 +36,8 @@ import ZFC.Int.Abs
 import ZFC.Int.DivMod
 import ZFC.Nat.Div
 import ZFC.Nat.Gcd
+import ZFC.Nat.Primes
+import ZFC.Int.Units
 
 namespace ZFC
   open Classical
@@ -674,6 +676,74 @@ namespace ZFC
             exact absurd hgt (mem_asymm (mul m (absZ a)) (mul n (absZ b)) (mem_Omega_is_Nat _ h_ma) (mem_Omega_is_Nat _ h_nb) hmem)
           rw [h2, h_sub0]
 
+    -- =========================================================================
+    -- Section 6: Fundamental Theorem of Arithmetic in ℤ
+    -- =========================================================================
+
+    /-- **Fundamental Theorem of Arithmetic in ℤ** (existence).
+        Every non-zero, non-unit z ∈ ℤ factors as
+          z = u · natToInt (fromPeano (product_list ps))
+        where u is a unit (u = 1 or u = −1) and ps is a prime DList.
+        Uniqueness of ps (up to prime multiplicities) follows from
+        `unique_prime_factorization_ZFC`. -/
+    theorem tfa_Z (z : U) (hz : z ∈ (IntSet : U)) (hz_ne : z ≠ (zeroZ : U))
+        (hz_unit : ¬ isUnitZ z) :
+        ∃ (u : U) (ps : DList ℕ₀),
+          isUnitZ u ∧ PrimeList ps ∧
+          z = mulZ u (natToInt (fromPeano (product_list ps))) := by
+      -- |z| ∈ ω
+      have habs : absZ z ∈ (ω : U) := absZ_in_omega z hz
+      -- |z| ≠ 0
+      have habs_ne_zero : absZ z ≠ (∅ : U) :=
+        fun h => hz_ne ((absZ_eq_zero_iff z hz).mp h)
+      -- |z| ≠ 1 (otherwise z would be a unit)
+      have habs_ne_one : absZ z ≠ σ (∅ : U) := by
+        intro h_one
+        apply hz_unit
+        have h_nat_one : natToInt (absZ z) = (oneZ : U) := by rw [h_one]; rfl
+        have h_z_sign : z = signZ z := by
+          have h := signZ_mulZ_absZ z hz
+          rw [h_nat_one, mulZ_one_right (signZ z) (signZ_in_IntSet z hz)] at h
+          exact h
+        rw [h_z_sign, unitZ_iff (signZ z) (signZ_in_IntSet z hz)]
+        rcases signZ_values z hz with h | h | h
+        · exact Or.inl h
+        · exact Or.inr h
+        · exact absurd (h_z_sign.trans h) hz_ne
+      -- |z| ≥ 2
+      have habs_ge_two : (σ (σ (∅ : U)) ∈ absZ z) ∨ σ (σ (∅ : U)) = absZ z := by
+        have htwo : σ (σ (∅ : U)) ∈ (ω : U) :=
+          succ_in_Omega _ (succ_in_Omega _ zero_in_Omega)
+        rcases trichotomy (σ (σ (∅ : U))) (absZ z)
+            (mem_Omega_is_Nat _ htwo) (mem_Omega_is_Nat _ habs) with hmem | heq | hmem
+        · exact Or.inl hmem
+        · exact Or.inr heq
+        · exfalso
+          rw [mem_succ_iff] at hmem
+          rcases hmem with h | h
+          · rw [mem_succ_iff] at h
+            rcases h with h | h
+            · exact EmptySet_is_empty (absZ z) h
+            · exact habs_ne_zero h
+          · exact habs_ne_one h
+      -- Prime factorization of |z|
+      obtain ⟨ps, hps, h_prod⟩ :=
+        exists_prime_factorization_ZFC (absZ z) habs habs_ge_two
+      -- Witness: u = signZ z
+      refine ⟨signZ z, ps, ?_, hps, ?_⟩
+      · -- isUnitZ (signZ z)
+        rw [unitZ_iff (signZ z) (signZ_in_IntSet z hz)]
+        rcases signZ_values z hz with h | h | h
+        · exact Or.inl h
+        · exact Or.inr h
+        · exfalso
+          have h_decomp := signZ_mulZ_absZ z hz
+          rw [h, mulZ_zero_left (natToInt (absZ z))
+              (natToInt_mem_IntSet (absZ z) habs)] at h_decomp
+          exact hz_ne h_decomp
+      · -- z = mulZ (signZ z) (natToInt (fromPeano (product_list ps)))
+        rw [h_prod]; exact signZ_mulZ_absZ z hz
+
   end Int.Div
 
 
@@ -702,6 +772,7 @@ namespace ZFC
     lcmZ_zero_right
     lcmZ_zero_left
     bezoutZ
+    tfa_Z
   )
 
 end ZFC
