@@ -47,3 +47,6 @@ ZFC/Int/Abs.lean
 ZFC/Int/Order.lean
 ZFC/Nat/Div.lean
 test_bezout_gcdZ3.lean
+ZFC/Nat/Gcd.lean
+ZFC/Nat/Primes.lean
+ZFC/Peano/FiniteSequencesBridge.lean
