@@ -1,36 +1,21 @@
-===== ZfcSetTheory Build Log =====
-Timestamp: 2026-02-12 20:37
-===== LAKE BUILD OUTPUT =====
-Ô£ö [21/24] Built ZfcSetTheory.NaturalNumbers (1.2s)
-Ô£ö [22/24] Built ZfcSetTheory.Infinity (913ms)
-Ô£ö [23/24] Built ZfcSetTheory (763ms)
-Build completed successfully (24 jobs).
+ÔÜá [43/75] Replayed PeanoNatLib.PeanoNatSub
+warning: PeanoNatLib/PeanoNatSub.lean:478:14: This simp argument is unused:
+  Nat.sub
 
-===== SORRY STATEMENTS =====
+Hint: Omit it from the simp argument list.
+  simp [N╠Áa╠Át╠Á.╠Ás╠Áu╠Áb╠Á,╠Á ╠Á╬ø, sub_zero]
 
-File: E:\Dropbox\GitHub\lean4\ZfcSetTheory\ZfcSetTheory\Recursion.lean
-115:             rw [hk']; exact Or.inl (by sorry)
-151:               sorry
-253:                  rw [Restriction_apply f (σ n) (σ k) (by sorry)]; -- σ k ∈ σ n
-254:                  rw [Restriction_apply f (σ n) k (by sorry)];
-256:                  exact hf.2.2 k (by sorry) -- k ∈ n ⊆ σ n
-269:           sorry -- Ya probado en la versión anterior, lo marco sorry para enfocar en la estructura nueva
-297:       sorry -- (Fácil de completar)
-318:             sorry
-321:               sorry
-341:           sorry -- (Lógica de extensión estándar)
-367:       · sorry -- Existencia
-368:       · sorry -- Unicidad (usando inducción sobre n para ver que cualquier G coincide con F)
-
-
-===== LEAN TYPE ERRORS IN SOURCE FILES =====
-
-File with potential type errors: E:\Dropbox\GitHub\lean4\ZfcSetTheory\ZfcSetTheory\NaturalNumbers.lean
-
-Files with known problematic patterns: 1
-
-===== SUMMARY =====
-Sorry statements: 12
-Files with potential type errors: 1
-Completed at: 2026-02-12 20:37
-
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+Ô£û [70/75] Building ZFC.Nat.Primes (1.2s)
+trace: .> LEAN_PATH=E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\packages\peanolib\.lake\build\lib\lean;E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean c:\Users\julia\.elan\toolchains\leanprover--lean4---v4.29.0\bin\lean.exe E:\Dropbox\GitHub\lean4\ZfcSetTheory\ZFC\Nat\Primes.lean -o E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZFC\Nat\Primes.olean -i E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\lib\lean\ZFC\Nat\Primes.ilean -c E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZFC\Nat\Primes.c --setup E:\Dropbox\GitHub\lean4\ZfcSetTheory\.lake\build\ir\ZFC\Nat\Primes.setup.json --json
+error: ZFC/Nat/Primes.lean:148:38: Unknown identifier `pp`
+error: ZFC/Nat/Primes.lean:148:61: Unknown identifier `pp`
+error: ZFC/Nat/Primes.lean:147:51: unsolved goals
+U : Type u
+p : U
+hp : isPrime p
+Ôèó ¤â ¤â Ôêà Ôêê p Ôê¿ ¤â ¤â Ôêà = p
+error: Lean exited with code 1
+Some required targets logged failures:
+- ZFC.Nat.Primes
+error: build failed
