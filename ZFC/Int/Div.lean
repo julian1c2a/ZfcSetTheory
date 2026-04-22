@@ -241,18 +241,21 @@ namespace ZFC
       exact congrArg (fromPeano : Peano.ℕ₀ → U)
         (Peano.Mul.mul_cancelation_left p q r hp_ne (fromPeano_injective h))
 
-    /-- In ω, mul a b = σ ∅ implies a = σ ∅ and b = σ ∅, lifted from Peano. -/
+    /-- In ω, mul a b = σ ∅ implies a = σ ∅ and b = σ ∅. -/
     private theorem mul_eq_one_omega (a b : U)
         (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U))
         (h : mul a b = σ (∅ : U)) : a = σ (∅ : U) ∧ b = σ (∅ : U) := by
-      obtain ⟨p, rfl⟩ := fromPeano_surjective a (mem_Omega_is_Nat a ha)
-      obtain ⟨q, rfl⟩ := fromPeano_surjective b (mem_Omega_is_Nat b hb)
-      rw [← fromPeano_mul p q] at h
-      have h_one : (σ (∅ : U)) = (fromPeano (Peano.ℕ₀.succ Peano.ℕ₀.zero) : U) := by
-        simp only [fromPeano]
-      rw [h_one] at h
-      obtain ⟨hp, hq⟩ := Peano.Primes.mul_eq_one (fromPeano_injective h)
-      exact ⟨by rw [hp]; exact h_one.symm, by rw [hq]; exact h_one.symm⟩
+      have h_one_in : σ (∅ : U) ∈ (ω : U) := succ_in_Omega ∅ zero_in_Omega
+      -- a | σ ∅ with witness b, since σ ∅ = mul a b
+      have ha_div : divides a (σ (∅ : U)) := ⟨b, hb, h.symm⟩
+      -- σ ∅ | a by one_divides_Omega
+      have hone_div_a : divides (σ (∅ : U)) a := one_divides_Omega a ha
+      -- a = σ ∅ by antisymmetry of divisibility
+      have ha_eq : a = σ (∅ : U) :=
+        antisymm_divides_Omega a (σ (∅ : U)) ha h_one_in ha_div hone_div_a
+      -- substituting a = σ ∅, one_mul_Omega gives b = σ ∅
+      rw [ha_eq, one_mul_Omega b hb] at h
+      exact ⟨ha_eq, h⟩
 
     /-- Antisymmetry of divisibility: a | b and b | a implies |a| = |b|. -/
     theorem dividesZ_antisymm_abs (a b : U)
@@ -482,12 +485,9 @@ namespace ZFC
     /-- gcdZ is "associative": gcdZ a (natToInt (gcdZ b c)) = gcdZ (natToInt (gcdZ a b)) c -/
     theorem gcdZ_assoc (a b c : U) (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U)) (hc : c ∈ (IntSet : U)) :
         gcdZ a (natToInt (gcdZ b c)) = gcdZ (natToInt (gcdZ a b)) c := by
-      have hab1 : gcdZ a b ∈ (ω : U) := gcdZ_in_omega a b ha hb
-      have hab2 : gcdZ b c ∈ (ω : U) := gcdZ_in_omega b c hb hc
-      have habs_ab : absZ (natToInt (gcdZ a b)) = gcdZ a b := absZ_natToInt _ hab1
-      have habs_bc : absZ (natToInt (gcdZ b c)) = gcdZ b c := absZ_natToInt _ hab2
       unfold gcdZ
-      rw [habs_bc, habs_ab]
+      rw [absZ_natToInt _ (gcd_in_Omega (absZ b) (absZ c) (absZ_in_omega b hb) (absZ_in_omega c hc))]
+      rw [absZ_natToInt _ (gcd_in_Omega (absZ a) (absZ b) (absZ_in_omega a ha) (absZ_in_omega b hb))]
       exact ZFC.Nat.Gcd.gcd_assoc_Omega (absZ a) (absZ b) (absZ c) (absZ_in_omega a ha) (absZ_in_omega b hb) (absZ_in_omega c hc)
 
     /-- lcmZ a 0 = 0 -/
@@ -527,7 +527,7 @@ namespace ZFC
 
     /-- Bridge: `natToInt (sub x y) = subZ (natToInt x) (natToInt y)` when `y ≤ x`. -/
     private theorem bezout_natToInt_sub_eq (x y : U) (hx : x ∈ ω) (hy : y ∈ ω)
-        (hle : y ∈ x ∨ y = x) :
+        (hle : (y ∈ x) ∨ y = x) :
         natToInt (sub x y) = subZ (natToInt x) (natToInt y) := by
       have hs_mem := sub_in_Omega x y hx hy
       have h_int_s := natToInt_mem_IntSet (sub x y) hs_mem
@@ -547,8 +547,8 @@ namespace ZFC
     private theorem bezout_case1 (a b : U) (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U))
         (n m : U) (hn : n ∈ ω) (hm : m ∈ ω)
         (heq : gcd (absZ a) (absZ b) = sub (mul n (absZ a)) (mul m (absZ b)))
-        (hle : mul m (absZ b) ∈ mul n (absZ a) ∨ mul m (absZ b) = mul n (absZ a)) :
-        ∃ s t : U, s ∈ (IntSet : U) ∧ t ∈ (IntSet : U) ∧
+        (hle : (mul m (absZ b) ∈ mul n (absZ a)) ∨ mul m (absZ b) = mul n (absZ a)) :
+        ∃ s t : U, (s ∈ (IntSet : U)) ∧ (t ∈ (IntSet : U)) ∧
           natToInt (gcdZ a b) = addZ (mulZ s a) (mulZ t b) := by
       have habs_a := absZ_in_omega a ha
       have habs_b := absZ_in_omega b hb
@@ -584,8 +584,8 @@ namespace ZFC
     private theorem bezout_case2 (a b : U) (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U))
         (n m : U) (hn : n ∈ ω) (hm : m ∈ ω)
         (heq : gcd (absZ a) (absZ b) = sub (mul n (absZ b)) (mul m (absZ a)))
-        (hle : mul m (absZ a) ∈ mul n (absZ b) ∨ mul m (absZ a) = mul n (absZ b)) :
-        ∃ s t : U, s ∈ (IntSet : U) ∧ t ∈ (IntSet : U) ∧
+        (hle : (mul m (absZ a) ∈ mul n (absZ b)) ∨ mul m (absZ a) = mul n (absZ b)) :
+        ∃ s t : U, (s ∈ (IntSet : U)) ∧ (t ∈ (IntSet : U)) ∧
           natToInt (gcdZ a b) = addZ (mulZ s a) (mulZ t b) := by
       have habs_a := absZ_in_omega a ha
       have habs_b := absZ_in_omega b hb
@@ -620,14 +620,14 @@ namespace ZFC
     /-- Bezout's identity on ℤ:
         ∃ s t ∈ ℤ, natToInt (gcdZ a b) = s·a + t·b. -/
     theorem bezoutZ (a b : U) (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U)) :
-        ∃ s t : U, s ∈ (IntSet : U) ∧ t ∈ (IntSet : U) ∧
+        ∃ s t : U, (s ∈ (IntSet : U)) ∧ (t ∈ (IntSet : U)) ∧
           natToInt (gcdZ a b) = addZ (mulZ s a) (mulZ t b) := by
       have habs_a := absZ_in_omega a ha
       have habs_b := absZ_in_omega b hb
       obtain ⟨n, m, hn, hm, hor⟩ := Nat.Gcd.bezout_natform_Omega (absZ a) (absZ b) habs_a habs_b
       -- Lemma: if gcd(|a|,|b|) = 0 then a = b = 0, trivial witnesses s=t=0
       have trivial_case : gcd (absZ a) (absZ b) = (∅ : U) →
-          ∃ s t : U, s ∈ (IntSet : U) ∧ t ∈ (IntSet : U) ∧
+          ∃ s t : U, (s ∈ (IntSet : U)) ∧ (t ∈ (IntSet : U)) ∧
             natToInt (gcdZ a b) = addZ (mulZ s a) (mulZ t b) := by
         intro h_gcd_zero
         have ha0 : a = zeroZ := (absZ_eq_zero_iff a ha).mp
@@ -698,6 +698,9 @@ namespace ZFC
     gcdZ_is_greatest
     dividesZ_antisymm_abs
     dividesZ_antisymm
+    gcdZ_assoc
+    lcmZ_zero_right
+    lcmZ_zero_left
     bezoutZ
   )
 
