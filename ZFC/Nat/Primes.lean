@@ -58,8 +58,8 @@ namespace ZFC
     /-- `p` is a ZFC-prime if: `p ∈ ω`, `p ≠ ∅`, `p ≠ σ ∅`, and for all `a b ∈ ω`,
         `divides p (mul a b) → divides p a ∨ divides p b`. -/
     def isPrime (p : U) : Prop :=
-      p ∈ (ω : U) ∧ p ≠ (∅ : U) ∧ p ≠ σ (∅ : U) ∧
-      ∀ a b : U, a ∈ (ω : U) → b ∈ (ω : U) →
+      mem p (ω : U) ∧ p ≠ (∅ : U) ∧ p ≠ σ (∅ : U) ∧
+      ∀ a b : U, mem a (ω : U) → mem b (ω : U) →
         divides p (mul a b) → divides p a ∨ divides p b
 
     -- =========================================================================
@@ -144,7 +144,7 @@ namespace ZFC
 
     /-- Every ZFC-prime is at least 2: `σ(σ ∅) ∈ p ∨ σ(σ ∅) = p`. -/
     theorem isPrime_ge_two (p : U) (hp : isPrime p) :
-        σ (σ (∅ : U)) ∈ p ∨ σ (σ (∅ : U)) = p := by
+        (σ (σ (∅ : U)) ∈ p) ∨ σ (σ (∅ : U)) = p := by
       obtain ⟨pp, rfl⟩ := fromPeano_surjective p (mem_Omega_is_Nat p hp.1)
       have hprime : Peano.Arith.Prime pp := (fromPeano_prime pp).mpr hp
       have hle := prime_ge_two hprime
@@ -172,7 +172,7 @@ namespace ZFC
 
     /-- Every `n ∈ ω` with `2 ≤ n` has a ZFC-prime divisor. -/
     theorem exists_prime_divisor_ZFC (n : U) (hn : n ∈ (ω : U))
-        (h_ge_2 : σ (σ (∅ : U)) ∈ n ∨ σ (σ (∅ : U)) = n) :
+        (h_ge_2 : (σ (σ (∅ : U)) ∈ n) ∨ σ (σ (∅ : U)) = n) :
         ∃ p : U, isPrime p ∧ divides p n := by
       obtain ⟨pn, rfl⟩ := fromPeano_surjective n (mem_Omega_is_Nat n hn)
       -- Convert ZFC ≥2 to Peano Le 𝟚 pn
@@ -193,7 +193,7 @@ namespace ZFC
         factorization given as a `DList ℕ₀` on the Peano side whose ZFC product
         equals `n`. -/
     theorem exists_prime_factorization_ZFC (n : U) (hn : n ∈ (ω : U))
-        (h_ge_2 : σ (σ (∅ : U)) ∈ n ∨ σ (σ (∅ : U)) = n) :
+        (h_ge_2 : (σ (σ (∅ : U)) ∈ n) ∨ σ (σ (∅ : U)) = n) :
         ∃ ps : DList ℕ₀, PrimeList ps ∧ (fromPeano (product_list ps) : U) = n := by
       obtain ⟨pn, rfl⟩ := fromPeano_surjective n (mem_Omega_is_Nat n hn)
       have hle_peano : Peano.Order.Le 𝟚 pn := by

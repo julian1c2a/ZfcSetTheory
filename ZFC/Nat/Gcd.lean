@@ -38,7 +38,7 @@ namespace ZFC
         ⟨a, b⟩ ↦ ⟨b, a mod b⟩   when b ≠ ∅  -/
     private noncomputable def euclid_stepFn : U :=
       sep ((ω ×ₛ ω : U) ×ₛ (ω ×ₛ ω : U)) (fun p =>
-        ∃ a b : U, a ∈ (ω : U) ∧ b ∈ (ω : U) ∧
+        ∃ a b : U, (a ∈ (ω : U)) ∧ (b ∈ (ω : U)) ∧
           ((b = ∅ ∧ p = ⟨⟨a, b⟩, ⟨a, b⟩⟩) ∨
            (b ≠ ∅ ∧ p = ⟨⟨a, b⟩, ⟨b, mod a b⟩⟩)))
 
@@ -236,12 +236,12 @@ namespace ZFC
     /-- Main convergence theorem: after σ b steps, the state is ⟨gcd(a,b), ∅⟩. -/
     private theorem euclid_converges (b : U) (hb : b ∈ (ω : U))
         (a : U) (ha : a ∈ (ω : U)) :
-        ∃ (x : U), x ∈ (ω : U) ∧
+        ∃ (x : U), (x ∈ (ω : U)) ∧
           apply (euclidFn a b ha hb) (σ b) = (⟨x, ∅⟩ : U) := by
       -- Strong induction on b, universally quantifying over all a and proof terms
       let S := sep (ω : U) (fun b =>
         ∀ (a : U) (_ : a ∈ (ω : U)) (hb' : b ∈ (ω : U)) (ha' : a ∈ (ω : U)),
-        ∃ x, x ∈ (ω : U) ∧ apply (euclidFn a b ha' hb') (σ b) = (⟨x, ∅⟩ : U))
+        ∃ x, (x ∈ (ω : U)) ∧ apply (euclidFn a b ha' hb') (σ b) = (⟨x, ∅⟩ : U))
       suffices hS_eq : S = ω by
         have hb_S : b ∈ S := hS_eq ▸ hb
         rw [mem_sep_iff] at hb_S
@@ -269,7 +269,7 @@ namespace ZFC
           have h_sb_in_sb : σ (mod a_v b) ∈ σ b :=
             (succ_mem_succ_iff (mod a_v b) b
               (mem_Omega_is_Nat _ hmod) (mem_Omega_is_Nat b hb_ω)).mp hmod_lt
-          have h_sb_le_b : σ (mod a_v b) ∈ b ∨ σ (mod a_v b) = b :=
+          have h_sb_le_b : (σ (mod a_v b) ∈ b) ∨ σ (mod a_v b) = b :=
             subset_of_mem_succ b _ h_sb_in_sb
           obtain ⟨d, hd, hsum⟩ :=
             le_then_exists_add_Omega (σ (mod a_v b)) b
@@ -327,7 +327,7 @@ namespace ZFC
       have h_sb_in_sb : σ (mod a b) ∈ σ b :=
         (succ_mem_succ_iff (mod a b) b
           (mem_Omega_is_Nat (mod a b) hmod) (mem_Omega_is_Nat b hb)).mp hmod_lt
-      have h_sb_le_b : σ (mod a b) ∈ b ∨ σ (mod a b) = b :=
+      have h_sb_le_b : (σ (mod a b) ∈ b) ∨ σ (mod a b) = b :=
         subset_of_mem_succ b (σ (mod a b)) h_sb_in_sb
       -- b = add (σ (mod a b)) d for some d
       obtain ⟨d, hd, hsum⟩ :=
@@ -411,7 +411,7 @@ namespace ZFC
     theorem gcd_eq_gcdOf (a b : U) (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U)) :
         gcd a b = gcdOf a b := by
       -- Strong induction on b with simple S predicate
-      let S := sep (ω : U) (fun b => ∀ (a : U), a ∈ (ω : U) → gcd a b = gcdOf a b)
+      let S := sep (ω : U) (fun b => ∀ (a : U), (a ∈ (ω : U)) → gcd a b = gcdOf a b)
       have hS_eq : S = ω := by
         apply strong_induction_principle S
         · intro x hx; rw [mem_sep_iff] at hx; exact hx.1
@@ -482,7 +482,7 @@ namespace ZFC
           · exact gcd_divides_right_Omega (gcd a b) c (gcd_in_Omega a b ha hb) hc
 
     theorem bezout_natform_Omega (a b : U) (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U)) :
-        ∃ n m : U, n ∈ (ω : U) ∧ m ∈ (ω : U) ∧
+        ∃ n m : U, (n ∈ (ω : U)) ∧ (m ∈ (ω : U)) ∧
           (gcd a b = sub (mul n a) (mul m b) ∨ gcd a b = sub (mul n b) (mul m a)) := by
       obtain ⟨p, hp⟩ := fromPeano_surjective a (mem_Omega_is_Nat a ha)
       obtain ⟨q, hq⟩ := fromPeano_surjective b (mem_Omega_is_Nat b hb)
@@ -508,8 +508,8 @@ namespace ZFC
 
     /-- ZFC-native LCM: a * b / gcd(a, b). -/
     noncomputable def lcm (a b : U) : U :=
-      if ha : a ∈ (ω : U) then
-        if hb : b ∈ (ω : U) then
+      if _ : a ∈ (ω : U) then
+        if _ : b ∈ (ω : U) then
           divOf (mul a b) (gcd a b)
         else ∅
       else ∅

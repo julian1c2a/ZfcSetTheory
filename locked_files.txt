@@ -46,5 +46,4 @@ ZFC/Cardinal/FinitePowerSet.lean
 ZFC/Int/Abs.lean
 ZFC/Int/Order.lean
 ZFC/Nat/Div.lean
-ZFC/Nat/Gcd.lean
 test_bezout_gcdZ3.lean

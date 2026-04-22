@@ -110,7 +110,7 @@ namespace ZFC
     private theorem seqProdFn_spec {f : U} (hf : isFinSeq f (domain f) ω) :
         IsFunction (seqProdFn f hf) ω ω ∧
         apply (seqProdFn f hf) (∅ : U) = σ (∅ : U) ∧
-        ∀ n, n ∈ ω → apply (seqProdFn f hf) (σ n) =
+        ∀ n, mem n (ω : U) → apply (seqProdFn f hf) (σ n) =
           apply (prodStepFn f) ⟨n, apply (seqProdFn f hf) n⟩ :=
       Classical.choose_spec (ExistsUnique.exists
         (RecursionTheoremWithStep (ω : U) (σ ∅) (prodStepFn f)
@@ -155,12 +155,12 @@ namespace ZFC
         (hf : isFinSeq f (domain f) ω)
         (hg : isFinSeq g (domain g) ω)
         (n : U) (hn : n ∈ (ω : U))
-        (h_agree : ∀ i, i ∈ n → f⦅i⦆ = g⦅i⦆) :
+        (h_agree : ∀ i, mem i n → f⦅i⦆ = g⦅i⦆) :
         seqProd f n = seqProd g n := by
       -- Induction on n ∈ ω
       let P : U → Prop := fun k =>
         ∀ f' g' : U, isFinSeq f' (domain f') ω → isFinSeq g' (domain g') ω →
-          (∀ i, i ∈ k → f'⦅i⦆ = g'⦅i⦆) → seqProd f' k = seqProd g' k
+          (∀ i, mem i k → f'⦅i⦆ = g'⦅i⦆) → seqProd f' k = seqProd g' k
       let S := sep (ω : U) P
       suffices hS : S = ω by
         have hn_S : n ∈ S := hS ▸ hn
@@ -178,7 +178,7 @@ namespace ZFC
         simp only [P] at ih ⊢
         exact ⟨succ_in_Omega k hk_omega, fun f' g' hf' hg' h_agree_sk => by
           rw [seqProd_succ_gen hf' k hk_omega, seqProd_succ_gen hg' k hk_omega]
-          have h_sub : ∀ i, i ∈ k → f'⦅i⦆ = g'⦅i⦆ :=
+          have h_sub : ∀ i, mem i k → f'⦅i⦆ = g'⦅i⦆ :=
             fun i hi => h_agree_sk i (mem_succ_of_mem i k hi)
           rw [ih f' g' hf' hg' h_sub, h_agree_sk k (mem_succ_self k)]⟩
 
@@ -308,7 +308,7 @@ namespace ZFC
           --      = fromPeano (product_list (.cons x xs))
           -- Step 4: seqProd extensionality
           have h_dom_xs := @dlistToSeq_isFinSeq_domain U xs
-          have h_agree : ∀ i, i ∈ (dlistLen xs : U) →
+          have h_agree : ∀ i, (i ∈ (dlistLen xs : U)) →
               (dlistToSeq (.cons x xs : DList Peano.ℕ₀) : U)⦅i⦆ =
                 (dlistToSeq xs : U)⦅i⦆ :=
             fun i hi => dlistToSeq_apply_prev x xs i hi
@@ -332,7 +332,7 @@ namespace ZFC
 
     /-- A finite sequence of primes of length k. -/
     def isPrimeSeq (f k : U) : Prop :=
-      isFinSeq f k ω ∧ ∀ i, i ∈ k → isPrime (f⦅i⦆)
+      isFinSeq f k ω ∧ ∀ i, mem i k → isPrime (f⦅i⦆)
 
     /-- Converting a PrimeList DList yields an isPrimeSeq. -/
     theorem dlistToSeq_isPrimeSeq : (ps : DList Peano.ℕ₀) → PrimeList ps →
@@ -365,7 +365,7 @@ namespace ZFC
         This is a pure ZFC statement — no DList or Peano types appear
         in the conclusion. -/
     theorem exists_prime_factorization_native (n : U) (hn : n ∈ (ω : U))
-        (h_ge2 : σ (σ (∅ : U)) ∈ n ∨ σ (σ (∅ : U)) = n) :
+        (h_ge2 : (σ (σ (∅ : U)) ∈ n) ∨ σ (σ (∅ : U)) = n) :
         ∃ f k : U, isPrimeSeq f k ∧ seqProd f k = n := by
       -- Get DList factorization from Approach A
       obtain ⟨ps, hpl, hprod⟩ := exists_prime_factorization_ZFC n hn h_ge2
