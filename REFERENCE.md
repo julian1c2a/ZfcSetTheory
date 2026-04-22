@@ -141,6 +141,20 @@ Este documento cumple con todos los requisitos especificados en [AI-GUIDE.md](AI
 | `Cardinal.FinitePowerSet.lean` | `ZFC.Cardinal.FinitePowerSet` | `Cardinal.Basic`, `SetOps.FiniteSets`, `Nat.Mul`, `Nat.Pow` + anteriores | ✅ Completo |
 | `BoolAlg.FiniteBA.lean` | `ZFC.BoolAlg.FiniteBA` | `Cardinal.FinitePowerSet`, `BoolAlg.Representation` + anteriores | ✅ Completo |
 | `BoolAlg.BoolRingBA.lean` | `ZFC.BoolAlg.BoolRingBA` | `BoolAlg.Ring` + anteriores | ✅ Completo |
+| `Int/Equiv.lean` | `ZFC.Int.Equiv` | `Nat.Basic`, `Infinity` + anteriores | ❌ Pendiente |
+| `Int/Basic.lean` | `ZFC.Int.Basic` | `Int.Equiv` + anteriores | ❌ Pendiente |
+| `Int/Add.lean` | `ZFC.Int.Add` | `Int.Basic` + anteriores | ❌ Pendiente |
+| `Int/Neg.lean` | `ZFC.Int.Neg` | `Int.Basic`, `Int.Add` + anteriores | ❌ Pendiente |
+| `Int/Mul.lean` | `ZFC.Int.Mul` | `Int.Basic`, `Int.Add`, `Int.Neg` + anteriores | ❌ Pendiente |
+| `Int/Ring.lean` | `ZFC.Int.Ring` | `Int.Mul` + anteriores | ❌ Pendiente |
+| `Int/Pow.lean` | `ZFC.Int.Pow` | `Int.Mul` + anteriores | ❌ Pendiente |
+| `Int/Sub.lean` | `ZFC.Int.Sub` | `Int.Add`, `Int.Neg` + anteriores | ❌ Pendiente |
+| `Int/DivMod.lean` | `ZFC.Int.DivMod` | `Int.Basic`, `Nat.Div` + anteriores | ❌ Pendiente |
+| `Int/Order.lean` | `ZFC.Int.Order` | `Int.Basic` + anteriores | ❌ Pendiente |
+| `Int/Embedding.lean` | `ZFC.Int.Embedding` | `Int.Basic`, `Nat.Add` + anteriores | ❌ Pendiente |
+| `Int/Abs.lean` | `ZFC.Int.Abs` | `Int.Basic`, `Int.Order` + anteriores | ❌ Pendiente |
+| `Int/Div.lean` | `ZFC.Int.Div` | `Int.Abs`, `Int.DivMod`, `Nat.Div`, `Nat.Gcd` | ✅ Completo |
+| `Int/Induction.lean` | `ZFC.Int.Induction` | `Int.Basic` + anteriores | ❌ Pendiente |
 
 ### 1.2 Axiomas ZFC por Módulo
 
@@ -4504,6 +4518,74 @@ noncomputable def atomsBelowMap (A : U) : U :=
 noncomputable def removeElemMap (A a : U) : U :=
   sep (sep (𝒫 A) (fun S => a ∈ S) ×ₛ 𝒫 (sdiff A {a}))
     (fun p => ∃ S, S ∈ 𝒫 A ∧ a ∈ S ∧ p = ⟨S, sdiff S {a}⟩)
+```
+
+---
+
+### 3.46 Int.Div.lean
+
+**Módulo**: `ZFC.Int.Div`
+**Namespace**: `ZFC.Int.Div`
+**Dependencias**: `ZFC.Int.Abs`, `ZFC.Int.DivMod`, `ZFC.Nat.Div`, `ZFC.Nat.Gcd`
+**Estrategia**: Define MCD/MCM/cociente/resto sobre ℤ mediante valores absolutos en ω y prueba propiedades de divisibilidad incluyendo antisimetría y la identidad de Bézout.
+
+#### gcdZ (gcdZ)
+
+**Ubicación**: `Int.Div.lean`, línea 65
+**Orden**: 1ª definición
+
+**Descripción Matemática**: MCD de $a, b \in \mathbb{Z}$: $\gcd_\mathbb{Z}(a,b) = \gcd(|a|, |b|) \in \omega$.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def gcdZ (a b : U) : U := gcd (absZ a) (absZ b)
+```
+
+---
+
+#### modZ (modZ)
+
+**Ubicación**: `Int.Div.lean`, línea 68
+**Orden**: 2ª definición
+
+**Descripción Matemática**: Resto euclídeo sobre ℤ: $\text{mod}_\mathbb{Z}(a,b) = |a| \bmod |b| \in \omega$.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def modZ (a b : U) : U := modOf (absZ a) (absZ b)
+```
+
+---
+
+#### quotZ (quotZ)
+
+**Ubicación**: `Int.Div.lean`, línea 71
+**Orden**: 3ª definición
+
+**Descripción Matemática**: Cociente euclídeo con signo sobre ℤ: $\text{quot}_\mathbb{Z}(a,b) = \text{sign}(a)\cdot\text{sign}(b)\cdot\lfloor|a|/|b|\rfloor \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def quotZ (a b : U) : U :=
+  mulZ (mulZ (signZ a) (signZ b)) (natToInt (divOf (absZ a) (absZ b)))
+```
+
+---
+
+#### lcmZ (lcmZ)
+
+**Ubicación**: `Int.Div.lean`, línea 341
+**Orden**: 4ª definición
+
+**Descripción Matemática**: MCM de $a, b \in \mathbb{Z}$: $\text{lcm}_\mathbb{Z}(a,b) = \text{lcm}(|a|, |b|) \in \omega$.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def lcmZ (a b : U) : U := lcm (absZ a) (absZ b)
 ```
 
 ---
@@ -11930,6 +12012,393 @@ theorem powerset_cardinality {A n : U} (hn : n ∈ ω) (hAn : A ≃ₛ n) :
 
 ---
 
+### 4.42 Int.Div.lean
+
+**Importancia por teorema**:
+
+- absZ_natToInt: high — bridge |natToInt(n)| = n
+- gcdZ_in_omega: high — clausura gcdZ ∈ ω
+- modZ_in_omega: high — clausura modZ ∈ ω
+- quotZ_in_IntSet: high — clausura quotZ ∈ ℤ
+- gcdZ_comm: medium — conmutatividad del MCD
+- gcdZ_zero_right: medium — gcdZ a 0 = |a|
+- gcdZ_zero_left: medium — gcdZ 0 b = |b|
+- modZ_lt_absZ: high — modZ a b ∈ absZ b (cota del resto)
+- gcdZ_dividesZ_left: high — natToInt(gcdZ) | a
+- gcdZ_dividesZ_right: high — natToInt(gcdZ) | b
+- gcdZ_is_greatest: high — mayor divisor común
+- dividesZ_antisymm_abs: high — a|b ∧ b|a → |a| = |b|
+- dividesZ_antisymm: high — a|b ∧ b|a → a = b ∨ a = −b
+- lcmZ_in_omega: high — clausura lcmZ ∈ ω
+- lcmZ_comm: medium — conmutatividad del MCM
+- lcmZ_zero_right: low — lcmZ a 0 = 0
+- lcmZ_zero_left: low — lcmZ 0 b = 0
+- gcdZ_assoc: medium — asociatividad del MCD
+- euclidean_divisionZ: high — identidad de división euclídea en ℤ
+- bezoutZ: high — identidad de Bézout en ℤ
+
+#### Valor absoluto de natToInt (absZ_natToInt)
+
+**Ubicación**: `Int.Div.lean`, línea 188
+**Orden**: 1º teorema (BRIDGE)
+
+**Enunciado Matemático**: Para $n \in \omega$, $|natToInt(n)| = n$.
+
+**Firma Lean4**:
+
+```lean
+theorem absZ_natToInt (n : U) (hn : n ∈ (ω : U)) :
+    absZ (natToInt n) = n
+```
+
+**Dependencias**: `natToInt`, `absZ`, `absZ_intClass_pos`
+**Importancia**: high
+
+#### Clausura de gcdZ en ω (gcdZ_in_omega)
+
+**Ubicación**: `Int.Div.lean`, línea 80
+**Orden**: 2º teorema
+
+**Enunciado Matemático**: Para $a, b \in \mathbb{Z}$, $\gcd_\mathbb{Z}(a,b) \in \omega$.
+
+**Firma Lean4**:
+
+```lean
+theorem gcdZ_in_omega (a b : U)
+    (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U)) :
+    gcdZ a b ∈ (ω : U)
+```
+
+**Dependencias**: `gcdZ`, `gcd_in_Omega`, `absZ_in_omega`
+**Importancia**: high
+
+#### Clausura de modZ en ω (modZ_in_omega)
+
+**Ubicación**: `Int.Div.lean`, línea 86
+**Orden**: 3º teorema
+
+**Enunciado Matemático**: Para $a, b \in \mathbb{Z}$, $\text{mod}_\mathbb{Z}(a,b) \in \omega$.
+
+**Firma Lean4**:
+
+```lean
+theorem modZ_in_omega (a b : U)
+    (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U)) :
+    modZ a b ∈ (ω : U)
+```
+
+**Dependencias**: `modZ`, `modOf_in_Omega`, `absZ_in_omega`
+**Importancia**: high
+
+#### Clausura de quotZ en ℤ (quotZ_in_IntSet)
+
+**Ubicación**: `Int.Div.lean`, línea 92
+**Orden**: 4º teorema
+
+**Enunciado Matemático**: Para $a, b \in \mathbb{Z}$, $\text{quot}_\mathbb{Z}(a,b) \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem quotZ_in_IntSet (a b : U)
+    (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U)) :
+    quotZ a b ∈ (IntSet : U)
+```
+
+**Dependencias**: `quotZ`, `mulZ_in_IntSet`, `signZ_in_IntSet`, `natToInt_mem_IntSet`, `divOf_in_Omega`, `absZ_in_omega`
+**Importancia**: high
+
+#### Conmutatividad de gcdZ (gcdZ_comm)
+
+**Ubicación**: `Int.Div.lean`, línea 103
+**Orden**: 5º teorema
+
+**Enunciado Matemático**: $\gcd_\mathbb{Z}(a,b) = \gcd_\mathbb{Z}(b,a)$.
+
+**Firma Lean4**:
+
+```lean
+theorem gcdZ_comm (a b : U)
+    (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U)) :
+    gcdZ a b = gcdZ b a
+```
+
+**Dependencias**: `gcdZ`, `gcd_comm_Omega`, `absZ_in_omega`
+**Importancia**: medium
+
+#### gcdZ con cero por la derecha (gcdZ_zero_right)
+
+**Ubicación**: `Int.Div.lean`, línea 110
+**Orden**: 6º teorema
+
+**Enunciado Matemático**: $\gcd_\mathbb{Z}(a, 0) = |a|$.
+
+**Firma Lean4**:
+
+```lean
+theorem gcdZ_zero_right (a : U) (ha : a ∈ (IntSet : U)) :
+    gcdZ a (zeroZ : U) = absZ a
+```
+
+**Dependencias**: `gcdZ`, `absZ_zero`, `gcd_zero`, `absZ_in_omega`
+**Importancia**: medium
+
+#### gcdZ con cero por la izquierda (gcdZ_zero_left)
+
+**Ubicación**: `Int.Div.lean`, línea 116
+**Orden**: 7º teorema
+
+**Enunciado Matemático**: $\gcd_\mathbb{Z}(0, b) = |b|$.
+
+**Firma Lean4**:
+
+```lean
+theorem gcdZ_zero_left (b : U) (hb : b ∈ (IntSet : U)) :
+    gcdZ (zeroZ : U) b = absZ b
+```
+
+**Dependencias**: `gcdZ_comm`, `gcdZ_zero_right`
+**Importancia**: medium
+
+#### Cota del resto (modZ_lt_absZ)
+
+**Ubicación**: `Int.Div.lean`, línea 122
+**Orden**: 8º teorema
+
+**Enunciado Matemático**: Si $b \neq 0$, entonces $\text{mod}_\mathbb{Z}(a,b) \in |b|$ (i.e., $\text{mod}_\mathbb{Z}(a,b) < |b|$ como ordinales).
+
+**Firma Lean4**:
+
+```lean
+theorem modZ_lt_absZ (a b : U)
+    (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U))
+    (hb_ne : b ≠ (zeroZ : U)) :
+    modZ a b ∈ absZ b
+```
+
+**Dependencias**: `modZ`, `mod_lt_divisor_Omega`, `absZ_eq_zero_iff`, `absZ_in_omega`
+**Importancia**: high
+
+#### gcdZ divide a a (gcdZ_dividesZ_left)
+
+**Ubicación**: `Int.Div.lean`, línea 165
+**Orden**: 9º teorema
+
+**Enunciado Matemático**: $natToInt(\gcd_\mathbb{Z}(a,b)) \mid a$ en $\mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem gcdZ_dividesZ_left (a b : U)
+    (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U)) :
+    dividesZ (natToInt (gcdZ a b)) a
+```
+
+**Dependencias**: `gcdZ`, `gcd_divides_left_Omega`, `dividesZ`, `natToInt`, `int_trichotomy`, `dividesZ_negZ_left_right`
+**Importancia**: high
+
+#### gcdZ divide a b (gcdZ_dividesZ_right)
+
+**Ubicación**: `Int.Div.lean`, línea 218
+**Orden**: 10º teorema
+
+**Enunciado Matemático**: $natToInt(\gcd_\mathbb{Z}(a,b)) \mid b$ en $\mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem gcdZ_dividesZ_right (a b : U)
+    (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U)) :
+    dividesZ (natToInt (gcdZ a b)) b
+```
+
+**Dependencias**: `gcdZ_comm`, `gcdZ_dividesZ_left`
+**Importancia**: high
+
+#### gcdZ es el mayor divisor común (gcdZ_is_greatest)
+
+**Ubicación**: `Int.Div.lean`, línea 317
+**Orden**: 11º teorema (PROPIEDAD FUNDAMENTAL)
+
+**Enunciado Matemático**: Si $d \mid a$ y $d \mid b$, entonces $d \mid natToInt(\gcd_\mathbb{Z}(a,b))$.
+
+**Firma Lean4**:
+
+```lean
+theorem gcdZ_is_greatest (a b d : U)
+    (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U)) (hd : d ∈ (IntSet : U))
+    (hda : dividesZ d a) (hdb : dividesZ d b) :
+    dividesZ d (natToInt (gcdZ a b))
+```
+
+**Dependencias**: `gcdZ`, `gcd_greatest_Omega`, `dividesZ_to_divides_abs`, `absZ_in_omega`, `divides_natToInt`, `dividesZ_natToInt_abs`
+**Importancia**: high
+
+#### Antisimetría del valor absoluto (dividesZ_antisymm_abs)
+
+**Ubicación**: `Int.Div.lean`, línea 265
+**Orden**: 12º teorema
+
+**Enunciado Matemático**: Si $a \mid b$ y $b \mid a$, entonces $|a| = |b|$.
+
+**Firma Lean4**:
+
+```lean
+theorem dividesZ_antisymm_abs (a b : U)
+    (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U))
+    (hab : dividesZ a b) (hba : dividesZ b a) :
+    absZ a = absZ b
+```
+
+**Dependencias**: `dividesZ`, `absZ`, `dividesZ_to_divides_abs`, `mul_cancel_left_omega`, `mul_eq_one_omega`, `antisymm_divides_Omega`
+**Importancia**: high
+
+#### Antisimetría completa (dividesZ_antisymm)
+
+**Ubicación**: `Int.Div.lean`, línea 363
+**Orden**: 13º teorema
+
+**Enunciado Matemático**: Si $a \mid b$ y $b \mid a$, entonces $a = b$ o $a = -b$.
+
+**Firma Lean4**:
+
+```lean
+theorem dividesZ_antisymm (a b : U)
+    (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U))
+    (hab : dividesZ a b) (hba : dividesZ b a) :
+    a = b ∨ a = negZ b
+```
+
+**Dependencias**: `dividesZ_antisymm_abs`, `int_eq_natToInt_abs_or_neg`, `negZ_negZ`
+**Importancia**: high
+
+#### Clausura de lcmZ en ω (lcmZ_in_omega)
+
+**Ubicación**: `Int.Div.lean`, línea 352
+**Orden**: 14º teorema
+
+**Enunciado Matemático**: Para $a, b \in \mathbb{Z}$, $\text{lcm}_\mathbb{Z}(a,b) \in \omega$.
+
+**Firma Lean4**:
+
+```lean
+theorem lcmZ_in_omega (a b : U)
+    (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U)) :
+    lcmZ a b ∈ (ω : U)
+```
+
+**Dependencias**: `lcmZ`, `lcm_in_Omega`, `absZ_in_omega`
+**Importancia**: high
+
+#### Conmutatividad de lcmZ (lcmZ_comm)
+
+**Ubicación**: `Int.Div.lean`, línea 358
+**Orden**: 15º teorema
+
+**Enunciado Matemático**: $\text{lcm}_\mathbb{Z}(a,b) = \text{lcm}_\mathbb{Z}(b,a)$.
+
+**Firma Lean4**:
+
+```lean
+theorem lcmZ_comm (a b : U)
+    (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U)) :
+    lcmZ a b = lcmZ b a
+```
+
+**Dependencias**: `lcmZ`, `lcm_comm_Omega`, `absZ_in_omega`
+**Importancia**: medium
+
+#### lcmZ con cero por la derecha (lcmZ_zero_right)
+
+**Ubicación**: `Int.Div.lean`, línea 494
+**Orden**: 16º teorema
+
+**Enunciado Matemático**: $\text{lcm}_\mathbb{Z}(a, 0) = 0$.
+
+**Firma Lean4**:
+
+```lean
+theorem lcmZ_zero_right (a : U) (ha : a ∈ (IntSet : U)) :
+    lcmZ a zeroZ = (∅ : U)
+```
+
+**Dependencias**: `lcmZ`, `absZ_zero`, `lcm_zero_right_Omega`, `absZ_in_omega`
+**Importancia**: low
+
+#### lcmZ con cero por la izquierda (lcmZ_zero_left)
+
+**Ubicación**: `Int.Div.lean`, línea 500
+**Orden**: 17º teorema
+
+**Enunciado Matemático**: $\text{lcm}_\mathbb{Z}(0, b) = 0$.
+
+**Firma Lean4**:
+
+```lean
+theorem lcmZ_zero_left (b : U) (hb : b ∈ (IntSet : U)) :
+    lcmZ zeroZ b = (∅ : U)
+```
+
+**Dependencias**: `lcmZ`, `absZ_zero`, `lcm_zero_left_Omega`, `absZ_in_omega`
+**Importancia**: low
+
+#### Asociatividad de gcdZ (gcdZ_assoc)
+
+**Ubicación**: `Int.Div.lean`, línea 484
+**Orden**: 18º teorema
+
+**Enunciado Matemático**: $\gcd_\mathbb{Z}(a,\,natToInt(\gcd_\mathbb{Z}(b,c))) = \gcd_\mathbb{Z}(natToInt(\gcd_\mathbb{Z}(a,b)),\,c)$.
+
+**Firma Lean4**:
+
+```lean
+theorem gcdZ_assoc (a b c : U)
+    (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U)) (hc : c ∈ (IntSet : U)) :
+    gcdZ a (natToInt (gcdZ b c)) = gcdZ (natToInt (gcdZ a b)) c
+```
+
+**Dependencias**: `gcdZ`, `absZ_natToInt`, `gcd_in_Omega`, `gcd_assoc_Omega`, `absZ_in_omega`
+**Importancia**: medium
+
+#### División euclídea en ℤ (euclidean_divisionZ)
+
+**Ubicación**: `Int.Div.lean`, línea 406
+**Orden**: 19º teorema (TEOREMA FUNDAMENTAL)
+
+**Enunciado Matemático**: Para $a, b \in \mathbb{Z}$ con $b \neq 0$: $a = \text{quot}_\mathbb{Z}(a,b) \cdot b + \text{sign}(a) \cdot natToInt(\text{mod}_\mathbb{Z}(a,b))$.
+
+**Firma Lean4**:
+
+```lean
+theorem euclidean_divisionZ (a b : U)
+    (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U))
+    (h_b_neq_zero : b ≠ zeroZ) :
+    a = addZ (mulZ (quotZ a b) b) (mulZ (signZ a) (natToInt (modZ a b)))
+```
+
+**Dependencias**: `quotZ`, `modZ`, `signZ`, `natToInt`, `divMod_eq_Omega`, `signZ_mulZ_absZ`, `mulZ_addZ_distrib_left`, `mulZ_assoc`
+**Importancia**: high
+
+#### Identidad de Bézout en ℤ (bezoutZ)
+
+**Ubicación**: `Int.Div.lean`, línea 635
+**Orden**: 20º teorema (TEOREMA PROFUNDO)
+
+**Enunciado Matemático**: Para cualesquiera $a, b \in \mathbb{Z}$, existen $s, t \in \mathbb{Z}$ tales que $natToInt(\gcd_\mathbb{Z}(a,b)) = s \cdot a + t \cdot b$.
+
+**Firma Lean4**:
+
+```lean
+theorem bezoutZ (a b : U) (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U)) :
+    ∃ s t : U, (s ∈ (IntSet : U)) ∧ (t ∈ (IntSet : U)) ∧
+      natToInt (gcdZ a b) = addZ (mulZ s a) (mulZ t b)
+```
+
+**Dependencias**: `bezout_natform_Omega`, `bezout_case1`, `bezout_case2`, `absZ_in_omega`, `gcdZ_in_omega`
+**Importancia**: high
+
+---
+
 ## 5. Notación y Sintaxis
 
 ### 5.1 Operadores Básicos
@@ -13381,6 +13850,41 @@ export Cardinal.FinitePowerSet (
 )
 ```
 
+### 6.43 Int.Div.lean
+
+**Namespace**: `ZFC.Int.Div` (exportado a `ZFC`)
+**Última modificación**: 2026-04-22
+**Dependencias**: `ZFC.Int.Abs`, `ZFC.Int.DivMod`, `ZFC.Nat.Div`, `ZFC.Nat.Gcd`
+
+```lean
+export Int.Div (
+    gcdZ
+    modZ
+    lcmZ
+    quotZ
+    absZ_natToInt
+    gcdZ_in_omega
+    modZ_in_omega
+    quotZ_in_IntSet
+    euclidean_divisionZ
+    lcmZ_in_omega
+    gcdZ_comm
+    gcdZ_zero_right
+    gcdZ_zero_left
+    lcmZ_comm
+    modZ_lt_absZ
+    gcdZ_dividesZ_left
+    gcdZ_dividesZ_right
+    gcdZ_is_greatest
+    dividesZ_antisymm_abs
+    dividesZ_antisymm
+    gcdZ_assoc
+    lcmZ_zero_right
+    lcmZ_zero_left
+    bezoutZ
+)
+```
+
 ## 7. Estado de Proyección por Módulo
 
 ### 7.1 Leyenda de Estados
@@ -13439,6 +13943,7 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `BoolAlg.BoolRingBA.lean` - Correspondencia Anillo Booleano ↔ Álgebra Booleana: X△Y△(X∩Y)=X∪Y, A△X=X^∁[A], (X∩Y^∁)∪(X^∁∩Y)=X△Y, round-trip BA→BR→BA (join/complement/meet), round-trip BR→BA→BR (add/mul), char 2, idempotencia, involución, X△X^∁=A. 0 definiciones + 13 teoremas + 13 exports
 - `BoolAlg.Representation.lean` - Teorema de Representación de Stone (forma concreta): biyección A↔Atoms(A) vía singletons, biyección 𝒫(A)↔𝒫(Atoms A) vía atomsBelowMap, preservación de ∪/∩/complemento. 3 definiciones + 24 teoremas + 27 exports
 - `Cardinal.FinitePowerSet.lean` - Cardinalidad del conjunto potencia finito: |𝒫(F)|=2^n, extensión de biyecciones, unión disjunta aditiva, descomposición en mitades, removeElemMap. 1 definición + 12 teoremas + 13 exports
+- `Int.Div.lean` - MCD/MCM/divisibilidad en ℤ: gcdZ/modZ/lcmZ/quotZ vía valores absolutos en ω, gcdZ_dividesZ_left/right, gcdZ_is_greatest, dividesZ_antisymm_abs/antisymm, euclidean_divisionZ, bezoutZ. 4 definiciones + 20 teoremas + 24 exports
 
 ### 7.3 Archivos Parcialmente Proyectados
 
@@ -13458,9 +13963,26 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 
 ### 7.5 Archivos Completos Pendientes de Proyectar
 
-(47/47 módulos completamente proyectados, 0 pendientes)
+(48/61 módulos proyectados, 13 pendientes)
+
+Módulos `ZFC.Int.*` pendientes de proyectar:
+- `Int/Equiv.lean` - `ZFC.Int.Equiv`
+- `Int/Basic.lean` - `ZFC.Int.Basic`
+- `Int/Add.lean` - `ZFC.Int.Add`
+- `Int/Neg.lean` - `ZFC.Int.Neg`
+- `Int/Mul.lean` - `ZFC.Int.Mul`
+- `Int/Ring.lean` - `ZFC.Int.Ring`
+- `Int/Pow.lean` - `ZFC.Int.Pow`
+- `Int/Sub.lean` - `ZFC.Int.Sub`
+- `Int/DivMod.lean` - `ZFC.Int.DivMod`
+- `Int/Order.lean` - `ZFC.Int.Order`
+- `Int/Embedding.lean` - `ZFC.Int.Embedding`
+- `Int/Abs.lean` - `ZFC.Int.Abs`
+- `Int/Induction.lean` - `ZFC.Int.Induction`
 
 ---
+
+*Última actualización: 2026-04-22 — Proyección completa de Int.Div.lean (§3.46, §4.42, §6.43: 4 def + 20 teoremas + 24 exports, gcdZ/modZ/lcmZ/quotZ vía valores absolutos en ω, gcdZ_dividesZ_left/right, gcdZ_is_greatest, dividesZ_antisymm_abs/antisymm, euclidean_divisionZ, identidad de Bézout). Tabla §1.1 actualizada (14 módulos Int añadidos: 1 ✅ + 13 ❌). §7.2 e §7.5 actualizados: 48/61 módulos proyectados, 13 pendientes (todos ZFC.Int.* excepto Int.Div).*
 
 *Última actualización: 2026-04-09 — Proyección completa de BoolAlg.Representation.lean (§3.44, §4.40, §6.41: 3 def + 24 teoremas + 27 exports, teorema de representación de Stone forma concreta, biyección A↔Atoms(A) vía singletons, biyección 𝒫(A)↔𝒫(Atoms A) vía atomsBelowMap, preservación ∪/∩/complemento/∅/universo) y Cardinal.FinitePowerSet.lean (§3.45, §4.41, §6.42: 1 def + 12 teoremas + 13 exports, |𝒫(F)|=2^n, extensión de biyecciones por un elemento, unión disjunta aditiva, descomposición en mitades disjuntas, removeElemMap). Tabla §1.1 y §7.2 actualizadas. §7.5: 47/47 módulos proyectados. Estado: ✅ 100% completo, 0 sorry.*
 
