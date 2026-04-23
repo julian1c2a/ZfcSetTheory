@@ -26,6 +26,9 @@ License: MIT
   * `dividesZ_sub` — a | b → a | c → a | (b - c)
   * `dividesZ_mulZ_right_factor` — a | (c · a)
   * `dividesZ_negZ_left_right` — a | b ↔ a | (-b)
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Int.Ring

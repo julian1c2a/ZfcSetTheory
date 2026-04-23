@@ -22,6 +22,9 @@ License: MIT
   * `subZ_negZ_left` — (-x) - y = -(x + y)
   * `subZ_addZ_left_cancel` — x - (x + y) = -y
   * `subZ_addZ_right_cancel` — (x + y) - x = y
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Int.Neg

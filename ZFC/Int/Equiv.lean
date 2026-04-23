@@ -20,6 +20,9 @@ License: MIT
   * `IntEquivRel_symm` — symmetry
   * `IntEquivRel_trans` — transitivity (uses additive cancellation on ω)
   * `IntEquivRel_is_equivalence` — IntEquivRel is an equivalence on ω × ω
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.SetOps.Relations

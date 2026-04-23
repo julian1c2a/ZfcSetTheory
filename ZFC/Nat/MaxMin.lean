@@ -30,6 +30,9 @@ License: MIT
   - `maxOf_le`:                           max is the least upper bound
   - `le_minOf`:                           min is the greatest lower bound
   - `maxOf_eq_iff_le`, `minOf_eq_iff_le`: characterization via ≤
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Nat.Basic

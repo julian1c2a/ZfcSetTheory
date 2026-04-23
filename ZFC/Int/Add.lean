@@ -23,6 +23,9 @@ License: MIT
   * `addZ_assoc` — associativity
   * `addZ_zero_right` — right identity: addZ x 0ℤ = x
   * `addZ_zero_left` — left identity: addZ 0ℤ x = x
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Int.Basic

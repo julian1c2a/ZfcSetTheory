@@ -27,6 +27,9 @@ This module also develops infrastructure for bijections and equipotence:
 * `bijection_inverse_is_bijection` — f⁻¹ is a bijection from B to A
 * `comp_bijection`                 — composition of bijections is a bijection
 * `equipotent_refl/symm/trans`     — equipotence is an equivalence relation
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Nat.Basic

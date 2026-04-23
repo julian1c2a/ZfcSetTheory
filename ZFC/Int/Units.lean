@@ -14,6 +14,9 @@ License: MIT
 
   * `isUnitZ` — definition of units in ℤ
   * `unitZ_iff` — the only units are ±1
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Int.Ring

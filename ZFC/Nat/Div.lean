@@ -40,6 +40,9 @@ License: MIT
   - `div_of_lt_Omega`: `m ∈ n → divOf m n = ∅`
   - `mod_of_lt_Omega`: `m ∈ n → modOf m n = m`
   - `div_le_self_Omega`: `n ≠ ∅ → divOf m n ∈ m ∨ divOf m n = m`
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Nat.Basic

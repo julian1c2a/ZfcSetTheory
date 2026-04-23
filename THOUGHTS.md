@@ -10,9 +10,9 @@
 
 **[5.]** Los resultados **[2.]**, **[3.]** y **[4.]** quedarán unidos en un único módulo final sobre este tema.
 
-**[6.]** Queda algo interesante que es demostrar que para los conjuntos finitos, digamos que $F$ es de cardinalidad $n \in \omega$, $\mathcal{P}(F) = 2^n$. Esto se puede demostrar con el sistema de isomorfismos, mostrando que $\mathcal{P}(F)$ es isomorfo a $2^n$ (con la estructura de los naturales de Von Neumann). Esto también quedará dentro del módulo final sobre Álgebras de Boole.
+**[6.]** Queda algo interesante que es demostrar que para los conjuntos finitos, digamos que $F$ es de cardinalidad $n \in \omega$, $\mathcal{P}(F) = 2^{n}$. Esto se puede demostrar con el sistema de isomorfismos, mostrando que $\mathcal{P}(F)$ es isomorfo a $2^{n}$ (con la estructura de los naturales de Von Neumann). Esto también quedará dentro del módulo final sobre Álgebras de Boole.
 
-**[7.]** Además habría que demostrar que si definimos sobre un conjunto finito $F$ un álgebra de Boole, entonces $∃ n ∈ ω, #F = 2^n$.
+**[7.]** Además habría que demostrar que si definimos sobre un conjunto finito $F$ un álgebra de Boole, entonces $∃ n ∈ ω, #F = 2^{n}$.
 
 **[8.]** En ZFC se puede (creo que con lo que tenemos es suficiente) demostrar los teoremas de Incompletitud de Gödel, y esto debe quedar dentro del proyecto. Quisiera que la forma final fuera la forma que demustra consistencia y no solo omega-consitencia (forma de Rosser).
 
@@ -22,6 +22,7 @@
 > ✅ Completado (Fases 1–3, abril 2026): 43 archivos en 8 subdirectorios (Core, Axiom, SetOps, Nat, Peano, Induction, BoolAlg, Cardinal), namespaces `ZFC.*` alineados con directorios, 185 identificadores renombrados según convención Mathlib.
 
 **[11.]** Lo siguiente a todo lo anterior (que podría seguir incrementándose hasta el infinito) es crear módulos para los números enteros en ZFC, para los racionales, y finalmente para los reales.
+> ✅ Enteros ℤ completados (Phase 5, abril 2026): 15 módulos, 189 exports, 0 sorry. Pendiente: ℚ (Phase 6 — planificada), ℝ (Phase 7 — esquemática).
 
 **[12.]** Una vez terminada toda esa parte más práctica, habría que empeza a introducir ordinales, recursión transfinita, y demás temas como aritmética ordinal, el teorema de (cada conjunto al que se le asigne un orden es isomorfo a un único ordinal) etc. Para esto habrá que incorporar los axiomas de ZFC como el de reemplazo y el de elección.
 
@@ -41,16 +42,16 @@
 > ✅ Completado (Fase 2): namespace `ZFC.*` alineado con directorios.
 *[1.3.]* Temas: [Preliminares], [Axiomas de ZFC], [Operaciones con conjuntos en ZFC], [Construcción de los Teoremas sobre Recursión e Inducción], [Números Naturales de Von Neumann], [Integración de los Postulados de Peano en ZFC], [Integración del proyecto Peano en ZFC], [Álgebras y Anillos Booleanos], [Sistemas de Números Enteros, Racionales, Reales y Complejos], [Álgebra Lineal], [Topología], [Ordinales y su Teoría], [Recursion Transfinita], [Teoría de Cardinales], [Jerarquía de Conjuntos de Zermelo], [Jerarquía de Gödel (construibles)], [Teoría de Modelos], etc.
 *[1.4.]* Hacer algún tipo de comentario sistematizado para distinguir en cada módulo cuáles son los teoremas principales, cuáles son los secundarios, etc. Esto se puede hacer con algún tipo de etiqueta o comentario especial que permita identificar rápidamente la importancia de cada resultado dentro del módulo.
-> ⏳ Pendiente: Fase 4 del plan de reorganización (sistema de anotaciones @importance, @axiom_system).
+> ✅ Completado (Fase 4, abril 2026): anotaciones `@importance` (high/medium/low) añadidas en REFERENCE.md para 280+ teoremas; anotaciones `@axiom_system` para todos los módulos.
 
 *[1.5.]* Algún sistema de marcas para identificar las dependencias.
-> ⏳ Pendiente: Fase 4.
+> ✅ Completado (Fase 4): `@axiom_system` en REFERENCE.md §1.2 — 47 módulos clasificados por axiomas ZFC usados transitivamente.
 
 *[1.6.]* Algún sistema de marcas para identificar los resultados que se han demostrado dentro de ZFC y los que no.
-> ⏳ Pendiente: Fase 4.
+> ✅ Completado (Fase 4): `@axiom_system` clasifica cada módulo por axiomas ZFC usados transitivamente, distinguiendo resultados de lógica pura de los que usan Infinito, Potencia, Selección, etc.
 
 *[1.7.]* Algún sistema de marcas para identificar los resultados que se han demostrado en Peano o en el sistema de Aczel (nuevo proyecto) y los que no.
-> ⏳ Pendiente: Fase 4.
+> ✅ Completado (Fase 4, parcial): `@axiom_system` distingue módulos con dependencia Peano (vía `ZFC.Peano.Import`). Sistema Aczel pendiente (proyecto futuro).
 
 *[1.8.]* ~~Quiero que adoptemos el sistema de nombres de teoremas, definiciones, etc de mathlib, si es que este es fácil de entender y de seguir. Tenemos una deuda de sistematicidad en los nombres que hace que sean muy difíciles de seguir los teoremas etc por sus nombres actuales. Esto es algo que se puede solucionar con un poco de trabajo y que hará que el proyecto sea mucho más fácil de seguir y de entender.~~
 > ✅ Completado (Fase 3): 185 identificadores renombrados según convención Mathlib. Ver REFERENCE.md §0 para la tabla completa.
@@ -145,7 +146,9 @@ Además el functor asignará a $\mathbf{0}_R$ el elemento $\mathbf{0}_B$, y a $\
 
 *[6.]* Todo lo dicho quedaría en un nuevo proyecto, que podría llamarse algo así como "Fundamentos de la Matemática en Lean", o algo por el estilo, que unificaría todos los proyectos anteriores y que tendría una organización mucho más clara y sistematizada. Este nuevo proyecto sería el que se mantendría a largo plazo, y en el que se irían añadiendo nuevos temas y resultados a medida que se vayan desarrollando. El proyecto actual de ZFC quedaría como un subproyecto dentro de este nuevo proyecto más amplio, y se iría integrando poco a poco con los demás subproyectos (Peano, Aczel, MKplusCAC, etc) para crear una visión unificada de los fundamentos de la matemática en Lean.
 
-**INMEDIATO: ENTEROS**
+**INMEDIATO: ENTEROS** — ✅ *Completado (Phase 5, abril 2026)*
+
+> **15 módulos implementados, 189 exports, 0 sorry, 0 errores.** Los 20 puntos planificados están resueltos. Ver NEXT-STEPS.md §2.14 para el estado detallado y los 13 items opcionales pendientes (bezoutZ, tfa_Z, etc.).
 
 [1.] En $\omega \times \omega$ establecemos la relación de equivalencia $(a,b) \sim_{\omega \times \omega} (c,d) \iff a + d = b + c$. Entonces, los enteros se definen como las clases de equivalencia de esta relación. Hay que demostrar que $\sim_{\omega \times \omega}$ es una relación de equivalencia, que es reflexiva, simétrica y transitiva.
 

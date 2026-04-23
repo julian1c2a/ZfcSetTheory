@@ -2,6 +2,9 @@
 Copyright (c) 2025. All rights reserved.
 Author: Julián Calderón Almendros
 License: MIT
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 /-

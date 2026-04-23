@@ -1,14 +1,17 @@
+/-
+Copyright (c) 2026. All rights reserved.
+Author: Julián Calderón Almendros
+License: MIT
+
+REFERENCE.md: Este módulo proyecta el isomorfismo Von Neumann ↔ Peano
+en §3.23, §4.19, §6.20 de REFERENCE.md.
+Al modificar, actualizar REFERENCE.md.
+-/
 import ZFC.Nat.Basic
 import ZFC.Axiom.Infinity
 import PeanoNatLib.PeanoNatAxioms
 import PeanoNatLib.PeanoNatStrictOrder
 import PeanoNatLib.PeanoNatOrder
-
-/-
-Copyright (c) 2026. All rights reserved.
-Author: Julián Calderón Almendros
-License: MIT
--/
 
 /-
   This module establishes an isomorphism between the Von Neumann natural numbers

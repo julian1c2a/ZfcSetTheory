@@ -26,6 +26,9 @@ where n ∈ ω (Von Neumann naturals) and A is any set.
 * `concatSeq_isFinSeq`     — concatenation yields a (n+m)-sequence
 * `concatSeq_left`         — accessing left part of concatenation
 * `concatSeq_right`        — accessing right part of concatenation
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Nat.Add

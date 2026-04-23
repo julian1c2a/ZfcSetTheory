@@ -28,6 +28,9 @@ License: MIT
   - `newton_binom_peano`:      (a+b)^n = Σ C(n,k)·a^k·b^(n−k)  (Peano→ZFC)
   - `sum_binom_eq_pow_two_peano`: Σ C(n,k) = 2^n  (Peano→ZFC)
   - `exists_nm_growth_Omega`:  ∃ n m ∈ ω, ∀ k ≥ 1, (n+k)^m < n^(m+k)
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Nat.Basic

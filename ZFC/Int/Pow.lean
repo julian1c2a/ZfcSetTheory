@@ -36,6 +36,9 @@ License: MIT
   * `powZ_mul_base` — powZ (mulZ x y) n = mulZ (powZ x n) (powZ y n)
   * `powZ_negZ_even` — powZ (negZ x) (add n n) = powZ x (add n n)
   * `powZ_negZ_odd` — powZ (negZ x) (σ (add n n)) = negZ (powZ x (σ (add n n)))
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Int.Ring

@@ -535,15 +535,69 @@ El patrón `X_is_specified` se reemplaza por `mem_X_iff` (describe el contenido)
 
 ---
 
-## 5. Nota sobre la Transición
+## 5. Estado de la Transición (completada, abril 2026)
 
-Durante la migración (`ZFC` → `ZFC`), los nombres actuales se renombrarán progresivamente
-siguiendo estas convenciones. El orden de prioridad es:
+✅ La migración de nombres (`ZfcSetTheory` → `ZFC`) quedó completada en abril de 2026.
+Todos los módulos siguen las convenciones Mathlib documentadas en este archivo.
 
-1. Módulos base (axiomas): `Extension`, `Specification`, `Union`, `PowerSet`
-2. Números naturales: `Nat.Basic` + 13 módulos de aritmética
-3. Funciones y relaciones: `Functions`, `Relations`, `SetOps.CartesianProduct`
-4. Álgebra booleana: `BoolAlg.Basic` + módulos derivados
-5. Cardinalidad y resto
+El proceso se realizó por fases, verificando compilación completa en cada paso:
 
-Cada renombrado se verifica con compilación completa antes de continuar.
+1. Módulos base (axiomas): `Extension`, `Specification`, `Union`, `PowerSet` — ✅ Hecho
+2. Números naturales: `Nat.Basic` + 13 módulos de aritmética — ✅ Hecho
+3. Funciones y relaciones: `Functions`, `Relations`, `SetOps.CartesianProduct` — ✅ Hecho
+4. Álgebra booleana: `BoolAlg.Basic` + módulos derivados — ✅ Hecho
+5. Cardinalidad y resto — ✅ Hecho
+6. Enteros: `Int/*` (15 módulos) — ✅ Hecho
+
+Algunos identificadores internos conservan su nombre original por claridad
+(e.g., `strict_order_transitive`, `CartesianProduct_is_specified`).
+
+---
+
+## 6. Sufijos de Dominio
+
+El proyecto usa sufijos de dominio para distinguir operaciones que actúan sobre
+estructuras específicas cuando podría haber ambigüedad con operaciones homónimas
+de otros dominios (especialmente `Nat` dentro del tipo universo `U`).
+
+### REGLA 13 — Sufijo de dominio `Z` para operaciones sobre `IntSet`
+
+Todas las operaciones y predicados definidos directamente sobre los enteros
+construidos como `IntSet` (cociente de `ω × ω`) llevan el sufijo `Z`:
+
+```
+-- Operaciones aritméticas
+addZ    : U → U → U          -- suma en ℤ = addZ x y
+negZ    : U → U              -- negación en ℤ
+mulZ    : U → U → U          -- producto en ℤ
+subZ    : U → U → U          -- diferencia en ℤ
+
+-- Orden
+leZ     : U → U → Prop       -- relación ≤ en ℤ
+ltZ     : U → U → Prop       -- relación < en ℤ
+leZRel  : U                   -- leZ como subconjunto de ℤ × ℤ
+ltZRel  : U                   -- ltZ como subconjunto de ℤ × ℤ
+
+-- Predicados
+isPositiveZ : U → Prop        -- x > 0 en ℤ
+isNegativeZ : U → Prop        -- x < 0 en ℤ
+isUnitZ     : U → Prop        -- x es unidad en ℤ (x = 1 ∨ x = -1)
+```
+
+**Razón**: Evitar colisión con operaciones análogas de `Nat.*` (e.g., `add` en `Nat`
+vs `addZ` en `Int`) y con nombres genéricos de Mathlib.
+
+**Nota sobre REGLA 7**: Los predicados con sufijo de dominio `Z` usan
+`lowerCamelCase` (e.g., `isPositiveZ`, `isNegativeZ`, `isUnitZ`) como excepción
+a la REGLA 7 (que prescribe `UpperCamelCase` para predicados `Prop`).
+Esta excepción es intencional: el sufijo `Z` es parte del nombre, no un
+modificador, y la `i` minúscula sigue el patrón de `isNat_zero` (REGLA 5).
+
+### Tabla de sufijos de dominio planificados
+
+| Sufijo | Dominio | Ejemplo |
+|--------|---------|--------|
+| `Z` | Enteros (`IntSet`) | `addZ`, `leZ`, `isPositiveZ` |
+| `N` (reservado) | Naturales (cuando ambigüedad con ZFC `ω`) | `addN` (no usado aún) |
+| `Q` (reservado) | Racionales (trabajo futuro) | `addQ` |
+| `R` (reservado) | Reales (trabajo futuro) | `addR` |

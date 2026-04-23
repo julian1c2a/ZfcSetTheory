@@ -43,6 +43,9 @@ ZFC terms: ∃ f k, isFinSeq f k ω ∧ allPrime ∧ seqProd f k = n.
 * `dlistToSeq_seqProd`     — product correspondence with product_list
 * `exists_prime_factorization_native` — TFA existence with ZFC sequences
 * `unique_prime_factorization_native` — TFA uniqueness with ZFC sequences
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Peano.FiniteSequencesArith

@@ -21,6 +21,9 @@ License: MIT
   - `well_founded_lt_Omega`:       membership on ω is well-founded (via Peano)
   - `well_ordering_Omega`:         every nonempty subset of ω has a unique minimum
   - `well_ordering_Omega_exists`:  simplified form without uniqueness
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Nat.Basic

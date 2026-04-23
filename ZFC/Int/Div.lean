@@ -30,6 +30,9 @@ License: MIT
   * `dividesZ_antisymm` — a | b → b | a → a = b ∨ a = negZ b
   * `lcmZ_in_omega` — lcmZ a b ∈ ω
   * `lcmZ_comm` — lcmZ a b = lcmZ b a
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Int.Abs

@@ -26,6 +26,9 @@ License: MIT
   * `natToInt_not_surjective` — natToInt is not surjective onto ℤ
   * `intToNat_zigzag_is_bijection` — zigzag is a bijection ℤ → ω
   * `IntSet_equipotent_omega` — |ℤ| = |ω|
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Int.Order

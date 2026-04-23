@@ -1,6 +1,6 @@
 # Referencia Técnica - ZfcSetTheory
 
-*Última actualización: 2026-04-02 17:53*
+*Última actualización: 2026-04-23 18:00*
 **Autor**: Julián Calderón Almendros
 
 ## 0. Guía de Convenciones de Nombres para el Estudioso
@@ -141,20 +141,21 @@ Este documento cumple con todos los requisitos especificados en [AI-GUIDE.md](AI
 | `Cardinal.FinitePowerSet.lean` | `ZFC.Cardinal.FinitePowerSet` | `Cardinal.Basic`, `SetOps.FiniteSets`, `Nat.Mul`, `Nat.Pow` + anteriores | ✅ Completo |
 | `BoolAlg.FiniteBA.lean` | `ZFC.BoolAlg.FiniteBA` | `Cardinal.FinitePowerSet`, `BoolAlg.Representation` + anteriores | ✅ Completo |
 | `BoolAlg.BoolRingBA.lean` | `ZFC.BoolAlg.BoolRingBA` | `BoolAlg.Ring` + anteriores | ✅ Completo |
-| `Int/Equiv.lean` | `ZFC.Int.Equiv` | `Nat.Basic`, `Infinity` + anteriores | ❌ Pendiente |
-| `Int/Basic.lean` | `ZFC.Int.Basic` | `Int.Equiv` + anteriores | ❌ Pendiente |
-| `Int/Add.lean` | `ZFC.Int.Add` | `Int.Basic` + anteriores | ❌ Pendiente |
-| `Int/Neg.lean` | `ZFC.Int.Neg` | `Int.Basic`, `Int.Add` + anteriores | ❌ Pendiente |
-| `Int/Mul.lean` | `ZFC.Int.Mul` | `Int.Basic`, `Int.Add`, `Int.Neg` + anteriores | ❌ Pendiente |
-| `Int/Ring.lean` | `ZFC.Int.Ring` | `Int.Mul` + anteriores | ❌ Pendiente |
-| `Int/Pow.lean` | `ZFC.Int.Pow` | `Int.Mul` + anteriores | ❌ Pendiente |
-| `Int/Sub.lean` | `ZFC.Int.Sub` | `Int.Add`, `Int.Neg` + anteriores | ❌ Pendiente |
-| `Int/DivMod.lean` | `ZFC.Int.DivMod` | `Int.Basic`, `Nat.Div` + anteriores | ❌ Pendiente |
-| `Int/Order.lean` | `ZFC.Int.Order` | `Int.Basic` + anteriores | ❌ Pendiente |
-| `Int/Embedding.lean` | `ZFC.Int.Embedding` | `Int.Basic`, `Nat.Add` + anteriores | ❌ Pendiente |
-| `Int/Abs.lean` | `ZFC.Int.Abs` | `Int.Basic`, `Int.Order` + anteriores | ❌ Pendiente |
+| `Int/Equiv.lean` | `ZFC.Int.Equiv` | `Nat.Basic`, `Infinity` + anteriores | ✅ Completo |
+| `Int/Basic.lean` | `ZFC.Int.Basic` | `Int.Equiv` + anteriores | ✅ Completo |
+| `Int/Add.lean` | `ZFC.Int.Add` | `Int.Basic` + anteriores | ✅ Completo |
+| `Int/Neg.lean` | `ZFC.Int.Neg` | `Int.Basic`, `Int.Add` + anteriores | ✅ Completo |
+| `Int/Mul.lean` | `ZFC.Int.Mul` | `Int.Basic`, `Int.Add`, `Int.Neg` + anteriores | ✅ Completo |
+| `Int/Ring.lean` | `ZFC.Int.Ring` | `Int.Mul` + anteriores | ✅ Completo |
+| `Int/Pow.lean` | `ZFC.Int.Pow` | `Int.Mul` + anteriores | ✅ Completo |
+| `Int/Sub.lean` | `ZFC.Int.Sub` | `Int.Add`, `Int.Neg` + anteriores | ✅ Completo |
+| `Int/DivMod.lean` | `ZFC.Int.DivMod` | `Int.Basic`, `Nat.Div` + anteriores | ✅ Completo |
+| `Int/Order.lean` | `ZFC.Int.Order` | `Int.Basic` + anteriores | ✅ Completo |
+| `Int/Embedding.lean` | `ZFC.Int.Embedding` | `Int.Basic`, `Nat.Add` + anteriores | ✅ Completo |
+| `Int/Abs.lean` | `ZFC.Int.Abs` | `Int.Basic`, `Int.Order` + anteriores | ✅ Completo |
 | `Int/Div.lean` | `ZFC.Int.Div` | `Int.Abs`, `Int.DivMod`, `Nat.Div`, `Nat.Gcd` | ✅ Completo |
-| `Int/Induction.lean` | `ZFC.Int.Induction` | `Int.Basic` + anteriores | ❌ Pendiente |
+| `Int/Induction.lean` | `ZFC.Int.Induction` | `Int.Basic` + anteriores | ✅ Completo |
+| `Int/Units.lean` | `ZFC.Int.Ring` | `Int.Ring`, `Int.Mul` + anteriores | ✅ Completo |
 
 ### 1.2 Axiomas ZFC por Módulo
 
@@ -4587,6 +4588,695 @@ noncomputable def quotZ (a b : U) : U :=
 ```lean
 noncomputable def lcmZ (a b : U) : U := lcm (absZ a) (absZ b)
 ```
+
+---
+
+### 3.47 Int.Equiv.lean
+
+**Módulo**: `ZFC.Int.Equiv`
+**Namespace**: `ZFC.Int.Equiv`
+**Dependencias**: `ZFC.Nat.Basic`, `ZFC.Axiom.Infinity`, `ZFC.SetOps.CartesianProduct`, `ZFC.SetOps.Relations`
+**Estrategia**: Define la relación de equivalencia sobre ω×ω que identifica pares (a,b)~(c,d) si a+d=b+c, capturando la idea de resta a−b. Demuestra reflexividad, simetría, transitividad y que es efectivamente una relación de equivalencia sobre ω×ω.
+
+#### IntEquivRel
+
+**Ubicación**: `Int/Equiv.lean`
+**Orden**: 1ª definición
+
+**Descripción Matemática**: La relación de equivalencia en $\omega \times \omega$: pares $\langle(a,b),(c,d)\rangle$ tales que $a + d = b + c$.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def IntEquivRel : U :=
+  {p ∈ (ω ×ₛ ω) ×ₛ (ω ×ₛ ω) |
+    add (fst (fst p)) (snd (snd p)) = add (snd (fst p)) (fst (snd p))}
+```
+
+**Computabilidad**: No computable
+
+---
+
+### 3.48 Int.Basic.lean
+
+**Módulo**: `ZFC.Int.Basic`
+**Namespace**: `ZFC.Int.Basic`
+**Dependencias**: `ZFC.Int.Equiv` + anteriores
+**Estrategia**: Construye el conjunto ℤ como conjunto cociente (ω×ω)/IntEquivRel. Define intClass como la clase de equivalencia de un par, zeroZ = [(0,0)], oneZ = [(σ∅,0)]. Prueba tricotomía: todo entero es positivo nulo, cero o negativo puro.
+
+#### IntSet
+
+**Ubicación**: `Int/Basic.lean`
+**Orden**: 1ª definición
+
+**Descripción Matemática**: El conjunto de los números enteros: $\mathbb{Z} := (\omega \times \omega)/{\sim}$ donde $(a,b) \sim (c,d) \iff a + d = b + c$.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def IntSet : U := QuotientSet (ω ×ₛ ω) IntEquivRel
+```
+
+**Computabilidad**: No computable
+
+---
+
+#### intClass
+
+**Ubicación**: `Int/Basic.lean`
+**Orden**: 2ª definición
+
+**Descripción Matemática**: La clase de equivalencia del par $(a,b)$: $[(a,b)] \in \mathbb{Z}$, representando el entero $a - b$.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def intClass (a b : U) : U :=
+  EqClass (ω ×ₛ ω) IntEquivRel (OrderedPair a b)
+```
+
+**Computabilidad**: No computable
+
+---
+
+#### zeroZ
+
+**Ubicación**: `Int/Basic.lean`
+**Orden**: 3ª definición
+
+**Descripción Matemática**: El cero en $\mathbb{Z}$:
+
+## 4. Teoremas Principales por Módulo_\mathbb{Z} = [(0, 0)]$
+
+**Firma Lean4**:
+
+```lean
+noncomputable def zeroZ : U := intClass ∅ ∅
+```
+
+**Computabilidad**: No computable
+
+---
+
+#### oneZ
+
+**Ubicación**: `Int/Basic.lean`
+**Orden**: 4ª definición
+
+**Descripción Matemática**: La unidad en $\mathbb{Z}$: $1_\mathbb{Z} = [(\sigma\emptyset, \emptyset)]$.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def oneZ : U := intClass (σ ∅) ∅
+```
+
+**Computabilidad**: No computable
+
+---
+
+### 3.49 Int.Add.lean
+
+**Módulo**: `ZFC.Int.Add`
+**Namespace**: `ZFC.Int.Add`
+**Dependencias**: `ZFC.Int.Basic` + anteriores
+**Estrategia**: Define la suma en ℤ mediante QuotientLift₂. La operación sobre representantes es $(a,b)+(c,d)=(a+c,b+d)$. Prueba buena definición (independencia del representante), clausura, conmutatividad, asociatividad e identidades del neutro.
+
+#### addZ_op
+
+**Ubicación**: `Int/Add.lean`
+**Orden**: 1ª definición (auxiliar)
+
+**Descripción Matemática**: Suma a nivel de representantes: $(a,b) + (c,d) = (a+c, b+d)$.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def addZ_op (p q : U) : U :=
+  OrderedPair (add (fst p) (fst q)) (add (snd p) (snd q))
+```
+
+**Computabilidad**: No computable
+
+---
+
+#### addZ_graph
+
+**Ubicación**: `Int/Add.lean`
+**Orden**: 2ª definición (auxiliar)
+
+**Descripción Matemática**: El gráfico ZFC de
+
+## 4. Teoremas Principales por Módulo_\mathbb{Z} : \mathbb{Z} \times \mathbb{Z} \to \mathbb{Z}$ construido via `QuotientLift₂`
+
+**Firma Lean4**:
+
+```lean
+noncomputable def addZ_graph : U :=
+  QuotientLift₂ (ω ×ₛ ω) IntEquivRel addZ_op
+```
+
+**Computabilidad**: No computable
+
+---
+
+#### addZ
+
+**Ubicación**: `Int/Add.lean`
+**Orden**: 3ª definición
+
+**Descripción Matemática**: La suma de dos enteros $x + y$ para $x, y \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def addZ (x y : U) : U := apply addZ_graph (OrderedPair x y)
+```
+
+**Computabilidad**: No computable
+
+---
+
+### 3.50 Int.Neg.lean
+
+**Módulo**: `ZFC.Int.Neg`
+**Namespace**: `ZFC.Int.Neg`
+**Dependencias**: `ZFC.Int.Add` + anteriores
+**Estrategia**: Define la negación en ℤ intercambiando componentes: $-[(a,b)] = [(b,a)]$. Define subZ = addZ x (negZ y). Prueba que ℤ forma grupo abeliano bajo addZ/negZ.
+
+#### negZ_fn
+
+**Ubicación**: `Int/Neg.lean`
+**Orden**: 1ª definición (auxiliar)
+
+**Descripción Matemática**: Negación a nivel de representantes: $(a,b) \mapsto (b,a)$.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def negZ_fn (p : U) : U := OrderedPair (snd p) (fst p)
+```
+
+**Computabilidad**: No computable
+
+---
+
+#### negZ_graph
+
+**Ubicación**: `Int/Neg.lean`
+**Orden**: 2ª definición (auxiliar)
+
+**Descripción Matemática**: El gráfico ZFC de $-_\mathbb{Z} : \mathbb{Z} \to \mathbb{Z}$ construido vía `QuotientLift`.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def negZ_graph : U :=
+  QuotientLift (ω ×ₛ ω) IntEquivRel negZ_fn
+```
+
+**Computabilidad**: No computable
+
+---
+
+#### negZ
+
+**Ubicación**: `Int/Neg.lean`
+**Orden**: 3ª definición
+
+**Descripción Matemática**: La negación $-x$ de un entero $x \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def negZ (x : U) : U := apply negZ_graph x
+```
+
+**Computabilidad**: No computable
+
+---
+
+#### subZ
+
+**Ubicación**: `Int/Neg.lean`
+**Orden**: 4ª definición
+
+**Descripción Matemática**: La sustracción en $\mathbb{Z}$: $x - y = x + (-y)$.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def subZ (x y : U) : U := addZ x (negZ y)
+```
+
+**Computabilidad**: No computable
+
+---
+
+### 3.51 Int.Mul.lean
+
+**Módulo**: `ZFC.Int.Mul`
+**Namespace**: `ZFC.Int.Mul`
+**Dependencias**: `ZFC.Int.Neg` + anteriores
+**Estrategia**: Define la multiplicación en ℤ mediante QuotientLift₂. La operación sobre representantes es $(a,b)\cdot(c,d)=(ac+bd, ad+bc)$. Prueba buena definición, clausura, conmutatividad, asociatividad, identidades y propiedades de negación.
+
+#### mulZ_op
+
+**Ubicación**: `Int/Mul.lean`
+**Orden**: 1ª definición (auxiliar)
+
+**Descripción Matemática**: Multiplicación a nivel de representantes: $(a,b)\cdot(c,d) = (ac+bd,\; ad+bc)$.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def mulZ_op (p q : U) : U :=
+  OrderedPair
+    (add (mul (fst p) (fst q)) (mul (snd p) (snd q)))
+    (add (mul (fst p) (snd q)) (mul (snd p) (fst q)))
+```
+
+**Computabilidad**: No computable
+
+---
+
+#### mulZ_graph
+
+**Ubicación**: `Int/Mul.lean`
+**Orden**: 2ª definición (auxiliar)
+
+**Descripción Matemática**: El gráfico ZFC de $\cdot_\mathbb{Z} : \mathbb{Z} \times \mathbb{Z} \to \mathbb{Z}$ construido vía `QuotientLift₂`.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def mulZ_graph : U :=
+  QuotientLift₂ (ω ×ₛ ω) IntEquivRel mulZ_op
+```
+
+**Computabilidad**: No computable
+
+---
+
+#### mulZ
+
+**Ubicación**: `Int/Mul.lean`
+**Orden**: 3ª definición
+
+**Descripción Matemática**: El producto $x \cdot y$ de dos enteros $x, y \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def mulZ (x y : U) : U := apply mulZ_graph (OrderedPair x y)
+```
+
+**Computabilidad**: No computable
+
+---
+
+### 3.52 Int.Ring.lean
+
+**Módulo**: `ZFC.Int.Ring`
+**Namespace**: `ZFC.Int.Ring`
+**Dependencias**: `ZFC.Int.Mul`, `ZFC.Int.Sub` + anteriores
+**Estrategia**: Demuestra las propiedades de anillo integral de ℤ: distributividad de la multiplicación respecto a la suma/resta, ausencia de divisores de cero, leyes de cancelación y diferencia de cuadrados. No introduce nuevas definiciones públicas.
+
+*(Sin nuevas definiciones públicas.)*
+
+---
+
+### 3.53 Int.Sub.lean
+
+**Módulo**: `ZFC.Int.Sub`
+**Namespace**: `ZFC.Int.Sub`
+**Dependencias**: `ZFC.Int.Neg`, `ZFC.Int.Add` + anteriores
+**Estrategia**: Establece las propiedades algebraicas de subZ: identidades con el neutro, interacción con negación, cancelación, asociatividad mixta. No introduce nuevas definiciones públicas (subZ está en Neg.lean).
+
+*(Sin nuevas definiciones públicas.)*
+
+---
+
+### 3.54 Int.DivMod.lean
+
+**Módulo**: `ZFC.Int.DivMod`
+**Namespace**: `ZFC.Int.DivMod`
+**Dependencias**: `ZFC.Int.Basic`, `ZFC.Nat.Div` + anteriores
+**Estrategia**: Define el predicado de divisibilidad `dividesZ` en ℤ como predicado proposicional. Prueba las propiedades clásicas: reflexividad, transitividad, compatibilidad con negación y productos. La división euclídea completa se construye en Int.Div.
+
+#### dividesZ
+
+**Ubicación**: `Int/DivMod.lean`
+**Orden**: 1ª definición
+
+**Descripción Matemática**: $a \mid b \iff \exists k \in \mathbb{Z},\; b = a \cdot k$.
+
+**Firma Lean4**:
+
+```lean
+def dividesZ (a b : U) : Prop :=
+  ∃ k ∈ (IntSet : U), b = mulZ a k
+```
+
+**Computabilidad**: Computable (predicado proposicional)
+
+---
+
+### 3.55 Int.Order.lean
+
+**Módulo**: `ZFC.Int.Order`
+**Namespace**: `ZFC.Int.Order`
+**Dependencias**: `ZFC.Int.Mul`, `ZFC.Int.Sub`, `ZFC.Int.Ring`, `ZFC.Nat.Mul`
+**Estrategia**: Define el orden lineal en ℤ mediante representantes: $[(a,b)] \leq [(c,d)] \iff a + d \leq b + c$ en ω (comparación via ⊆). Demuestra que es un orden total compatible con addZ, negZ y mulZ.
+
+#### leZ_repr
+
+**Ubicación**: `Int/Order.lean`
+**Orden**: 1ª definición (auxiliar)
+
+**Descripción Matemática**: Orden no estricto a nivel de representantes: $a + d \subseteq b + c$ en $\omega$ (equivalente a $a + d \leq b + c$).
+
+**Firma Lean4**:
+
+```lean
+def leZ_repr (a b c d : U) : Prop := add a d ⊆ add b c
+```
+
+---
+
+#### ltZ_repr
+
+**Ubicación**: `Int/Order.lean`
+**Orden**: 2ª definición (auxiliar)
+
+**Descripción Matemática**: Orden estricto a nivel de representantes: $a + d \in b + c$ (equivalente a $a + d < b + c$ en $\omega$).
+
+**Firma Lean4**:
+
+```lean
+def ltZ_repr (a b c d : U) : Prop := add a d ∈ add b c
+```
+
+---
+
+#### leZ
+
+**Ubicación**: `Int/Order.lean`
+**Orden**: 3ª definición
+
+**Descripción Matemática**: El orden no estricto en $\mathbb{Z}$: $x \leq y$, definido independientemente del representante escogido.
+
+**Firma Lean4**:
+
+```lean
+def leZ (x y : U) : Prop :=
+  ∀ a b c d : U, x = intClass a b → y = intClass c d →
+    a ∈ (ω : U) → b ∈ (ω : U) → c ∈ (ω : U) → d ∈ (ω : U) →
+    leZ_repr a b c d
+```
+
+---
+
+#### ltZ
+
+**Ubicación**: `Int/Order.lean`
+**Orden**: 4ª definición
+
+**Descripción Matemática**: El orden estricto en $\mathbb{Z}$: $x < y \iff x \leq y \wedge x \neq y$.
+
+**Firma Lean4**:
+
+```lean
+def ltZ (x y : U) : Prop := leZ x y ∧ x ≠ y
+```
+
+---
+
+#### isPositiveZ
+
+**Ubicación**: `Int/Order.lean`
+**Orden**: 5ª definición
+
+**Descripción Matemática**: Predicado de positividad: $x > 0_\mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+def isPositiveZ (x : U) : Prop := ltZ zeroZ x
+```
+
+---
+
+#### isNegativeZ
+
+**Ubicación**: `Int/Order.lean`
+**Orden**: 6ª definición
+
+**Descripción Matemática**: Predicado de negatividad: $x < 0_\mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+def isNegativeZ (x : U) : Prop := ltZ x zeroZ
+```
+
+---
+
+#### leZRel
+
+**Ubicación**: `Int/Order.lean`
+**Orden**: 7ª definición
+
+**Descripción Matemática**: El grafo de `leZ` como conjunto de pares ordenados: $\{\langle x, y\rangle \in \mathbb{Z} \times \mathbb{Z} \mid x \leq y\}$. Permite enunciar que `leZ` es un orden lineal en el sentido set-teórico (usando `isLinearOrderOn`).
+
+**Firma Lean4**:
+
+```lean
+noncomputable def leZRel : U :=
+  sep ((IntSet : U) ×ₛ IntSet) (fun p => leZ (fst p) (snd p))
+```
+
+---
+
+#### ltZRel
+
+**Ubicación**: `Int/Order.lean`
+**Orden**: 8ª definición
+
+**Descripción Matemática**: El grafo de `ltZ` como conjunto de pares ordenados: $\{\langle x, y\rangle \in \mathbb{Z} \times \mathbb{Z} \mid x < y\}$. Permite enunciar que `ltZ` es un orden lineal estricto en el sentido set-teórico (usando `isStrictLinearOrderOn`).
+
+**Firma Lean4**:
+
+```lean
+noncomputable def ltZRel : U :=
+  sep ((IntSet : U) ×ₛ IntSet) (fun p => ltZ (fst p) (snd p))
+```
+
+---
+
+### 3.56 Int.Embedding.lean
+
+**Módulo**: `ZFC.Int.Embedding`
+**Namespace**: `ZFC.Int.Embedding`
+**Dependencias**: `ZFC.Int.Order`, `ZFC.Int.Mul`, `ZFC.Int.Add` + anteriores
+**Estrategia**: Define el embedding canónico ω → ℤ (n ↦ [(n,∅)]) y la biyección zigzag ℤ → ω. Prueba que ℤ y ω son equipotentes.
+
+#### natToInt
+
+**Ubicación**: `Int/Embedding.lean`
+**Orden**: 1ª definición
+
+**Descripción Matemática**: El embedding canónico $\mathbb{N} \hookrightarrow \mathbb{Z}$: $n \mapsto [(n, 0)]$.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def natToInt (n : U) : U := intClass n ∅
+```
+
+**Computabilidad**: No computable
+
+---
+
+#### natToInt_graph
+
+**Ubicación**: `Int/Embedding.lean`
+**Orden**: 2ª definición
+
+**Descripción Matemática**: El gráfico ZFC de `natToInt` como función ZFC $\omega \to \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def natToInt_graph : U :=
+  {p ∈ ω ×ₛ IntSet | snd p = intClass (fst p) ∅}
+```
+
+**Computabilidad**: No computable
+
+---
+
+#### intToNat_zigzag
+
+**Ubicación**: `Int/Embedding.lean`
+**Orden**: 3ª definición
+
+**Descripción Matemática**: Biyección zigzag $\mathbb{Z} \to \omega$:
+
+## 4. Teoremas Principales por Módulo \mapsto 0$, $1 \mapsto 1$, $-1 \mapsto 2$, $2 \mapsto 3$, $-2 \mapsto 4$, etc. Prueba que $|\mathbb{Z}| = |\omega|$
+
+**Firma Lean4**:
+
+```lean
+noncomputable def intToNat_zigzag : U :=
+  {p ∈ IntSet ×ₛ ω | ... }
+```
+
+**Computabilidad**: No computable
+
+---
+
+### 3.57 Int.Abs.lean
+
+**Módulo**: `ZFC.Int.Abs`
+**Namespace**: `ZFC.Int.Abs`
+**Dependencias**: `ZFC.Int.Order`, `ZFC.Int.Embedding` + anteriores
+**Estrategia**: Define el valor absoluto $|x| \in \omega$ y la función signo $\text{sgn}(x) \in \{-1_\mathbb{Z}, 0_\mathbb{Z}, 1_\mathbb{Z}\}$ para $x \in \mathbb{Z}$.
+
+#### absZ
+
+**Ubicación**: `Int/Abs.lean`
+**Orden**: 1ª definición
+
+**Descripción Matemática**: El valor absoluto $|x| \in \omega$ para $x \in \mathbb{Z}$: si $x = [(n,0)]$ entonces $|x| = n$; si $x = [(0,m)]$ entonces $|x| = m$.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def absZ (z : U) : U :=
+  if z = zeroZ then ∅
+  else if isPositiveZ z then Classical.choose (int_trichotomy_pos z ...)
+  else Classical.choose (int_trichotomy_neg z ...)
+```
+
+**Computabilidad**: No computable
+
+---
+
+#### signZ
+
+**Ubicación**: `Int/Abs.lean`
+**Orden**: 2ª definición
+
+**Descripción Matemática**: La función signo: $\text{sgn}(x) = 1_\mathbb{Z}$ si $x > 0$, $\text{sgn}(0) = 0_\mathbb{Z}$, $\text{sgn}(x) = -1_\mathbb{Z}$ si $x < 0$.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def signZ (z : U) : U :=
+  if z = zeroZ then zeroZ
+  else if isPositiveZ z then oneZ
+  else negZ oneZ
+```
+
+**Computabilidad**: No computable
+
+---
+
+### 3.58 Int.Pow.lean
+
+**Módulo**: `ZFC.Int.Pow`
+**Namespace**: `ZFC.Int.Pow`
+**Dependencias**: `ZFC.Int.Mul`, `ZFC.Induction.Recursion` + anteriores
+**Estrategia**: Define la exponenciación entera $x^n$ para $x \in \mathbb{Z}$, $n \in \omega$ mediante recursión ZFC. Usa `mulZLeftFn` (función de multiplicación izquierda) como paso recursivo y `RecursiveFn` para construir la función $n \mapsto x^n$.
+
+#### mulZLeftFn
+
+**Ubicación**: `Int/Pow.lean`
+**Orden**: 1ª definición (auxiliar)
+
+**Descripción Matemática**: El gráfico ZFC de la función $y \mapsto x \cdot y : \mathbb{Z} \to \mathbb{Z}$ para $x \in \mathbb{Z}$ fijo.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def mulZLeftFn (x : U) (hx : x ∈ (IntSet : U)) : U :=
+  {p ∈ IntSet ×ₛ IntSet | snd p = mulZ x (fst p)}
+```
+
+**Computabilidad**: No computable
+
+---
+
+#### powZFn
+
+**Ubicación**: `Int/Pow.lean`
+**Orden**: 2ª definición (auxiliar)
+
+**Descripción Matemática**: La función $n \mapsto x^n$ como función ZFC $\omega \to \mathbb{Z}$, construida por recursión: $x^0 = 1_\mathbb{Z}$, $x^{\sigma n} = x \cdot x^n$.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def powZFn (x : U) (hx : x ∈ (IntSet : U)) : U :=
+  RecursiveFn ω IntSet oneZ (mulZLeftFn x hx)
+```
+
+**Computabilidad**: No computable
+
+---
+
+#### powZ
+
+**Ubicación**: `Int/Pow.lean`
+**Orden**: 3ª definición
+
+**Descripción Matemática**: La potencia $x^n$ para $x \in \mathbb{Z}$, $n \in \omega$.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def powZ (x n : U) : U :=
+  if h : x ∈ (IntSet : U) then apply (powZFn x h) n else ∅
+```
+
+**Computabilidad**: No computable
+
+---
+
+### 3.59 Int.Induction.lean
+
+**Módulo**: `ZFC.Int.Induction`
+**Namespace**: `ZFC.Int.Induction`
+**Dependencias**: `ZFC.Int.Abs`, `ZFC.Int.Basic`, `ZFC.Nat.WellFounded` + anteriores
+**Estrategia**: Establece principios de inducción y buena ordenación sobre ℤ basados en el valor absoluto $|\cdot|$. Permite inducción simultánea sobre positivos/negativos y descenso infinito.
+
+*(Sin nuevas definiciones públicas.)*
+
+---
+
+### 3.60 Int.Units.lean
+
+**Módulo**: `ZFC.Int.Ring` (namespace); módulo fuente: `ZFC.Int.Units`
+**Namespace**: `ZFC.Int.Ring`
+**Dependencias**: `ZFC.Int.Ring`, `PeanoNatLib.PeanoNatPrimes` + anteriores
+**Estrategia**: Caracteriza las unidades del anillo $\mathbb{Z}$: los únicos elementos invertibles son $1_\mathbb{Z}$ y $-1_\mathbb{Z}$. Separado de Ring.lean para aislar el conflicto de notación de `DList.Mem` (precedencia ∈) de PeanoNatPrimes.
+
+#### isUnitZ
+
+**Ubicación**: `Int/Units.lean`
+**Orden**: 1ª definición
+
+**Descripción Matemática**: El predicado de unidad en $\mathbb{Z}$: $u$ es unidad si $\exists v \in \mathbb{Z},\; u \cdot v = 1_\mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+def isUnitZ (u : U) : Prop :=
+  ∃ v ∈ (IntSet : U), mulZ u v = oneZ
+```
+
+**Computabilidad**: Computable (predicado proposicional)
 
 ---
 
@@ -12399,6 +13089,2447 @@ theorem bezoutZ (a b : U) (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U)) :
 
 ---
 
+### 4.43 Int.Equiv.lean
+
+**Importancia por teorema**:
+
+- `mem_IntEquivRel`: high — caracterización explícita de membresía en IntEquivRel
+- `IntEquivRel_is_relation`: high — IntEquivRel es relación en ω×ω
+- `IntEquivRel_refl`: high — reflexividad
+- `IntEquivRel_symm`: high — simetría
+- `IntEquivRel_trans`: high — transitividad
+- `IntEquivRel_is_equivalence`: high — es relación de equivalencia completa
+
+#### Caracterización de Membresía (mem_IntEquivRel)
+
+**Enunciado Matemático**: $\langle\langle a,b\rangle,\langle c,d\rangle\rangle \in \text{IntEquivRel} \iff a,b,c,d \in \omega \wedge a+d = b+c$.
+
+**Firma Lean4**:
+
+```lean
+theorem mem_IntEquivRel (a b c d : U) :
+    OrderedPair (OrderedPair a b) (OrderedPair c d) ∈ IntEquivRel ↔
+    (a ∈ (ω : U) ∧ b ∈ (ω : U) ∧ c ∈ (ω : U) ∧ d ∈ (ω : U) ∧
+     add a d = add b c)
+```
+
+**Importancia**: high
+
+#### IntEquivRel es Relación (IntEquivRel_is_relation)
+
+**Enunciado Matemático**: `IntEquivRel` es una relación sobre $\omega \times \omega$.
+
+**Firma Lean4**:
+
+```lean
+theorem IntEquivRel_is_relation :
+    isRelationOn IntEquivRel (ω ×ₛ ω)
+```
+
+**Importancia**: high
+
+#### Reflexividad (IntEquivRel_refl)
+
+**Enunciado Matemático**: Para todo $\langle a,b\rangle \in \omega\times\omega$, se tiene $(a,b) \sim (a,b)$.
+
+**Firma Lean4**:
+
+```lean
+theorem IntEquivRel_refl :
+    isReflexiveOn IntEquivRel (ω ×ₛ ω)
+```
+
+**Importancia**: high
+
+#### Simetría (IntEquivRel_symm)
+
+**Enunciado Matemático**: Si $(a,b) \sim (c,d)$ entonces $(c,d) \sim (a,b)$.
+
+**Firma Lean4**:
+
+```lean
+theorem IntEquivRel_symm :
+    isSymmetricOn IntEquivRel (ω ×ₛ ω)
+```
+
+**Importancia**: high
+
+#### Transitividad (IntEquivRel_trans)
+
+**Enunciado Matemático**: Si $(a,b) \sim (c,d)$ y $(c,d) \sim (e,f)$ entonces $(a,b) \sim (e,f)$.
+
+**Firma Lean4**:
+
+```lean
+theorem IntEquivRel_trans :
+    isTransitiveOn IntEquivRel (ω ×ₛ ω)
+```
+
+**Importancia**: high
+
+#### Es Relación de Equivalencia (IntEquivRel_is_equivalence)
+
+**Enunciado Matemático**: `IntEquivRel` es una relación de equivalencia sobre $\omega \times \omega$.
+
+**Firma Lean4**:
+
+```lean
+theorem IntEquivRel_is_equivalence :
+    isEquivalenceOn IntEquivRel (ω ×ₛ ω)
+```
+
+**Importancia**: high
+
+---
+
+### 4.44 Int.Basic.lean
+
+**Importancia por teorema**:
+
+- `intClass_mem_IntSet`: high — toda clase [(a,b)] pertenece a ℤ
+- `zeroZ_mem_IntSet`: high — 0ℤ ∈ ℤ
+- `oneZ_mem_IntSet`: high — 1ℤ ∈ ℤ
+- `intClass_eq_iff`: high — criterio de igualdad de clases
+- `canonical_pos_exists`: medium — forma canónica de positivos
+- `canonical_neg_exists`: medium — forma canónica de negativos
+- `canonical_representative_exists`: high — todo entero tiene representante canónico
+- `intClass_pos_injective`: high — inyectividad de n ↦ [(n,0)]
+- `intClass_neg_injective`: high — inyectividad de m ↦ [(0,m)]
+- `intClass_pos_ne_neg`: high — positivos ≠ negativos (n,m ≠ 0)
+- `int_trichotomy`: high — tricotomía: todo entero es 0, positivo puro o negativo puro
+
+#### Clausura de intClass (intClass_mem_IntSet)
+
+**Enunciado Matemático**: Si $a, b \in \omega$ entonces $[(a,b)] \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem intClass_mem_IntSet (a b : U)
+    (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U)) :
+    intClass a b ∈ (IntSet : U)
+```
+
+**Importancia**: high
+
+#### Cero en ℤ (zeroZ_mem_IntSet)
+
+**Enunciado Matemático**:
+
+## 5. Notación y Sintaxis_\mathbb{Z} \in \mathbb{Z}$
+
+**Firma Lean4**:
+
+```lean
+theorem zeroZ_mem_IntSet : zeroZ ∈ (IntSet : U)
+```
+
+**Importancia**: high
+
+#### Uno en ℤ (oneZ_mem_IntSet)
+
+**Enunciado Matemático**: $1_\mathbb{Z} \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem oneZ_mem_IntSet : oneZ ∈ (IntSet : U)
+```
+
+**Importancia**: high
+
+#### Igualdad de Clases (intClass_eq_iff)
+
+**Enunciado Matemático**: $[(a,b)] = [(c,d)] \iff a,b,c,d \in \omega \wedge a+d = b+c$.
+
+**Firma Lean4**:
+
+```lean
+theorem intClass_eq_iff (a b c d : U)
+    (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U))
+    (hc : c ∈ (ω : U)) (hd : d ∈ (ω : U)) :
+    intClass a b = intClass c d ↔ add a d = add b c
+```
+
+**Importancia**: high
+
+#### Forma Canónica Positiva (canonical_pos_exists)
+
+**Enunciado Matemático**: Si $b \leq a$ en $\omega$, entonces $[(a,b)] = [(a-b, 0)]$.
+
+**Firma Lean4**:
+
+```lean
+theorem canonical_pos_exists (a b : U)
+    (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U)) (h : b ⊆ a) :
+    intClass a b = intClass (sub a b) ∅
+```
+
+**Importancia**: medium
+
+#### Forma Canónica Negativa (canonical_neg_exists)
+
+**Enunciado Matemático**: Si $a \leq b$ y $a \neq b$ en $\omega$, entonces $[(a,b)] = [(0, b-a)]$.
+
+**Firma Lean4**:
+
+```lean
+theorem canonical_neg_exists (a b : U)
+    (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U)) (h : a ⊆ b) (hne : a ≠ b) :
+    intClass a b = intClass ∅ (sub b a)
+```
+
+**Importancia**: medium
+
+#### Existencia de Representante Canónico (canonical_representative_exists)
+
+**Enunciado Matemático**: Todo $[(a,b)] \in \mathbb{Z}$ tiene la forma $[(n, 0)]$ (positivo o cero) o $[(0, m)]$ con $m \neq 0$ (negativo).
+
+**Firma Lean4**:
+
+```lean
+theorem canonical_representative_exists (a b : U)
+    (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U)) :
+    ∃ n ∈ (ω : U), intClass a b = intClass n ∅ ∨
+    ∃ m ∈ (ω : U), m ≠ ∅ ∧ intClass a b = intClass ∅ m
+```
+
+**Importancia**: high
+
+#### Inyectividad Positiva (intClass_pos_injective)
+
+**Enunciado Matemático**: Si $[(n,0)] = [(m,0)]$ entonces $n = m$.
+
+**Firma Lean4**:
+
+```lean
+theorem intClass_pos_injective (n m : U)
+    (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U)) :
+    intClass n ∅ = intClass m ∅ → n = m
+```
+
+**Importancia**: high
+
+#### Inyectividad Negativa (intClass_neg_injective)
+
+**Enunciado Matemático**: Si $[(0,n)] = [(0,m)]$ entonces $n = m$.
+
+**Firma Lean4**:
+
+```lean
+theorem intClass_neg_injective (n m : U)
+    (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U)) :
+    intClass ∅ n = intClass ∅ m → n = m
+```
+
+**Importancia**: high
+
+#### Positivos Distintos de Negativos (intClass_pos_ne_neg)
+
+**Enunciado Matemático**: Si $n \neq 0$ y $m \neq 0$ entonces $[(n,0)] \neq [(0,m)]$.
+
+**Firma Lean4**:
+
+```lean
+theorem intClass_pos_ne_neg (n m : U)
+    (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U))
+    (hn0 : n ≠ ∅) (hm0 : m ≠ ∅) :
+    intClass n ∅ ≠ intClass ∅ m
+```
+
+**Importancia**: high
+
+#### Tricotomía de ℤ (int_trichotomy)
+
+**Enunciado Matemático**: Todo $z \in \mathbb{Z}$ satisface: $z = 0_\mathbb{Z}$, o $\exists n \neq 0 \in \omega,\; z = [(n,0)]$, o $\exists m \neq 0 \in \omega,\; z = [(0,m)]$.
+
+**Firma Lean4**:
+
+```lean
+theorem int_trichotomy (z : U) (hz : z ∈ (IntSet : U)) :
+    z = zeroZ ∨
+    (∃ n ∈ (ω : U), n ≠ ∅ ∧ z = intClass n ∅) ∨
+    (∃ m ∈ (ω : U), m ≠ ∅ ∧ z = intClass ∅ m)
+```
+
+**Importancia**: high
+
+---
+
+### 4.45 Int.Add.lean
+
+**Importancia por teorema**:
+
+- `addZ_graph_is_function`: high — addZ_graph es función ZFC ℤ×ℤ → ℤ
+- `addZ_well_defined`: high — independencia del representante
+- `addZ_class`: high — comportamiento sobre representantes
+- `addZ_in_IntSet`: high — clausura de addZ en ℤ
+- `addZ_comm`: high — conmutatividad
+- `addZ_assoc`: high — asociatividad
+- `addZ_zero_right`: high — identidad derecha
+- `addZ_zero_left`: high — identidad izquierda
+
+#### addZ es Función (addZ_graph_is_function)
+
+**Enunciado Matemático**: `addZ_graph` es una función $\mathbb{Z} \times \mathbb{Z} \to \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem addZ_graph_is_function :
+    IsFunction addZ_graph (IntSet ×ₛ IntSet) IntSet
+```
+
+**Importancia**: high
+
+#### Buena Definición (addZ_well_defined)
+
+**Enunciado Matemático**: Si $[(a_1,b_1)] = [(a_2,b_2)]$ y $[(c_1,d_1)] = [(c_2,d_2)]$, entonces $[(a_1+c_1, b_1+d_1)] = [(a_2+c_2, b_2+d_2)]$.
+
+**Firma Lean4**:
+
+```lean
+theorem addZ_well_defined (a₁ b₁ a₂ b₂ c₁ d₁ c₂ d₂ : U) ... :
+    intClass a₁ b₁ = intClass a₂ b₂ →
+    intClass c₁ d₁ = intClass c₂ d₂ →
+    intClass (add a₁ c₁) (add b₁ d₁) = intClass (add a₂ c₂) (add b₂ d₂)
+```
+
+**Importancia**: high
+
+#### Fórmula sobre Representantes (addZ_class)
+
+**Enunciado Matemático**: $[(a,b)] + [(c,d)] = [(a+c, b+d)]$.
+
+**Firma Lean4**:
+
+```lean
+theorem addZ_class (a b c d : U)
+    (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U))
+    (hc : c ∈ (ω : U)) (hd : d ∈ (ω : U)) :
+    addZ (intClass a b) (intClass c d) = intClass (add a c) (add b d)
+```
+
+**Importancia**: high
+
+#### Clausura (addZ_in_IntSet)
+
+**Enunciado Matemático**: Si $x, y \in \mathbb{Z}$ entonces $x + y \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem addZ_in_IntSet (x y : U)
+    (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) :
+    addZ x y ∈ (IntSet : U)
+```
+
+**Importancia**: high
+
+#### Conmutatividad (addZ_comm)
+
+**Enunciado Matemático**: $x + y = y + x$ para todo $x, y \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem addZ_comm (x y : U)
+    (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) :
+    addZ x y = addZ y x
+```
+
+**Importancia**: high
+
+#### Asociatividad (addZ_assoc)
+
+**Enunciado Matemático**: $(x + y) + z = x + (y + z)$ para todo $x, y, z \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem addZ_assoc (x y z : U)
+    (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) (hz : z ∈ (IntSet : U)) :
+    addZ (addZ x y) z = addZ x (addZ y z)
+```
+
+**Importancia**: high
+
+#### Identidad Derecha (addZ_zero_right)
+
+**Enunciado Matemático**: $x + 0_\mathbb{Z} = x$ para todo $x \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem addZ_zero_right (x : U) (hx : x ∈ (IntSet : U)) :
+    addZ x zeroZ = x
+```
+
+**Importancia**: high
+
+#### Identidad Izquierda (addZ_zero_left)
+
+**Enunciado Matemático**:
+
+## 5. Notación y Sintaxis_\mathbb{Z} + x = x$ para todo $x \in \mathbb{Z}$
+
+**Firma Lean4**:
+
+```lean
+theorem addZ_zero_left (x : U) (hx : x ∈ (IntSet : U)) :
+    addZ zeroZ x = x
+```
+
+**Importancia**: high
+
+---
+
+### 4.46 Int.Neg.lean
+
+**Importancia por teorema**:
+
+- `negZ_class`: high — fórmula negZ sobre representantes
+- `negZ_in_IntSet`: high — clausura de negZ en ℤ
+- `negZ_well_defined`: high — independencia del representante
+- `addZ_negZ_right`: high — inverso derecho (x + (−x) = 0)
+- `addZ_negZ_left`: high — inverso izquierdo ((−x) + x = 0)
+- `negZ_negZ`: high — doble negación (−(−x) = x)
+- `negZ_zero`: medium — −0 = 0
+- `negZ_addZ`: medium — negación de suma
+- `subZ_self`: medium — x − x = 0
+- `subZ_in_IntSet`: high — clausura de subZ en ℤ
+
+#### Fórmula sobre Representantes (negZ_class)
+
+**Enunciado Matemático**: $-[(a,b)] = [(b,a)]$.
+
+**Firma Lean4**:
+
+```lean
+theorem negZ_class (a b : U)
+    (ha : a ∈ (ω : U)) (hb : b ∈ (ω : U)) :
+    negZ (intClass a b) = intClass b a
+```
+
+**Importancia**: high
+
+#### Clausura (negZ_in_IntSet)
+
+**Enunciado Matemático**: Si $x \in \mathbb{Z}$ entonces $-x \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem negZ_in_IntSet (x : U) (hx : x ∈ (IntSet : U)) :
+    negZ x ∈ (IntSet : U)
+```
+
+**Importancia**: high
+
+#### Buena Definición (negZ_well_defined)
+
+**Enunciado Matemático**: Si $[(a,b)] = [(c,d)]$ entonces $[(b,a)] = [(d,c)]$.
+
+**Firma Lean4**:
+
+```lean
+theorem negZ_well_defined (a b c d : U) ... :
+    intClass a b = intClass c d → intClass b a = intClass d c
+```
+
+**Importancia**: high
+
+#### Inverso Derecho (addZ_negZ_right)
+
+**Enunciado Matemático**: $x + (-x) = 0_\mathbb{Z}$ para todo $x \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem addZ_negZ_right (x : U) (hx : x ∈ (IntSet : U)) :
+    addZ x (negZ x) = zeroZ
+```
+
+**Importancia**: high
+
+#### Inverso Izquierdo (addZ_negZ_left)
+
+**Enunciado Matemático**: $(-x) + x = 0_\mathbb{Z}$ para todo $x \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem addZ_negZ_left (x : U) (hx : x ∈ (IntSet : U)) :
+    addZ (negZ x) x = zeroZ
+```
+
+**Importancia**: high
+
+#### Doble Negación (negZ_negZ)
+
+**Enunciado Matemático**: $-(-x) = x$ para todo $x \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem negZ_negZ (x : U) (hx : x ∈ (IntSet : U)) :
+    negZ (negZ x) = x
+```
+
+**Importancia**: high
+
+#### Negación del Cero (negZ_zero)
+
+**Enunciado Matemático**: $-0_\mathbb{Z} = 0_\mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem negZ_zero : negZ zeroZ = zeroZ
+```
+
+**Importancia**: medium
+
+#### Negación de la Suma (negZ_addZ)
+
+**Enunciado Matemático**: $-(x+y) = (-x) + (-y)$ para todo $x, y \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem negZ_addZ (x y : U)
+    (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) :
+    negZ (addZ x y) = addZ (negZ x) (negZ y)
+```
+
+**Importancia**: medium
+
+#### Auto-Resta (subZ_self)
+
+**Enunciado Matemático**: $x - x = 0_\mathbb{Z}$ para todo $x \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem subZ_self (x : U) (hx : x ∈ (IntSet : U)) :
+    subZ x x = zeroZ
+```
+
+**Importancia**: medium
+
+#### Clausura de Sustracción (subZ_in_IntSet)
+
+**Enunciado Matemático**: Si $x, y \in \mathbb{Z}$ entonces $x - y \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem subZ_in_IntSet (x y : U)
+    (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) :
+    subZ x y ∈ (IntSet : U)
+```
+
+**Importancia**: high
+
+---
+
+### 4.47 Int.Mul.lean
+
+**Importancia por teorema**:
+
+- `mulZ_graph_is_function`: high — mulZ_graph es función ZFC ℤ×ℤ → ℤ
+- `mulZ_well_defined`: high — independencia del representante
+- `mulZ_class`: high — fórmula sobre representantes
+- `mulZ_in_IntSet`: high — clausura de mulZ en ℤ
+- `mulZ_comm`: high — conmutatividad
+- `mulZ_assoc`: high — asociatividad
+- `mulZ_one_right`: high — identidad derecha
+- `mulZ_one_left`: high — identidad izquierda
+- `mulZ_zero_right`: high — aniquilador derecho
+- `mulZ_zero_left`: high — aniquilador izquierdo
+- `mulZ_negZ_left`: high — (−x)·y = −(x·y)
+- `mulZ_negZ_right`: high — x·(−y) = −(x·y)
+- `negZ_mulZ_negZ`: high — (−x)·(−y) = x·y
+- `mul_eq_zero_iff`: high — en ω: m·n = 0 ↔ m=0 ∨ n=0
+
+#### mulZ es Función (mulZ_graph_is_function)
+
+**Enunciado Matemático**: `mulZ_graph` es una función $\mathbb{Z} \times \mathbb{Z} \to \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem mulZ_graph_is_function :
+    IsFunction mulZ_graph (IntSet ×ₛ IntSet) IntSet
+```
+
+**Importancia**: high
+
+#### Buena Definición (mulZ_well_defined)
+
+**Enunciado Matemático**: Si $[(a_1,b_1)] = [(a_2,b_2)]$ y $[(c_1,d_1)] = [(c_2,d_2)]$, entonces $[(a_1c_1+b_1d_1, a_1d_1+b_1c_1)] = [(a_2c_2+b_2d_2, a_2d_2+b_2c_2)]$.
+
+**Firma Lean4**:
+
+```lean
+theorem mulZ_well_defined (a₁ b₁ a₂ b₂ c₁ d₁ c₂ d₂ : U) ... :
+    intClass a₁ b₁ = intClass a₂ b₂ →
+    intClass c₁ d₁ = intClass c₂ d₂ →
+    intClass (add (mul a₁ c₁) (mul b₁ d₁)) (add (mul a₁ d₁) (mul b₁ c₁)) =
+    intClass (add (mul a₂ c₂) (mul b₂ d₂)) (add (mul a₂ d₂) (mul b₂ c₂))
+```
+
+**Importancia**: high
+
+#### Fórmula sobre Representantes (mulZ_class)
+
+**Enunciado Matemático**: $[(a,b)] \cdot [(c,d)] = [(ac+bd,\; ad+bc)]$.
+
+**Firma Lean4**:
+
+```lean
+theorem mulZ_class (a b c d : U) ... :
+    mulZ (intClass a b) (intClass c d) =
+    intClass (add (mul a c) (mul b d)) (add (mul a d) (mul b c))
+```
+
+**Importancia**: high
+
+#### Clausura (mulZ_in_IntSet)
+
+**Enunciado Matemático**: Si $x, y \in \mathbb{Z}$ entonces $x \cdot y \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem mulZ_in_IntSet (x y : U)
+    (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) :
+    mulZ x y ∈ (IntSet : U)
+```
+
+**Importancia**: high
+
+#### Conmutatividad (mulZ_comm)
+
+**Enunciado Matemático**: $x \cdot y = y \cdot x$ para todo $x, y \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem mulZ_comm (x y : U)
+    (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) :
+    mulZ x y = mulZ y x
+```
+
+**Importancia**: high
+
+#### Asociatividad (mulZ_assoc)
+
+**Enunciado Matemático**: $(x \cdot y) \cdot z = x \cdot (y \cdot z)$ para todo $x, y, z \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem mulZ_assoc (x y z : U) ... :
+    mulZ (mulZ x y) z = mulZ x (mulZ y z)
+```
+
+**Importancia**: high
+
+#### Identidad Derecha (mulZ_one_right)
+
+**Enunciado Matemático**: $x \cdot 1_\mathbb{Z} = x$ para todo $x \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem mulZ_one_right (x : U) (hx : x ∈ (IntSet : U)) :
+    mulZ x oneZ = x
+```
+
+**Importancia**: high
+
+#### Identidad Izquierda (mulZ_one_left)
+
+**Enunciado Matemático**: $1_\mathbb{Z} \cdot x = x$ para todo $x \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem mulZ_one_left (x : U) (hx : x ∈ (IntSet : U)) :
+    mulZ oneZ x = x
+```
+
+**Importancia**: high
+
+#### Aniquilador Derecho (mulZ_zero_right)
+
+**Enunciado Matemático**: $x \cdot 0_\mathbb{Z} = 0_\mathbb{Z}$ para todo $x \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem mulZ_zero_right (x : U) (hx : x ∈ (IntSet : U)) :
+    mulZ x zeroZ = zeroZ
+```
+
+**Importancia**: high
+
+#### Aniquilador Izquierdo (mulZ_zero_left)
+
+**Enunciado Matemático**:
+
+## 5. Notación y Sintaxis_\mathbb{Z} \cdot x = 0_\mathbb{Z}$ para todo $x \in \mathbb{Z}$
+
+**Firma Lean4**:
+
+```lean
+theorem mulZ_zero_left (x : U) (hx : x ∈ (IntSet : U)) :
+    mulZ zeroZ x = zeroZ
+```
+
+**Importancia**: high
+
+#### Negación por la Izquierda (mulZ_negZ_left)
+
+**Enunciado Matemático**: $(-x) \cdot y = -(x \cdot y)$ para todo $x, y \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem mulZ_negZ_left (x y : U) ... :
+    mulZ (negZ x) y = negZ (mulZ x y)
+```
+
+**Importancia**: high
+
+#### Negación por la Derecha (mulZ_negZ_right)
+
+**Enunciado Matemático**: $x \cdot (-y) = -(x \cdot y)$ para todo $x, y \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem mulZ_negZ_right (x y : U) ... :
+    mulZ x (negZ y) = negZ (mulZ x y)
+```
+
+**Importancia**: high
+
+#### Producto de Negativos (negZ_mulZ_negZ)
+
+**Enunciado Matemático**: $(-x) \cdot (-y) = x \cdot y$ para todo $x, y \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem negZ_mulZ_negZ (x y : U) ... :
+    mulZ (negZ x) (negZ y) = mulZ x y
+```
+
+**Importancia**: high
+
+#### Sin Divisores de Cero en ω (mul_eq_zero_iff)
+
+**Enunciado Matemático**: Para $m, n \in \omega$: $m \cdot n = \emptyset \iff (m = \emptyset \vee n = \emptyset)$.
+
+**Firma Lean4**:
+
+```lean
+theorem mul_eq_zero_iff (m n : U)
+    (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) :
+    mul m n = ∅ ↔ (m = ∅ ∨ n = ∅)
+```
+
+**Importancia**: high
+
+---
+
+### 4.48 Int.Ring.lean
+
+**Importancia por teorema**:
+
+- `mulZ_addZ_distrib_left`: high — distributividad izquierda
+- `mulZ_addZ_distrib_right`: high — distributividad derecha
+- `mulZ_subZ_distrib_left`: high — distributividad respecto resta (izq)
+- `mulZ_subZ_distrib_right`: high — distributividad respecto resta (der)
+- `mulZ_eq_zero_iff`: high — dominio integral: x·y = 0 ↔ x = 0 ∨ y = 0
+- `mulZ_cancel_left`: high — ley de cancelación izquierda
+- `mulZ_cancel_right`: high — ley de cancelación derecha
+- `difference_of_squares`: medium — identidad de diferencia de cuadrados
+
+#### Distributividad Izquierda (mulZ_addZ_distrib_left)
+
+**Enunciado Matemático**: $x \cdot (y + z) = x \cdot y + x \cdot z$ para todo $x, y, z \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem mulZ_addZ_distrib_left (x y z : U) ... :
+    mulZ x (addZ y z) = addZ (mulZ x y) (mulZ x z)
+```
+
+**Importancia**: high
+
+#### Distributividad Derecha (mulZ_addZ_distrib_right)
+
+**Enunciado Matemático**: $(x + y) \cdot z = x \cdot z + y \cdot z$ para todo $x, y, z \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem mulZ_addZ_distrib_right (x y z : U) ... :
+    mulZ (addZ x y) z = addZ (mulZ x z) (mulZ y z)
+```
+
+**Importancia**: high
+
+#### Distributividad Respecto a Resta (Izq) (mulZ_subZ_distrib_left)
+
+**Enunciado Matemático**: $x \cdot (y - z) = x \cdot y - x \cdot z$ para todo $x, y, z \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem mulZ_subZ_distrib_left (x y z : U) ... :
+    mulZ x (subZ y z) = subZ (mulZ x y) (mulZ x z)
+```
+
+**Importancia**: high
+
+#### Distributividad Respecto a Resta (Der) (mulZ_subZ_distrib_right)
+
+**Enunciado Matemático**: $(x - y) \cdot z = x \cdot z - y \cdot z$ para todo $x, y, z \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem mulZ_subZ_distrib_right (x y z : U) ... :
+    mulZ (subZ x y) z = subZ (mulZ x z) (mulZ y z)
+```
+
+**Importancia**: high
+
+#### Dominio Integral (mulZ_eq_zero_iff)
+
+**Enunciado Matemático**: $x \cdot y = 0_\mathbb{Z} \iff x = 0_\mathbb{Z} \vee y = 0_\mathbb{Z}$ para $x, y \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem mulZ_eq_zero_iff (x y : U) ... :
+    mulZ x y = zeroZ ↔ (x = zeroZ ∨ y = zeroZ)
+```
+
+**Importancia**: high
+
+#### Cancelación Izquierda (mulZ_cancel_left)
+
+**Enunciado Matemático**: Si $z \neq 0_\mathbb{Z}$ y $z \cdot x = z \cdot y$, entonces $x = y$.
+
+**Firma Lean4**:
+
+```lean
+theorem mulZ_cancel_left (x y z : U) ...
+    (hz : z ≠ zeroZ) :
+    mulZ z x = mulZ z y → x = y
+```
+
+**Importancia**: high
+
+#### Cancelación Derecha (mulZ_cancel_right)
+
+**Enunciado Matemático**: Si $z \neq 0_\mathbb{Z}$ y $x \cdot z = y \cdot z$, entonces $x = y$.
+
+**Firma Lean4**:
+
+```lean
+theorem mulZ_cancel_right (x y z : U) ...
+    (hz : z ≠ zeroZ) :
+    mulZ x z = mulZ y z → x = y
+```
+
+**Importancia**: high
+
+#### Diferencia de Cuadrados (difference_of_squares)
+
+**Enunciado Matemático**: $x^2 - y^2 = (x+y)(x-y)$ para todo $x, y \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem difference_of_squares (x y : U) ... :
+    subZ (mulZ x x) (mulZ y y) = mulZ (addZ x y) (subZ x y)
+```
+
+**Importancia**: medium
+
+---
+
+### 4.49 Int.Sub.lean
+
+**Importancia por teorema**:
+
+- `subZ_zero_right`: high — x − 0 = x
+- `subZ_zero_left`: high — 0 − y = −y
+- `subZ_negZ_right`: high — x − (−y) = x + y
+- `negZ_subZ`: medium — −(x−y) = y−x
+- `subZ_addZ_cancel`: high — (x+y) − y = x
+- `addZ_subZ_cancel`: high — (x−y) + y = x
+- `subZ_eq_zero_iff`: high — x−y = 0 ↔ x = y
+- `subZ_subZ`: medium — (x−y)−z = x−(y+z)
+- `addZ_subZ_assoc`: medium — x+(y−z) = (x+y)−z
+- `subZ_negZ_left`: medium — (−x)−y = −(x+y)
+- `subZ_addZ_left_cancel`: medium — x−(x+y) = −y
+- `subZ_addZ_right_cancel`: medium — (x+y)−x = y
+
+#### Identidad Derecha de Resta (subZ_zero_right)
+
+**Enunciado Matemático**: $x - 0_\mathbb{Z} = x$ para todo $x \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem subZ_zero_right (x : U) (hx : x ∈ (IntSet : U)) :
+    subZ x zeroZ = x
+```
+
+**Importancia**: high
+
+#### Resta con Cero a la Izquierda (subZ_zero_left)
+
+**Enunciado Matemático**:
+
+## 5. Notación y Sintaxis_\mathbb{Z} - y = -y$ para todo $y \in \mathbb{Z}$
+
+**Firma Lean4**:
+
+```lean
+theorem subZ_zero_left (y : U) (hy : y ∈ (IntSet : U)) :
+    subZ zeroZ y = negZ y
+```
+
+**Importancia**: high
+
+#### Resta de Negativo (subZ_negZ_right)
+
+**Enunciado Matemático**: $x - (-y) = x + y$ para todo $x, y \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem subZ_negZ_right (x y : U) ... :
+    subZ x (negZ y) = addZ x y
+```
+
+**Importancia**: high
+
+#### Negación de Resta (negZ_subZ)
+
+**Enunciado Matemático**: $-(x - y) = y - x$ para todo $x, y \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem negZ_subZ (x y : U) ... :
+    negZ (subZ x y) = subZ y x
+```
+
+**Importancia**: medium
+
+#### Cancelación (subZ_addZ_cancel)
+
+**Enunciado Matemático**: $(x + y) - y = x$ para todo $x, y \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem subZ_addZ_cancel (x y : U) ... :
+    subZ (addZ x y) y = x
+```
+
+**Importancia**: high
+
+#### Cancelación Inversa (addZ_subZ_cancel)
+
+**Enunciado Matemático**: $(x - y) + y = x$ para todo $x, y \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem addZ_subZ_cancel (x y : U) ... :
+    addZ (subZ x y) y = x
+```
+
+**Importancia**: high
+
+#### Resta Cero iff Iguales (subZ_eq_zero_iff)
+
+**Enunciado Matemático**: $x - y = 0_\mathbb{Z} \iff x = y$ para $x, y \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem subZ_eq_zero_iff (x y : U) ... :
+    subZ x y = zeroZ ↔ x = y
+```
+
+**Importancia**: high
+
+#### Resta de Resta (subZ_subZ)
+
+**Enunciado Matemático**: $(x - y) - z = x - (y + z)$ para todo $x, y, z \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem subZ_subZ (x y z : U) ... :
+    subZ (subZ x y) z = subZ x (addZ y z)
+```
+
+**Importancia**: medium
+
+#### Asociatividad Mixta (addZ_subZ_assoc)
+
+**Enunciado Matemático**: $x + (y - z) = (x + y) - z$ para todo $x, y, z \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem addZ_subZ_assoc (x y z : U) ... :
+    addZ x (subZ y z) = subZ (addZ x y) z
+```
+
+**Importancia**: medium
+
+#### Resta con Negativo a la Izquierda (subZ_negZ_left)
+
+**Enunciado Matemático**: $(-x) - y = -(x + y)$ para todo $x, y \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem subZ_negZ_left (x y : U) ... :
+    subZ (negZ x) y = negZ (addZ x y)
+```
+
+**Importancia**: medium
+
+#### Cancelación Suma-Resta Izquierda (subZ_addZ_left_cancel)
+
+**Enunciado Matemático**: $x - (x + y) = -y$ para todo $x, y \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem subZ_addZ_left_cancel (x y : U) ... :
+    subZ x (addZ x y) = negZ y
+```
+
+**Importancia**: medium
+
+#### Cancelación Suma-Resta Derecha (subZ_addZ_right_cancel)
+
+**Enunciado Matemático**: $(x + y) - x = y$ para todo $x, y \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem subZ_addZ_right_cancel (x y : U) ... :
+    subZ (addZ x y) x = y
+```
+
+**Importancia**: medium
+
+---
+
+### 4.50 Int.DivMod.lean
+
+**Importancia por teorema**:
+
+- `dividesZ_refl`: high — a | a
+- `dividesZ_zero`: high — a | 0
+- `zero_dividesZ_iff`: high — 0 | b ↔ b = 0
+- `dividesZ_trans`: high — transitividad
+- `dividesZ_negZ_right`: high — a|b → a|(−b)
+- `dividesZ_negZ_left`: high — a|b ↔ (−a)|b
+- `dividesZ_mulZ_left`: high — a | a·b
+- `dividesZ_mulZ_right`: high — a|b → a|(b·c)
+- `one_dividesZ`: high — 1 | a para todo a
+- `dividesZ_add`: high — a|b ∧ a|c → a|(b+c)
+- `dividesZ_sub`: high — a|b ∧ a|c → a|(b−c)
+- `dividesZ_mulZ_right_factor`: medium — a | c·a
+- `dividesZ_negZ_left_right`: medium — a|b ↔ a|(−b)
+
+#### Reflexividad (dividesZ_refl)
+
+**Enunciado Matemático**: $a \mid a$ para todo $a \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem dividesZ_refl (a : U) (ha : a ∈ (IntSet : U)) :
+    dividesZ a a
+```
+
+**Importancia**: high
+
+#### Divide al Cero (dividesZ_zero)
+
+**Enunciado Matemático**: $a \mid 0_\mathbb{Z}$ para todo $a \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem dividesZ_zero (a : U) (ha : a ∈ (IntSet : U)) :
+    dividesZ a zeroZ
+```
+
+**Importancia**: high
+
+#### Cero Divide (zero_dividesZ_iff)
+
+**Enunciado Matemático**:
+
+## 5. Notación y Sintaxis_\mathbb{Z} \mid b \iff b = 0_\mathbb{Z}$ para $b \in \mathbb{Z}$
+
+**Firma Lean4**:
+
+```lean
+theorem zero_dividesZ_iff (b : U) (hb : b ∈ (IntSet : U)) :
+    dividesZ zeroZ b ↔ b = zeroZ
+```
+
+**Importancia**: high
+
+#### Transitividad (dividesZ_trans)
+
+**Enunciado Matemático**: Si $a \mid b$ y $b \mid c$ entonces $a \mid c$.
+
+**Firma Lean4**:
+
+```lean
+theorem dividesZ_trans (a b c : U) ... :
+    dividesZ a b → dividesZ b c → dividesZ a c
+```
+
+**Importancia**: high
+
+#### División Negativa Derecha (dividesZ_negZ_right)
+
+**Enunciado Matemático**: Si $a \mid b$ entonces $a \mid (-b)$.
+
+**Firma Lean4**:
+
+```lean
+theorem dividesZ_negZ_right (a b : U) ... :
+    dividesZ a b → dividesZ a (negZ b)
+```
+
+**Importancia**: high
+
+#### División Negativa Izquierda (dividesZ_negZ_left)
+
+**Enunciado Matemático**: $a \mid b \iff (-a) \mid b$.
+
+**Firma Lean4**:
+
+```lean
+theorem dividesZ_negZ_left (a b : U) ... :
+    dividesZ a b ↔ dividesZ (negZ a) b
+```
+
+**Importancia**: high
+
+#### Divide al Producto Izquierdo (dividesZ_mulZ_left)
+
+**Enunciado Matemático**: $a \mid a \cdot b$ para todo $a, b \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem dividesZ_mulZ_left (a b : U) ... :
+    dividesZ a (mulZ a b)
+```
+
+**Importancia**: high
+
+#### Divide al Múltiplo (dividesZ_mulZ_right)
+
+**Enunciado Matemático**: Si $a \mid b$ entonces $a \mid b \cdot c$ para todo $c \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem dividesZ_mulZ_right (a b c : U) ... :
+    dividesZ a b → dividesZ a (mulZ b c)
+```
+
+**Importancia**: high
+
+#### Uno Divide Todo (one_dividesZ)
+
+**Enunciado Matemático**: $1_\mathbb{Z} \mid a$ para todo $a \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem one_dividesZ (a : U) (ha : a ∈ (IntSet : U)) :
+    dividesZ oneZ a
+```
+
+**Importancia**: high
+
+#### Divisibilidad de Suma (dividesZ_add)
+
+**Enunciado Matemático**: Si $a \mid b$ y $a \mid c$ entonces $a \mid (b + c)$.
+
+**Firma Lean4**:
+
+```lean
+theorem dividesZ_add (a b c : U) ... :
+    dividesZ a b → dividesZ a c → dividesZ a (addZ b c)
+```
+
+**Importancia**: high
+
+#### Divisibilidad de Diferencia (dividesZ_sub)
+
+**Enunciado Matemático**: Si $a \mid b$ y $a \mid c$ entonces $a \mid (b - c)$.
+
+**Firma Lean4**:
+
+```lean
+theorem dividesZ_sub (a b c : U) ... :
+    dividesZ a b → dividesZ a c → dividesZ a (subZ b c)
+```
+
+**Importancia**: high
+
+#### Factor Derecho del Producto (dividesZ_mulZ_right_factor)
+
+**Enunciado Matemático**: $a \mid c \cdot a$ para todo $a, c \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem dividesZ_mulZ_right_factor (a c : U) ... :
+    dividesZ a (mulZ c a)
+```
+
+**Importancia**: medium
+
+#### Divisibilidad y Negativo (dividesZ_negZ_left_right)
+
+**Enunciado Matemático**: $a \mid b \iff a \mid (-b)$ para $a, b \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem dividesZ_negZ_left_right (a b : U) ... :
+    dividesZ a b ↔ dividesZ a (negZ b)
+```
+
+**Importancia**: medium
+
+---
+
+### 4.51 Int.Order.lean
+
+**Importancia por teorema**:
+
+- `leZ_repr_well_defined`: high — independencia del representante para leZ
+- `leZ_iff_repr`: high — caracterización via representantes
+- `leZ_refl`: high — reflexividad
+- `leZ_trans`: high — transitividad
+- `leZ_antisymm`: high — antisimetría
+- `leZ_total`: high — totalidad del orden
+- `ltZ_iff_leZ_and_ne`: high — ltZ ↔ leZ ∧ ≠
+- `ltZ_irrefl`: high — irreflexividad de ltZ
+- `ltZ_trans`: high — transitividad de ltZ
+- `leZ_iff_ltZ_or_eq`: high — leZ ↔ ltZ ∨ =
+- `addZ_leZ_addZ`: high — monotonía de addZ respecto leZ
+- `ltZ_addZ_ltZ`: high — monotonía de addZ respecto ltZ
+- `leZ_negZ`: high — leZ invierte con negZ
+- `int_trichotomy_order`: high — tricotomía: positivo, cero o negativo
+- `addZ_leZ_addZ_left`: medium — variante izquierda de monotonía
+- `mulZ_le_mulZ_nonneg`: high — monotonía de mulZ con factor no negativo
+- `mulZ_le_mulZ_nonpos`: high — inversión de orden con factor no positivo
+- `mulZ_ltZ_mulZ_pos`: high — monotonía estricta de mulZ con factor positivo
+- `positiveZ_mul_closed`: high — producto de positivos es positivo
+- `negativeZ_mul_positive`: high — producto de negativos es positivo
+- `positiveZ_negativeZ_mul_negative`: high — positivo × negativo es negativo
+- `square_nonneg`: high — x² ≥ 0
+
+#### Buena Definición de leZ (leZ_repr_well_defined)
+
+**Enunciado Matemático**: `leZ_repr a b c d` es independiente del representante escogido para $[(a,b)]$ y $[(c,d)]$.
+
+**Firma Lean4**:
+
+```lean
+theorem leZ_repr_well_defined (a₁ b₁ a₂ b₂ c₁ d₁ c₂ d₂ : U) ... :
+    intClass a₁ b₁ = intClass a₂ b₂ →
+    intClass c₁ d₁ = intClass c₂ d₂ →
+    (leZ_repr a₁ b₁ c₁ d₁ ↔ leZ_repr a₂ b₂ c₂ d₂)
+```
+
+**Importancia**: high
+
+#### Caracterización via Representantes (leZ_iff_repr)
+
+**Enunciado Matemático**: Para $x, y \in \mathbb{Z}$: $x \leq y \iff \exists a,b,c,d \in \omega,\; x = [(a,b)] \wedge y = [(c,d)] \wedge a+d \leq b+c$.
+
+**Firma Lean4**:
+
+```lean
+theorem leZ_iff_repr (x y : U) (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) :
+    leZ x y ↔ ∃ a b c d : U, a ∈ (ω : U) ∧ b ∈ (ω : U) ∧
+      c ∈ (ω : U) ∧ d ∈ (ω : U) ∧
+      x = intClass a b ∧ y = intClass c d ∧ leZ_repr a b c d
+```
+
+**Importancia**: high
+
+#### Reflexividad (leZ_refl)
+
+**Enunciado Matemático**: $x \leq x$ para todo $x \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem leZ_refl (x : U) (hx : x ∈ (IntSet : U)) :
+    leZ x x
+```
+
+**Importancia**: high
+
+#### Transitividad (leZ_trans)
+
+**Enunciado Matemático**: Si $x \leq y$ y $y \leq z$ entonces $x \leq z$.
+
+**Firma Lean4**:
+
+```lean
+theorem leZ_trans (x y z : U) ... :
+    leZ x y → leZ y z → leZ x z
+```
+
+**Importancia**: high
+
+#### Antisimetría (leZ_antisymm)
+
+**Enunciado Matemático**: Si $x \leq y$ y $y \leq x$ entonces $x = y$.
+
+**Firma Lean4**:
+
+```lean
+theorem leZ_antisymm (x y : U) ... :
+    leZ x y → leZ y x → x = y
+```
+
+**Importancia**: high
+
+#### Totalidad (leZ_total)
+
+**Enunciado Matemático**: Para todo $x, y \in \mathbb{Z}$: $x \leq y \vee y \leq x$.
+
+**Firma Lean4**:
+
+```lean
+theorem leZ_total (x y : U) ... :
+    leZ x y ∨ leZ y x
+```
+
+**Importancia**: high
+
+#### Equivalencia ltZ-leZ (ltZ_iff_leZ_and_ne)
+
+**Enunciado Matemático**: $x < y \iff x \leq y \wedge x \neq y$.
+
+**Firma Lean4**:
+
+```lean
+theorem ltZ_iff_leZ_and_ne (x y : U) ... :
+    ltZ x y ↔ leZ x y ∧ x ≠ y
+```
+
+**Importancia**: high
+
+#### Irreflexividad Estricta (ltZ_irrefl)
+
+**Enunciado Matemático**: $\neg(x < x)$ para todo $x \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem ltZ_irrefl (x : U) (hx : x ∈ (IntSet : U)) :
+    ¬ ltZ x x
+```
+
+**Importancia**: high
+
+#### Transitividad Estricta (ltZ_trans)
+
+**Enunciado Matemático**: Si $x < y$ y $y < z$ entonces $x < z$.
+
+**Firma Lean4**:
+
+```lean
+theorem ltZ_trans (x y z : U) ... :
+    ltZ x y → ltZ y z → ltZ x z
+```
+
+**Importancia**: high
+
+#### leZ iff ltZ o Igualdad (leZ_iff_ltZ_or_eq)
+
+**Enunciado Matemático**: $x \leq y \iff (x < y \vee x = y)$.
+
+**Firma Lean4**:
+
+```lean
+theorem leZ_iff_ltZ_or_eq (x y : U) ... :
+    leZ x y ↔ ltZ x y ∨ x = y
+```
+
+**Importancia**: high
+
+#### Monotonía de addZ (addZ_leZ_addZ)
+
+**Enunciado Matemático**: Si $x \leq y$ entonces $x + z \leq y + z$ para todo $z \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem addZ_leZ_addZ (x y z : U) ... :
+    leZ x y → leZ (addZ x z) (addZ y z)
+```
+
+**Importancia**: high
+
+#### Monotonía Estricta de addZ (ltZ_addZ_ltZ)
+
+**Enunciado Matemático**: Si $x < y$ entonces $x + z < y + z$ para todo $z \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem ltZ_addZ_ltZ (x y z : U) ... :
+    ltZ x y → ltZ (addZ x z) (addZ y z)
+```
+
+**Importancia**: high
+
+#### Inversión de Orden por negZ (leZ_negZ)
+
+**Enunciado Matemático**: Si $x \leq y$ entonces $-y \leq -x$.
+
+**Firma Lean4**:
+
+```lean
+theorem leZ_negZ (x y : U) ... :
+    leZ x y → leZ (negZ y) (negZ x)
+```
+
+**Importancia**: high
+
+#### Tricotomía de Orden (int_trichotomy_order)
+
+**Enunciado Matemático**: Todo $x \in \mathbb{Z}$ es positivo, cero o negativo.
+
+**Firma Lean4**:
+
+```lean
+theorem int_trichotomy_order (x : U) (hx : x ∈ (IntSet : U)) :
+    isPositiveZ x ∨ x = zeroZ ∨ isNegativeZ x
+```
+
+**Importancia**: high
+
+#### Monotonía Izquierda de addZ (addZ_leZ_addZ_left)
+
+**Enunciado Matemático**: Si $x \leq y$ entonces $z + x \leq z + y$.
+
+**Firma Lean4**:
+
+```lean
+theorem addZ_leZ_addZ_left (x y z : U) ... :
+    leZ x y → leZ (addZ z x) (addZ z y)
+```
+
+**Importancia**: medium
+
+#### Monotonía de mulZ No Negativo (mulZ_le_mulZ_nonneg)
+
+**Enunciado Matemático**: Si $x \leq y$ y
+
+## 5. Notación y Sintaxis \leq z$ entonces $z \cdot x \leq z \cdot y$
+
+**Firma Lean4**:
+
+```lean
+theorem mulZ_le_mulZ_nonneg (x y z : U) ... :
+    leZ x y → leZ zeroZ z → leZ (mulZ z x) (mulZ z y)
+```
+
+**Importancia**: high
+
+#### Monotonía de mulZ No Positivo (mulZ_le_mulZ_nonpos)
+
+**Enunciado Matemático**: Si $x \leq y$ y $z \leq 0$ entonces $z \cdot y \leq z \cdot x$.
+
+**Firma Lean4**:
+
+```lean
+theorem mulZ_le_mulZ_nonpos (x y z : U) ... :
+    leZ x y → leZ z zeroZ → leZ (mulZ z y) (mulZ z x)
+```
+
+**Importancia**: high
+
+#### Monotonía Estricta de mulZ Positivo (mulZ_ltZ_mulZ_pos)
+
+**Enunciado Matemático**: Si $x < y$ y
+
+## 5. Notación y Sintaxis < z$ entonces $z \cdot x < z \cdot y$
+
+**Firma Lean4**:
+
+```lean
+theorem mulZ_ltZ_mulZ_pos (x y z : U) ... :
+    ltZ x y → ltZ zeroZ z → ltZ (mulZ z x) (mulZ z y)
+```
+
+**Importancia**: high
+
+#### Clausura Positivos bajo Multiplicación (positiveZ_mul_closed)
+
+**Enunciado Matemático**: Si $x > 0$ e $y > 0$ entonces $x \cdot y > 0$.
+
+**Firma Lean4**:
+
+```lean
+theorem positiveZ_mul_closed (x y : U) ... :
+    isPositiveZ x → isPositiveZ y → isPositiveZ (mulZ x y)
+```
+
+**Importancia**: high
+
+#### Producto de Negativos es Positivo (negativeZ_mul_positive)
+
+**Enunciado Matemático**: Si $x < 0$ e $y < 0$ entonces $x \cdot y > 0$.
+
+**Firma Lean4**:
+
+```lean
+theorem negativeZ_mul_positive (x y : U) ... :
+    isNegativeZ x → isNegativeZ y → isPositiveZ (mulZ x y)
+```
+
+**Importancia**: high
+
+#### Producto Positivo × Negativo es Negativo (positiveZ_negativeZ_mul_negative)
+
+**Enunciado Matemático**: Si $x > 0$ e $y < 0$ entonces $x \cdot y < 0$.
+
+**Firma Lean4**:
+
+```lean
+theorem positiveZ_negativeZ_mul_negative (x y : U) ... :
+    isPositiveZ x → isNegativeZ y → isNegativeZ (mulZ x y)
+```
+
+**Importancia**: high
+
+#### Cuadrados No Negativos (square_nonneg)
+
+**Enunciado Matemático**: $x \cdot x \geq 0_\mathbb{Z}$ para todo $x \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem square_nonneg (x : U) (hx : x ∈ (IntSet : U)) :
+    leZ zeroZ (mulZ x x)
+```
+
+**Importancia**: high
+
+#### Membresía en leZRel (mem_leZRel)
+
+**Enunciado Matemático**: $\langle x, y\rangle \in \text{leZRel} \iff x \in \mathbb{Z} \wedge y \in \mathbb{Z} \wedge x \leq y$.
+
+**Firma Lean4**:
+
+```lean
+theorem mem_leZRel (x y : U) :
+    ⟨x, y⟩ ∈ (leZRel : U) ↔ x ∈ (IntSet : U) ∧ y ∈ (IntSet : U) ∧ leZ x y
+```
+
+**Importancia**: medium
+
+#### Membresía en ltZRel (mem_ltZRel)
+
+**Enunciado Matemático**: $\langle x, y\rangle \in \text{ltZRel} \iff x \in \mathbb{Z} \wedge y \in \mathbb{Z} \wedge x < y$.
+
+**Firma Lean4**:
+
+```lean
+theorem mem_ltZRel (x y : U) :
+    ⟨x, y⟩ ∈ (ltZRel : U) ↔ x ∈ (IntSet : U) ∧ y ∈ (IntSet : U) ∧ ltZ x y
+```
+
+**Importancia**: medium
+
+#### Orden Lineal (leZ_is_linear_order)
+
+**Enunciado Matemático**: $\text{leZRel}$ es un orden lineal (total) sobre $\mathbb{Z}$ en el sentido set-teórico: es relación, reflexiva, antisimétrica, transitiva y conexa.
+
+**Firma Lean4**:
+
+```lean
+theorem leZ_is_linear_order :
+    isLinearOrderOn (leZRel : U) (IntSet : U)
+```
+
+**Importancia**: high
+
+#### Orden Lineal Estricto (ltZ_is_strict_linear_order)
+
+**Enunciado Matemático**: $\text{ltZRel}$ es un orden lineal estricto sobre $\mathbb{Z}$: es relación, irreflexiva, transitiva y tricotómica.
+
+**Firma Lean4**:
+
+```lean
+theorem ltZ_is_strict_linear_order :
+    isStrictLinearOrderOn (ltZRel : U) (IntSet : U)
+```
+
+**Importancia**: high
+
+---
+
+### 4.52 Int.Embedding.lean
+
+**Importancia por teorema**:
+
+- `natToInt_mem_IntSet`: high — natToInt(n) ∈ ℤ
+- `natToInt_is_function`: high — natToInt_graph es función ZFC
+- `natToInt_injective`: high — embedding inyectivo
+- `natToInt_preserves_add`: high — compatibilidad con suma
+- `natToInt_preserves_mul`: high — compatibilidad con producto
+- `natToInt_preserves_le`: high — compatibilidad con orden (≤)
+- `natToInt_reflects_le`: high — reflexión del orden
+- `natToInt_not_surjective`: high — el embedding no es sobreyectivo
+- `intToNat_zigzag_is_function`: high — zigzag es función ZFC
+- `intToNat_zigzag_injective`: high — zigzag es inyectivo
+- `intToNat_zigzag_surjective`: high — zigzag es sobreyectivo
+- `intToNat_zigzag_is_bijection`: high — zigzag es biyección ℤ → ω
+- `IntSet_equipotent_omega`: high — ℤ ≃ ω (equipotencia)
+
+#### Clausura del Embedding (natToInt_mem_IntSet)
+
+**Enunciado Matemático**: Para todo $n \in \omega$, $\text{natToInt}(n) \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem natToInt_mem_IntSet (n : U) (hn : n ∈ (ω : U)) :
+    natToInt n ∈ (IntSet : U)
+```
+
+**Importancia**: high
+
+#### natToInt es Función ZFC (natToInt_is_function)
+
+**Enunciado Matemático**: `natToInt_graph` es una función ZFC $\omega \to \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem natToInt_is_function :
+    IsFunction natToInt_graph (ω : U) IntSet
+```
+
+**Importancia**: high
+
+#### Inyectividad (natToInt_injective)
+
+**Enunciado Matemático**: `natToInt_graph` es inyectiva.
+
+**Firma Lean4**:
+
+```lean
+theorem natToInt_injective : isInjective natToInt_graph
+```
+
+**Importancia**: high
+
+#### Preserva la Suma (natToInt_preserves_add)
+
+**Enunciado Matemático**: $\text{natToInt}(m + n) = \text{natToInt}(m) + \text{natToInt}(n)$ para $m, n \in \omega$.
+
+**Firma Lean4**:
+
+```lean
+theorem natToInt_preserves_add (m n : U)
+    (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) :
+    natToInt (add m n) = addZ (natToInt m) (natToInt n)
+```
+
+**Importancia**: high
+
+#### Preserva el Producto (natToInt_preserves_mul)
+
+**Enunciado Matemático**: $\text{natToInt}(m \cdot n) = \text{natToInt}(m) \cdot \text{natToInt}(n)$ para $m, n \in \omega$.
+
+**Firma Lean4**:
+
+```lean
+theorem natToInt_preserves_mul (m n : U)
+    (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) :
+    natToInt (mul m n) = mulZ (natToInt m) (natToInt n)
+```
+
+**Importancia**: high
+
+#### Preserva el Orden (natToInt_preserves_le)
+
+**Enunciado Matemático**: Si $m \subseteq n$ en $\omega$ entonces $\text{natToInt}(m) \leq \text{natToInt}(n)$ en $\mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem natToInt_preserves_le (m n : U)
+    (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) :
+    m ⊆ n → leZ (natToInt m) (natToInt n)
+```
+
+**Importancia**: high
+
+#### Refleja el Orden (natToInt_reflects_le)
+
+**Enunciado Matemático**: Si $\text{natToInt}(m) \leq \text{natToInt}(n)$ en $\mathbb{Z}$ entonces $m \subseteq n$ en $\omega$.
+
+**Firma Lean4**:
+
+```lean
+theorem natToInt_reflects_le (m n : U)
+    (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) :
+    leZ (natToInt m) (natToInt n) → m ⊆ n
+```
+
+**Importancia**: high
+
+#### No es Sobreyectivo (natToInt_not_surjective)
+
+**Enunciado Matemático**: `natToInt_graph` no es sobreyectiva sobre $\mathbb{Z}$ (los enteros negativos no son imagen de ningún $n \in \omega$).
+
+**Firma Lean4**:
+
+```lean
+theorem natToInt_not_surjective :
+    ¬ isSurjectiveOnto natToInt_graph (IntSet : U)
+```
+
+**Importancia**: high
+
+#### Zigzag es Función (intToNat_zigzag_is_function)
+
+**Enunciado Matemático**: `intToNat_zigzag` es una función ZFC $\mathbb{Z} \to \omega$.
+
+**Firma Lean4**:
+
+```lean
+theorem intToNat_zigzag_is_function :
+    IsFunction intToNat_zigzag (IntSet : U) (ω : U)
+```
+
+**Importancia**: high
+
+#### Zigzag es Inyectivo (intToNat_zigzag_injective)
+
+**Enunciado Matemático**: `intToNat_zigzag` es inyectiva.
+
+**Firma Lean4**:
+
+```lean
+theorem intToNat_zigzag_injective : isInjective intToNat_zigzag
+```
+
+**Importancia**: high
+
+#### Zigzag es Sobreyectivo (intToNat_zigzag_surjective)
+
+**Enunciado Matemático**: `intToNat_zigzag` es sobreyectiva sobre $\omega$.
+
+**Firma Lean4**:
+
+```lean
+theorem intToNat_zigzag_surjective :
+    isSurjectiveOnto intToNat_zigzag (ω : U)
+```
+
+**Importancia**: high
+
+#### Zigzag es Biyección (intToNat_zigzag_is_bijection)
+
+**Enunciado Matemático**: `intToNat_zigzag` es una biyección $\mathbb{Z} \to \omega$.
+
+**Firma Lean4**:
+
+```lean
+theorem intToNat_zigzag_is_bijection :
+    isBijectionOnto intToNat_zigzag (IntSet : U) (ω : U)
+```
+
+**Importancia**: high
+
+#### ℤ Equipotente a ω (IntSet_equipotent_omega)
+
+**Enunciado Matemático**: $\mathbb{Z} \simeq_s \omega$ (ℤ y ω son equipotentes).
+
+**Firma Lean4**:
+
+```lean
+theorem IntSet_equipotent_omega :
+    isEquipotent (IntSet : U) (ω : U)
+```
+
+**Importancia**: high
+
+---
+
+### 4.53 Int.Abs.lean
+
+**Importancia por teorema**:
+
+- `absZ_zero`: high — |0ℤ| = 0
+- `absZ_intClass_pos`: high — |[(n,0)]| = n
+- `absZ_intClass_neg`: high — |[(0,m)]| = m
+- `absZ_in_omega`: high — |x| ∈ ω para x ∈ ℤ
+- `absZ_eq_zero_iff`: high — |x| = 0 ↔ x = 0ℤ
+- `absZ_negZ`: high — |−x| = |x|
+- `absZ_mulZ`: high — |x·y| = |x|·|y|
+- `signZ_zero`: medium — sgn(0) = 0ℤ
+- `signZ_pos`: medium — sgn([(n,0)]) = 1ℤ para n ≠ 0
+- `signZ_neg`: medium — sgn([(0,m)]) = −1ℤ para m ≠ 0
+- `signZ_values`: high — sgn(x) ∈ {1ℤ, −1ℤ, 0ℤ}
+- `signZ_in_IntSet`: high — sgn(x) ∈ ℤ
+- `signZ_mulZ_absZ`: high — x = sgn(x) · natToInt(|x|)
+- `signZ_mulZ`: high — sgn(x·y) = sgn(x)·sgn(y)
+- `signZ_square`: medium — sgn(a)² = 1ℤ para a ≠ 0ℤ
+- `absZ_addZ_le`: high — |x+y| ≤ |x|+|y| (desigualdad triangular)
+- `absZ_pos`: high — |x| ≠ 0 ↔ x ≠ 0ℤ
+- `absZ_mulZ_nonneg`: medium — |x·y| ≥ 0
+- `absZ_subZ_le`: high — |x−y| ≤ |x|+|y|
+
+#### Valor Absoluto de Cero (absZ_zero)
+
+**Enunciado Matemático**: $|0_\mathbb{Z}| = \emptyset$ (el 0 en ω).
+
+**Firma Lean4**:
+
+```lean
+theorem absZ_zero : absZ zeroZ = ∅
+```
+
+**Importancia**: high
+
+#### Valor Absoluto Positivo (absZ_intClass_pos)
+
+**Enunciado Matemático**: $|[(n,0)]| = n$ para $n \in \omega$.
+
+**Firma Lean4**:
+
+```lean
+theorem absZ_intClass_pos (n : U) (hn : n ∈ (ω : U)) :
+    absZ (intClass n ∅) = n
+```
+
+**Importancia**: high
+
+#### Valor Absoluto Negativo (absZ_intClass_neg)
+
+**Enunciado Matemático**: $|[(0,m)]| = m$ para $m \in \omega$.
+
+**Firma Lean4**:
+
+```lean
+theorem absZ_intClass_neg (m : U) (hm : m ∈ (ω : U)) :
+    absZ (intClass ∅ m) = m
+```
+
+**Importancia**: high
+
+#### Clausura en ω (absZ_in_omega)
+
+**Enunciado Matemático**: Si $x \in \mathbb{Z}$ entonces $|x| \in \omega$.
+
+**Firma Lean4**:
+
+```lean
+theorem absZ_in_omega (x : U) (hx : x ∈ (IntSet : U)) :
+    absZ x ∈ (ω : U)
+```
+
+**Importancia**: high
+
+#### Cero iff Cero (absZ_eq_zero_iff)
+
+**Enunciado Matemático**: Para $x \in \mathbb{Z}$: $|x| = \emptyset \iff x = 0_\mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem absZ_eq_zero_iff (x : U) (hx : x ∈ (IntSet : U)) :
+    absZ x = ∅ ↔ x = zeroZ
+```
+
+**Importancia**: high
+
+#### Valor Absoluto de Negativo (absZ_negZ)
+
+**Enunciado Matemático**: $|-x| = |x|$ para todo $x \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem absZ_negZ (x : U) (hx : x ∈ (IntSet : U)) :
+    absZ (negZ x) = absZ x
+```
+
+**Importancia**: high
+
+#### Multiplicatividad del Valor Absoluto (absZ_mulZ)
+
+**Enunciado Matemático**: $|x \cdot y| = |x| \cdot |y|$ para $x, y \in \mathbb{Z}$ (el producto en ω).
+
+**Firma Lean4**:
+
+```lean
+theorem absZ_mulZ (x y : U) ... :
+    absZ (mulZ x y) = mul (absZ x) (absZ y)
+```
+
+**Importancia**: high
+
+#### Signo del Cero (signZ_zero)
+
+**Enunciado Matemático**: $\text{sgn}(0_\mathbb{Z}) = 0_\mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem signZ_zero : signZ zeroZ = zeroZ
+```
+
+**Importancia**: medium
+
+#### Signo Positivo (signZ_pos)
+
+**Enunciado Matemático**: Para $n \in \omega$, $n \neq \emptyset$: $\text{sgn}([(n,0)]) = 1_\mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem signZ_pos (n : U) (hn : n ∈ (ω : U)) (hn0 : n ≠ ∅) :
+    signZ (intClass n ∅) = oneZ
+```
+
+**Importancia**: medium
+
+#### Signo Negativo (signZ_neg)
+
+**Enunciado Matemático**: Para $m \in \omega$, $m \neq \emptyset$: $\text{sgn}([(0,m)]) = -1_\mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem signZ_neg (m : U) (hm : m ∈ (ω : U)) (hm0 : m ≠ ∅) :
+    signZ (intClass ∅ m) = negZ oneZ
+```
+
+**Importancia**: medium
+
+#### Valores del Signo (signZ_values)
+
+**Enunciado Matemático**: Para todo $x \in \mathbb{Z}$: $\text{sgn}(x) \in \{1_\mathbb{Z}, -1_\mathbb{Z}, 0_\mathbb{Z}\}$.
+
+**Firma Lean4**:
+
+```lean
+theorem signZ_values (x : U) (hx : x ∈ (IntSet : U)) :
+    signZ x = oneZ ∨ signZ x = negZ oneZ ∨ signZ x = zeroZ
+```
+
+**Importancia**: high
+
+#### Clausura del Signo (signZ_in_IntSet)
+
+**Enunciado Matemático**: Si $x \in \mathbb{Z}$ entonces $\text{sgn}(x) \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem signZ_in_IntSet (x : U) (hx : x ∈ (IntSet : U)) :
+    signZ x ∈ (IntSet : U)
+```
+
+**Importancia**: high
+
+#### Descomposición Signo-Módulo (signZ_mulZ_absZ)
+
+**Enunciado Matemático**: $x = \text{sgn}(x) \cdot \text{natToInt}(|x|)$ para todo $x \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem signZ_mulZ_absZ (x : U) (hx : x ∈ (IntSet : U)) :
+    x = mulZ (signZ x) (natToInt (absZ x))
+```
+
+**Importancia**: high
+
+#### Multiplicatividad del Signo (signZ_mulZ)
+
+**Enunciado Matemático**: $\text{sgn}(x \cdot y) = \text{sgn}(x) \cdot \text{sgn}(y)$ para $x, y \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem signZ_mulZ (x y : U) ... :
+    signZ (mulZ x y) = mulZ (signZ x) (signZ y)
+```
+
+**Importancia**: high
+
+#### Signo al Cuadrado (signZ_square)
+
+**Enunciado Matemático**: Si $a \neq 0_\mathbb{Z}$ entonces $\text{sgn}(a)^2 = 1_\mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem signZ_square (a : U) (ha : a ∈ (IntSet : U)) (ha0 : a ≠ zeroZ) :
+    mulZ (signZ a) (signZ a) = oneZ
+```
+
+**Importancia**: medium
+
+#### Desigualdad Triangular (absZ_addZ_le)
+
+**Enunciado Matemático**: $|x + y| \leq |x| + |y|$ para $x, y \in \mathbb{Z}$ (en ω: `add (absZ x) (absZ y)`).
+
+**Firma Lean4**:
+
+```lean
+theorem absZ_addZ_le (x y : U) ... :
+    absZ (addZ x y) ⊆ add (absZ x) (absZ y)
+```
+
+**Importancia**: high
+
+#### Positividad del Valor Absoluto (absZ_pos)
+
+**Enunciado Matemático**: Para $x \in \mathbb{Z}$: $|x| \neq \emptyset \iff x \neq 0_\mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem absZ_pos (x : U) (hx : x ∈ (IntSet : U)) :
+    absZ x ≠ ∅ ↔ x ≠ zeroZ
+```
+
+**Importancia**: high
+
+#### No Negatividad del Producto Absoluto (absZ_mulZ_nonneg)
+
+**Enunciado Matemático**: $|x \cdot y| \geq 0$ en $\omega$ (trivialmente, pues $|x| \in \omega$).
+
+**Firma Lean4**:
+
+```lean
+theorem absZ_mulZ_nonneg (x y : U) ... :
+    ∅ ⊆ absZ (mulZ x y)
+```
+
+**Importancia**: medium
+
+#### Desigualdad Triangular para Resta (absZ_subZ_le)
+
+**Enunciado Matemático**: $|x - y| \leq |x| + |y|$ para $x, y \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem absZ_subZ_le (x y : U) ... :
+    absZ (subZ x y) ⊆ add (absZ x) (absZ y)
+```
+
+**Importancia**: high
+
+---
+
+### 4.54 Int.Pow.lean
+
+**Importancia por teorema**:
+
+- `mulZLeftFn_is_function`: high — mulZLeftFn es función ZFC ℤ→ℤ
+- `mulZLeftFn_apply`: high — apply(mulZLeftFn x, y) = x·y
+- `powZFn_is_function`: high — powZFn es función ZFC ω→ℤ
+- `powZ_eq`: high — powZ x n = apply(powZFn x, n)
+- `powZ_in_IntSet`: high — x^n ∈ ℤ
+- `powZ_zero`: high — x^0 = 1ℤ
+- `powZ_succ`: high — x^(σn) = x · x^n
+- `powZ_one`: high — x^1 = x
+- `oneZ_powZ`: medium — 1ℤ^n = 1ℤ
+- `zeroZ_powZ`: medium — 0ℤ^(σn) = 0ℤ
+- `powZ_add_exp`: high — x^(n+k) = x^n · x^k
+- `powZ_mul_base`: high — (x·y)^n = x^n · y^n
+- `powZ_negZ_sq`: medium — (−x)² = x²
+- `powZ_negZ_even`: medium — (−x)^(2n) = x^(2n)
+- `powZ_negZ_odd`: medium — (−x)^(2n+1) = −x^(2n+1)
+- `powZ_powZ`: high — (x^m)^n = x^(m·n)
+
+#### mulZLeftFn es Función (mulZLeftFn_is_function)
+
+**Enunciado Matemático**: Para $x \in \mathbb{Z}$, `mulZLeftFn x hx` es una función ZFC $\mathbb{Z} \to \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem mulZLeftFn_is_function (x : U) (hx : x ∈ (IntSet : U)) :
+    IsFunction (mulZLeftFn x hx) IntSet IntSet
+```
+
+**Importancia**: high
+
+#### Aplicación de mulZLeftFn (mulZLeftFn_apply)
+
+**Enunciado Matemático**: Para $x, y \in \mathbb{Z}$: $\text{apply}(\text{mulZLeftFn}(x), y) = x \cdot y$.
+
+**Firma Lean4**:
+
+```lean
+theorem mulZLeftFn_apply (x y : U) (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) :
+    apply (mulZLeftFn x hx) y = mulZ x y
+```
+
+**Importancia**: high
+
+#### powZFn es Función (powZFn_is_function)
+
+**Enunciado Matemático**: Para $x \in \mathbb{Z}$, `powZFn x hx` es una función ZFC $\omega \to \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem powZFn_is_function (x : U) (hx : x ∈ (IntSet : U)) :
+    IsFunction (powZFn x hx) (ω : U) IntSet
+```
+
+**Importancia**: high
+
+#### Fórmula de powZ (powZ_eq)
+
+**Enunciado Matemático**: Para $x \in \mathbb{Z}$, $n \in \omega$: $x^n = \text{apply}(\text{powZFn}(x), n)$.
+
+**Firma Lean4**:
+
+```lean
+theorem powZ_eq (x n : U) (hx : x ∈ (IntSet : U)) (hn : n ∈ (ω : U)) :
+    powZ x n = apply (powZFn x hx) n
+```
+
+**Importancia**: high
+
+#### Clausura de powZ (powZ_in_IntSet)
+
+**Enunciado Matemático**: Si $x \in \mathbb{Z}$ y $n \in \omega$ entonces $x^n \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem powZ_in_IntSet (x n : U) (hx : x ∈ (IntSet : U)) (hn : n ∈ (ω : U)) :
+    powZ x n ∈ (IntSet : U)
+```
+
+**Importancia**: high
+
+#### Caso Base (powZ_zero)
+
+**Enunciado Matemático**: $x^0 = 1_\mathbb{Z}$ para todo $x \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem powZ_zero (x : U) (hx : x ∈ (IntSet : U)) :
+    powZ x ∅ = oneZ
+```
+
+**Importancia**: high
+
+#### Caso Recursivo (powZ_succ)
+
+**Enunciado Matemático**: $x^{\sigma n} = x \cdot x^n$ para $x \in \mathbb{Z}$, $n \in \omega$.
+
+**Firma Lean4**:
+
+```lean
+theorem powZ_succ (x n : U) (hx : x ∈ (IntSet : U)) (hn : n ∈ (ω : U)) :
+    powZ x (σ n) = mulZ x (powZ x n)
+```
+
+**Importancia**: high
+
+#### Potencia 1 (powZ_one)
+
+**Enunciado Matemático**: $x^1 = x$ para todo $x \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem powZ_one (x : U) (hx : x ∈ (IntSet : U)) :
+    powZ x (σ ∅) = x
+```
+
+**Importancia**: high
+
+#### Unidad a Cualquier Potencia (oneZ_powZ)
+
+**Enunciado Matemático**: $1_\mathbb{Z}^n = 1_\mathbb{Z}$ para todo $n \in \omega$.
+
+**Firma Lean4**:
+
+```lean
+theorem oneZ_powZ (n : U) (hn : n ∈ (ω : U)) :
+    powZ oneZ n = oneZ
+```
+
+**Importancia**: medium
+
+#### Cero a Potencia No Nula (zeroZ_powZ)
+
+**Enunciado Matemático**:
+
+## 5. Notación y Sintaxis_\mathbb{Z}^{\sigma n} = 0_\mathbb{Z}$ para todo $n \in \omega$
+
+**Firma Lean4**:
+
+```lean
+theorem zeroZ_powZ (n : U) (hn : n ∈ (ω : U)) :
+    powZ zeroZ (σ n) = zeroZ
+```
+
+**Importancia**: medium
+
+#### Ley de Exponentes Suma (powZ_add_exp)
+
+**Enunciado Matemático**: $x^{n+k} = x^n \cdot x^k$ para $x \in \mathbb{Z}$, $n, k \in \omega$.
+
+**Firma Lean4**:
+
+```lean
+theorem powZ_add_exp (x n k : U) (hx : x ∈ (IntSet : U))
+    (hn : n ∈ (ω : U)) (hk : k ∈ (ω : U)) :
+    powZ x (add n k) = mulZ (powZ x n) (powZ x k)
+```
+
+**Importancia**: high
+
+#### Potencia de Producto (powZ_mul_base)
+
+**Enunciado Matemático**: $(x \cdot y)^n = x^n \cdot y^n$ para $x, y \in \mathbb{Z}$, $n \in \omega$.
+
+**Firma Lean4**:
+
+```lean
+theorem powZ_mul_base (x y n : U) ... :
+    powZ (mulZ x y) n = mulZ (powZ x n) (powZ y n)
+```
+
+**Importancia**: high
+
+#### Cuadrado de Negativo (powZ_negZ_sq)
+
+**Enunciado Matemático**: $(-x)^2 = x^2$ para todo $x \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem powZ_negZ_sq (x : U) (hx : x ∈ (IntSet : U)) :
+    powZ (negZ x) (σ (σ ∅)) = powZ x (σ (σ ∅))
+```
+
+**Importancia**: medium
+
+#### Potencia Par de Negativo (powZ_negZ_even)
+
+**Enunciado Matemático**: $(-x)^{2n} = x^{2n}$ para todo $x \in \mathbb{Z}$, $n \in \omega$.
+
+**Firma Lean4**:
+
+```lean
+theorem powZ_negZ_even (x : U) (hx : x ∈ (IntSet : U)) :
+    ∀ n ∈ (ω : U), powZ (negZ x) (add n n) = powZ x (add n n)
+```
+
+**Importancia**: medium
+
+#### Potencia Impar de Negativo (powZ_negZ_odd)
+
+**Enunciado Matemático**: $(-x)^{2n+1} = -(x^{2n+1})$ para todo $x \in \mathbb{Z}$, $n \in \omega$.
+
+**Firma Lean4**:
+
+```lean
+theorem powZ_negZ_odd (x n : U) (hx : x ∈ (IntSet : U)) (hn : n ∈ (ω : U)) :
+    powZ (negZ x) (σ (add n n)) = negZ (powZ x (σ (add n n)))
+```
+
+**Importancia**: medium
+
+#### Ley de Potencias Iteradas (powZ_powZ)
+
+**Enunciado Matemático**: $(x^m)^n = x^{m \cdot n}$ para $x \in \mathbb{Z}$, $m, n \in \omega$.
+
+**Firma Lean4**:
+
+```lean
+theorem powZ_powZ (x m n : U) (hx : x ∈ (IntSet : U))
+    (hm : m ∈ (ω : U)) (hn : n ∈ (ω : U)) :
+    powZ (powZ x m) n = powZ x (mul m n)
+```
+
+**Importancia**: high
+
+---
+
+### 4.55 Int.Induction.lean
+
+**Importancia por teorema**:
+
+- `int_induction_abs`: high — inducción sobre |x| con casos pos/neg
+- `int_strong_induction_abs`: high — inducción fuerte sobre |x|
+- `int_well_ordering_abs`: high — buena ordenación de ℤ por |·|
+- `int_induction_nonneg`: high — inducción sobre no negativos via natToInt
+- `int_induction_neg`: medium — inducción sobre negativos puros
+- `int_descent`: high — principio de descenso infinito
+
+#### Inducción por Valor Absoluto (int_induction_abs)
+
+**Enunciado Matemático**: Si $P(0_\mathbb{Z})$, y para todo $n \in \omega$: $P([(n,0)]) \Rightarrow P([(\sigma n, 0)])$ y $P([(0,n)]) \Rightarrow P([(0, \sigma n)])$, entonces $\forall x \in \mathbb{Z},\; P(x)$.
+
+**Firma Lean4**:
+
+```lean
+theorem int_induction_abs (P : U → Prop)
+    (h0 : P zeroZ)
+    (hpos : ∀ n ∈ (ω : U), P (intClass n ∅) → P (intClass (σ n) ∅))
+    (hneg : ∀ n ∈ (ω : U), P (intClass ∅ n) → P (intClass ∅ (σ n))) :
+    ∀ x ∈ (IntSet : U), P x
+```
+
+**Importancia**: high
+
+#### Inducción Fuerte (int_strong_induction_abs)
+
+**Enunciado Matemático**: Si para todo $x \in \mathbb{Z}$, $(\forall y \in \mathbb{Z},\; |y| \in |x| \Rightarrow P(y)) \Rightarrow P(x)$, entonces $\forall x \in \mathbb{Z},\; P(x)$.
+
+**Firma Lean4**:
+
+```lean
+theorem int_strong_induction_abs (P : U → Prop)
+    (h : ∀ x ∈ (IntSet : U), (∀ y ∈ (IntSet : U), absZ y ∈ absZ x → P y) → P x) :
+    ∀ x ∈ (IntSet : U), P x
+```
+
+**Importancia**: high
+
+#### Buena Ordenación por Valor Absoluto (int_well_ordering_abs)
+
+**Enunciado Matemático**: Si $\exists x \in \mathbb{Z},\; P(x)$, entonces existe $z \in \mathbb{Z}$ con $P(z)$ y $|z| \leq |w|$ para todo $w \in \mathbb{Z}$ con $P(w)$.
+
+**Firma Lean4**:
+
+```lean
+theorem int_well_ordering_abs (P : U → Prop)
+    (h : ∃ x ∈ (IntSet : U), P x) :
+    ∃ z ∈ (IntSet : U), P z ∧
+      ∀ w ∈ (IntSet : U), P w → (absZ z ∈ absZ w ∨ absZ z = absZ w)
+```
+
+**Importancia**: high
+
+#### Inducción sobre No Negativos (int_induction_nonneg)
+
+**Enunciado Matemático**: Si $P(\text{natToInt}(\emptyset))$ y para todo $n \in \omega$: $P(\text{natToInt}(n)) \Rightarrow P(\text{natToInt}(\sigma n))$, entonces $\forall n \in \omega,\; P(\text{natToInt}(n))$.
+
+**Firma Lean4**:
+
+```lean
+theorem int_induction_nonneg (P : U → Prop)
+    (h0 : P (natToInt ∅))
+    (hs : ∀ n ∈ (ω : U), P (natToInt n) → P (natToInt (σ n))) :
+    ∀ n ∈ (ω : U), P (natToInt n)
+```
+
+**Importancia**: high
+
+#### Inducción sobre Negativos (int_induction_neg)
+
+**Enunciado Matemático**: Si $P([(0,1)])$ y para todo $n \in \omega$: $P([(0,\sigma n)]) \Rightarrow P([(0,\sigma(\sigma n))])$, entonces $\forall n \in \omega,\; P([(0,\sigma n)])$.
+
+**Firma Lean4**:
+
+```lean
+theorem int_induction_neg (P : U → Prop)
+    (h1 : P (intClass ∅ (σ ∅)))
+    (hs : ∀ n ∈ (ω : U), P (intClass ∅ (σ n)) → P (intClass ∅ (σ (σ n)))) :
+    ∀ n ∈ (ω : U), P (intClass ∅ (σ n))
+```
+
+**Importancia**: medium
+
+#### Descenso Infinito (int_descent)
+
+**Enunciado Matemático**: Si para todo $x \in \mathbb{Z}$ con $P(x)$ existe $y \in \mathbb{Z}$ con $P(y)$ y $|y| < |x|$, entonces $\forall x \in \mathbb{Z},\; \neg P(x)$.
+
+**Firma Lean4**:
+
+```lean
+theorem int_descent (P : U → Prop)
+    (h : ∀ x ∈ (IntSet : U), P x →
+         ∃ y ∈ (IntSet : U), P y ∧ absZ y ∈ absZ x) :
+    ∀ x ∈ (IntSet : U), ¬ P x
+```
+
+**Importancia**: high
+
+---
+
+### 4.56 Int.Units.lean
+
+**Importancia por teorema**:
+
+- `unitZ_iff`: high — caracterización completa de unidades en ℤ
+
+#### Caracterización de Unidades (unitZ_iff)
+
+**Enunciado Matemático**: Para $u \in \mathbb{Z}$: $u$ es unidad $\iff u = 1_\mathbb{Z} \vee u = -1_\mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem unitZ_iff (u : U) (hu : u ∈ (IntSet : U)) :
+    isUnitZ u ↔ (u = oneZ ∨ u = negZ oneZ)
+```
+
+**Importancia**: high
+
+---
+
 ## 5. Notación y Sintaxis
 
 ### 5.1 Operadores Básicos
@@ -13885,6 +17016,371 @@ export Int.Div (
 )
 ```
 
+### 6.44 Int.Equiv.lean
+
+**Namespace**: `ZFC.Int.Equiv` (exportado a global)
+**Última modificación**: 2026-04-23
+**Dependencias**: `ZFC.Nat.Basic`, `ZFC.Axiom.Infinity`
+
+```lean
+export ZFC.Int.Equiv (
+  IntEquivRel
+  mem_IntEquivRel
+  IntEquivRel_is_relation
+  IntEquivRel_refl
+  IntEquivRel_symm
+  IntEquivRel_trans
+  IntEquivRel_is_equivalence
+)
+```
+
+---
+
+### 6.45 Int.Basic.lean
+
+**Namespace**: `ZFC.Int.Basic` (exportado a global)
+**Última modificación**: 2026-04-23
+**Dependencias**: `ZFC.Int.Equiv` + anteriores
+
+```lean
+export ZFC.Int.Basic (
+  IntSet
+  intClass
+  zeroZ
+  oneZ
+  intClass_mem_IntSet
+  zeroZ_mem_IntSet
+  oneZ_mem_IntSet
+  intClass_eq_iff
+  canonical_pos_exists
+  canonical_neg_exists
+  canonical_representative_exists
+  intClass_pos_injective
+  intClass_neg_injective
+  intClass_pos_ne_neg
+  int_trichotomy
+)
+```
+
+---
+
+### 6.46 Int.Add.lean
+
+**Namespace**: `ZFC.Int.Add` (exportado a global)
+**Última modificación**: 2026-04-23
+**Dependencias**: `ZFC.Int.Basic` + anteriores
+
+```lean
+export ZFC.Int.Add (
+  addZ
+  addZ_graph_is_function
+  addZ_well_defined
+  addZ_class
+  addZ_in_IntSet
+  addZ_comm
+  addZ_assoc
+  addZ_zero_right
+  addZ_zero_left
+)
+```
+
+---
+
+### 6.47 Int.Neg.lean
+
+**Namespace**: `ZFC.Int.Neg` (exportado a global)
+**Última modificación**: 2026-04-23
+**Dependencias**: `ZFC.Int.Basic`, `ZFC.Int.Add` + anteriores
+
+```lean
+export ZFC.Int.Neg (
+  negZ
+  negZ_class
+  negZ_in_IntSet
+  negZ_well_defined
+  addZ_negZ_right
+  addZ_negZ_left
+  negZ_negZ
+  negZ_zero
+  negZ_addZ
+  subZ
+  subZ_self
+  subZ_in_IntSet
+)
+```
+
+---
+
+### 6.48 Int.Mul.lean
+
+**Namespace**: `ZFC.Int.Mul` (exportado a global)
+**Última modificación**: 2026-04-23
+**Dependencias**: `ZFC.Int.Basic`, `ZFC.Int.Add`, `ZFC.Int.Neg` + anteriores
+
+```lean
+export ZFC.Int.Mul (
+  mulZ
+  mulZ_graph_is_function
+  mulZ_well_defined
+  mulZ_class
+  mulZ_in_IntSet
+  mulZ_comm
+  mulZ_assoc
+  mulZ_one_right
+  mulZ_one_left
+  mulZ_zero_right
+  mulZ_zero_left
+  mulZ_negZ_left
+  mulZ_negZ_right
+  negZ_mulZ_negZ
+  mul_eq_zero_iff
+)
+```
+
+---
+
+### 6.49 Int.Ring.lean
+
+**Namespace**: `ZFC.Int.Ring` (exportado a global)
+**Última modificación**: 2026-04-23
+**Dependencias**: `ZFC.Int.Mul` + anteriores
+
+```lean
+export ZFC.Int.Ring (
+  mulZ_addZ_distrib_left
+  mulZ_addZ_distrib_right
+  mulZ_subZ_distrib_left
+  mulZ_subZ_distrib_right
+  mulZ_eq_zero_iff
+  mulZ_cancel_left
+  mulZ_cancel_right
+  difference_of_squares
+)
+```
+
+---
+
+### 6.50 Int.Sub.lean
+
+**Namespace**: `ZFC.Int.Sub` (sin bloque `export` — símbolos accesibles vía `ZFC.Int.Sub.*`)
+**Última modificación**: 2026-04-23
+**Dependencias**: `ZFC.Int.Add`, `ZFC.Int.Neg` + anteriores
+
+```lean
+-- namespace ZFC.Int.Sub
+  subZ_zero_right
+  subZ_zero_left
+  subZ_negZ_right
+  negZ_subZ
+  subZ_addZ_cancel
+  addZ_subZ_cancel
+  subZ_eq_zero_iff
+  subZ_subZ
+  addZ_subZ_assoc
+  subZ_negZ_left
+  subZ_addZ_left_cancel
+  subZ_addZ_right_cancel
+```
+
+---
+
+### 6.51 Int.DivMod.lean
+
+**Namespace**: `ZFC.Int.DivMod` (sin bloque `export` — símbolos accesibles vía `ZFC.Int.DivMod.*`)
+**Última modificación**: 2026-04-23
+**Dependencias**: `ZFC.Int.Basic`, `ZFC.Nat.Div` + anteriores
+
+```lean
+-- namespace ZFC.Int.DivMod
+  dividesZ          -- def
+  dividesZ_refl
+  dividesZ_zero
+  zero_dividesZ_iff
+  dividesZ_trans
+  dividesZ_negZ_right
+  dividesZ_negZ_left
+  dividesZ_mulZ_left
+  dividesZ_mulZ_right
+  one_dividesZ
+  dividesZ_add
+  dividesZ_sub
+  dividesZ_mulZ_right_factor
+  dividesZ_negZ_left_right
+```
+
+---
+
+### 6.52 Int.Order.lean
+
+**Namespace**: `ZFC.Int.Order` (exportado a global)
+**Última modificación**: 2026-04-23
+**Dependencias**: `ZFC.Int.Mul`, `ZFC.Int.Sub`, `ZFC.Int.Ring`, `ZFC.Nat.Mul`
+
+```lean
+export ZFC.Int.Order (
+  leZ_repr
+  ltZ_repr
+  leZ_repr_well_defined
+  leZ
+  ltZ
+  leZ_iff_repr
+  leZ_refl
+  leZ_trans
+  leZ_antisymm
+  leZ_total
+  ltZ_iff_leZ_and_ne
+  ltZ_irrefl
+  ltZ_trans
+  leZ_iff_ltZ_or_eq
+  addZ_leZ_addZ
+  ltZ_addZ_ltZ
+  leZ_negZ
+  isPositiveZ
+  isNegativeZ
+  int_trichotomy_order
+  addZ_leZ_addZ_left
+  mulZ_le_mulZ_nonneg
+  mulZ_le_mulZ_nonpos
+  mulZ_ltZ_mulZ_pos
+  positiveZ_mul_closed
+  negativeZ_mul_positive
+  positiveZ_negativeZ_mul_negative
+  square_nonneg
+  leZRel
+  ltZRel
+  mem_leZRel
+  mem_ltZRel
+  leZ_is_linear_order
+  ltZ_is_strict_linear_order
+)
+```
+
+---
+
+### 6.53 Int.Embedding.lean
+
+**Namespace**: `ZFC.Int.Embedding` (exportado a global)
+**Última modificación**: 2026-04-23
+**Dependencias**: `ZFC.Int.Order`, `ZFC.Int.Mul`, `ZFC.Int.Add` + anteriores
+
+```lean
+export ZFC.Int.Embedding (
+  natToInt
+  natToInt_graph
+  natToInt_mem_IntSet
+  natToInt_is_function
+  natToInt_injective
+  natToInt_preserves_add
+  natToInt_preserves_mul
+  natToInt_preserves_le
+  natToInt_reflects_le
+  natToInt_not_surjective
+  intToNat_zigzag
+  intToNat_zigzag_is_function
+  intToNat_zigzag_injective
+  intToNat_zigzag_surjective
+  intToNat_zigzag_is_bijection
+  IntSet_equipotent_omega
+)
+```
+
+---
+
+### 6.54 Int.Abs.lean
+
+**Namespace**: `ZFC.Int.Abs` (sin bloque `export` — símbolos accesibles vía `ZFC.Int.Abs.*`)
+**Última modificación**: 2026-04-23
+**Dependencias**: `ZFC.Int.Order`, `ZFC.Int.Embedding` + anteriores
+
+```lean
+-- namespace ZFC.Int.Abs
+  absZ              -- noncomputable def
+  signZ             -- noncomputable def
+  absZ_zero
+  absZ_intClass_pos
+  absZ_intClass_neg
+  absZ_in_omega
+  absZ_eq_zero_iff
+  absZ_negZ
+  absZ_mulZ
+  signZ_zero
+  signZ_pos
+  signZ_neg
+  signZ_values
+  signZ_in_IntSet
+  signZ_mulZ_absZ
+  signZ_mulZ
+  signZ_square
+  absZ_addZ_le
+  absZ_pos
+  absZ_mulZ_nonneg
+  absZ_subZ_le
+```
+
+---
+
+### 6.55 Int.Pow.lean
+
+**Namespace**: `ZFC.Int.Pow` (sin bloque `export` — símbolos accesibles vía `ZFC.Int.Pow.*`)
+**Última modificación**: 2026-04-23
+**Dependencias**: `ZFC.Int.Mul`, `ZFC.Induction.Recursion` + anteriores
+
+```lean
+-- namespace ZFC.Int.Pow
+  mulZLeftFn        -- noncomputable def
+  powZFn            -- noncomputable def
+  powZ              -- noncomputable def
+  mulZLeftFn_is_function
+  mulZLeftFn_apply
+  powZFn_is_function
+  powZ_eq
+  powZ_in_IntSet
+  powZ_zero
+  powZ_succ
+  powZ_one
+  oneZ_powZ
+  zeroZ_powZ
+  powZ_add_exp
+  powZ_mul_base
+  powZ_negZ_sq
+  powZ_negZ_even
+  powZ_negZ_odd
+  powZ_powZ
+```
+
+---
+
+### 6.56 Int.Induction.lean
+
+**Namespace**: `ZFC.Int.Induction` (sin bloque `export` — símbolos accesibles vía `ZFC.Int.Induction.*`)
+**Última modificación**: 2026-04-23
+**Dependencias**: `ZFC.Int.Basic` + anteriores
+
+```lean
+-- namespace ZFC.Int.Induction
+  int_induction_abs
+  int_strong_induction_abs
+  int_well_ordering_abs
+  int_induction_nonneg
+  int_induction_neg
+  int_descent
+```
+
+---
+
+### 6.57 Int.Units.lean
+
+**Namespace**: `ZFC.Int.Ring` (exportado a global — extiende el export de `Int.Ring`)
+**Última modificación**: 2026-04-23
+**Dependencias**: `ZFC.Int.Ring`, `ZFC.Int.Mul` + anteriores
+
+```lean
+export ZFC.Int.Ring (
+  isUnitZ
+  unitZ_iff
+)
+```
+
 ## 7. Estado de Proyección por Módulo
 
 ### 7.1 Leyenda de Estados
@@ -13944,6 +17440,20 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `BoolAlg.Representation.lean` - Teorema de Representación de Stone (forma concreta): biyección A↔Atoms(A) vía singletons, biyección 𝒫(A)↔𝒫(Atoms A) vía atomsBelowMap, preservación de ∪/∩/complemento. 3 definiciones + 24 teoremas + 27 exports
 - `Cardinal.FinitePowerSet.lean` - Cardinalidad del conjunto potencia finito: |𝒫(F)|=2^n, extensión de biyecciones, unión disjunta aditiva, descomposición en mitades, removeElemMap. 1 definición + 12 teoremas + 13 exports
 - `Int.Div.lean` - MCD/MCM/divisibilidad en ℤ: gcdZ/modZ/lcmZ/quotZ vía valores absolutos en ω, gcdZ_dividesZ_left/right, gcdZ_is_greatest, dividesZ_antisymm_abs/antisymm, euclidean_divisionZ, bezoutZ. 4 definiciones + 20 teoremas + 24 exports
+- `Int/Equiv.lean` - Relación de equivalencia de enteros IntEquivRel en ω×ω: reflexividad, simetría, transitividad, IntEquivRel_is_equivalence. 1 definición + 6 teoremas + 7 exports
+- `Int/Basic.lean` - Enteros ℤ como clases de equivalencia en ω×ω: IntSet, intClass, zeroZ, oneZ, tricotomía, inyectividad de representantes. 4 definiciones + 11 teoremas + 15 exports
+- `Int/Add.lean` - Suma en ℤ: addZ vía representantes, buena definición, conmutatividad, asociatividad, identidades. 1 definición + 8 teoremas + 9 exports
+- `Int/Neg.lean` - Negación y sustraccion en ℤ: negZ, subZ, inverso aditivo, buena definición, leyes de negación. 2 definiciones + 10 teoremas + 12 exports
+- `Int/Mul.lean` - Multiplicación en ℤ: mulZ vía representantes, buena definición, conmutatividad, asociatividad, identidad, anuladores, regla de signos. 1 definición + 14 teoremas + 15 exports
+- `Int/Ring.lean` - Leyes de anillo en ℤ: distributividad, cancelación, diferencia de cuadrados. 0 definiciones + 8 teoremas + 8 exports
+- `Int/Pow.lean` - Potenciación en ℤ: powZ vía recursion ZFC, leyes de exponentes, regla de signos para potencias pares/impares. 3 definiciones + 16 teoremas + 19 exports
+- `Int/Sub.lean` - Propiedades de subZ en ℤ: identidades, cancelación, interacción con negZ y addZ. 0 definiciones + 12 teoremas (sin bloque export)
+- `Int/DivMod.lean` - Divisibilidad en ℤ: dividesZ, reflexividad, transitividad, interacción con negZ/mulZ/suma. 1 definición + 13 teoremas (sin bloque export)
+- `Int/Order.lean` - Orden en ℤ: leZ/ltZ totales, compatibilidad con addZ/mulZ/negZ, isPositiveZ/isNegativeZ, leZRel/ltZRel como conjuntos, leZ_is_linear_order, ltZ_is_strict_linear_order. 6 definiciones + 28 teoremas + 34 exports
+- `Int/Embedding.lean` - Embedding ω→ℤ y biyección zigzag ℤ→ω: natToInt preserva suma/producto/orden, intToNat_zigzag es biyección, IntSet≃ω. 2 definiciones + 14 teoremas + 16 exports
+- `Int/Abs.lean` - Valor absoluto y signo en ℤ: absZ∈ω, signZ∈ℤ, |x·y|=|x|·|y|, desigualdad triangular, signZ·|x|=x. 2 definiciones + 19 teoremas (sin bloque export)
+- `Int/Induction.lean` - Inducción sobre ℤ: por valor absoluto (simple y fuerte), buena ordenación, sobre no-negativos/negativos, descenso infinito. 0 definiciones + 6 teoremas (sin bloque export)
+- `Int/Units.lean` - Unidades de ℤ: isUnitZ, unitZ_iff (x∈ℤ× ⇔ x=1∨x=-1). 1 definición + 1 teorema + 2 exports
 
 ### 7.3 Archivos Parcialmente Proyectados
 
@@ -13963,36 +17473,21 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 
 ### 7.5 Archivos Completos Pendientes de Proyectar
 
-(48/61 módulos proyectados, 13 pendientes)
-
-Módulos `ZFC.Int.*` pendientes de proyectar:
-- `Int/Equiv.lean` - `ZFC.Int.Equiv`
-- `Int/Basic.lean` - `ZFC.Int.Basic`
-- `Int/Add.lean` - `ZFC.Int.Add`
-- `Int/Neg.lean` - `ZFC.Int.Neg`
-- `Int/Mul.lean` - `ZFC.Int.Mul`
-- `Int/Ring.lean` - `ZFC.Int.Ring`
-- `Int/Pow.lean` - `ZFC.Int.Pow`
-- `Int/Sub.lean` - `ZFC.Int.Sub`
-- `Int/DivMod.lean` - `ZFC.Int.DivMod`
-- `Int/Order.lean` - `ZFC.Int.Order`
-- `Int/Embedding.lean` - `ZFC.Int.Embedding`
-- `Int/Abs.lean` - `ZFC.Int.Abs`
-- `Int/Induction.lean` - `ZFC.Int.Induction`
+(Ninguno — 62/62 módulos proyectados)
 
 ---
 
-*Última actualización: 2026-04-22 — Proyección completa de Int.Div.lean (§3.46, §4.42, §6.43: 4 def + 20 teoremas + 24 exports, gcdZ/modZ/lcmZ/quotZ vía valores absolutos en ω, gcdZ_dividesZ_left/right, gcdZ_is_greatest, dividesZ_antisymm_abs/antisymm, euclidean_divisionZ, identidad de Bézout). Tabla §1.1 actualizada (14 módulos Int añadidos: 1 ✅ + 13 ❌). §7.2 e §7.5 actualizados: 48/61 módulos proyectados, 13 pendientes (todos ZFC.Int.* excepto Int.Div).*
+*Última actualización: 2026-04-23 18:00 — Proyección completa de 14 módulos ZFC.Int.* (excepto Int.Div ya proyectado): Equiv, Basic, Add, Neg, Mul, Ring, Pow, Sub, DivMod, Order, Embedding, Abs, Induction, Units (§3.47-§3.60, §4.43-§4.56, §6.44-§6.57). Implementados leZ_is_linear_order y ltZ_is_strict_linear_order en Int/Order.lean (2 nuevos teoremas bundled, 4 definiciones auxiliares). Tabla §1.1 actualizada (13 ❌→✅, fila Units añadida). §7.2 e §7.5 actualizados: 62/62 módulos proyectados, 0 pendientes.*
 
-*Última actualización: 2026-04-09 — Proyección completa de BoolAlg.Representation.lean (§3.44, §4.40, §6.41: 3 def + 24 teoremas + 27 exports, teorema de representación de Stone forma concreta, biyección A↔Atoms(A) vía singletons, biyección 𝒫(A)↔𝒫(Atoms A) vía atomsBelowMap, preservación ∪/∩/complemento/∅/universo) y Cardinal.FinitePowerSet.lean (§3.45, §4.41, §6.42: 1 def + 12 teoremas + 13 exports, |𝒫(F)|=2^n, extensión de biyecciones por un elemento, unión disjunta aditiva, descomposición en mitades disjuntas, removeElemMap). Tabla §1.1 y §7.2 actualizadas. §7.5: 47/47 módulos proyectados. Estado: ✅ 100% completo, 0 sorry.*
+*Última actualización: 2026-04-09 12:00 — Proyección completa de BoolAlg.Representation.lean (§3.44, §4.40, §6.41: 3 def + 24 teoremas + 27 exports, teorema de representación de Stone forma concreta, biyección A↔Atoms(A) vía singletons, biyección 𝒫(A)↔𝒫(Atoms A) vía atomsBelowMap, preservación ∪/∩/complemento/∅/universo) y Cardinal.FinitePowerSet.lean (§3.45, §4.41, §6.42: 1 def + 12 teoremas + 13 exports, |𝒫(F)|=2^n, extensión de biyecciones por un elemento, unión disjunta aditiva, descomposición en mitades disjuntas, removeElemMap). Tabla §1.1 y §7.2 actualizadas. §7.5: 47/47 módulos proyectados. Estado: ✅ 100% completo, 0 sorry.*
 
-*Última actualización: 2026-04-08 — Proyección completa de BoolAlg.FiniteBA.lean (§3.42, §4.38, §6.39: 0 def + 8 teoremas + 8 exports, cardinalidad de BA finita |𝒫(A)|=2^n, equipotencia átomos↔base, finiteness bidireccional, representación vía átomos, BA finita es completa atómica) y BoolAlg.BoolRingBA.lean (§3.43, §4.39, §6.40: 0 def + 13 teoremas + 13 exports, correspondencia BR↔BA, X△Y△(X∩Y)=X∪Y, A△X=X^∁[A], round-trips BA→BR→BA y BR→BA→BR, char 2, idempotencia, involución complemento). Tabla §1.1 y §7.2 actualizadas. §7.5: 45/45 módulos proyectados. Estado: ✅ 100% completo, 0 sorry.*
+*Última actualización: 2026-04-08 12:00 — Proyección completa de BoolAlg.FiniteBA.lean (§3.42, §4.38, §6.39: 0 def + 8 teoremas + 8 exports, cardinalidad de BA finita |𝒫(A)|=2^n, equipotencia átomos↔base, finiteness bidireccional, representación vía átomos, BA finita es completa atómica) y BoolAlg.BoolRingBA.lean (§3.43, §4.39, §6.40: 0 def + 13 teoremas + 13 exports, correspondencia BR↔BA, X△Y△(X∩Y)=X∪Y, A△X=X^∁[A], round-trips BA→BR→BA y BR→BA→BR, char 2, idempotencia, involución complemento). Tabla §1.1 y §7.2 actualizadas. §7.5: 45/45 módulos proyectados. Estado: ✅ 100% completo, 0 sorry.*
 
-*Última actualización: 2026-04-07 — Proyección completa de BoolAlg.Complete.lean (§3.41, §4.37, §6.38: 4 def + 11 teoremas + 15 exports, supremo/ínfimo relativizados isSupremumIn/isInfimumIn, retículo completo isCompleteLattice, álgebra booleana completa atómica isCompleteAtomicBA, supremo en 𝒫(A) vía ⋃, ínfimo en 𝒫(A) vía ⋂, unicidad, ínfimo de familia vacía = A, powerset_is_complete_lattice, powerset_is_complete_atomic_BA). Tabla §1.1 y §7.2 actualizadas. §7.5 vacío: 43/43 módulos proyectados. Estado: ✅ 100% completo, 0 sorry.*
+*Última actualización: 2026-04-07 12:00 — Proyección completa de BoolAlg.Complete.lean (§3.41, §4.37, §6.38: 4 def + 11 teoremas + 15 exports, supremo/ínfimo relativizados isSupremumIn/isInfimumIn, retículo completo isCompleteLattice, álgebra booleana completa atómica isCompleteAtomicBA, supremo en 𝒫(A) vía ⋃, ínfimo en 𝒫(A) vía ⋂, unicidad, ínfimo de familia vacía = A, powerset_is_complete_lattice, powerset_is_complete_atomic_BA). Tabla §1.1 y §7.2 actualizadas. §7.5 vacío: 43/43 módulos proyectados. Estado: ✅ 100% completo, 0 sorry.*
 
-*Última actualización: 2026-04-01 — Proyección completa de BoolAlg.FiniteCofinite.lean (§3.40, §4.36, §6.37: 4 def + 19 teoremas + 22 exports, álgebra booleana finita/cofinita FinCofAlg(ω), clausura de finitos finite_subset/finite_union/Omega_not_finite, paridad even_or_odd/even_ne_odd/double_injective, EvenSet/OddSet infinitos, estructura BA ∅/A/complemento/unión/intersección, contraejemplo FinCofAlg_not_complete). Tabla §1.1 y §7.2 actualizadas. BoolAlg.Complete.lean añadido a §1.1 como ❌ Pendiente y §7.5. Estado: ✅ 100% completo, 0 sorry.*
+*Última actualización: 2026-04-01 12:00 — Proyección completa de BoolAlg.FiniteCofinite.lean (§3.40, §4.36, §6.37: 4 def + 19 teoremas + 22 exports, álgebra booleana finita/cofinita FinCofAlg(ω), clausura de finitos finite_subset/finite_union/Omega_not_finite, paridad even_or_odd/even_ne_odd/double_injective, EvenSet/OddSet infinitos, estructura BA ∅/A/complemento/unión/intersección, contraejemplo FinCofAlg_not_complete). Tabla §1.1 y §7.2 actualizadas. BoolAlg.Complete.lean añadido a §1.1 como ❌ Pendiente y §7.5. Estado: ✅ 100% completo, 0 sorry.*
 
-*Última actualización: 2026-03-30 — Proyección completa de Peano.FiniteSequencesArith.lean (§3.38, §4.34, §6.35: 7 def + 18 teoremas + 33 exports, sumación/producto numérico seqSum/seqProd, producto cartesiano familyProduct, teoremas de cardinalidad card_product_two/card_familyProduct vía inducción ZFC). Tabla §1.1 y §7.2 actualizadas. Estado: ✅ 100% completo, 0 sorry.*
+*Última actualización: 2026-03-30 12:00 — Proyección completa de Peano.FiniteSequencesArith.lean (§3.38, §4.34, §6.35: 7 def + 18 teoremas + 33 exports, sumación/producto numérico seqSum/seqProd, producto cartesiano familyProduct, teoremas de cardinalidad card_product_two/card_familyProduct vía inducción ZFC). Tabla §1.1 y §7.2 actualizadas. Estado: ✅ 100% completo, 0 sorry.*
 
 *Última actualización: 2026-03-29 — Proyección completa de SetOps.FiniteSets.lean (§3.37, §4.33, §6.34: 1 def + 21 teoremas + 22 exports, definición isFiniteSet, infraestructura de biyecciones id/inversa/composición, equipotencia refl/symm/trans, finitud de ∅/n/singleton/unión). Tabla §1.1 y §7.2 actualizadas. Estado: ✅ 100% completo, 0 sorry.*
 

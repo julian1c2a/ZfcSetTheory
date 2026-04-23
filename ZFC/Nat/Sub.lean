@@ -31,6 +31,9 @@ License: MIT
   (which holds unconditionally), combined with `predecessor_fromPeano_eq_tau`:
     predecessor (fromPeano x) = fromPeano (τ x).
   Induction on q then closes the bridge.
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Nat.Basic

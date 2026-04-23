@@ -22,6 +22,9 @@ cardinality of the Cartesian product equals the product of the cardinalities.
 * `seqSum_zero`, `seqSum_succ`   — recursion equations for sum
 * `seqProd_zero`, `seqProd_succ` — recursion equations for product
 * `familyProduct_zero`, `familyProduct_succ` — recursion for Cartesian product
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Nat.Mul

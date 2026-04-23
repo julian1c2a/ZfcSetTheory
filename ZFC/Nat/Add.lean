@@ -27,6 +27,9 @@ License: MIT
     fromPeano (Peano.Add.add p q) = add (fromPeano p) (fromPeano q)
 
   This allows lifting all theorems from PeanoNatAdd to ZFC sets automatically.
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Nat.Basic

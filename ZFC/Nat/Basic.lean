@@ -102,6 +102,9 @@ License: MIT
 
   - **NaturalArithmetic.lean**: Aritmética básica (suma, multiplicación, exponenciación),
     propiedades algebraicas, orden aritmético, divisibilidad, números primos
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import Init.Classical

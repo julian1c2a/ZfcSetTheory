@@ -31,6 +31,9 @@ License: MIT
   - `binomOf_eq_zero_of_gt`:  n ∈ k → C(n, k) = ∅  (n < k → C(n,k) = 0)
   - `binomOf_pos`:             k ≤ n → ∅ ∈ C(n, k)  (k ≤ n → 0 < C(n,k))
   - `binomOf_mul_factorials`:  C(n,k) · k! · (n−k)! = n!
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Nat.Basic

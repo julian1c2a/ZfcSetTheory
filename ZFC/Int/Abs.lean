@@ -31,6 +31,9 @@ License: MIT
   * `signZ_mulZ_absZ` — x = sign(x) · natToInt(|x|)
   * `signZ_mulZ` — sign(x · y) = sign(x) · sign(y)
   * `signZ_square` — sign(x) · sign(x) = 1 if x ≠ 0
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Int.Order

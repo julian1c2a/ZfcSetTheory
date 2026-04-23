@@ -29,6 +29,9 @@ License: MIT
   - `exists_prime_divisor_ZFC` — every n ≥ 2 in ω has a ZFC-prime divisor
   - `exists_prime_factorization_ZFC` — TFA existence (Approach A)
   - `unique_prime_factorization_ZFC` — TFA uniqueness (Approach A)
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Nat.Basic

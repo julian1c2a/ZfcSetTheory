@@ -38,6 +38,16 @@ License: MIT
   * `positiveZ_mul_closed` — positive × positive = positive
   * `negativeZ_mul_positive` — negative × negative = positive
   * `positiveZ_negativeZ_mul_negative` — positive × negative = negative
+  * `square_nonneg` — x² ≥ 0 for all x ∈ ℤ
+  * `leZRel` — leZ as a set of ordered pairs
+  * `ltZRel` — ltZ as a set of ordered pairs
+  * `mem_leZRel` — membership characterization for leZRel
+  * `mem_ltZRel` — membership characterization for ltZRel
+  * `leZ_is_linear_order` — leZRel is a linear order on IntSet
+  * `ltZ_is_strict_linear_order` — ltZRel is a strict linear order on IntSet
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Int.Mul
@@ -824,6 +834,106 @@ namespace ZFC
         have h := mulZ_le_mulZ_nonpos x zeroZ x hx zeroZ_mem_IntSet hx h_neg h_neg
         rwa [mulZ_zero_right x hx] at h
 
+    /-! ### leZ and ltZ as set-theoretic relations -/
+
+    /-- The graph of leZ as a set: leZRel = {⟨x, y⟩ ∈ IntSet × IntSet | leZ x y} -/
+    noncomputable def leZRel : U :=
+      sep ((IntSet : U) ×ₛ IntSet) (fun p => leZ (fst p) (snd p))
+
+    /-- The graph of ltZ as a set: ltZRel = {⟨x, y⟩ ∈ IntSet × IntSet | ltZ x y} -/
+    noncomputable def ltZRel : U :=
+      sep ((IntSet : U) ×ₛ IntSet) (fun p => ltZ (fst p) (snd p))
+
+    /-- Membership characterization for leZRel -/
+    theorem mem_leZRel (x y : U) :
+        ⟨x, y⟩ ∈ (leZRel : U) ↔ x ∈ (IntSet : U) ∧ y ∈ (IntSet : U) ∧ leZ x y := by
+      unfold leZRel
+      rw [mem_sep_iff, OrderedPair_mem_CartesianProduct]
+      simp only [fst_of_ordered_pair, snd_of_ordered_pair]
+      tauto
+
+    /-- Membership characterization for ltZRel -/
+    theorem mem_ltZRel (x y : U) :
+        ⟨x, y⟩ ∈ (ltZRel : U) ↔ x ∈ (IntSet : U) ∧ y ∈ (IntSet : U) ∧ ltZ x y := by
+      unfold ltZRel
+      rw [mem_sep_iff, OrderedPair_mem_CartesianProduct]
+      simp only [fst_of_ordered_pair, snd_of_ordered_pair]
+      tauto
+
+    /-- leZRel is a linear (total) order on IntSet -/
+    theorem leZ_is_linear_order :
+        isLinearOrderOn (leZRel : U) (IntSet : U) := by
+      constructor
+      · -- isPartialOrderOn leZRel IntSet
+        refine ⟨?_, ?_, ?_, ?_⟩
+        · -- isRelationOn: leZRel ⊆ IntSet ×ₛ IntSet
+          intro p hp
+          unfold leZRel at hp
+          exact (mem_sep_iff _ _ _).mp hp |>.1
+        · -- isReflexiveOn
+          intro x hx
+          rw [mem_leZRel]
+          exact ⟨hx, hx, leZ_refl x hx⟩
+        · -- isAntiSymmetricOn
+          intro x y hx hy hxy hyx
+          rw [mem_leZRel] at hxy hyx
+          exact leZ_antisymm x y hx hy hxy.2.2 hyx.2.2
+        · -- isTransitiveOn
+          intro x y z hx hy hz hxy hyz
+          rw [mem_leZRel] at hxy hyz
+          rw [mem_leZRel]
+          exact ⟨hx, hz, leZ_trans x y z hx hy hz hxy.2.2 hyz.2.2⟩
+      · -- isConnectedOn
+        intro x y hx hy _hne
+        rcases leZ_total x y hx hy with h | h
+        · left;  rw [mem_leZRel]; exact ⟨hx, hy, h⟩
+        · right; rw [mem_leZRel]; exact ⟨hy, hx, h⟩
+
+    /-- ltZRel is a strict linear order on IntSet -/
+    theorem ltZ_is_strict_linear_order :
+        isStrictLinearOrderOn (ltZRel : U) (IntSet : U) := by
+      constructor
+      · -- isStrictOrderOn ltZRel IntSet
+        refine ⟨?_, ?_, ?_⟩
+        · -- isRelationOn
+          intro p hp
+          unfold ltZRel at hp
+          exact (mem_sep_iff _ _ _).mp hp |>.1
+        · -- isIrreflexiveOn
+          intro x hx hxx
+          rw [mem_ltZRel] at hxx
+          exact ltZ_irrefl x hx hxx.2.2
+        · -- isTransitiveOn
+          intro x y z hx hy hz hxy hyz
+          rw [mem_ltZRel] at hxy hyz
+          rw [mem_ltZRel]
+          exact ⟨hx, hz, ltZ_trans x y z hx hy hz hxy.2.2 hyz.2.2⟩
+      · -- isTrichotomousOn
+        intro x y hx hy
+        by_cases heq : x = y
+        · -- middle case: x = y
+          subst heq
+          right; left
+          refine ⟨?_, rfl, ?_⟩
+          · intro h; rw [mem_ltZRel] at h; exact ltZ_irrefl x hx h.2.2
+          · intro h; rw [mem_ltZRel] at h; exact ltZ_irrefl x hx h.2.2
+        · -- x ≠ y: use leZ_total
+          rcases leZ_total x y hx hy with hxy | hyx
+          · -- leZ x y, x ≠ y → ltZ x y: first case
+            left
+            refine ⟨?_, heq, ?_⟩
+            · rw [mem_ltZRel]; exact ⟨hx, hy, hxy, heq⟩
+            · intro h
+              rw [mem_ltZRel] at h
+              exact heq (leZ_antisymm x y hx hy hxy h.2.2.1)
+          · -- leZ y x, x ≠ y → ltZ y x: third case
+            right; right
+            refine ⟨?_, heq, ?_⟩
+            · intro h
+              rw [mem_ltZRel] at h
+              exact heq (leZ_antisymm x y hx hy h.2.2.1 hyx)
+            · rw [mem_ltZRel]; exact ⟨hy, hx, hyx, Ne.symm heq⟩
+
   end Int.Order
 
 export ZFC.Int.Order (
@@ -855,4 +965,10 @@ export ZFC.Int.Order (
   negativeZ_mul_positive
   positiveZ_negativeZ_mul_negative
   square_nonneg
+  leZRel
+  ltZRel
+  mem_leZRel
+  mem_ltZRel
+  leZ_is_linear_order
+  ltZ_is_strict_linear_order
 )

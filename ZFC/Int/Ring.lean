@@ -17,6 +17,9 @@ License: MIT
   * `mulZ_cancel_left` / `mulZ_cancel_right` — multiplicative cancellation
   * `difference_of_squares` — x² - y² = (x+y)(x-y)
   (Units characterization moved to `ZFC.Int.Units` to avoid notation conflicts.)
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Int.Mul

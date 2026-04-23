@@ -1,6 +1,6 @@
 # Next Steps — ZfcSetTheory Project
 
-**Last updated**: 2026-04-06
+**Last updated**: 2026-04-23
 
 ---
 
@@ -14,7 +14,7 @@ All major development through Boolean algebra theory is complete:
 - ✅ **Cardinalidad** (2 módulos): Cantor, CSB, |𝒫(F)|=2^n
 - ✅ **Álgebras de Boole** (11 módulos): Basic, Ring, PowerSetAlgebra, GenDeMorgan, GenDistributive, Atomic, Complete, Representation, FiniteCofinite, FiniteBA, BoolRingBA — los 6 items de §3.1 completos
 - ✅ **Reorganización Fases 1–3**: directorios, namespaces `ZFC`, convenciones Mathlib (185 renames)
-- ✅ **Enteros ℤ** (15 módulos): Equiv, Basic, Add, Neg, Mul, Ring, Sub, DivMod, Order, Embedding, Abs, Div, Pow, Induction — 183 exports, 0 sorry
+- ✅ **Enteros ℤ** (15 módulos): Equiv, Basic, Add, Neg, Mul, Ring, Sub, DivMod, Order, Embedding, Abs, Div, Pow, Induction — 189 exports, 0 sorry
 
 **Estado**: 75 jobs, 0 sorry, 0 errores de compilación.
 
@@ -32,7 +32,9 @@ Metadata annotations added to REFERENCE.md:
 
 ---
 
-## 2. Phase 5: Enteros ℤ en ZFC — Plan detallado
+## 2. Phase 5: Enteros ℤ en ZFC — ✅ Completa (abril 2026)
+
+> **Phase 5 completada**: 15 módulos, 189 exports, 0 sorry. Las secciones §2.0–§2.13 contienen el plan de diseño original (referencia histórica). El estado actualizado y los items opcionales pendientes están en §2.14.
 
 ### 2.0. Pre-requisito: Infraestructura de cocientes (Relations.lean + Functions.lean)
 
@@ -697,9 +699,9 @@ Listado de errores/omisiones encontrados en THOUGHTS.md que este plan corrige:
 
 ---
 
-## 2.14. Estado actual de Phase 5 (ℤ) — 2026-04-06
+## 2.14. Estado actual de Phase 5 (ℤ) — 2026-04-23
 
-**Estado global**: 15 archivos (1 hub + 14 implementación), **183 exports**, 0 `sorry`, 0 errores.
+**Estado global**: 15 archivos (1 hub + 14 implementación), **189 exports**, 0 `sorry`, 0 errores.
 
 ### Archivos implementados y completos
 
@@ -734,12 +736,10 @@ Listado de errores/omisiones encontrados en THOUGHTS.md que este plan corrige:
 
 | # | Nombre | Enunciado | Dificultad | Notas |
 |---|--------|-----------|------------|-------|
-| 1 | `quotZ`          | Completado                                                  | ✅ Completo |
-| 2 | `euclidean_divisionZ`| Completado                                                  | ✅ Completo |
-| 3 | `bezoutZ` | `∃ s t ∈ IntSet, natToInt (gcdZ a b) = addZ (mulZ s a) (mulZ t b)` — Bézout | Media-Baja | Levantar `bezout_natform_Omega` sobre `absZ m`, `absZ n`; convertir `sub` → `addZ + negZ` vía `natToInt` |
-| 4 | `gcdZ_assoc` | `gcdZ a (gcdZ b c) = gcdZ (gcdZ a b) c` (vía gcd_assoc en ω) | Baja | Directo de `gcd_assoc_Omega` + definición `gcdZ` |
-| 5 | `lcmZ_zero` | `lcmZ a zeroZ = (∅ : U)` y `lcmZ zeroZ b = (∅ : U)` | Baja | |
-| 6 | `tfa_Z` | Todo `z ∈ IntSet` con `z ≠ zeroZ`, `¬isUnitZ z` es `mulZ u (natToInt (product_list ps))` con `u` unidad y `ps` lista prima; único salvo orden | Media-Baja | Usar `signZ_mulZ_absZ` + `exists/unique_prime_factorization_ZFC` sobre `absZ z` |
+| 1 | `bezoutZ` | `∃ s t ∈ IntSet, natToInt (gcdZ a b) = addZ (mulZ s a) (mulZ t b)` — Bézout | Media-Baja | Levantar `bezout_natform_Omega` sobre `absZ m`, `absZ n`; convertir `sub` → `addZ + negZ` vía `natToInt` |
+| 2 | `gcdZ_assoc` | `gcdZ a (gcdZ b c) = gcdZ (gcdZ a b) c` (vía gcd_assoc en ω) | Baja | Directo de `gcd_assoc_Omega` + definición `gcdZ` |
+| 3 | `lcmZ_zero` | `lcmZ a zeroZ = (∅ : U)` y `lcmZ zeroZ b = (∅ : U)` | Baja | |
+| 4 | `tfa_Z` | Todo `z ∈ IntSet` con `z ≠ zeroZ`, `¬isUnitZ z` es `mulZ u (natToInt (product_list ps))` con `u` unidad y `ps` lista prima; único salvo orden | Media-Baja | Usar `signZ_mulZ_absZ` + `exists/unique_prime_factorization_ZFC` sobre `absZ z` |
 
 #### Pow.lean — 2 items
 
@@ -767,15 +767,15 @@ Listado de errores/omisiones encontrados en THOUGHTS.md que este plan corrige:
 | Área | Items pendientes | Dificultad dominante |
 |------|-----------------|---------------------|
 | Abs | 3 | Baja-Media |
-| Div | 6 | Media-Baja (gracias a puentes Peano/ω) |
+| Div | 4 | Media-Baja (gracias a puentes Peano/ω) |
 | Pow | 2 | Media |
 | Ring | 2 | Baja-Media |
 | Induction | 2 | Baja-Media |
-| **Total** | **15** | |
+| **Total** | **13** | |
 
-**Nota sobre dificultades en Div**: `bezoutZ`, `euclidean_divisionZ` y `tfa_Z` parecen de dificultad alta a priori, pero la maquinaria pesada (Euclides, factorización prima, unicidad) ya está completamente resuelta en Peano/ω (`bezout_natform_Omega`, `exists/unique_prime_factorization_ZFC`, `divMod_eq`). El trabajo restante es "fontanería de signos": descomponer `z = signZ z · natToInt (absZ z)`, aplicar el resultado de ω sobre `absZ`, y traducir restas truncadas (`sub`) a sumas con negaciones (`addZ + negZ`) vía `natToInt`. Esto reduce las tres a dificultad **media-baja** (~50-80 líneas cada una).
+**Nota sobre dificultades en Div**: `bezoutZ` y `tfa_Z` parecen de dificultad alta a priori, pero la maquinaria pesada (Euclides, factorización prima, unicidad) ya está completamente resuelta en Peano/ω (`bezout_natform_Omega`, `exists/unique_prime_factorization_ZFC`, `divMod_eq`). El trabajo restante es "fontanería de signos": descomponer `z = signZ z · natToInt (absZ z)`, aplicar el resultado de ω sobre `absZ`, y traducir restas truncadas (`sub`) a sumas con negaciones (`addZ + negZ`) vía `natToInt`. Esto reduce ambos a dificultad **media-baja** (~50-80 líneas cada uno).
 
-**Prioridad recomendada**: Div (quotZ + euclidean_divisionZ + bezoutZ + tfa_Z) → Ring (square_nonneg) → Pow (powZ_powZ) → Abs → Induction.
+**Prioridad recomendada**: Div (bezoutZ + tfa_Z) → Ring (square_nonneg) → Pow (powZ_powZ) → Abs → Induction.
 
 Los 2 items de mayor impacto matemático son:
 
@@ -789,11 +789,11 @@ Los 2 items de mayor impacto matemático son:
 | Priority | Task | Status | Módulos |
 |----------|------|--------|---------|
 | **1** | Phase 4: annotation system | ✅ Complete | — |
-| **2** | Phase 5: Enteros ℤ | ✅ 189 exports, 0 sorry — 15 items opcionales pendientes | 15 archivos completos |
+| **2** | Phase 5: Enteros ℤ | ✅ 189 exports, 0 sorry — 13 items opcionales pendientes | 15 archivos completos |
 | **3** | Phase 6: Racionales ℚ | 📋 Planificado | ~9 nuevos |
 | **4** | Phase 7: Reales ℝ | 📋 Esquemático | ~8-15 nuevos |
 | **5** | Gödel's Incompleteness | 📋 Futuro | TBD |
 
 ---
 
-*Updated 2026-04-06. 75 build jobs, 0 sorry, 0 errores. Phase 5 (ℤ) sustancialmente completa: 15 archivos, 189 exports. 15 items opcionales pendientes (§2.14), la mayoría de dificultad baja-media gracias a puentes Peano/ω existentes. Next: completar euclidean_divisionZ + bezoutZ + tfa_Z, o comenzar Phase 6 (ℚ).*
+*Updated 2026-04-23. 75 build jobs, 0 sorry, 0 errores. Phase 5 (ℤ) completa: 15 archivos, 189 exports. 13 items opcionales pendientes (§2.14), la mayoría de dificultad baja-media gracias a puentes Peano/ω existentes. Next: completar bezoutZ + tfa_Z, o comenzar Phase 6 (ℚ).*

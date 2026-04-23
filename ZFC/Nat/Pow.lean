@@ -27,6 +27,9 @@ License: MIT
   definition gives `pow m (σ n) = mul m (pow m n)` (left multiply). The bridge proof
   uses `mul_comm_Omega` in the inductive step, exactly as `fromPeano_mul` used
   `add_comm_Omega`.
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Nat.Basic

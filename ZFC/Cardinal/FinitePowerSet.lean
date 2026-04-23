@@ -22,6 +22,9 @@ is a power of 2: if |F| = n then |𝒫(F)| = 2^n.
 ## References
 
 * Basic combinatorics: finite power set has 2^n elements
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.SetOps.FiniteSets

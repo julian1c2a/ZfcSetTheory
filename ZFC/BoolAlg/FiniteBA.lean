@@ -28,6 +28,9 @@ The proof proceeds through two independent paths:
 ## References
 
 * Every finite Boolean algebra has 2^n elements for some n ∈ ω
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Cardinal.FinitePowerSet

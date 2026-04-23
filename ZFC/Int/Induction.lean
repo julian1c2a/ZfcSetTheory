@@ -1,11 +1,15 @@
-import ZFC.Int.Abs
-import ZFC.Nat.WellFounded
-
-/-!
-Copyright (c) 2025. All rights reserved.
+/-
+Copyright (c) 2026. All rights reserved.
 Author: Julián Calderón Almendros
 License: MIT
 
+REFERENCE.md: Este módulo proyecta los principios de inducción de Z en los secciones
+de inducción (§3.56, §4.52, §6.53) de REFERENCE.md.
+Al modificar, actualizar REFERENCE.md.
+-/
+import ZFC.Int.Abs
+import ZFC.Nat.WellFounded
+/-!
   # Integer Induction Principles
 
   This module provides induction and well-ordering principles for ℤ

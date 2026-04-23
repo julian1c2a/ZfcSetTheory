@@ -24,6 +24,9 @@ License: MIT
   * `mulZ_zero_right` / `mulZ_zero_left` — absorbing element
   * `mulZ_negZ_left` / `mulZ_negZ_right` — interaction with negation
   * `negZ_mulZ_negZ` — negation cancellation in product
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Int.Neg

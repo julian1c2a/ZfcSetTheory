@@ -25,6 +25,9 @@ License: MIT
 
   `bezout_natform_Omega` lifts the Peano subtractive Bézout identity:
     gcd(m, n) = a·m − b·n   or   gcd(m, n) = a·n − b·m  for some a, b ∈ ω.
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Nat.Basic

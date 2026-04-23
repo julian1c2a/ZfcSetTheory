@@ -24,6 +24,9 @@ License: MIT
   * `canonical_pos_exists` — if b ≤ a then [(a,b)] = [(a-b, 0)]
   * `canonical_neg_exists` — if a ≤ b and a ≠ b then [(a,b)] = [(0, b-a)]
   * `int_trichotomy` — every z ∈ ℤ is zero, positive, or negative
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Int.Equiv

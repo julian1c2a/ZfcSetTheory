@@ -32,6 +32,9 @@ The round-trip theorems show these constructions are mutual inverses.
 ## References
 
 * Every Boolean ring gives rise to a Boolean algebra and vice versa.
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.BoolAlg.Ring

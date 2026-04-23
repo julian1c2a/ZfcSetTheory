@@ -24,6 +24,9 @@ License: MIT
   * `negZ_addZ` — homomorphism: negZ (addZ x y) = addZ (negZ x) (negZ y)
   * `subZ_self` — subZ x x = 0ℤ
   * `subZ_in_IntSet` — closure for subtraction
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Int.Add

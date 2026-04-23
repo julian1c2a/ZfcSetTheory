@@ -26,6 +26,9 @@ License: MIT
   - `factorialOf_pos`:     ∅ ∈ factorialOf n  (0 < n!)
   - `factorialOf_ge_one`:  σ ∅ ∈ factorialOf n ∨ σ ∅ = factorialOf n  (1 ≤ n!)
   - `factorialOf_le_mono`: m ≤ n → factorialOf m ≤ factorialOf n
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Nat.Basic

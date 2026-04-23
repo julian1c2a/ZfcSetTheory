@@ -9,6 +9,9 @@ We implement gcd(a, b) by running σ b steps of the Euclidean pair recursion
   ⟨a, b⟩ → if b = ∅ then ⟨a, b⟩ else ⟨b, a mod b⟩
 using RecursiveFn on ω ×ₛ ω.  After σ b steps the second component is ∅ and
 the first component equals gcd(a, b) in the classical sense.
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Nat.Basic

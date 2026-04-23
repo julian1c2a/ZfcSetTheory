@@ -27,6 +27,9 @@ License: MIT
 
   Note: Peano defines `mul n (σ m) = add (mul n m) n`, so the bridge proof uses
   `add_comm_Omega` in the inductive step.
+
+REFERENCE.md: Este archivo está proyectado en REFERENCE.md. Al modificar, actualizar
+las secciones §3, §4 y §6 correspondientes.
 -/
 
 import ZFC.Nat.Basic
