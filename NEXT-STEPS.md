@@ -47,17 +47,20 @@
 
 ### Resumen de módulos
 
-| Módulo | Estado | Contenido principal |
-|--------|--------|---------------------|
-| `Rat/Equiv.lean` | ✅ Hecho | NonZeroIntSet, RatBase, RatEquivRel, reflexividad, simetría, transitividad, RatSet |
-| `Rat/Basic.lean` | 📋 Siguiente | ratClass, zeroQ, oneQ, igualdad de clases, clase nula |
-| `Rat/Add.lean` | 📋 | addQ bien definida, grupo abeliano (ℚ, +) |
-| `Rat/Neg.lean` | 📋 | negQ, subQ, inverso aditivo |
-| `Rat/Mul.lean` | 📋 | mulQ bien definida, anillo; invQ (todo ≠ 0 es unidad); divQ; powQ_nat; powQ_int |
-| `Rat/Order.lean` | 📋 | leQ, ltQ, orden total bien definido, densidad, no mínimo positivo |
-| `Rat/Field.lean` | 📋 | ℚ es cuerpo ordenado; bundled theorems |
-| `Rat/Embedding.lean` | 📋 | intToRat: embedding de anillos ℤ→ℚ; preserva orden; Arquimediano; biyección ℚ≈ω |
-| `Rat/Abs.lean` | 📋 | absQ, signQ, desigualdad triangular |
+| # | Módulo | Estado | Contenido principal |
+|---|--------|--------|---------------------|
+| 1 | `Rat/Equiv.lean` | ✅ 16 exports | NonZeroIntSet, RatBase, RatEquivRel, reflexividad, simetría, transitividad, RatSet |
+| 2 | `Rat/Basic.lean` | ✅ 13 exports | ratClass, zeroQ, oneQ, igualdad de clases, clase nula |
+| 3 | `Rat/Add.lean` | ✅ 7 exports | addQ bien definida, grupo abeliano (ℚ, +) |
+| 4 | `Rat/Neg.lean` | ✅ 7 exports | negQ, subQ, inverso aditivo |
+| 5 | `Rat/Mul.lean` | ✅ 18 exports | mulQ bien definida, anillo; invQ (todo ≠ 0 es unidad); divQ; powQ_nat; powQ_int |
+| 6 | `Rat/Order.lean` | ✅ 17 exports | leQ, ltQ, orden total bien definido, compatibilidad +/× |
+| 7 | `Rat/Abs.lean` | 📋 Siguiente | absQ, signQ, desigualdad triangular |
+| 8 | `Rat/Embedding.lean` | 📋 | intToRat: embedding de anillos ℤ→ℚ; preserva orden; Arquimediano; biyección ℚ≈ω |
+| 9 | `Rat/Field.lean` | 📋 | ℚ es cuerpo ordenado; bundled theorems |
+| 10 | `Rat/Sequences.lean` | 📋 | sucesiones f: ω → ℚ, convergencia, Cauchy, sucesión de Newton para √2 |
+| 11 | `Rat/Computable.lean` | 🔮 | números computables como sucesiones de Cauchy + testigo de convergencia |
+| 12 | `Rat/Algebraic.lean` | 🔮 | números algebraicos, raíces de polinomios sobre ℤ |
 
 ---
 
@@ -244,6 +247,87 @@ Los 7 objetivos del usuario se organizan así:
 | 33 | `powQ_int_nonneg` | `isNonnegZ n → powQ_int x n = powQ_nat x (absZ n)` |
 | 34 | `powQ_int_neg` | `isNegativeZ n → x ≠ zeroQ → powQ_int x n = invQ (powQ_nat x (absZ n))` |
 | 35 | `powQ_int_add_exp` | `x ≠ zeroQ → m n ∈ IntSet → powQ_int x (addZ m n) = mulQ (powQ_int x m) (powQ_int x n)` |
+
+---
+
+### [7] Valor absoluto en ℚ — `Rat/Abs.lean`
+
+**Dependencias**: `Rat/Order.lean`, `Rat/Neg.lean`, `Int/Abs.lean`
+
+**Definición**: `absQ x := if leQ zeroQ x then x else negQ x`
+
+**Estrategia**: análoga a `absZ`. El signo es `signQ x := if x = zeroQ then zeroQ else if isPosQ x then oneQ else negQ oneQ`.
+
+| # | Nombre | Enunciado |
+|---|--------|-----------|
+| 1 | `absQ_in_RatSet` | `x ∈ RatSet → absQ x ∈ RatSet` |
+| 2 | `absQ_nonneg` | `x ∈ RatSet → leQ zeroQ (absQ x)` |
+| 3 | `absQ_eq_zero_iff` | `x ∈ RatSet → (absQ x = zeroQ ↔ x = zeroQ)` |
+| 4 | `absQ_negQ` | `x ∈ RatSet → absQ (negQ x) = absQ x` |
+| 5 | `absQ_mulQ` | `x y ∈ RatSet → absQ (mulQ x y) = mulQ (absQ x) (absQ y)` |
+| 6 | `absQ_triangle` | `x y ∈ RatSet → leQ (absQ (addQ x y)) (addQ (absQ x) (absQ y))` |
+| 7 | `absQ_subQ_le` | `x y ∈ RatSet → leQ (absQ (subQ x y)) (addQ (absQ x) (absQ y))` |
+| 8 | `absQ_pos` | `x ∈ RatSet → x ≠ zeroQ → ltQ zeroQ (absQ x)` |
+| 9 | `signQ_in_RatSet` | `x ∈ RatSet → signQ x ∈ RatSet` |
+| 10 | `signQ_mulQ_absQ` | `x ∈ RatSet → mulQ (signQ x) (absQ x) = x` |
+
+---
+
+### [10] Sucesiones en ℚ — `Rat/Sequences.lean`
+
+**Dependencias**: `Rat/Abs.lean`, `Rat/Field.lean` (o al menos `Rat/Order.lean`), `Nat/Basic.lean`
+
+**Motivación** (ADDENDUM 20:35/23-04-2026 de THOUGHTS.md): Antes de construir ℝ, construir sobre ℚ la teoría de sucesiones para motivar la completitud. La sucesión de Newton $f(n+1) = \frac{1}{2}(f(n) + \frac{2}{f(n)})$ con $f(0) = \frac{3}{2}$ es de Cauchy en ℚ, cumple $f(n)^2 \to 2$, pero no tiene límite en ℚ (ya que $\sqrt{2} \notin \mathbb{Q}$).
+
+**Nota**: en THOUGHTS.md aparece $f(0) = \frac{2}{3}$ por errata tipográfica; el valor correcto es $f(0) = \frac{3}{2}$ (pues $f(0)^2 = \frac{9}{4} > 2$ como allí se indica).
+
+#### Representación de sucesiones
+
+Una sucesión de racionales se representa como función Lean `f : ℕ → U` con `hf : ∀ n, f n ∈ RatSet`. Esto evita el overhead de las funciones set-teóricas de `SetOps/Functions.lean` y es más adecuado para el uso analítico.
+
+#### Definiciones
+
+| # | Nombre | Tipo | Descripción |
+|---|--------|------|-------------|
+| 1 | `RatSeq` | `def` | `{f : ℕ → U // ∀ n, f n ∈ RatSet}` — tipo de sucesiones racionales |
+| 2 | `convergesTo f L` | `Prop` | `L ∈ RatSet ∧ ∀ ε ∈ RatSet, ltQ zeroQ ε → ∃ N : ℕ, ∀ n ≥ N, ltQ (absQ (subQ (f n) L)) ε` |
+| 3 | `isCauchy f` | `Prop` | `∀ ε ∈ RatSet, ltQ zeroQ ε → ∃ N : ℕ, ∀ m n ≥ N, ltQ (absQ (subQ (f m) (f n))) ε` |
+| 4 | `convergesToZero f` | `Prop` | `convergesTo f zeroQ` (convergencia nula; a veces mal llamada "absoluta") |
+| 5 | `newtonSqrt2` | `ℕ → U` | `newtonSqrt2 0 = ratClass oneZ (σ∅) ⋅ 3` (= 3/2); `newtonSqrt2 (n+1) = divQ (addQ (newtonSqrt2 n) (divQ twoQ (newtonSqrt2 n))) twoQ` |
+
+#### Teoremas generales
+
+| # | Nombre | Enunciado |
+|---|--------|-----------|
+| 1 | `convergesTo_unique` | Si `f → L` y `f → L'` entonces `L = L'` (unicidad del límite) |
+| 2 | `convergent_is_cauchy` | `convergesTo f L → isCauchy f` |
+| 3 | `cauchy_bounded` | Una sucesión de Cauchy está acotada: `isCauchy f → ∃ M ∈ RatSet, ∀ n, leQ (absQ (f n)) M` |
+| 4 | `addSeq_converges` | Si `f → L` y `g → M` entonces `(n ↦ addQ (f n) (g n)) → addQ L M` |
+| 5 | `mulSeq_converges` | Si `f → L` y `g → M` entonces `(n ↦ mulQ (f n) (g n)) → mulQ L M` |
+
+#### Teoremas sobre la sucesión de Newton para √2
+
+| # | Nombre | Enunciado |
+|---|--------|-----------|
+| 6 | `newtonSqrt2_mem_RatSet` | `∀ n, newtonSqrt2 n ∈ RatSet` |
+| 7 | `newtonSqrt2_pos` | `∀ n, ltQ zeroQ (newtonSqrt2 n)` |
+| 8 | `newtonSqrt2_sq_gt_two` | `∀ n, ltQ twoQ (mulQ (newtonSqrt2 n) (newtonSqrt2 n))` |
+| 9 | `newtonSqrt2_decreasing` | `∀ n, ltQ (newtonSqrt2 (n+1)) (newtonSqrt2 n)` |
+| 10 | `newtonSqrt2_sq_converges_to_two` | `convergesTo (fun n ↦ mulQ (newtonSqrt2 n) (newtonSqrt2 n)) twoQ` |
+| 11 | `newtonSqrt2_is_cauchy` | `isCauchy newtonSqrt2` |
+| 12 | `newtonSqrt2_no_limit_in_Q` | `¬ ∃ L ∈ RatSet, convergesTo newtonSqrt2 L` (usando `mulQ L L ≠ twoQ` para todo `L ∈ ℚ`, que requiere irracionalidad de √2 en ℚ) |
+
+**Nota sobre irracionalidad**: `newtonSqrt2_no_limit_in_Q` requiere el lema `no_sqrt_two_in_Q : ¬ ∃ L ∈ RatSet, mulQ L L = twoQ`. Esto se prueba por el argumento clásico de paridad de numerador/denominador en forma irreducible. Puede ubicarse en `Rat/Field.lean` o en un lema auxiliar de `Rat/Sequences.lean`.
+
+#### Sobre los cuerpos intermedios (pendiente lejano)
+
+THOUGHTS.md propone construir cuerpos ordenados intermedios entre ℚ y ℝ:
+
+- **Números computables**: sucesiones de Cauchy con testigo explícito de convergencia (función de módulo). Son un subanillo de ℝ, ordenado, arquimediano, pero no completo. Requiere noción de computabilidad (Church-Turing) — fuera del alcance actual.
+- **Números constructibles** (cerrados bajo raíces cuadradas): campo de extensión de ℚ de grado potencia de 2. Requiere teoría de extensiones de cuerpos.
+- **Números algebraicos** (raíces de polinomios sobre ℤ): requiere álgebra de polinomios (`Nat/Poly.lean` o similar) y el teorema de la raíz racional.
+
+Estos tres cuerpos se documentan como objetivo **futuro** (Phase 6.5), posterior a `Rat/Sequences.lean` y a la construcción de ℝ.
 
 ---
 
@@ -446,10 +530,11 @@ Este módulo formaliza que `(ℚ, +, ×, −, ⁻¹, 0, 1)` es un **cuerpo orden
 | 1–3: Estructura y SetOps | ✅ Completo | ~40 | — |
 | 4: Anotaciones | ✅ Completo | — | — |
 | 5: Enteros ℤ | ✅ Completo | 15 | 190 |
-| 6: Racionales ℚ | 🔄 En progreso | 1/9 | 16 |
+| 6: Racionales ℚ | 🔄 En progreso | 6/12 | 78 |
+| 6.5: Cuerpos intermedios | 🔮 Futuro | 0/3 | — |
 | 7: Reales ℝ | 📋 Planificado | 0/15 | — |
 | Futuro | 🔮 Lejano | — | — |
 
 ---
 
-*Última actualización: 2026-04-23. 76 build jobs, 0 sorry, 0 errores. Phase 5 (ℤ) 100% completa. Phase 6 (ℚ): ZFC/Rat/Equiv.lean completado, siguiente ZFC/Rat/Basic.lean.*
+*Última actualización: 2026-04-23. Phase 5 (ℤ) 100% completa. Phase 6 (ℚ): 6 módulos completados (Equiv, Basic, Add, Neg, Mul, Order — 78 exports, 0 sorry). Siguiente: Rat/Abs.lean. Nuevo: Rat/Sequences.lean planificado con sucesiones de Cauchy y sucesión de Newton para √2.*

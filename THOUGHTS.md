@@ -47,6 +47,52 @@ Notas de diseño, reflexiones y hoja de ruta del proyecto.
 - `BoolAlg.Atomic`, `Complete`, `FiniteCofinite`, `Representation`, `FiniteBA`, `BoolRingBA`
 - Resultados clave: 𝒫(A) es AB completa atómica; toda BA completa atómica ≅ 𝒫(A); FinCofAlg(ω) no es completa; toda BA finita tiene cardinalidad 2^n; correspondencia BR ↔ BA
 
+#### NUEVOS PENSAMIENTOS SOBRE BOOLALG: 21:37/23-04-2026
+
+Deberíamos añadir la compleción del teorema de representación de Stone. Hay que hacer una plan para la representación inversa de Stone, que es el isomorfismo inverso entre una BA completa atómica A y 𝒫(Atoms(A)). Para esto, hay que definir la función atomsBelowMap: A → 𝒫(Atoms(A)) que a cada elemento a ∈ A le asigna el conjunto de átomos que están por debajo de a. Luego hay que demostrar que esta función es un isomorfismo de BA, es decir, que preserva las operaciones de unión, intersección, complemento, así como los elementos neutros ∅ y universo. Esto completaría la caracterización de las BA completas atómicas como álgebras de conjuntos.
+
+Además tengo un álgebra de Boole de cardinalidad infinita contable, que no es atómica:
+
+Álgebras de Boole Numerables y sin Átomos
+
+Un álgebra de Boole se dice que es sin átomos (o no atómica) si para cualquier elemento no nulo $x$, existe otro elemento no nulo $y$ estrictamente menor que $x$ (es decir, $y \le x$ y $y \neq x$). En términos de conjuntos, esto significa que ningún conjunto no vacío es "indivisible": siempre puedes encontrar un subconjunto propio no vacío.A continuación, se presentan dos construcciones puramente conjuntistas (álgebras de conjuntos, donde las operaciones son la unión $\cup$, intersección $\cap$ y complemento $\setminus$ clásicos) que dan lugar a un álgebra de Boole numerable y sin átomos.
+
+Construcción 1: El álgebra de intervalos de los racionales
+
+Esta es la forma más clásica e intuitiva de construirla.
+
+El conjunto base: Tomamos como conjunto base a los números racionales en el intervalo semiabierto: $X = \mathbb{Q} \cap [0, 1)$.
+
+Los elementos del álgebra: Consideramos la familia de conjuntos $\mathcal{B}$ formada por todas las uniones finitas de intervalos semiabiertos de la forma $[a, b)$, donde $a, b \in \mathbb{Q}$ y $0 \le a < b \le 1$. También incluimos el conjunto vacío $\emptyset$.
+
+Es un álgebra de Boole: $\mathcal{B}$ es cerrada bajo intersecciones finitas y bajo uniones finitas. Además, es cerrada bajo el complemento relativo a $X$.
+
+Por ejemplo, el complemento de $[a, b)$ es $[0, a) \cup [b, 1)$, que sigue siendo una unión finita de intervalos semiabiertos.
+
+Cardinalidad contable (Numerable): Dado que los extremos $a$ y $b$ de los intervalos se eligen de $\mathbb{Q}$ (que es numerable), existen numerables intervalos de esta forma. Como los elementos del álgebra son solo las uniones finitas de estos intervalos, el cardinal del álgebra $\mathcal{B}$ sigue siendo $\aleph_0$ (numerable).
+
+Sin átomos: Sea $A \in \mathcal{B}$ un conjunto no vacío. Por definición, $A$ debe contener al menos un intervalo de la forma $[a, b)$ con $a < b$. Como los números racionales son densos, siempre existe un número racional $c$ tal que $a < c < b$. El intervalo $[a, c)$ es no vacío, pertenece al álgebra $\mathcal{B}$, y es un subconjunto propio estricto de $A$. Por tanto, no existen elementos indivisibles (átomos).
+
+Construcción 2: El álgebra de conjuntos cilindro (Espacio de Cantor)
+
+Esta construcción es fundamental en teoría de la medida y topología, y muestra una distinción interesante: el álgebra es numerable, aunque el conjunto base sobre el que opera es no numerable.
+
+El conjunto base: Sea $X = \{0, 1\}^{\mathbb{N}}$, el conjunto de todas las sucesiones infinitas de ceros y unos. (Notar que el cardinal de $X$ es el del continuo, $2^{\aleph_0}$).
+
+Los conjuntos cilindro (o abiertos básicos): Definimos un "cilindro" fijando un prefijo finito. Por ejemplo, el cilindro $C_{011}$ es el conjunto de todas las sucesiones infinitas que comienzan exactamente con la secuencia finita (0, 1, 1, ...).
+
+Los elementos del álgebra: Definimos nuestra familia $\mathcal{C}$ como la colección de todas las uniones finitas de conjuntos cilindro, además del vacío $\emptyset$.
+
+Es un álgebra de Boole: La intersección o unión de dos cilindros es otro cilindro (o una unión finita de ellos). El complemento de un cilindro también es una unión finita de cilindros. (Por ejemplo, el complemento de "sucesiones que empiezan por 0" son "las sucesiones que empiezan por 1"). Por lo tanto, $\mathcal{C}$ es un álgebra de conjuntos.
+
+Cardinalidad contable: El número de posibles secuencias prefijo finitas de ceros y unos es numerable (es la suma de $2^n$ para $n \in \mathbb{N}$). Puesto que tomamos solo uniones finitas de estos cilindros, la cantidad total de conjuntos en nuestra álgebra $\mathcal{C}$ es $\aleph_0$ (numerable).
+
+Sin átomos: Toma cualquier conjunto no vacío en $\mathcal{C}$. Este debe contener al menos algún cilindro definido por un prefijo de longitud $n$ (digamos, el prefijo $s$). Podemos "dividir" este cilindro en dos subcilindros disjuntos, especificando el siguiente dígito: el subcilindro de sucesiones que empiezan por $s \frown 0$ (el prefijo $s$ seguido de un 0) y el de sucesiones que empiezan por $s \frown 1$. Ambos pertenecen al álgebra y son estrictamente más pequeños. Ningún conjunto del álgebra es atómico.
+
+Conclusión
+
+Ambas construcciones proporcionan modelos puramente conjuntistas de un álgebra de Boole contable y sin átomos. De hecho, por el teorema de representación (y resultados clásicos de teoría de modelos sobre categorías $\aleph_0$-categóricas), el álgebra $\mathcal{B}$ (de los intervalos racionales) y el álgebra $\mathcal{C}$ (de los cilindros booleanos) son exactamente la misma estructura algebraica disfrazada de dos formas distintas: existe un isomorfismo de álgebras de Boole entre ellas.
+
 ### Cardinal (fases anteriores)
 
 - `Cardinal.Basic`: Teorema de Cantor, Cantor-Schröder-Bernstein
@@ -72,11 +118,71 @@ Módulos planificados en `ZFC/Rat/`:
 
 Relación de equivalencia: $(a, b) \sim (c, d) \iff a \cdot d = b \cdot c$ en $\mathbb{Z} \times \mathbb{Z}^*$.
 
+## ADDENDUM: 20:35/23-04-2026 Nuevas ideas sobre los racionales
+
+Antes de pasar a los reales, vamos a construir sobre los racionales las sucesiones. Vamos a ver sucesiones en general como funciones f: ℕ₀ → ℚ. Construiremos las definiciones de convergencia, límites y sucesiones de Cauchy. Construiremos una sucesión que será de Cauchy pero no convergente, para así dar la explicación sobre la necesidad de los reales.
+
+Las sucesiones serán convergentes si existe un límite L ∈ ℚ tal que para todo ε > 0 (racional), existe N ∈ ℕ₀ tal que para todo ∀ n ∈ ℕ₀, n ≥ N $\->$ |f(n) - L| < ε. Las sucesiones de Cauchy serán aquellas para las cuales para todo ε > 0, existe N tal que para todo m, n ≥ N, |f(m) - f(n)| < ε.
+
+Distinguiremos entre convergencia absoluta y convergencia relativa o normal. La convergencia absoluta será aquella para la cual existe L ∈ ℚ tal que para todo ε > 0, existe N tal que para todo n ≥ N, |f(n)| < ε. La convergencia relativa o normal será aquella para la cual existe L ∈ ℚ tal que para todo ε > 0, existe N tal que para todo n ≥ N, |f(n) - L| < ε. También podemos distinguir entre convergencia de Cauchy absoluta y relativa.
+
+Construiremos una sucesión de racionales, de Cauchy, f: ℕ₀ → ℚ, tal que la sucesión g:: ℕ₀ → ℚ : n → f(n)⋅f(n) es convergente al límite 2.
+
+$$
+f(0) = {\frac 2 3}​ \newline
+f(n+1)= {\frac 1 2} ⋅ ​(f(n) + {\frac 2 {f(n)}}) \text{ para } n≥0
+$$
+
+Demostramos que efectivamente es lo que queríamos:
+
+1. Es una sucesión de racionales ($f(n) \in \mathbb{Q}$)
+
+El primer término $f(0) = 3/2$ es un número racional. Como el cuerpo de los números racionales es cerrado bajo la suma, la multiplicación y la división (siempre que el divisor no sea cero, y aquí $f(n)$ es siempre estrictamente positivo), por inducción, todos los términos $f(n)$ pertenecen a $\mathbb{Q}$.
+
+1. $(f(n))^2$ se acerca a 2 de forma monótona
+
+Para demostrar que el acercamiento de los cuadrados es estrictamente monótono (en este caso, decreciente hacia 2), primero calculemos la diferencia entre el cuadrado del término siguiente y 2:
+
+$$f(n+1)^2 - 2 = \left( \frac{f(n)^2 + 2}{2f(n)} \right)^2 - 2 = \frac{f(n)^4 + 4f(n)^2 + 4 - 8f(n)^2}{4f(n)^2} = \frac{(f(n)^2 - 2)^2}{4f(n)^2}$$
+
+Dado que el numerador es un cuadrado perfecto y el denominador es positivo, la fracción entera es estrictamente mayor que cero. Esto significa que para cualquier $n \ge 0$, siempre se cumple que $f(n+1)^2 > 2$. (El término inicial $f(0)^2 = 9/4 > 2$ también lo cumple).
+
+Ahora evaluamos la diferencia entre dos términos consecutivos de la sucesión:
+
+$$f(n+1) - f(n) = \frac{1}{2} \left( f(n) + \frac{2}{f(n)} \right) - f(n) = \frac{2 - f(n)^2}{2f(n)}$$
+
+Como acabamos de demostrar que $f(n)^2 > 2$ para todo $n$, el numerador $2 - f(n)^2$ es negativo. Al ser el denominador positivo, la fracción completa es negativa. Por tanto:
+
+$$f(n+1) < f(n)$$
+
+Como todos los términos son positivos y la sucesión $f(n)$ es estrictamente decreciente, sus cuadrados también lo son. Por lo tanto, la sucesión $(f(n))^2$ se acerca a 2 de forma monótona decreciente.
+
+1. Es una sucesión de Cauchy
+
+Por definición, una sucesión de Cauchy es aquella en la que la distancia entre sus elementos se vuelve arbitrariamente pequeña a medida que avanza la sucesión.
+
+En el ámbito de los números reales $\mathbb{R}$, toda sucesión convergente es de Cauchy. Dado que hemos demostrado que $f(n)$ es decreciente y está acotada inferiormente por $\sqrt{2}$, por el teorema de la convergencia monótona, la sucesión converge a $\sqrt{2}$. Al converger a un límite real finito, la sucesión de racionales $f(n)$ cumple intrínsecamente la condición de Cauchy:
+
+Para todo $\epsilon > 0$, existe un número natural $N$ tal que para todo $n, m > N$, se cumple que $|f(n) - f(m)| < \epsilon$.
+
+De hecho, debido a que se origina en el método de Newton, esta sucesión tiene convergencia cuadrática, lo que significa que el número de decimales correctos se duplica (aproximadamente) en cada paso, haciendo que los términos se "apelotonen" extremadamente rápido.
+
+Vamos a hacer nuevas construcciones que cumplen que son cuerpos ordenados que contienen a los racionales, pero que no son completos:
+
+- El cuerpo de los números computables. Estableceremos el conjunto de las funciones computables de números racionales como sucesiones f: ℕ₀ → ℚ de Cauchy, junto con un $N \in ℕ$, tal que $∀ (n, m) ∈ ℕ × ℕ , n > N ∧ m > N ⟹ |f(n)-f(m)| < {\frac 1 {2^{N}}}$. Definiremos las operaciones de suma, producto, orden, etc. de forma punto a punto. Este cuerpo es un cuerpo ordenado que contiene a los racionales (identificados con las sucesiones constantes), pero no es completo (como ya hemos visto anteriormente), ya que la sucesión f(n) definida anteriormente es computable pero no tiene porqué tener un límite computable.
+
+- El cuerpo de los números cerrados bajo la operación raíz cuadrada (números constructibles, que son los que nos permiten hacer geometría). Veremos que no es completo.
+
+- El cuerpo de los números cerrados bajo la operación raíces de cualquier exponente entero. Veremos que no es completo.
+
+- El cuerpo de los números algebraicos (cerrados bajo raíces de polinomios con coeficientes enteros). Veremos que no es completo.
+
 ---
 
 ## 📋 PRÓXIMO — Phase 7: Reales ℝ
 
 Construcción vía sucesiones de Cauchy de racionales:
+
 - `Real/Equiv.lean`: sucesiones de Cauchy en ℚ, relación de equivalencia
 - `Real/Basic.lean`: ℝ := Cauchy(ℚ) / ~, completitud
 - `Real/Add.lean`, `Neg.lean`, `Mul.lean`, `Order.lean`, `Embedding.lean`
@@ -97,20 +203,24 @@ Construcción vía sucesiones de Cauchy de racionales:
 ## 🔮 FUTURO LEJANO
 
 ### Álgebra Abstracta
+
 - Grupos, anillos, módulos como estructuras genéricas
 - Espacios vectoriales sobre ℚ y ℝ
 - Interfaces via Typeclasses de Lean 4 (Naturals, Integers, Rationals, ...)
 
 ### Teoría de Ordinales y Cardinales
+
 - Axioma de Reemplazo, Axioma de Fundación, Axioma de Elección
 - Ordinales transfinitos, recursión transfinita, aritmética ordinal
 - Cardinales ℵ, jerarquía de Zermelo, jerarquía de Gödel (construibles)
 
 ### Teoría de Modelos y Fundamentos
+
 - Incompletitud de Gödel (forma de Rosser: consistencia, no solo ω-consistencia)
 - Prueba dentro de ZFC
 
 ### Sistema de Interfaces entre Axiomáticas
+
 - ZFC, Peano, Aczel (hereditariamente finito), MKplusCAC
 - Bridges/functores entre sistemas
 - Teoremas genéricos via Typeclasses: `[Naturals N]`, `[Integers Z]`, etc.
