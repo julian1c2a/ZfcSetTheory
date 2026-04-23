@@ -743,12 +743,9 @@ Listado de errores/omisiones encontrados en THOUGHTS.md que este plan corrige:
 | 1 | `powZ_powZ` | `powZ (powZ x m) n = powZ x (mul m n)` — (x^m)^n = x^(mn) | Media |
 | 2 | `powZ_negZ_odd` | `powZ (negZ x) (σ (mul (σ(σ ∅)) n)) = negZ (powZ x (...))` | Media |
 
-#### Ring.lean — 2 items
+#### Ring.lean — ✅ Completo (todos los items implementados)
 
-| # | Nombre | Enunciado | Dificultad |
-|---|--------|-----------|------------|
-| 1 | `square_nonneg` | `x ∈ IntSet → leZ zeroZ (mulZ x x)` (x² ≥ 0) | Media |
-| 2 | `difference_of_squares` | `subZ (mulZ x x) (mulZ y y) = mulZ (addZ x y) (subZ x y)` | Baja |
+> `square_nonneg` (en `Order.lean`) y `difference_of_squares` (en `Ring.lean`) ya están implementados y exportados. Ver REFERENCE.md §4.43 y §4.51.
 
 #### Induction.lean — 2 items
 
@@ -764,13 +761,13 @@ Listado de errores/omisiones encontrados en THOUGHTS.md que este plan corrige:
 | Abs | 3 | Baja-Media |
 | Div | 0 | ✅ Completo |
 | Pow | 2 | Media |
-| Ring | 2 | Baja-Media |
+| Ring | 0 | ✅ Completo |
 | Induction | 2 | Baja-Media |
-| **Total** | **9** | |
+| **Total** | **7** | |
 
 **Nota sobre dificultades en Div**: Todos completados. `bezoutZ` y `tfa_Z` usan la maquinaria de Peano/ω (`bezout_natform_Omega`, `exists/unique_prime_factorization_ZFC`) y traducen a ℤ vía `signZ_mulZ_absZ`.
 
-**Prioridad recomendada**: Ring (square_nonneg + difference_of_squares) → Pow (powZ_powZ + powZ_negZ_odd) → Abs → Induction.
+**Prioridad recomendada**: Pow (powZ_powZ + powZ_negZ_odd) → Abs → Induction.
 
 Los 2 items de mayor impacto matemático son:
 
@@ -784,11 +781,11 @@ Los 2 items de mayor impacto matemático son:
 | Priority | Task | Status | Módulos |
 |----------|------|--------|---------|
 | **1** | Phase 4: annotation system | ✅ Complete | — |
-| **2** | Phase 5: Enteros ℤ | ✅ 190 exports, 0 sorry — 9 items opcionales pendientes | 15 archivos completos |
+| **2** | Phase 5: Enteros ℤ | ✅ 190 exports, 0 sorry — 7 items opcionales pendientes | 15 archivos completos |
 | **3** | Phase 6: Racionales ℚ | 📋 Planificado | ~9 nuevos |
 | **4** | Phase 7: Reales ℝ | 📋 Esquemático | ~8-15 nuevos |
 | **5** | Gödel's Incompleteness | 📋 Futuro | TBD |
 
 ---
 
-*Updated 2026-04-23. 75 build jobs, 0 sorry, 0 errores. Phase 5 (ℤ) completa: 15 archivos, 190 exports (incluyendo tfa_Z en Int/Div). 9 items opcionales pendientes (§2.14), la mayoría de dificultad baja-media. Div.lean completamente terminado. Next: completar 9 items opcionales (Ring, Pow, Abs, Induction), o comenzar Phase 6 (ℚ).*
+*Updated 2026-04-23. 75 build jobs, 0 sorry, 0 errores. Phase 5 (ℤ) completa: 15 archivos, 190 exports. 7 items opcionales pendientes (§2.14): Pow (2), Abs (3), Induction (2). Div y Ring completamente terminados. Next: Pow (powZ_powZ + powZ_negZ_odd), Abs, Induction, o comenzar Phase 6 (ℚ).*

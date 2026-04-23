@@ -12,7 +12,7 @@
 
 **[6.]** Queda algo interesante que es demostrar que para los conjuntos finitos, digamos que $F$ es de cardinalidad $n \in \omega$, $\mathcal{P}(F) = 2^{n}$. Esto se puede demostrar con el sistema de isomorfismos, mostrando que $\mathcal{P}(F)$ es isomorfo a $2^{n}$ (con la estructura de los naturales de Von Neumann). Esto también quedará dentro del módulo final sobre Álgebras de Boole.
 
-**[7.]** Además habría que demostrar que si definimos sobre un conjunto finito $F$ un álgebra de Boole, entonces $∃ n ∈ ω, #F = 2^{n}$.
+**[7.]** Además habría que demostrar que si definimos sobre un conjunto finito $F$ un álgebra de Boole, entonces $∃ n ∈ ω$, tal que $|F| = 2^{n}$ .
 
 **[8.]** En ZFC se puede (creo que con lo que tenemos es suficiente) demostrar los teoremas de Incompletitud de Gödel, y esto debe quedar dentro del proyecto. Quisiera que la forma final fuera la forma que demustra consistencia y no solo omega-consitencia (forma de Rosser).
 
