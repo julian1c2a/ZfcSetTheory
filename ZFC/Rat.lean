@@ -10,3 +10,4 @@ Al modificar sub-módulos, actualizar REFERENCE.md en las secciones correspondie
 import ZFC.Rat.Equiv
 import ZFC.Rat.Basic
 import ZFC.Rat.Add
+import ZFC.Rat.Neg
