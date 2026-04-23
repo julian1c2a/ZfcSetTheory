@@ -724,55 +724,40 @@ Listado de errores/omisiones encontrados en THOUGHTS.md que este plan corrige:
 
 ### Items pendientes por archivo
 
-#### Abs.lean — 3 items
+#### Abs.lean — ✅ Completo (todos los items implementados)
 
-| # | Nombre | Enunciado | Dificultad |
-|---|--------|-----------|------------|
-| 1 | `absZ_pos` | `x ∈ IntSet → x ≠ zeroZ → absZ x ≠ (∅ : U)` (alternativa a absZ_eq_zero_iff) | Baja |
-| 2 | `absZ_subZ_le` | `absZ (subZ x y) ⊆ add (absZ x) (absZ y)` o equivalente | Media |
-| 3 | `absZ_mulZ_nonneg` | `leZ zeroZ (natToInt (absZ x))` | Baja |
+> `absZ_pos`, `absZ_mulZ_nonneg`, `absZ_subZ_le` ya implementados y exportados en `Abs.lean`. Ver REFERENCE.md §4.48.
 
 #### Div.lean — ✅ Completo (todos los items implementados)
 
 > `bezoutZ`, `gcdZ_assoc`, `lcmZ_zero_right/left`, `tfa_Z` ya están en el archivo. 25 exports totales.
 
-#### Pow.lean — 2 items
+#### Pow.lean — ✅ Completo (todos los items implementados)
 
-| # | Nombre | Enunciado | Dificultad |
-|---|--------|-----------|------------|
-| 1 | `powZ_powZ` | `powZ (powZ x m) n = powZ x (mul m n)` — (x^m)^n = x^(mn) | Media |
-| 2 | `powZ_negZ_odd` | `powZ (negZ x) (σ (mul (σ(σ ∅)) n)) = negZ (powZ x (...))` | Media |
+> `powZ_powZ` y `powZ_negZ_odd` ya implementados y exportados en `Pow.lean`. Ver REFERENCE.md §4.44.
 
 #### Ring.lean — ✅ Completo (todos los items implementados)
 
 > `square_nonneg` (en `Order.lean`) y `difference_of_squares` (en `Ring.lean`) ya están implementados y exportados. Ver REFERENCE.md §4.43 y §4.51.
 
-#### Induction.lean — 2 items
+#### Induction.lean — ✅ Completo (todos los items implementados)
 
-| # | Nombre | Enunciado | Dificultad |
-|---|--------|-----------|------------|
-| 1 | `int_descent` | Descenso infinito: si P(x) → ∃ y, P(y) ∧ absZ y ∈ absZ x, entonces ¬ ∃ x ∈ IntSet, P(x) | Media |
-| 2 | `int_induction_neg` | Inducción restringida a ℤ⁻ (negativos) | Baja |
+> `int_descent` e `int_induction_neg` ya implementados y exportados en `Induction.lean`. Ver REFERENCE.md §4.52.
 
 ### Resumen pendiente
 
 | Área | Items pendientes | Dificultad dominante |
 |------|-----------------|---------------------|
-| Abs | 3 | Baja-Media |
+| Abs | 0 | ✅ Completo |
 | Div | 0 | ✅ Completo |
-| Pow | 2 | Media |
+| Pow | 0 | ✅ Completo |
 | Ring | 0 | ✅ Completo |
-| Induction | 2 | Baja-Media |
-| **Total** | **7** | |
+| Induction | 0 | ✅ Completo |
+| **Total** | **0** | ✅ Phase 5 terminada |
 
-**Nota sobre dificultades en Div**: Todos completados. `bezoutZ` y `tfa_Z` usan la maquinaria de Peano/ω (`bezout_natform_Omega`, `exists/unique_prime_factorization_ZFC`) y traducen a ℤ vía `signZ_mulZ_absZ`.
+**Nota Phase 5**: Todos los items opcionales completados (descubierto 2026-04-23). `bezoutZ`, `tfa_Z`, `square_nonneg`, `difference_of_squares`, `powZ_powZ`, `powZ_negZ_odd`, `absZ_pos`, `absZ_mulZ_nonneg`, `absZ_subZ_le`, `int_descent`, `int_induction_neg` — todos implementados y exportados.
 
-**Prioridad recomendada**: Pow (powZ_powZ + powZ_negZ_odd) → Abs → Induction.
-
-Los 2 items de mayor impacto matemático son:
-
-1. **`bezoutZ`** — identidad de Bézout, clave para ℚ y primalidad en ℤ
-2. **`tfa_Z`** — TFA en ℤ, cierra la teoría aritmética de enteros
+**Siguiente inmediato**: Phase 6 (ℚ) con `ZFC/Rat/Equiv.lean`.
 
 ---
 
@@ -781,11 +766,11 @@ Los 2 items de mayor impacto matemático son:
 | Priority | Task | Status | Módulos |
 |----------|------|--------|---------|
 | **1** | Phase 4: annotation system | ✅ Complete | — |
-| **2** | Phase 5: Enteros ℤ | ✅ 190 exports, 0 sorry — 7 items opcionales pendientes | 15 archivos completos |
+| **2** | Phase 5: Enteros ℤ | ✅ COMPLETO — 190 exports, 0 sorry, 0 pendientes | 15 archivos completos |
 | **3** | Phase 6: Racionales ℚ | 📋 Planificado | ~9 nuevos |
 | **4** | Phase 7: Reales ℝ | 📋 Esquemático | ~8-15 nuevos |
 | **5** | Gödel's Incompleteness | 📋 Futuro | TBD |
 
 ---
 
-*Updated 2026-04-23. 75 build jobs, 0 sorry, 0 errores. Phase 5 (ℤ) completa: 15 archivos, 190 exports. 7 items opcionales pendientes (§2.14): Pow (2), Abs (3), Induction (2). Div y Ring completamente terminados. Next: Pow (powZ_powZ + powZ_negZ_odd), Abs, Induction, o comenzar Phase 6 (ℚ).*
+*Updated 2026-04-23. 75 build jobs, 0 sorry, 0 errores. Phase 5 (ℤ) 100% COMPLETA: 15 archivos, 190 exports, 0 pendientes. Todos los items opcionales ya estaban implementados. Next: Phase 6 (ℚ) — comenzar con `ZFC/Rat/Equiv.lean`.*
