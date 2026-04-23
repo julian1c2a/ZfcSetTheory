@@ -11,3 +11,4 @@ import ZFC.Rat.Equiv
 import ZFC.Rat.Basic
 import ZFC.Rat.Add
 import ZFC.Rat.Neg
+import ZFC.Rat.Mul
