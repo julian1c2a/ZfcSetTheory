@@ -850,17 +850,17 @@ namespace ZFC
       unfold leZRel
       rw [mem_sep_iff, OrderedPair_mem_CartesianProduct]
       simp only [fst_of_ordered_pair, snd_of_ordered_pair]
-      tauto
-
-    /-- Membership characterization for ltZRel -/
+      constructor
+      · intro h; exact ⟨h.1.1, h.1.2, h.2⟩
+      · intro h; exact ⟨⟨h.1, h.2.1⟩, h.2.2⟩
     theorem mem_ltZRel (x y : U) :
         ⟨x, y⟩ ∈ (ltZRel : U) ↔ x ∈ (IntSet : U) ∧ y ∈ (IntSet : U) ∧ ltZ x y := by
       unfold ltZRel
       rw [mem_sep_iff, OrderedPair_mem_CartesianProduct]
       simp only [fst_of_ordered_pair, snd_of_ordered_pair]
-      tauto
-
-    /-- leZRel is a linear (total) order on IntSet -/
+      constructor
+      · intro h; exact ⟨h.1.1, h.1.2, h.2⟩
+      · intro h; exact ⟨⟨h.1, h.2.1⟩, h.2.2⟩
     theorem leZ_is_linear_order :
         isLinearOrderOn (leZRel : U) (IntSet : U) := by
       constructor
