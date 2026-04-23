@@ -253,7 +253,7 @@ Los 7 objetivos del usuario se organizan así:
 
 **Estrategia de definición**: Definir primero la positividad sobre representantes y probar que es independiente de la elección. Sea `isPosQ [(a,b)] :⟺ isPositiveZ (mulZ a b)` — es decir, el numerador y el denominador tienen el mismo signo (a/b > 0). Luego `leQ x y :⟺ isNonnegQ (subQ y x)`.
 
-**Clave de bien definición**: Si `(a,b)~(c,d)` [i.e., `mulZ a d = mulZ b c`] y `isPositiveZ (mulZ a b)`, entonces `isPositiveZ (mulZ c d)`. *Prueba*: `(mulZ c d) · (mulZ a b) = (mulZ a c) · (mulZ b d)`. Por otro lado, `mulZ a b > 0` implica `a ≠ 0`, y de `a·d = b·c` con `d ≠ 0` se obtiene `c ≠ 0`, luego la igualdad cero es imposible. Y `(mulZ c d) · (mulZ a b) = (mulZ (mulZ a d) (mulZ b c)) / ... ` — más precisamente, basta usar que `(c·d)·(a·b) = (a·d)·(b·c) = (b·c)²` ≥ 0 con igualdad solo si `b·c = 0`, imposible. Luego `c·d > 0`.
+**Clave de bien definición**: Si `(a,b)~(c,d)` [i.e., `mulZ a d = mulZ b c`] y `isPositiveZ (mulZ a b)`, entonces `isPositiveZ (mulZ c d)`. *Prueba*: `(mulZ c d) · (mulZ a b) = (mulZ a c) · (mulZ b d)`. Por otro lado, `mulZ a b > 0` implica `a ≠ 0`, y de `a·d = b·c` con `d ≠ 0` se obtiene `c ≠ 0`, luego la igualdad cero es imposible. Y `(mulZ c d) · (mulZ a b) = (mulZ (mulZ a d) (mulZ b c)) / ...` — más precisamente, basta usar que `(c·d)·(a·b) = (a·d)·(b·c) = (b·c)²` ≥ 0 con igualdad solo si `b·c = 0`, imposible. Luego `c·d > 0`.
 
 #### [1.1] Bien definición del orden respecto a las clases de equivalencia
 
@@ -352,6 +352,7 @@ Los 7 objetivos del usuario se organizan así:
 #### [5] Propiedad Arquimediana en ℚ (trasladada desde ℤ vía el embedding)
 
 **Pre-requisito**: propiedad Arquimediana en ℤ. Si no existe ya en `Int/Order.lean` o `Int/Induction.lean`, añadir allí:
+
 - `archZ`: `m n ∈ IntSet → isPositiveZ n → ∃ k ∈ ω, leZ m (mulZ (natToInt k) n)`
 
 **Teoremas**:
@@ -388,6 +389,7 @@ Este módulo formaliza que `(ℚ, +, ×, −, ⁻¹, 0, 1)` es un **cuerpo orden
 ### [7] Biyección ℚ ≈ ω — `Rat/Embedding.lean`
 
 **Estrategia**: Cantor-Bernstein (`CSB` de `Cardinal.Basic`) con:
+
 1. Inyección `ω → ℚ`: composición `natToInt ; intToRat` (ambas inyectivas).
 2. Inyección `ℚ → ω`: vía `RatBase ≈ ω` (por Cantor pairing en ℤ×ℤ*) y elección de representante canónico por `Classical.choice`.
 
