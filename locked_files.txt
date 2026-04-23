@@ -43,7 +43,6 @@ ZFC/BoolAlg/BoolRingBA.lean
 ZFC/BoolAlg/Representation.lean
 ZFC/Cardinal/FinitePowerSet.lean
 ZFC/Nat/Div.lean
-test_bezout_gcdZ3.lean
 ZFC/Nat/Gcd.lean
 ZFC/Peano/FiniteSequencesBridge.lean
 ZFC/Nat/Primes.lean
