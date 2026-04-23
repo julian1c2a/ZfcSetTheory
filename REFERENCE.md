@@ -4528,7 +4528,7 @@ noncomputable def removeElemMap (A a : U) : U :=
 **Módulo**: `ZFC.Int.Div`
 **Namespace**: `ZFC.Int.Div`
 **Dependencias**: `ZFC.Int.Abs`, `ZFC.Int.DivMod`, `ZFC.Nat.Div`, `ZFC.Nat.Gcd`
-**Estrategia**: Define MCD/MCM/cociente/resto sobre ℤ mediante valores absolutos en ω y prueba propiedades de divisibilidad incluyendo antisimetría y la identidad de Bézout.
+**Estrategia**: Define MCD/MCM/cociente/resto sobre ℤ mediante valores absolutos en ω y prueba propiedades de divisibilidad incluyendo antisimetría, la identidad de Bézout, y el Teorema Fundamental de la Aritmética en ℤ (TFA).
 
 #### gcdZ (gcdZ)
 
@@ -12726,6 +12726,7 @@ theorem powerset_cardinality {A n : U} (hn : n ∈ ω) (hAn : A ≃ₛ n) :
 - gcdZ_assoc: medium — asociatividad del MCD
 - euclidean_divisionZ: high — identidad de división euclídea en ℤ
 - bezoutZ: high — identidad de Bézout en ℤ
+- tfa_Z: high — TFA en ℤ: todo no-nulo, no-unidad factoriza como u·natToInt(product\_list ps)
 
 #### Valor absoluto de natToInt (absZ_natToInt)
 
@@ -13085,6 +13086,28 @@ theorem bezoutZ (a b : U) (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U)) :
 ```
 
 **Dependencias**: `bezout_natform_Omega`, `bezout_case1`, `bezout_case2`, `absZ_in_omega`, `gcdZ_in_omega`
+**Importancia**: high
+
+---
+
+#### Teorema Fundamental de la Aritmética en ℤ (tfa_Z)
+
+**Ubicación**: `Int.Div.lean`, línea 692
+**Orden**: 21º teorema (TEOREMA PROFUNDO)
+
+**Enunciado Matemático**: Todo $z \in \mathbb{Z}$ no nulo y no unidad se factoriza como $z = u \cdot natToInt(fromPeano(product\_list\; ps))$, donde $u$ es una unidad ($u = 1_\mathbb{Z}$ ó $u = -1_\mathbb{Z}$) y $ps$ es una `DList` de primos. La lista $ps$ es única salvo reordenación (unicidad garantizada por `unique_prime_factorization_ZFC`).
+
+**Firma Lean4**:
+
+```lean
+theorem tfa_Z (z : U) (hz : z ∈ (IntSet : U)) (hz_ne : z ≠ (zeroZ : U))
+    (hz_unit : ¬isUnitZ z) :
+    ∃ (u : U) (ps : DList ℕ₀),
+      isUnitZ u ∧ PrimeList ps ∧
+      z = mulZ u (natToInt (fromPeano (product_list ps)))
+```
+
+**Dependencias**: `exists_prime_factorization_ZFC`, `signZ_mulZ_absZ`, `absZ_in_omega`, `unitZ_iff`, `signZ_values`
 **Importancia**: high
 
 ---
@@ -17013,6 +17036,7 @@ export Int.Div (
     lcmZ_zero_right
     lcmZ_zero_left
     bezoutZ
+    tfa_Z
 )
 ```
 
@@ -17477,7 +17501,7 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 
 ---
 
-*Última actualización: 2026-04-23 18:00 — Proyección completa de 14 módulos ZFC.Int.* (excepto Int.Div ya proyectado): Equiv, Basic, Add, Neg, Mul, Ring, Pow, Sub, DivMod, Order, Embedding, Abs, Induction, Units (§3.47-§3.60, §4.43-§4.56, §6.44-§6.57). Implementados leZ_is_linear_order y ltZ_is_strict_linear_order en Int/Order.lean (2 nuevos teoremas bundled, 4 definiciones auxiliares). Tabla §1.1 actualizada (13 ❌→✅, fila Units añadida). §7.2 e §7.5 actualizados: 62/62 módulos proyectados, 0 pendientes.*
+*Última actualización: 2026-04-23 19:00 — Proyección de `tfa_Z` en Int.Div.lean (§3.46 estrategia, §4.42 entrada, §6.43 export block). NEXT-STEPS.md actualizado: Div.lean completamente terminado (25 exports), total Phase 5 = 190 exports, 9 items opcionales pendientes.*
 
 *Última actualización: 2026-04-09 12:00 — Proyección completa de BoolAlg.Representation.lean (§3.44, §4.40, §6.41: 3 def + 24 teoremas + 27 exports, teorema de representación de Stone forma concreta, biyección A↔Atoms(A) vía singletons, biyección 𝒫(A)↔𝒫(Atoms A) vía atomsBelowMap, preservación ∪/∩/complemento/∅/universo) y Cardinal.FinitePowerSet.lean (§3.45, §4.41, §6.42: 1 def + 12 teoremas + 13 exports, |𝒫(F)|=2^n, extensión de biyecciones por un elemento, unión disjunta aditiva, descomposición en mitades disjuntas, removeElemMap). Tabla §1.1 y §7.2 actualizadas. §7.5: 47/47 módulos proyectados. Estado: ✅ 100% completo, 0 sorry.*
 
