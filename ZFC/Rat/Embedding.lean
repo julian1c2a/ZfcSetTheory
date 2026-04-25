@@ -392,12 +392,61 @@ namespace ZFC
     -- Section 7: Archimedean property
     -- =========================================================================
 
-    /-- Archimedean property for ℤ (sorry — needs Archimedean induction on ω). -/
+    /-- Archimedean property for ℤ: for any M ∈ ℤ and N ∈ ℤ with 0 < N,
+        there exists k ∈ ω such that M ≤ k · N. -/
     private theorem archZ (M N : U)
         (hM : M ∈ (IntSet : U)) (hN : N ∈ (IntSet : U))
         (hN_pos : ltZ (zeroZ : U) N) :
         ∃ k : U, (k ∈ (ω : U)) ∧ leZ M (mulZ (natToInt k) N) := by
-      sorry
+      -- Step 1: Show 1 ≤ N (since 0 < N).
+      have h_one_le_N : leZ (oneZ : U) N := by
+        rcases int_trichotomy N hN with rfl | ⟨p, hp, hp_ne, rfl⟩ | ⟨m, hm, hm_ne, rfl⟩
+        · -- N = zeroZ: contradicts hN_pos
+          exact absurd rfl hN_pos.2
+        · -- N = intClass p ∅ (p ∈ ω, p ≠ ∅): need 1 ≤ N, i.e. σ∅ ⊆ p
+          exact natToInt_preserves_le (σ (∅ : U)) p
+            (succ_in_Omega (∅ : U) zero_in_Omega) hp
+            (fun x hx => by
+              rw [mem_succ_iff] at hx
+              rcases hx with h | h
+              · exact absurd h (EmptySet_is_empty x)
+              · exact h ▸ zero_mem_of_nat_nonempty p (mem_Omega_is_Nat p hp) hp_ne)
+        · -- N = intClass ∅ m (m ≠ ∅): contradicts hN_pos (0 < N)
+          exfalso
+          have h_repr := hN_pos.1 ∅ ∅ ∅ m
+            zero_in_Omega zero_in_Omega zero_in_Omega hm rfl rfl
+          unfold leZ_repr at h_repr
+          rw [zero_add m hm, add_zero (∅ : U) zero_in_Omega] at h_repr
+          exact h_repr.elim (fun h => absurd h (EmptySet_is_empty m)) hm_ne
+      -- Step 2: Case split on M to choose k.
+      rcases int_trichotomy M hM with rfl | ⟨n, hn, hn_ne, rfl⟩ | ⟨m, hm, hm_ne, rfl⟩
+      · -- M = zeroZ: k = ∅, since 0 = natToInt ∅ · N = 0
+        exact ⟨∅, zero_in_Omega, by
+          rw [show natToInt (∅ : U) = (zeroZ : U) from rfl, mulZ_zero_left N hN]
+          exact leZ_refl zeroZ zeroZ_mem_IntSet⟩
+      · -- M = intClass n ∅ (positive): k = n, since M ≤ M · N (using 1 ≤ N)
+        have hM_mem : intClass n (∅ : U) ∈ (IntSet : U) :=
+          intClass_mem_IntSet n ∅ hn zero_in_Omega
+        have hM_nonneg : leZ (zeroZ : U) (intClass n (∅ : U)) :=
+          natToInt_preserves_le ∅ n zero_in_Omega hn
+            (fun x hx => absurd hx (EmptySet_is_empty x))
+        exact ⟨n, hn, by
+          rw [show natToInt n = intClass n (∅ : U) from rfl]
+          have h := mulZ_le_mulZ_nonneg oneZ N (intClass n (∅ : U))
+            oneZ_mem_IntSet hN hM_mem h_one_le_N hM_nonneg
+          rwa [mulZ_one_right (intClass n (∅ : U)) hM_mem] at h⟩
+      · -- M = intClass ∅ m (negative): k = ∅, since M < 0 = natToInt ∅ · N
+        exact ⟨∅, zero_in_Omega, by
+          rw [show natToInt (∅ : U) = (zeroZ : U) from rfl, mulZ_zero_left N hN]
+          rcases leZ_total (intClass (∅ : U) m) zeroZ
+              (intClass_mem_IntSet ∅ m zero_in_Omega hm) zeroZ_mem_IntSet with h | h
+          · exact h
+          · exfalso
+            have h_repr := h ∅ ∅ ∅ m
+              zero_in_Omega zero_in_Omega zero_in_Omega hm rfl rfl
+            unfold leZ_repr at h_repr
+            rw [zero_add m hm, add_zero (∅ : U) zero_in_Omega] at h_repr
+            exact h_repr.elim (fun h => absurd h (EmptySet_is_empty m)) hm_ne⟩
 
     /-- Archimedean property for ℚ:
         For any x, y ∈ ℚ with 0 < y, there exists k ∈ ω such that x ≤ k · y. -/
@@ -405,7 +454,69 @@ namespace ZFC
         (hx : x ∈ (RatSet : U)) (hy : y ∈ (RatSet : U))
         (hy_pos : isPositiveQ y) :
         ∃ k : U, (k ∈ (ω : U)) ∧ leQ x (mulQ (intToRat (natToInt k)) y) := by
-      sorry
+      -- Decompose representatives.
+      obtain ⟨a, b, ha, hb, hx_eq⟩ := mem_RatSet_is_ratClass x hx
+      obtain ⟨c, d, hc, hd, hy_eq⟩ := mem_RatSet_is_ratClass y hy
+      have hb_i := NonZeroIntSet_mem_IntSet b hb
+      have hd_i := NonZeroIntSet_mem_IntSet d hd
+      -- From hy_pos.1 (leQ zeroQ y), extract leZ zeroZ (mulZ c d).
+      have h_cd_nonneg : leZ (zeroZ : U) (mulZ c d) := by
+        have h_repr := hy_pos.1 zeroZ oneZ c d
+          zeroZ_mem_IntSet oneZ_mem_NonZeroIntSet hc hd rfl hy_eq
+        unfold leQ_repr at h_repr
+        rw [mulZ_zero_left oneZ oneZ_mem_IntSet,
+            mulZ_zero_left (mulZ d d) (mulZ_in_IntSet d d hd_i hd_i),
+            mulZ_one_left oneZ oneZ_mem_IntSet,
+            mulZ_one_left (mulZ c d) (mulZ_in_IntSet c d hc hd_i)] at h_repr
+        exact h_repr
+      -- mulZ c d ≠ zeroZ (c·d ≠ 0).
+      have h_cd_ne : mulZ c d ≠ (zeroZ : U) := by
+        intro h_eq
+        rcases (mulZ_eq_zero_iff c d hc hd_i).mp h_eq with hc_zero | hd_zero
+        · have : y = (zeroQ : U) :=
+            hy_eq.trans ((ratClass_eq_zeroQ_iff c d hc hd).mpr hc_zero)
+          exact hy_pos.2 this.symm
+        · exact absurd hd_zero (NonZeroIntSet_ne_zero d hd)
+      -- Set up M, N ∈ IntSet with N > 0.
+      have hb2 : mulZ b b ∈ (IntSet : U) := mulZ_in_IntSet b b hb_i hb_i
+      have hcd : mulZ c d ∈ (IntSet : U) := mulZ_in_IntSet c d hc hd_i
+      let M := mulZ (mulZ a b) (mulZ d d)
+      let N := mulZ (mulZ b b) (mulZ c d)
+      have hM : M ∈ (IntSet : U) :=
+        mulZ_in_IntSet _ _ (mulZ_in_IntSet a b ha hb_i) (mulZ_in_IntSet d d hd_i hd_i)
+      have hN : N ∈ (IntSet : U) := mulZ_in_IntSet _ _ hb2 hcd
+      -- N > 0: b² > 0 and c·d > 0.
+      have hN_pos : ltZ (zeroZ : U) N :=
+        positiveZ_mul_closed _ _ hb2 hcd
+          (sq_pos_ne_zero b hb_i (NonZeroIntSet_ne_zero b hb))
+          ⟨h_cd_nonneg, fun h => h_cd_ne h.symm⟩
+      -- Apply archZ to get k ∈ ω with leZ M (natToInt k · N).
+      obtain ⟨k, hk, hk_le⟩ := archZ M N hM hN hN_pos
+      refine ⟨k, hk, ?_⟩
+      -- Compute mulQ (intToRat (natToInt k)) y.
+      have hn_k : natToInt k ∈ (IntSet : U) := natToInt_mem_IntSet k hk
+      have hnkc : mulZ (natToInt k) c ∈ (IntSet : U) := mulZ_in_IntSet _ _ hn_k hc
+      have h_mulQ_eq : mulQ (intToRat (natToInt k)) y =
+          ratClass (mulZ (natToInt k) c) d := by
+        unfold intToRat
+        rw [hy_eq,
+            mulQ_class (natToInt k) oneZ c d hn_k oneZ_mem_NonZeroIntSet hc hd,
+            mulZ_one_left d hd_i]
+      -- Reduce to leQ_repr.
+      rw [hx_eq, h_mulQ_eq]
+      exact (leQ_iff_repr (ratClass a b) (ratClass (mulZ (natToInt k) c) d)
+          (ratClass_mem_RatSet a b ha hb)
+          (ratClass_mem_RatSet (mulZ (natToInt k) c) d hnkc hd)).mpr
+        ⟨a, b, mulZ (natToInt k) c, d, ha, hb, hnkc, hd, rfl, rfl, by
+          unfold leQ_repr
+          have h_alg : mulZ (mulZ b b) (mulZ (mulZ (natToInt k) c) d) =
+              mulZ (natToInt k) N := by
+            rw [mulZ_assoc (natToInt k) c d hn_k hc hd_i,
+                ← mulZ_assoc (mulZ b b) (natToInt k) (mulZ c d) hb2 hn_k hcd,
+                mulZ_comm (mulZ b b) (natToInt k) hb2 hn_k,
+                mulZ_assoc (natToInt k) (mulZ b b) (mulZ c d) hn_k hb2 hcd]
+          rw [h_alg]
+          exact hk_le⟩
 
   end Rat.Embedding
 

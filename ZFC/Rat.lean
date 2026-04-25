@@ -15,3 +15,4 @@ import ZFC.Rat.Mul
 import ZFC.Rat.Order
 import ZFC.Rat.Abs
 import ZFC.Rat.Embedding
+import ZFC.Rat.Field
