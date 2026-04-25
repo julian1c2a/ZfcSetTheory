@@ -563,7 +563,7 @@ namespace ZFC
        fun h_eq => h_ne ((absQ_eq_zero_iff x hx).mp h_eq.symm)⟩
 
     /-- signQ x ∈ ℚ -/
-    theorem signQ_in_RatSet (x : U) (hx : x ∈ (RatSet : U)) :
+    theorem signQ_in_RatSet (x : U) (_hx : x ∈ (RatSet : U)) :
         signQ x ∈ (RatSet : U) := by
       unfold signQ
       by_cases h1 : x = (zeroQ : U)

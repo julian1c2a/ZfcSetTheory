@@ -14,3 +14,4 @@ import ZFC.Rat.Neg
 import ZFC.Rat.Mul
 import ZFC.Rat.Order
 import ZFC.Rat.Abs
+import ZFC.Rat.Embedding
