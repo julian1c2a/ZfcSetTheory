@@ -1,6 +1,6 @@
 # Changelog
 
-**Última actualización:** 2026-04-10
+**Última actualización:** 2026-04-26
 **Autor**: Julián Calderón Almendros
 
 Todos los cambios notables de este proyecto serán documentados en este archivo.
@@ -9,6 +9,71 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Añadido (2026-04-26)
+
+- **Phase 6 (ℚ) — Completada**: 9 módulos, 0 sorry, 0 errores, 81 módulos activos en total
+  - README.md, REFERENCE.md y NEXT-STEPS.md actualizados con estado definitivo
+- **Nuevo módulo `Rat/Field.lean` — Axiomas de cuerpo de ℚ**:
+  - ✅ 14 teoremas: `mulQ_eq_zero_iff`, `mulQ_ne_zeroQ`, `mulQ_left_cancel`, `mulQ_right_cancel`
+  - ✅ `invQ_invQ` (doble inverso), `invQ_mulQ` (inverso del producto)
+  - ✅ `divQ_self`, `divQ_one`, `divQ_mulQ_cancel`, `mulQ_divQ_cancel`
+  - ✅ `negQ_mulQ_left`, `negQ_mulQ_right`
+  - ✅ `mulQ_addQ_distrib_left`, `mulQ_addQ_distrib_right`
+  - ✅ Namespace `ZFC.Rat.Field` (exportado a `ZFC`, 14 exports)
+  - ✅ Proyectado en REFERENCE.md §3.62, §4.58, §6.59
+- **Propiedad arquimediana**:
+  - ✅ `archZ` (private) en `Rat/Embedding.lean` — ∀ z ∈ ℤ, ∃ n ∈ ω, z ≤ natToInt n
+  - ✅ `archQ` — ∀ q ∈ ℚ, ∃ n ∈ ω, q ≤ intToRat(natToInt n)
+- **Fix**: eliminados warnings de variables no usadas en `Int/Sub.lean`, `Int/DivMod.lean`, `Int/Div.lean`, `Int/Pow.lean` (prefijo `_`)
+- **Refactor**: eliminado `patch_divOf.lean` (módulo obsoleto)
+- **REFERENCE.md**: proyección de `Rat/Embedding.lean` (§3.61, §4.57, §6.58) y `Rat/Field.lean` (§3.62, §4.58, §6.59); §7.5: 64/64 módulos proyectados; 18000+ líneas
+
+### Añadido (2026-04-25)
+
+- **Nuevo módulo `Rat/Embedding.lean` — Embedding canónico ℤ ↪ ℚ**:
+  - ✅ `intToRat (n : U) : U` — `noncomputable def`, mapea n ↦ ratClass n oneZ
+  - ✅ `intToRat_mem_RatSet`, `intToRat_injective`
+  - ✅ Preservación: `intToRat_zeroZ`, `intToRat_oneZ`, `intToRat_preserves_add/neg/sub/mul`
+  - ✅ Orden: `intToRat_preserves_leZ/ltZ`, `intToRat_reflects_leZ/ltZ`
+  - ✅ `intToRat_not_surjective` — 1/2 ∉ Im(ι)
+  - ✅ Namespace `ZFC.Rat.Embedding` (exportado a `ZFC`, 15 exports)
+
+### Añadido (2026-04-23)
+
+- **Phase 5 (ℤ) — Marcada 100% completa**: 190 exports, 0 sorry, todos los ítems opcionales implementados
+- **Phase 6 (ℚ) — Iniciada**: `Rat/Equiv.lean` con `RatEquivRel` sobre ℤ × ℤ* (NonZeroIntSet, RatBase, RatSet)
+- **6 nuevos módulos ℚ completados en un solo día**:
+  - ✅ `Rat/Basic.lean` — `ratClass`, `zeroQ`, `oneQ`; `ratClass_eq_iff`, `ratClass_ne_iff`, 13 exports
+  - ✅ `Rat/Add.lean` — `addQ`; `addQ_comm`, `addQ_assoc`, `addQ_zeroQ_right`, 7 exports
+  - ✅ `Rat/Neg.lean` — `negQ`; inverso aditivo, `negQ_negQ`, 7 exports
+  - ✅ `Rat/Mul.lean` — `mulQ`, `invQ`, `divQ`; `mulQ_comm`, `mulQ_assoc`, `mulQ_oneQ`, `invQ_mulQ_right`, 18 exports
+  - ✅ `Rat/Order.lean` — `leQ`, `ltQ`, `isPositiveQ`, `isNegativeQ`; orden total, compatibilidad con +/×, 17 exports
+  - ✅ `Rat/Abs.lean` — `subQ`, `absQ`, `signQ`; desigualdad triangular, `absQ_mulQ`, `signQ_mulQ_absQ`, 13 exports
+- **Refactor**: eliminados archivos obsoletos y pruebas no utilizadas (`_test_tactic.lean`, `test_*.lean`, etc.)
+- **fix(`Int/Order`)**: `tauto` → `constructor` para compatibilidad con Lean v4.29.0
+
+### Cambiado (2026-04-22)
+
+- **Refactor mayor: renombrado `ZfcSetTheory/` → `ZFC/`**:
+  - ✅ Directorio fuente renombrado de `ZfcSetTheory/` a `ZFC/`
+  - ✅ Módulo raíz: `ZfcSetTheory.lean` → `ZFC.lean`
+  - ✅ `lakefile.lean`: `lean_lib «ZFC»` (package sigue siendo `«ZfcSetTheory»`)
+  - ✅ Todos los `import ZfcSetTheory.*` actualizados a `import ZFC.*`
+  - ✅ Build limpio después del refactor
+- **fix**: contaminación `DList.Mem` en `Nat/Gcd.lean`, `Nat/Primes.lean`, `Peano/FiniteSequencesBridge.lean`
+- **Phase 5 (ℤ) — 13 ítems opcionales implementados**:
+  - ✅ `Int/Units.lean` — `isUnitZ`, `unitZ_iff` (unidades de ℤ = {1, −1})
+  - ✅ `Int/Div.lean` — `tfa_Z` (TFA en ℤ: toda z ≠ 0, ∉ ℤ× admite factorización prima única)
+  - ✅ `bezoutZ` completado sin sorry (identidad de Bézout en ℤ)
+  - ✅ Refactor de notación `∈` para evitar contaminación de `DList.Mem`
+- **fix(`Induction/Recursion`)**: ajuste de importaciones y corrección de comentarios
+
+### Añadido (2026-04-21)
+
+- **`bezoutZ` — Identidad de Bézout en ℤ (0 sorry)**:
+  - ✅ `bezoutZ (a b : U) : a ∈ IntSet → b ∈ IntSet → ∃ s t, natToInt (gcdZ a b) = s·a + t·b`
+  - Prueba directa en ZFC nativo sin Mathlib, combinando `gcdZ` y `euclidean_divisionZ`
 
 ### Añadido (2026-04-10)
 
