@@ -35,7 +35,6 @@ REFERENCE.md: Este archivo debe proyectarse en REFERENCE.md cuando compile.
 import ZFC.Rat.Abs
 import ZFC.Int.Embedding
 import ZFC.Int.Induction
-import ZFC.Int.Units
 
 namespace ZFC
   open Classical
@@ -327,12 +326,67 @@ namespace ZFC
             hz oneZ_mem_NonZeroIntSet oneZ_mem_IntSet twoInt_mem_NonZeroIntSet,
           mulZ_one_left oneZ oneZ_mem_IntSet] at h_eq
       -- h_eq : mulZ z twoInt = oneZ
-      rw [mulZ_comm z twoInt hz twoInt_mem_IntSet] at h_eq
-      -- mulZ twoInt z = oneZ → isUnitZ twoInt
-      have h_unit : isUnitZ (twoInt : U) := ⟨twoInt_mem_IntSet, z, hz, h_eq⟩
-      rcases (unitZ_iff twoInt twoInt_mem_IntSet).mp h_unit with h | h
-      · exact twoInt_ne_oneZ h
-      · exact twoInt_ne_negOneZ h
+      -- Rewrite: mulZ z twoInt = addZ z z (since twoInt = oneZ + oneZ)
+      have h_two_eq : (twoInt : U) = addZ (oneZ : U) (oneZ : U) := by
+        unfold twoInt oneZ
+        rw [addZ_class (σ (∅ : U)) (∅ : U) (σ (∅ : U)) (∅ : U)
+              (succ_in_Omega (∅ : U) zero_in_Omega) zero_in_Omega
+              (succ_in_Omega (∅ : U) zero_in_Omega) zero_in_Omega,
+            add_succ (σ (∅ : U)) (∅ : U) (succ_in_Omega (∅ : U) zero_in_Omega) zero_in_Omega,
+            add_zero (σ (∅ : U)) (succ_in_Omega (∅ : U) zero_in_Omega),
+            add_zero (∅ : U) zero_in_Omega]
+      rw [h_two_eq, mulZ_comm z (addZ oneZ oneZ) hz
+              (addZ_in_IntSet oneZ oneZ oneZ_mem_IntSet oneZ_mem_IntSet),
+          mulZ_addZ_distrib_right oneZ oneZ z oneZ_mem_IntSet oneZ_mem_IntSet hz,
+          mulZ_one_left z hz] at h_eq
+      -- h_eq : addZ z z = oneZ
+      rcases int_trichotomy z hz with rfl | ⟨n, hn, hn_ne, rfl⟩ | ⟨m, hm, hm_ne, rfl⟩
+      · -- Case z = zeroZ: addZ zeroZ zeroZ = zeroZ ≠ oneZ
+        rw [addZ_zero_right zeroZ zeroZ_mem_IntSet] at h_eq
+        unfold zeroZ oneZ at h_eq
+        have h' := (intClass_eq_iff (∅ : U) (∅ : U) (σ (∅ : U)) (∅ : U)
+                      zero_in_Omega zero_in_Omega
+                      (succ_in_Omega (∅ : U) zero_in_Omega) zero_in_Omega).mp h_eq
+        rw [add_zero (∅ : U) zero_in_Omega,
+            zero_add (σ (∅ : U)) (succ_in_Omega (∅ : U) zero_in_Omega)] at h'
+        exact absurd h'.symm (succ_nonempty (∅ : U))
+      · -- Case z = intClass n ∅ (n ≠ ∅): addZ (intClass n ∅) twice = intClass (add n n) ∅
+        rw [addZ_class n (∅ : U) n (∅ : U) hn zero_in_Omega hn zero_in_Omega,
+            add_zero (∅ : U) zero_in_Omega] at h_eq
+        unfold oneZ at h_eq
+        have h' := (intClass_eq_iff (add n n) (∅ : U) (σ (∅ : U)) (∅ : U)
+                      (add_in_Omega n n hn hn) zero_in_Omega
+                      (succ_in_Omega (∅ : U) zero_in_Omega) zero_in_Omega).mp h_eq
+        rw [add_zero (add n n) (add_in_Omega n n hn hn),
+            zero_add (σ (∅ : U)) (succ_in_Omega (∅ : U) zero_in_Omega)] at h'
+        -- h' : add n n = σ(∅ : U); but n = σ m' for some m'
+        obtain ⟨m', hn_eq⟩ :=
+          (eq_zero_or_exists_succ n (mem_Omega_is_Nat n hn)).resolve_left hn_ne
+        have hm'_omega : m' ∈ (ω : U) :=
+          Nat_in_Omega m' (nat_element_is_nat n m' (mem_Omega_is_Nat n hn)
+                           (hn_eq ▸ mem_succ_self m'))
+        rw [hn_eq, add_succ (σ m') m' (succ_in_Omega m' hm'_omega) hm'_omega] at h'
+        -- h' : σ(add (σ m') m') = σ(∅ : U)
+        have h'' := succ_injective _ _
+          (mem_Omega_is_Nat _ (add_in_Omega (σ m') m' (succ_in_Omega m' hm'_omega) hm'_omega))
+          (mem_Omega_is_Nat _ zero_in_Omega) h'
+        -- h'' : add (σ m') m' = ∅
+        rw [add_comm_Omega (σ m') m' (succ_in_Omega m' hm'_omega) hm'_omega,
+            add_succ m' m' hm'_omega hm'_omega] at h''
+        -- h'' : σ(add m' m') = ∅
+        exact absurd h'' (succ_nonempty _)
+      · -- Case z = intClass ∅ m (m ≠ ∅): addZ twice = intClass ∅ (add m m)
+        rw [addZ_class (∅ : U) m (∅ : U) m zero_in_Omega hm zero_in_Omega hm,
+            add_zero (∅ : U) zero_in_Omega] at h_eq
+        unfold oneZ at h_eq
+        have h' := (intClass_eq_iff (∅ : U) (add m m) (σ (∅ : U)) (∅ : U)
+                     zero_in_Omega (add_in_Omega m m hm hm)
+                     (succ_in_Omega (∅ : U) zero_in_Omega) zero_in_Omega).mp h_eq
+        rw [add_zero (∅ : U) zero_in_Omega,
+            add_succ (add m m) (∅ : U) (add_in_Omega m m hm hm) zero_in_Omega,
+            add_zero (add m m) (add_in_Omega m m hm hm)] at h'
+        -- h' : ∅ = σ(add m m)
+        exact absurd h'.symm (succ_nonempty _)
 
     -- =========================================================================
     -- Section 7: Archimedean property
