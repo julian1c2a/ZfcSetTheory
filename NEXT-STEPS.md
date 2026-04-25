@@ -62,9 +62,70 @@
 
 ---
 
-## Phase 7: Reales ℝ — 📋 Planificado
+## Phase 6.5: Sucesiones en ℚ — 📋 Planificado
 
-**Pre-requisito**: Phase 6 completa (ℚ funcional)
+**Pre-requisito**: Phase 6 completa (ℚ cuerpo ordenado arquimediano)  
+**Directorio**: `ZFC/Rat/` (extensión del directorio de racionales)
+
+| # | Módulo | Exports clave | Contenido principal |
+|---|--------|---------------|---------------------|
+| 1 | `Rat/Sequences.lean` | `IsSeqQ`, `constSeqQ`, `addSeqQ`, `mulSeqQ` | Sucesiones f: ω → ℚ como predicado sobre funciones (`IsFunction f ω RatSet`), operaciones punto a punto, clausura |
+| 2 | `Rat/Convergence.lean` | `convergesToQ`, `limit_unique`, `convergesToQ_add`, `convergesToQ_mul` | Convergencia ε-N en ℚ, unicidad del límite, aritmética de límites (suma, producto, cociente) |
+| 3 | `Rat/CauchyQ.lean` | `IsCauchyQ`, `cauchy_of_convergentQ`, `cauchy_bounded`, `cauchyQ_add` | Sucesiones de Cauchy en ℚ; convergente ⟹ Cauchy; Cauchy ⟹ acotada; aritmética de Cauchy |
+| 4 | `Rat/SqrtApprox.lean` | `sqrtApprox`, `sqrtApprox_is_cauchy`, `sqrt2_irrational`, `sqrtApprox_not_convergent` | Sucesión de Newton-Raphson para √2: f(0)=3/2, f(n+1)=(f(n)+2/f(n))/2; es Cauchy en ℚ pero no converge en ℚ |
+
+**Teoremas clave de `Rat/SqrtApprox.lean`** (prueba completa de incompletitud de ℚ):
+
+1. `sqrtApprox_in_RatSet` — f(n) ∈ ℚ para todo n (inducción sobre la recurrencia)
+2. `sqrtApprox_positive` — f(n) > 0 para todo n
+3. `sqrtApprox_sq_gt_2` — f(n)² > 2 para todo n (identidad: f(n+1)²−2 = (f(n)²−2)²/(4f(n)²))
+4. `sqrtApprox_decreasing` — f(n+1) < f(n) para todo n (monótona decreciente)
+5. `sqrtApprox_is_cauchy` — IsCauchyQ sqrtApprox (convergencia cuadrática de Newton-Raphson)
+6. `sqrt2_irrational` — ¬∃ p q : ℤ, q≠0 ∧ p·p = 2·(q·q) (irracionalidad de √2, argumento 2-ádico)
+7. `sqrtApprox_not_convergent` — ¬∃ L∈ℚ, convergesToQ sqrtApprox L (**incompletitud de ℚ**)
+
+---
+
+## Phase 7: Cuerpos Ordenados Intermedios entre ℚ y ℝ — 📋 Planificado
+
+**Pre-requisito**: Phase 6.5 completa (sucesiones de Cauchy en ℚ definidas y con ejemplos)  
+**Motivación**: Entre ℚ y ℝ existen cuerpos ordenados que contienen ℚ pero no son completos. Su formalización ilustra el rol esencial de la propiedad del supremo en la construcción de ℝ.
+
+### Phase 7a: Números Computables — `ZFC/Computable/`
+
+| Módulo | Contenido principal |
+|--------|---------------------|
+| `Computable/Basic.lean` | `ComputSet`: pares (f, N) con f: ω→ℚ Cauchy y módulo uniforme 1/2^N; relación de equivalencia de Cauchy |
+| `Computable/Arith.lean` | Suma, producto, negativo, inverso; (Computables, +, ·) es cuerpo ordenado |
+| `Computable/Embedding.lean` | ℚ ↪ Computables (sucesiones constantes); inyectividad, preserva orden |
+| `Computable/NotComplete.lean` | `sqrtApprox` es computable pero no tiene límite computable: incompletitud de Computables |
+
+### Phase 7b: Números Constructibles — `ZFC/Constructible/`
+
+| Módulo | Contenido principal |
+|--------|---------------------|
+| `Constructible/Basic.lean` | `ConstructSet`: cierre mínimo de ℚ bajo +, −, ·, ÷ y √(x) para x>0; cada elemento es algebraico de grado potencia de 2 |
+| `Constructible/NotComplete.lean` | No completo: sucesión de Cauchy en ConstructSet sin límite constructible (ej. ∑ 1/n! ∉ ConstructSet) |
+
+### Phase 7c: Números Radicales — `ZFC/Radical/`
+
+| Módulo | Contenido principal |
+|--------|---------------------|
+| `Radical/Basic.lean` | `RadicalSet`: cierre de ℚ bajo +, −, ·, ÷ y raíces n-ésimas para cualquier n∈ℕ positivo |
+| `Radical/NotComplete.lean` | No completo: existen sucesiones de Cauchy de radicales sin límite radical |
+
+### Phase 7d: Números Algebraicos — `ZFC/Algebraic/`
+
+| Módulo | Contenido principal |
+|--------|---------------------|
+| `Algebraic/Basic.lean` | `AlgebraicSet`: raíces de polinomios en ℤ[x]; cuerpo; contiene Constructible y Radical |
+| `Algebraic/NotComplete.lean` | No completo: ∃ sucesión de Cauchy de algebraicos sin límite algebraico (ej. ∑ 1/n! = e ∉ Algebraic) |
+
+---
+
+## Phase 8: Reales ℝ — 📋 Planificado
+
+**Pre-requisito**: Phase 6.5 completa (sucesiones de Cauchy en ℚ — base directa de la construcción de ℝ)
 
 | Módulo | Contenido principal |
 |--------|---------------------|
@@ -105,9 +166,14 @@
 | 4: Anotaciones | ✅ Completo | — | — |
 | 5: Enteros ℤ | ✅ Completo | 15 | 190 |
 | 6: Racionales ℚ | ✅ Completo | 9 | 90 |
-| 7: Reales ℝ | 📋 Planificado | 0/15 | — |
+| 6.5: Sucesiones en ℚ | 📋 Planificado | 0/4 | — |
+| 7a: Computables | 📋 Planificado | 0/4 | — |
+| 7b: Constructibles | 📋 Planificado | 0/2 | — |
+| 7c: Radicales | 📋 Planificado | 0/2 | — |
+| 7d: Algebraicos | 📋 Planificado | 0/2 | — |
+| 8: Reales ℝ | 📋 Planificado | 0/15 | — |
 | Futuro | 🔮 Lejano | — | — |
 
 ---
 
-*Última actualización: 2026-04-26. Phase 6 (ℚ) 100% completa: 9 módulos (Equiv, Basic, Add, Neg, Mul, Order, Abs, Embedding, Field — ~90 exports, 0 sorry). 81 módulos activos en total. Siguiente: Phase 7 (comienzo ℝ via sucesiones de Cauchy en ℚ).*
+*Última actualización: 2026-04-26. Phase 6 (ℚ) 100% completa: 9 módulos (~90 exports, 0 sorry). 81 módulos activos en total. Siguiente: Phase 6.5 — sucesiones en ℚ, 4 módulos en `ZFC/Rat/`: `Sequences`, `Convergence`, `CauchyQ`, `SqrtApprox` (prueba de incompletitud de ℚ como motivación de ℝ).*
