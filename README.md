@@ -3,13 +3,13 @@
 [![Lean 4](https://img.shields.io/badge/Lean-v4.29.0-blue)](https://leanprover.github.io/)
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](REFERENCE.md)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![Modules](https://img.shields.io/badge/módulos-75-blue)](REFERENCE.md)
+[![Modules](https://img.shields.io/badge/módulos-81-blue)](REFERENCE.md)
 [![Sorry](https://img.shields.io/badge/sorry-0-brightgreen)](REFERENCE.md)
 
 Una implementación formal de la **Teoría de Conjuntos de Zermelo-Fraenkel (ZFC)** en Lean 4, sin dependencias de Mathlib.
 
-> **Estado actual** (2026-04-23): 75 jobs de build · 0 sorry · 0 errores.
-> Phase 5 (ℤ) 100% completa — 190 exports. Comenzando Phase 6 (ℚ).
+> **Estado actual** (2026-04-26): 81 módulos activos · 0 sorry · 0 errores.
+> Phase 5 (ℤ) 100% completa — 190 exports. Phase 6 (ℚ) 100% completa — 9 módulos.
 
 ---
 
@@ -25,7 +25,7 @@ Construye las matemáticas desde los axiomas de ZFC hacia arriba, en Lean 4 puro
 6. **Álgebras de Boole** — Teorema de representación de Stone; correspondencia BR ↔ BA; cardinalidad 2^n
 7. **Cardinalidad** — Cantor, Cantor-Schröder-Bernstein
 8. **Enteros ℤ** — Construcción completa: +, −, ×, ÷ euclídea, ^, GCD, LCM, Bézout, TFA, valor absoluto, signo, orden total, inducción
-9. **Racionales ℚ** *(en progreso)* — Equivalencia, operaciones, cuerpo ordenado
+9. **Racionales ℚ** — Construcción completa: equivalencia en ℤ×ℤ*, +, −, ×, ÷, |·|, orden total, embedding ℤ↪ℚ, propiedad arquimediana, axiomas de cuerpo
 
 ---
 
@@ -113,14 +113,19 @@ Construye las matemáticas desde los axiomas de ZFC hacia arriba, en Lean 4 puro
 | `Int/Induction.lean` | int_induction_abs, int_strong_induction_abs, int_descent, int_induction_neg |
 | `Int/Units.lean` | isUnitZ, unitZ_iff (unidades = {oneZ, negZ oneZ}) |
 
-### Phase 6: Racionales ℚ (🔄 En progreso)
+### Phase 6: Racionales ℚ (✅ Completo — 0 sorry)
 
-| Módulo | Estado |
-|--------|--------|
-| `Rat/Equiv.lean` | 🔄 En progreso — RatEquivRel en ℤ × ℤ* |
-| `Rat/Basic.lean` | 📋 Planificado |
-| `Rat/Add.lean`, `Neg.lean`, `Mul.lean` | 📋 Planificado |
-| `Rat/Order.lean`, `Embedding.lean`, `Field.lean` | 📋 Planificado |
+| Módulo | Exports clave |
+|--------|---------------|
+| `Rat/Equiv.lean` | NonZeroIntSet, RatBase, RatEquivRel, RatSet, RatEquivRel_is_equivalence |
+| `Rat/Basic.lean` | ratClass, zeroQ, oneQ, ratClass_mem_RatSet, ratClass_eq_iff |
+| `Rat/Add.lean` | addQ, addQ_comm, addQ_assoc, addQ_zeroQ_right, addQ_in_RatSet |
+| `Rat/Neg.lean` | negQ, negQ_in_RatSet, negQ_addQ_right, negQ_negQ |
+| `Rat/Mul.lean` | mulQ, invQ, divQ, mulQ_comm, mulQ_assoc, mulQ_oneQ, invQ_mem |
+| `Rat/Abs.lean` | subQ, absQ, signQ, triángulo, interacción absQ/mulQ, archZ |
+| `Rat/Order.lean` | leQ, ltQ, isPositiveQ, isNegativeQ, orden total, compatibilidad +/× |
+| `Rat/Embedding.lean` | intToRat, homomorfismo +/−/×/≤/<, intToRat_injective, archQ |
+| `Rat/Field.lean` | mulQ_eq_zero_iff, mulQ_left_cancel, invQ_invQ, invQ_mulQ, divQ_self, distribQ |
 
 ---
 
@@ -185,7 +190,7 @@ ZfcSetTheory/
     ├── BoolAlg/                # Álgebras de Boole (11 módulos)
     ├── Cardinal/               # Cardinalidad (2 módulos)
     ├── Int/                    # ℤ completo (15 módulos)
-    └── Rat/                    # ℚ (en progreso)
+    └── Rat/                    # ℚ completo (9 módulos)
 ```
 
 ---
@@ -194,7 +199,7 @@ ZfcSetTheory/
 
 | Documento | Contenido |
 |-----------|-----------|
-| [REFERENCE.md](REFERENCE.md) | Referencia técnica completa: 17000+ líneas, todas las definiciones y teoremas con firma Lean4, anotaciones `@importance` |
+| [REFERENCE.md](REFERENCE.md) | Referencia técnica completa: 18000+ líneas, todas las definiciones y teoremas con firma Lean4, anotaciones `@importance` |
 | [NEXT-STEPS.md](NEXT-STEPS.md) | Hoja de ruta detallada: Phase 6 (ℚ), Phase 7 (ℝ), futuro |
 | [THOUGHTS.md](THOUGHTS.md) | Notas de diseño y reflexiones; qué está hecho, en progreso y en el futuro lejano |
 | [NAMING-CONVENTIONS.md](NAMING-CONVENTIONS.md) | Convenciones de nombres estilo Mathlib |
