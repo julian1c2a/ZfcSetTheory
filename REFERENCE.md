@@ -1,6 +1,6 @@
 # Referencia Técnica - ZfcSetTheory
 
-*Última actualización: 2026-04-23 18:00*
+*Última actualización: 2026-04-26 12:00*
 **Autor**: Julián Calderón Almendros
 
 ## 0. Guía de Convenciones de Nombres para el Estudioso
@@ -156,6 +156,8 @@ Este documento cumple con todos los requisitos especificados en [AI-GUIDE.md](AI
 | `Int/Div.lean` | `ZFC.Int.Div` | `Int.Abs`, `Int.DivMod`, `Nat.Div`, `Nat.Gcd` | ✅ Completo |
 | `Int/Induction.lean` | `ZFC.Int.Induction` | `Int.Basic` + anteriores | ✅ Completo |
 | `Int/Units.lean` | `ZFC.Int.Ring` | `Int.Ring`, `Int.Mul` + anteriores | ✅ Completo |
+| `Rat/Embedding.lean` | `ZFC.Rat.Embedding` | `Rat.Abs`, `Int.Embedding`, `Int.Induction` + anteriores | ✅ Completo |
+| `Rat/Field.lean` | `ZFC.Rat.Field` | `Rat.Mul`, `Rat.Order` + anteriores | ✅ Completo |
 
 ### 1.2 Axiomas ZFC por Módulo
 
@@ -223,6 +225,8 @@ Cada módulo usa transitivamente un subconjunto de los 7 axiomas ZFC del proyect
 - `Nat.Binom`, `Nat.MaxMin`, `Nat.NewtonBinom`, `Nat.WellFounded`
 - `BoolAlg.FiniteCofinite`
 - `BoolAlg.FiniteBA`
+- `Int/Equiv`, `Int/Basic`, `Int/Add`, `Int/Neg`, `Int/Mul`, `Int/Ring`, `Int/Sub`, `Int/Pow`, `Int/DivMod`, `Int/Order`, `Int/Embedding`, `Int/Abs`, `Int/Induction`, `Int/Units`, `Int/Div`
+- `Rat/Embedding`, `Rat/Field`
 
 **Nota**: `BoolAlg.Representation` (teorema de Stone) usa solo 6 axiomas — no requiere Infinito. `BoolAlg.FiniteBA` sí requiere los 7 porque importa `Cardinal.FinitePowerSet`.
 
@@ -5277,6 +5281,41 @@ def isUnitZ (u : U) : Prop :=
 ```
 
 **Computabilidad**: Computable (predicado proposicional)
+
+---
+
+### 3.61 Rat.Embedding.lean
+
+**Módulo**: `ZFC.Rat.Embedding`
+**Namespace**: `ZFC.Rat.Embedding`
+**Dependencias**: `ZFC.Rat.Abs`, `ZFC.Int.Embedding`, `ZFC.Int.Induction` + anteriores
+**Estrategia**: Define el embedding canónico $\iota : \mathbb{Z} \to \mathbb{Q}$, $n \mapsto n/1 = \text{ratClass}\, n\, 1_\mathbb{Z}$, y prueba que es un homomorfismo de anillos ordenados (preserva $+$, $-$, $\cdot$, $\leq$, $<$) e inyectivo. Prueba la no-suryectividad exhibiendo $1/2 \notin \text{Im}(\iota)$. Culmina con la propiedad arquimediana de $\mathbb{Q}$: para todo $x, y \in \mathbb{Q}$ con $0_\mathbb{Q} < y$, existe $k \in \omega$ tal que $x \leq k \cdot y$.
+
+#### intToRat
+
+**Ubicación**: `Rat/Embedding.lean`
+**Orden**: 1ª definición
+
+**Descripción Matemática**: La incrustación canónica $\iota : \mathbb{Z} \hookrightarrow \mathbb{Q}$, $n \mapsto n/1$.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def intToRat (n : U) : U := ratClass n oneZ
+```
+
+**Computabilidad**: No computable
+
+---
+
+### 3.62 Rat.Field.lean
+
+**Módulo**: `ZFC.Rat.Field`
+**Namespace**: `ZFC.Rat.Field`
+**Dependencias**: `ZFC.Rat.Mul`, `ZFC.Rat.Order` + anteriores
+**Estrategia**: Prueba los axiomas de cuerpo de $(\mathbb{Q}, +, \cdot, 0_\mathbb{Q}, 1_\mathbb{Q})$ que no están en Rat.Mul/Rat.Neg: ausencia de divisores de cero, leyes de cancelación multiplicativa, doble inverso ($\text{invQ}(\text{invQ}(x)) = x$), inverso del producto, propiedades de la división ($x/x = 1_\mathbb{Q}$, $x/1_\mathbb{Q} = x$, $(x/y)\cdot y = y\cdot(x/y) = x$), distribución de la negación sobre el producto, y distributividad de $\cdot$ respecto a $+$.
+
+*(Sin nuevas definiciones públicas.)*
 
 ---
 
@@ -15553,6 +15592,439 @@ theorem unitZ_iff (u : U) (hu : u ∈ (IntSet : U)) :
 
 ---
 
+### 4.57 Rat.Embedding.lean
+
+**Importancia por teorema**:
+
+- `intToRat_mem_RatSet`: high — clausura: intToRat mapea ℤ en ℚ
+- `intToRat_injective`: high — inyectividad del embedding
+- `intToRat_zeroZ`: high — intToRat(0ℤ) = 0ℚ
+- `intToRat_oneZ`: high — intToRat(1ℤ) = 1ℚ
+- `intToRat_preserves_add`: high — homomorfismo de suma
+- `intToRat_preserves_neg`: high — homomorfismo de negación
+- `intToRat_preserves_sub`: high — homomorfismo de resta
+- `intToRat_preserves_mul`: high — homomorfismo de multiplicación
+- `intToRat_preserves_leZ`: high — preserva el orden ≤
+- `intToRat_reflects_leZ`: high — refleja el orden ≤
+- `intToRat_preserves_ltZ`: high — preserva el orden estricto <
+- `intToRat_reflects_ltZ`: high — refleja el orden estricto <
+- `intToRat_not_surjective`: high — no es suryectivo (1/2 ∉ Im(ι))
+- `archQ`: high — propiedad arquimediana de ℚ
+
+#### Clausura (intToRat_mem_RatSet)
+
+**Enunciado Matemático**: Para $n \in \mathbb{Z}$: $\iota(n) \in \mathbb{Q}$.
+
+**Firma Lean4**:
+
+```lean
+theorem intToRat_mem_RatSet (n : U) (hn : n ∈ (IntSet : U)) :
+    intToRat n ∈ (RatSet : U)
+```
+
+**Importancia**: high
+
+#### Inyectividad (intToRat_injective)
+
+**Enunciado Matemático**: Para $m, n \in \mathbb{Z}$: $\iota(m) = \iota(n) \Rightarrow m = n$.
+
+**Firma Lean4**:
+
+```lean
+theorem intToRat_injective (m n : U)
+    (hm : m ∈ (IntSet : U)) (hn : n ∈ (IntSet : U))
+    (h : intToRat m = intToRat n) : m = n
+```
+
+**Importancia**: high
+
+#### Preservación de Cero (intToRat_zeroZ)
+
+**Enunciado Matemático**: $\iota(0_\mathbb{Z}) = 0_\mathbb{Q}$.
+
+**Firma Lean4**:
+
+```lean
+theorem intToRat_zeroZ : intToRat (zeroZ : U) = (zeroQ : U)
+```
+
+**Importancia**: high
+
+#### Preservación de Uno (intToRat_oneZ)
+
+**Enunciado Matemático**: $\iota(1_\mathbb{Z}) = 1_\mathbb{Q}$.
+
+**Firma Lean4**:
+
+```lean
+theorem intToRat_oneZ : intToRat (oneZ : U) = (oneQ : U)
+```
+
+**Importancia**: high
+
+#### Preservación de Suma (intToRat_preserves_add)
+
+**Enunciado Matemático**: $\iota(m + n) = \iota(m) + \iota(n)$ para $m, n \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem intToRat_preserves_add (m n : U)
+    (hm : m ∈ (IntSet : U)) (hn : n ∈ (IntSet : U)) :
+    intToRat (addZ m n) = addQ (intToRat m) (intToRat n)
+```
+
+**Importancia**: high
+
+#### Preservación de Negación (intToRat_preserves_neg)
+
+**Enunciado Matemático**: $\iota(-n) = -\iota(n)$ para $n \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem intToRat_preserves_neg (n : U) (hn : n ∈ (IntSet : U)) :
+    intToRat (negZ n) = negQ (intToRat n)
+```
+
+**Importancia**: high
+
+#### Preservación de Resta (intToRat_preserves_sub)
+
+**Enunciado Matemático**: $\iota(m - n) = \iota(m) - \iota(n)$ para $m, n \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem intToRat_preserves_sub (m n : U)
+    (hm : m ∈ (IntSet : U)) (hn : n ∈ (IntSet : U)) :
+    intToRat (subZ m n) = subQ (intToRat m) (intToRat n)
+```
+
+**Importancia**: high
+
+#### Preservación de Multiplicación (intToRat_preserves_mul)
+
+**Enunciado Matemático**: $\iota(m \cdot n) = \iota(m) \cdot \iota(n)$ para $m, n \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem intToRat_preserves_mul (m n : U)
+    (hm : m ∈ (IntSet : U)) (hn : n ∈ (IntSet : U)) :
+    intToRat (mulZ m n) = mulQ (intToRat m) (intToRat n)
+```
+
+**Importancia**: high
+
+#### Preservación del Orden ≤ (intToRat_preserves_leZ)
+
+**Enunciado Matemático**: $m \leq_\mathbb{Z} n \Rightarrow \iota(m) \leq_\mathbb{Q} \iota(n)$ para $m, n \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem intToRat_preserves_leZ (m n : U)
+    (hm : m ∈ (IntSet : U)) (hn : n ∈ (IntSet : U))
+    (h : leZ m n) : leQ (intToRat m) (intToRat n)
+```
+
+**Importancia**: high
+
+#### Reflexión del Orden ≤ (intToRat_reflects_leZ)
+
+**Enunciado Matemático**: $\iota(m) \leq_\mathbb{Q} \iota(n) \Rightarrow m \leq_\mathbb{Z} n$ para $m, n \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem intToRat_reflects_leZ (m n : U)
+    (hm : m ∈ (IntSet : U)) (hn : n ∈ (IntSet : U))
+    (h : leQ (intToRat m) (intToRat n)) : leZ m n
+```
+
+**Importancia**: high
+
+#### Preservación del Orden Estricto (intToRat_preserves_ltZ)
+
+**Enunciado Matemático**: $m <_\mathbb{Z} n \Rightarrow \iota(m) <_\mathbb{Q} \iota(n)$ para $m, n \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem intToRat_preserves_ltZ (m n : U)
+    (hm : m ∈ (IntSet : U)) (hn : n ∈ (IntSet : U))
+    (h : ltZ m n) : ltQ (intToRat m) (intToRat n)
+```
+
+**Importancia**: high
+
+#### Reflexión del Orden Estricto (intToRat_reflects_ltZ)
+
+**Enunciado Matemático**: $\iota(m) <_\mathbb{Q} \iota(n) \Rightarrow m <_\mathbb{Z} n$ para $m, n \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem intToRat_reflects_ltZ (m n : U)
+    (hm : m ∈ (IntSet : U)) (hn : n ∈ (IntSet : U))
+    (h : ltQ (intToRat m) (intToRat n)) : ltZ m n
+```
+
+**Importancia**: high
+
+#### No Suryectividad (intToRat_not_surjective)
+
+**Enunciado Matemático**: El embedding $\iota$ no es suryectivo: existe $x \in \mathbb{Q}$ (concretamente $1/2$) sin preimagen entera.
+
+**Firma Lean4**:
+
+```lean
+theorem intToRat_not_surjective :
+    ¬ ∀ x : U, (x ∈ RatSet) → ∃ z : U, (z ∈ IntSet) ∧ intToRat z = x
+```
+
+**Importancia**: high
+
+#### Propiedad Arquimediana (archQ)
+
+**Enunciado Matemático**: Para todo $x, y \in \mathbb{Q}$ con $0_\mathbb{Q} < y$, existe $k \in \omega$ tal que $x \leq \iota(\text{natToInt}(k)) \cdot y$.
+
+**Firma Lean4**:
+
+```lean
+theorem archQ (x y : U)
+    (hx : x ∈ (RatSet : U)) (hy : y ∈ (RatSet : U))
+    (hy_pos : isPositiveQ y) :
+    ∃ k : U, (k ∈ (ω : U)) ∧ leQ x (mulQ (intToRat (natToInt k)) y)
+```
+
+**Importancia**: high
+
+---
+
+### 4.58 Rat.Field.lean
+
+**Importancia por teorema**:
+
+- `mulQ_eq_zero_iff`: high — no divisores de cero en ℚ
+- `mulQ_ne_zeroQ`: high — producto de no-ceros es no-cero
+- `mulQ_left_cancel`: high — cancelación izquierda por factor no nulo
+- `mulQ_right_cancel`: high — cancelación derecha por factor no nulo
+- `invQ_invQ`: high — doble inverso: invQ(invQ x) = x
+- `invQ_mulQ`: high — inverso del producto: invQ(x·y) = invQ x · invQ y
+- `divQ_self`: high — x/x = 1ℚ para x ≠ 0ℚ
+- `divQ_one`: high — x/1ℚ = x
+- `divQ_mulQ_cancel`: high — (x/y)·y = x para y ≠ 0ℚ
+- `mulQ_divQ_cancel`: high — y·(x/y) = x para y ≠ 0ℚ
+- `negQ_mulQ_left`: high — negQ(x·y) = (negQ x)·y
+- `negQ_mulQ_right`: high — negQ(x·y) = x·(negQ y)
+- `mulQ_addQ_distrib_left`: high — x·(y+z) = x·y + x·z
+- `mulQ_addQ_distrib_right`: high — (x+y)·z = x·z + y·z
+
+#### No Divisores de Cero (mulQ_eq_zero_iff)
+
+**Enunciado Matemático**: Para $x, y \in \mathbb{Q}$: $x \cdot y = 0_\mathbb{Q} \iff x = 0_\mathbb{Q} \vee y = 0_\mathbb{Q}$.
+
+**Firma Lean4**:
+
+```lean
+theorem mulQ_eq_zero_iff (x y : U)
+    (hx : x ∈ (RatSet : U)) (hy : y ∈ (RatSet : U)) :
+    mulQ x y = (zeroQ : U) ↔ x = (zeroQ : U) ∨ y = (zeroQ : U)
+```
+
+**Importancia**: high
+
+#### Producto No Nulo (mulQ_ne_zeroQ)
+
+**Enunciado Matemático**: Si $x, y \in \mathbb{Q}$, $x \neq 0_\mathbb{Q}$, $y \neq 0_\mathbb{Q}$, entonces $x \cdot y \neq 0_\mathbb{Q}$.
+
+**Firma Lean4**:
+
+```lean
+theorem mulQ_ne_zeroQ (x y : U)
+    (hx : x ∈ (RatSet : U)) (hy : y ∈ (RatSet : U))
+    (hx_ne : x ≠ (zeroQ : U)) (hy_ne : y ≠ (zeroQ : U)) :
+    mulQ x y ≠ (zeroQ : U)
+```
+
+**Importancia**: high
+
+#### Cancelación Izquierda (mulQ_left_cancel)
+
+**Enunciado Matemático**: Si $z \in \mathbb{Q}$, $z \neq 0_\mathbb{Q}$ y $z \cdot x = z \cdot y$, entonces $x = y$.
+
+**Firma Lean4**:
+
+```lean
+theorem mulQ_left_cancel (x y z : U)
+    (hx : x ∈ (RatSet : U)) (hy : y ∈ (RatSet : U)) (hz : z ∈ (RatSet : U))
+    (hz_ne : z ≠ (zeroQ : U))
+    (h : mulQ z x = mulQ z y) : x = y
+```
+
+**Importancia**: high
+
+#### Cancelación Derecha (mulQ_right_cancel)
+
+**Enunciado Matemático**: Si $z \in \mathbb{Q}$, $z \neq 0_\mathbb{Q}$ y $x \cdot z = y \cdot z$, entonces $x = y$.
+
+**Firma Lean4**:
+
+```lean
+theorem mulQ_right_cancel (x y z : U)
+    (hx : x ∈ (RatSet : U)) (hy : y ∈ (RatSet : U)) (hz : z ∈ (RatSet : U))
+    (hz_ne : z ≠ (zeroQ : U))
+    (h : mulQ x z = mulQ y z) : x = y
+```
+
+**Importancia**: high
+
+#### Doble Inverso (invQ_invQ)
+
+**Enunciado Matemático**: Para $x \in \mathbb{Q}$, $x \neq 0_\mathbb{Q}$: $\text{invQ}(\text{invQ}(x)) = x$.
+
+**Firma Lean4**:
+
+```lean
+theorem invQ_invQ (x : U)
+    (hx : x ∈ (RatSet : U)) (hx_ne : x ≠ (zeroQ : U)) :
+    invQ (invQ x) = x
+```
+
+**Importancia**: high
+
+#### Inverso del Producto (invQ_mulQ)
+
+**Enunciado Matemático**: Para $x, y \in \mathbb{Q}$ no nulos: $\text{invQ}(x \cdot y) = \text{invQ}(x) \cdot \text{invQ}(y)$.
+
+**Firma Lean4**:
+
+```lean
+theorem invQ_mulQ (x y : U)
+    (hx : x ∈ (RatSet : U)) (hy : y ∈ (RatSet : U))
+    (hx_ne : x ≠ (zeroQ : U)) (hy_ne : y ≠ (zeroQ : U)) :
+    invQ (mulQ x y) = mulQ (invQ x) (invQ y)
+```
+
+**Importancia**: high
+
+#### Auto-División (divQ_self)
+
+**Enunciado Matemático**: Para $x \in \mathbb{Q}$, $x \neq 0_\mathbb{Q}$: $x / x = 1_\mathbb{Q}$.
+
+**Firma Lean4**:
+
+```lean
+theorem divQ_self (x : U)
+    (hx : x ∈ (RatSet : U)) (hx_ne : x ≠ (zeroQ : U)) :
+    divQ x x = (oneQ : U)
+```
+
+**Importancia**: high
+
+#### División por Uno (divQ_one)
+
+**Enunciado Matemático**: Para $x \in \mathbb{Q}$: $x / 1_\mathbb{Q} = x$.
+
+**Firma Lean4**:
+
+```lean
+theorem divQ_one (x : U) (hx : x ∈ (RatSet : U)) :
+    divQ x (oneQ : U) = x
+```
+
+**Importancia**: high
+
+#### Cancelación (x/y)·y (divQ_mulQ_cancel)
+
+**Enunciado Matemático**: Para $x, y \in \mathbb{Q}$, $y \neq 0_\mathbb{Q}$: $(x / y) \cdot y = x$.
+
+**Firma Lean4**:
+
+```lean
+theorem divQ_mulQ_cancel (x y : U)
+    (hx : x ∈ (RatSet : U)) (hy : y ∈ (RatSet : U))
+    (hy_ne : y ≠ (zeroQ : U)) :
+    mulQ (divQ x y) y = x
+```
+
+**Importancia**: high
+
+#### Cancelación y·(x/y) (mulQ_divQ_cancel)
+
+**Enunciado Matemático**: Para $x, y \in \mathbb{Q}$, $y \neq 0_\mathbb{Q}$: $y \cdot (x / y) = x$.
+
+**Firma Lean4**:
+
+```lean
+theorem mulQ_divQ_cancel (x y : U)
+    (hx : x ∈ (RatSet : U)) (hy : y ∈ (RatSet : U))
+    (hy_ne : y ≠ (zeroQ : U)) :
+    mulQ y (divQ x y) = x
+```
+
+**Importancia**: high
+
+#### Negación en el Factor Izquierdo (negQ_mulQ_left)
+
+**Enunciado Matemático**: $-(x \cdot y) = (-x) \cdot y$ para $x, y \in \mathbb{Q}$.
+
+**Firma Lean4**:
+
+```lean
+theorem negQ_mulQ_left (x y : U)
+    (hx : x ∈ (RatSet : U)) (hy : y ∈ (RatSet : U)) :
+    negQ (mulQ x y) = mulQ (negQ x) y
+```
+
+**Importancia**: high
+
+#### Negación en el Factor Derecho (negQ_mulQ_right)
+
+**Enunciado Matemático**: $-(x \cdot y) = x \cdot (-y)$ para $x, y \in \mathbb{Q}$.
+
+**Firma Lean4**:
+
+```lean
+theorem negQ_mulQ_right (x y : U)
+    (hx : x ∈ (RatSet : U)) (hy : y ∈ (RatSet : U)) :
+    negQ (mulQ x y) = mulQ x (negQ y)
+```
+
+**Importancia**: high
+
+#### Distributividad Izquierda (mulQ_addQ_distrib_left)
+
+**Enunciado Matemático**: $x \cdot (y + z) = x \cdot y + x \cdot z$ para $x, y, z \in \mathbb{Q}$.
+
+**Firma Lean4**:
+
+```lean
+theorem mulQ_addQ_distrib_left (x y z : U)
+    (hx : x ∈ (RatSet : U)) (hy : y ∈ (RatSet : U)) (hz : z ∈ (RatSet : U)) :
+    mulQ x (addQ y z) = addQ (mulQ x y) (mulQ x z)
+```
+
+**Importancia**: high
+
+#### Distributividad Derecha (mulQ_addQ_distrib_right)
+
+**Enunciado Matemático**: $(x + y) \cdot z = x \cdot z + y \cdot z$ para $x, y, z \in \mathbb{Q}$.
+
+**Firma Lean4**:
+
+```lean
+theorem mulQ_addQ_distrib_right (x y z : U)
+    (hx : x ∈ (RatSet : U)) (hy : y ∈ (RatSet : U)) (hz : z ∈ (RatSet : U)) :
+    mulQ (addQ x y) z = addQ (mulQ x z) (mulQ y z)
+```
+
+**Importancia**: high
+
+---
+
 ## 5. Notación y Sintaxis
 
 ### 5.1 Operadores Básicos
@@ -17405,6 +17877,61 @@ export ZFC.Int.Ring (
 )
 ```
 
+---
+
+### 6.58 Rat.Embedding.lean
+
+**Namespace**: `ZFC.Rat.Embedding` (exportado a `ZFC`)
+**Última modificación**: 2026-04-26
+**Dependencias**: `ZFC.Rat.Abs`, `ZFC.Int.Embedding`, `ZFC.Int.Induction` + anteriores
+
+```lean
+export ZFC.Rat.Embedding (
+  intToRat
+  intToRat_mem_RatSet
+  intToRat_injective
+  intToRat_zeroZ
+  intToRat_oneZ
+  intToRat_preserves_add
+  intToRat_preserves_neg
+  intToRat_preserves_sub
+  intToRat_preserves_mul
+  intToRat_preserves_leZ
+  intToRat_reflects_leZ
+  intToRat_preserves_ltZ
+  intToRat_reflects_ltZ
+  intToRat_not_surjective
+  archQ
+)
+```
+
+---
+
+### 6.59 Rat.Field.lean
+
+**Namespace**: `ZFC.Rat.Field` (exportado a `ZFC`)
+**Última modificación**: 2026-04-26
+**Dependencias**: `ZFC.Rat.Mul`, `ZFC.Rat.Order` + anteriores
+
+```lean
+export ZFC.Rat.Field (
+  mulQ_eq_zero_iff
+  mulQ_ne_zeroQ
+  mulQ_left_cancel
+  mulQ_right_cancel
+  invQ_invQ
+  invQ_mulQ
+  divQ_self
+  divQ_one
+  divQ_mulQ_cancel
+  mulQ_divQ_cancel
+  negQ_mulQ_left
+  negQ_mulQ_right
+  mulQ_addQ_distrib_left
+  mulQ_addQ_distrib_right
+)
+```
+
 ## 7. Estado de Proyección por Módulo
 
 ### 7.1 Leyenda de Estados
@@ -17478,6 +18005,8 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `Int/Abs.lean` - Valor absoluto y signo en ℤ: absZ∈ω, signZ∈ℤ, |x·y|=|x|·|y|, desigualdad triangular, signZ·|x|=x. 2 definiciones + 19 teoremas (sin bloque export)
 - `Int/Induction.lean` - Inducción sobre ℤ: por valor absoluto (simple y fuerte), buena ordenación, sobre no-negativos/negativos, descenso infinito. 0 definiciones + 6 teoremas (sin bloque export)
 - `Int/Units.lean` - Unidades de ℤ: isUnitZ, unitZ_iff (x∈ℤ× ⇔ x=1∨x=-1). 1 definición + 1 teorema + 2 exports
+- `Rat/Embedding.lean` - Embedding ℤ→ℚ e identidades de homomorfismo de anillos ordenados: intToRat canónico (n↦n/1), clausura, inyectividad, preserva/refleja +/−/·/≤/<, no suryectivo, propiedad arquimediana. 1 definición + 14 teoremas + 15 exports
+- `Rat/Field.lean` - Axiomas de cuerpo de ℚ: no divisores de cero, cancelación, doble inverso, invQ(x·y), auto-división, división por 1, (x/y)·y=x, distribución de negación, distributividad ·/+. 0 definiciones + 14 teoremas + 14 exports
 
 ### 7.3 Archivos Parcialmente Proyectados
 
@@ -17497,9 +18026,11 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 
 ### 7.5 Archivos Completos Pendientes de Proyectar
 
-(Ninguno — 62/62 módulos proyectados)
+(Ninguno — 64/64 módulos proyectados)
 
 ---
+
+*Última actualización: 2026-04-26 12:00 — Proyección completa de Rat.Embedding.lean (§3.61, §4.57, §6.58: 1 def + 14 teoremas + 15 exports, embedding canónico intToRat : ℤ→ℚ, homomorfismo de anillos ordenados, no suryectividad, propiedad arquimediana) y Rat.Field.lean (§3.62, §4.58, §6.59: 0 def + 14 teoremas + 14 exports, no divisores de cero, cancelación, doble inverso, propiedades de divQ, distributividad ·/+). Tabla §1.1 y §7.2 actualizadas. §7.5: 64/64 módulos proyectados. Estado: ✅ 100% completo, 0 sorry.*
 
 *Última actualización: 2026-04-23 19:00 — Proyección de `tfa_Z` en Int.Div.lean (§3.46 estrategia, §4.42 entrada, §6.43 export block). NEXT-STEPS.md actualizado: Div.lean completamente terminado (25 exports), total Phase 5 = 190 exports, 9 items opcionales pendientes.*
 
