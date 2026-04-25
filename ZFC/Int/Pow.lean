@@ -79,7 +79,7 @@ namespace ZFC
 
     /-- `mulZLeftFn x hx` is the graph of the function y ↦ mulZ x y on ℤ,
         constructed as a subset of ℤ × ℤ via specification. -/
-    noncomputable def mulZLeftFn (x : U) (hx : x ∈ (IntSet : U)) : U :=
+    noncomputable def mulZLeftFn (x : U) (_hx : x ∈ (IntSet : U)) : U :=
       sep ((IntSet : U) ×ₛ IntSet) (fun p => ∃ y, y ∈ (IntSet : U) ∧ p = ⟨y, mulZ x y⟩)
 
     /-- `mulZLeftFn x hx` is a function from ℤ to ℤ. -/

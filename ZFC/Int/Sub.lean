@@ -68,7 +68,7 @@ namespace ZFC
 
     /-- x - (-y) = x + y -/
     theorem subZ_negZ_right (x y : U)
-        (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) :
+        (_hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) :
         subZ x (negZ y) = addZ x y := by
       unfold subZ
       rw [negZ_negZ y hy]

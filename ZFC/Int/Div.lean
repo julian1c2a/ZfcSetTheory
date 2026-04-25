@@ -159,7 +159,7 @@ namespace ZFC
 
     /-- Bridge: if k | n in ω then natToInt k | natToInt n in ℤ. -/
     private theorem divides_natToInt (k n : U)
-        (hk : k ∈ (ω : U)) (hn : n ∈ (ω : U))
+        (hk : k ∈ (ω : U)) (_hn : n ∈ (ω : U))
         (h : divides k n) :
         dividesZ (natToInt k) (natToInt n) := by
       obtain ⟨q, hq, h_eq⟩ := h
@@ -225,7 +225,7 @@ namespace ZFC
 
     /-- Bridge: dividesZ a b with a, b ∈ ℤ implies divides (absZ a) (absZ b) in ω. -/
     private theorem dividesZ_to_divides_abs (a b : U)
-        (ha : a ∈ (IntSet : U)) (hb : b ∈ (IntSet : U))
+        (ha : a ∈ (IntSet : U)) (_hb : b ∈ (IntSet : U))
         (h : dividesZ a b) :
         divides (absZ a) (absZ b) := by
       obtain ⟨k, hk, h_eq⟩ := h
