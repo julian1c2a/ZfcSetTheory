@@ -16,3 +16,6 @@ import ZFC.Rat.Order
 import ZFC.Rat.Abs
 import ZFC.Rat.Embedding
 import ZFC.Rat.Field
+import ZFC.Rat.Sequences
+import ZFC.Rat.Convergence
+import ZFC.Rat.CauchyQ
