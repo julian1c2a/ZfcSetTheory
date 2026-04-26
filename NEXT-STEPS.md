@@ -15,9 +15,9 @@
 - ✅ **Anotaciones REFERENCE.md** (Phase 4): @axiom_system, @importance, ~280 teoremas anotados
 - ✅ **Enteros ℤ** (Phase 5, 15 módulos): 190 exports, 0 sorry, 0 errores
 - ✅ **Racionales ℚ** (Phase 6, 9 módulos): `Equiv`, `Basic`, `Add`, `Neg`, `Mul`, `Order`, `Abs`, `Embedding`, `Field` — 0 sorry, 0 errores
-- 🔄 **Sucesiones en ℚ** (Phase 6.5, 6 módulos compilan): `Int/MaxMin`, `Rat/MaxMin`, `Rat/Sequences`, `Rat/Convergence`, `Rat/CauchyQ`, `Rat/Monotone` — `cauchy_bounded` demostrado sin sorry; ~3 sorry legítimos (Real.Completeness)
+- 🔄 **Sucesiones en ℚ** (Phase 6.5, 6 módulos compilan): `Int/MaxMin`, `Rat/MaxMin`, `Rat/Sequences`, `Rat/Convergence`, `Rat/CauchyQ`, `Rat/Monotone` — `cauchy_bounded`, `nondecreasing_bounded_isCauchy`, `nonincreasing_bounded_isCauchy`, `convergent_isBounded` demostrados sin sorry; ~2 sorry legítimos restantes (aritmética avanzada de límites en `Convergence.lean`)
 
-**Estado**: 87 módulos, ~3 sorry legítimos (requieren Real.Completeness), 0 errores de compilación.
+**Estado**: 87 módulos, ~2 sorry legítimos (aritmética avanzada de límites en `Rat/Convergence.lean`), 0 errores de compilación.
 
 ---
 
@@ -75,7 +75,7 @@
 | 1 | `Rat/Sequences.lean` | `IsSeqQ`, `constSeqQ`, `addSeqQ`, `negSeqQ`, `mulSeqQ` | ✅ 0 sorry |
 | 2 | `Rat/Convergence.lean` | `convergesToQ`, `limit_unique`, `convergesToQ_add`, `convergesToQ_mul_bounded`, `subseq_convergent`, `IsSubseqOf` | 🔄 2 sorry (aritmética avanzada de límites) |
 | 3 | `Rat/CauchyQ.lean` | `IsCauchyQ`, `cauchy_of_convergentQ`, `cauchy_bounded`, `constSeqQ_isCauchy` | ✅ 0 sorry |
-| 4 | `Rat/Monotone.lean` | `isNondecreasingQ`, `isBoundedQ`, `limit_le_of_bounded_above`, `convergent_isBounded` | 🔄 1 sorry (`convergent_isBounded`) |
+| 4 | `Rat/Monotone.lean` | `isNondecreasingQ`, `isBoundedQ`, `limit_le_of_bounded_above`, `convergent_isBounded`, `nondecreasing_bounded_isCauchy`, `nonincreasing_bounded_isCauchy` | ✅ 0 sorry |
 | 5 | `Rat/SqrtApprox.lean` | `sqrtApprox`, `sqrtApprox_is_cauchy`, `sqrt2_irrational`, `sqrtApprox_not_convergent` | ❌ No iniciado |
 
 **Teoremas clave de `Rat/Convergence.lean`** (plan detallado):
@@ -148,11 +148,11 @@
 
 ### Acotamiento y monotonía (en `Rat/Monotone.lean`)
 
-1. `nondecreasing_bounded_isCauchy` — gₙ no-decreciente + acotada superiormente ⟹ Cauchy. (**eliminado de `Monotone.lean`** — requiere Real.Completeness; irá en `ZFC.Real.Monotone`)
-2. `nonincreasing_bounded_isCauchy` — gₙ no-creciente + acotada inferiormente ⟹ Cauchy. (**eliminado de `Monotone.lean`** — requiere Real.Completeness; irá en `ZFC.Real.Monotone`)
+1. `nondecreasing_bounded_isCauchy` — gₙ no-decreciente + acotada superiormente ⟹ Cauchy. (**✅ probado** — demostración directa por propiedad arquimediana en ℚ; inducción + `archQ`; no requiere Real.Completeness)
+2. `nonincreasing_bounded_isCauchy` — gₙ no-creciente + acotada inferiormente ⟹ Cauchy. (**✅ probado** — dual de `nondecreasing_bounded_isCauchy`; argumento arquimediano simétrico)
 3. `limit_le_of_bounded_above f L M` — f→L, ∀n f(n)≤M ⟹ L≤M. (**✅ probado**)
 4. `le_limit_of_bounded_below f L M` — f→L, ∀n M≤f(n) ⟹ M≤L. (**✅ probado**)
-5. `convergent_isBounded f L` — f→L ⟹ f está acotada (superior e inferiormente). (**sorry: necesita `maxQ` iterado sobre segmento finito con índice variable**)
+5. `convergent_isBounded f L` — f→L ⟹ f está acotada (superior e inferiormente). (**✅ probado** vía `cauchy_bounded f hf (cauchy_of_convergentQ f L hf hL hconv)`)
 
 **Teoremas clave de `Rat/CauchyQ.lean`** (plan detallado):
 
