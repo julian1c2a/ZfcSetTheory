@@ -12,18 +12,21 @@ License: MIT
 
   * `convergesToQ f L`   — f converges to L: ε-N definition over ℚ
   * `hasLimitQ f`        — f has some limit in ℚ
+  * `IsSubseqOf g f`     — g is a subsequence of f via some strictly increasing φ: ω → ω
 
   ## Main Theorems
 
-  * `convergesToQ_mem_RatSet` — the limit of a convergent sequence lies in ℚ
-  * `limit_unique`            — limits are unique (if L₁, L₂ are both limits then L₁ = L₂)
-  * `convergesToQ_const`      — the constant sequence at a converges to a
+  * `convergesToQ_const`   — the constant sequence at a converges to a
+  * `limit_unique`         — limits are unique (if L₁, L₂ are both limits then L₁ = L₂)
+  * `subseq_convergent`    — every subsequence of a convergent sequence converges to the same limit
+  * `convergesToQ_add`     — f → L₁, g → L₂ implies (f+g) → L₁+L₂
 
 REFERENCE.md: Este archivo debe proyectarse en REFERENCE.md cuando compile.
 -/
 
 import ZFC.Rat.Sequences
 import ZFC.Rat.Abs
+import ZFC.Rat.Field
 import ZFC.Nat.MaxMin
 
 namespace ZFC
@@ -48,12 +51,230 @@ namespace ZFC
   open ZFC.Rat.Mul
   open ZFC.Rat.Order
   open ZFC.Rat.Abs
+  open ZFC.Rat.Field
   open ZFC.Rat.Sequences
 
   universe u
   variable {U : Type u}
 
   namespace Rat.Convergence
+
+    -- =========================================================================
+    -- Section 0: Private helpers
+    -- =========================================================================
+
+    /-- oneQ is positive: 0 < 1 in ℚ -/
+    private theorem oneQ_pos : isPositiveQ (oneQ : U) := by
+      constructor
+      · -- leQ zeroQ oneQ: use canonical reps and square_nonneg
+        rw [leQ_iff_repr zeroQ oneQ zeroQ_mem_RatSet oneQ_mem_RatSet]
+        have hone_i : (oneZ : U) ∈ (IntSet : U) := oneZ_mem_IntSet
+        have hone_nz : (oneZ : U) ∈ (NonZeroIntSet : U) := oneZ_mem_NonZeroIntSet
+        have h_repr : leQ_repr zeroZ oneZ oneZ oneZ := by
+          unfold leQ_repr
+          have h_one : mulZ oneZ oneZ = (oneZ : U) :=
+            mulZ_one_left oneZ hone_i
+          have h_zero : mulZ zeroZ oneZ = (zeroZ : U) :=
+            mulZ_zero_left oneZ hone_i
+          -- LHS = mulZ (mulZ zeroZ oneZ) (mulZ oneZ oneZ) = mulZ zeroZ oneZ = zeroZ
+          have lhs_eq : mulZ (mulZ zeroZ oneZ) (mulZ oneZ oneZ) = (zeroZ : U) := by
+            rw [h_one, h_zero, mulZ_zero_left oneZ hone_i]
+          -- RHS = mulZ (mulZ oneZ oneZ) (mulZ oneZ oneZ) = mulZ oneZ oneZ = oneZ
+          have rhs_eq : mulZ (mulZ oneZ oneZ) (mulZ oneZ oneZ) = (oneZ : U) := by
+            simp only [h_one]
+          rw [lhs_eq, rhs_eq]
+          -- Goal: leZ zeroZ oneZ. From square_nonneg oneZ : leZ zeroZ (mulZ oneZ oneZ) = leZ zeroZ oneZ
+          have sq := square_nonneg oneZ hone_i
+          rwa [h_one] at sq
+        exact ⟨zeroZ, oneZ, oneZ, oneZ, zeroZ_mem_IntSet, hone_nz,
+               hone_i, hone_nz, rfl, rfl, h_repr⟩
+      · exact zeroQ_ne_oneQ
+
+    /-- 2 in ℚ -/
+    private noncomputable def twoQ : U := addQ (oneQ : U) (oneQ : U)
+
+    private theorem twoQ_mem_RatSet : (twoQ : U) ∈ (RatSet : U) :=
+      addQ_in_RatSet oneQ oneQ oneQ_mem_RatSet oneQ_mem_RatSet
+
+    /-- 1+1 ≠ 0 in ℚ -/
+    private theorem twoQ_ne_zeroQ : (twoQ : U) ≠ (zeroQ : U) := by
+      intro h
+      -- twoQ = zeroQ → addQ oneQ oneQ = zeroQ
+      -- addQ_leQ_addQ zeroQ oneQ oneQ: leQ (addQ zeroQ oneQ) (addQ oneQ oneQ)
+      -- = leQ oneQ zeroQ (using addQ_zero_left and h)
+      -- With leQ zeroQ oneQ (from oneQ_pos), we get oneQ = zeroQ → contradiction
+      have h_le : leQ (addQ (zeroQ : U) (oneQ : U)) (addQ (oneQ : U) (oneQ : U)) :=
+        addQ_leQ_addQ zeroQ oneQ oneQ zeroQ_mem_RatSet oneQ_mem_RatSet oneQ_mem_RatSet
+          oneQ_pos.1
+      rw [addQ_zero_left oneQ oneQ_mem_RatSet, h] at h_le
+      -- h_le : leQ oneQ zeroQ; oneQ_pos.1 : leQ zeroQ oneQ
+      have h_eq : (oneQ : U) = zeroQ :=
+        leQ_antisymm oneQ zeroQ oneQ_mem_RatSet zeroQ_mem_RatSet h_le oneQ_pos.1
+      exact zeroQ_ne_oneQ h_eq.symm
+
+    /-- Half of ε: ε / 2 = ε · (1/2) -/
+    private noncomputable def halfQ (ε : U) : U := mulQ ε (invQ twoQ)
+
+    private theorem halfQ_mem_RatSet (ε : U) (hε : ε ∈ (RatSet : U)) :
+        halfQ ε ∈ (RatSet : U) :=
+      mulQ_in_RatSet ε (invQ twoQ) hε (invQ_in_RatSet twoQ twoQ_mem_RatSet)
+
+    /-- invQ(2) + invQ(2) = 1  (because (1/2 + 1/2)·2 = 1·2) -/
+    private theorem inv_twoQ_add :
+        addQ (invQ (twoQ : U)) (invQ (twoQ : U)) = (oneQ : U) := by
+      have hinv : invQ (twoQ : U) ∈ (RatSet : U) := invQ_in_RatSet twoQ twoQ_mem_RatSet
+      -- mulQ (invQ twoQ) twoQ = oneQ
+      have h_mul := mulQ_invQ_left twoQ twoQ_mem_RatSet twoQ_ne_zeroQ
+      -- expand twoQ = oneQ + oneQ
+      show addQ (invQ twoQ) (invQ twoQ) = oneQ
+      rw [show (twoQ : U) = addQ (oneQ : U) (oneQ : U) from rfl] at h_mul
+      rw [mulQ_addQ_distrib_left (invQ twoQ) oneQ oneQ
+            hinv oneQ_mem_RatSet oneQ_mem_RatSet,
+          mulQ_one_right (invQ twoQ) hinv] at h_mul
+      exact h_mul
+
+    /-- ε/2 + ε/2 = ε -/
+    private theorem half_add_half (ε : U) (hε : ε ∈ (RatSet : U)) :
+        addQ (halfQ ε) (halfQ ε) = ε := by
+      show addQ (mulQ ε (invQ twoQ)) (mulQ ε (invQ twoQ)) = ε
+      rw [← mulQ_addQ_distrib_right ε (invQ twoQ) (invQ twoQ)
+            hε (invQ_in_RatSet twoQ twoQ_mem_RatSet) (invQ_in_RatSet twoQ twoQ_mem_RatSet),
+          inv_twoQ_add, mulQ_one_right ε hε]
+
+    /-- If ε > 0 then ε/2 > 0 -/
+    private theorem halfQ_pos (ε : U) (hε : ε ∈ (RatSet : U)) (hε_pos : isPositiveQ ε) :
+        isPositiveQ (halfQ ε) := by
+      have hε₂ : halfQ ε ∈ (RatSet : U) := halfQ_mem_RatSet ε hε
+      rcases rat_trichotomy_order (halfQ ε) hε₂ with h | h | h
+      · exact h
+      · -- halfQ ε = zeroQ → ε = 0, contradiction
+        exfalso
+        have : ε = (zeroQ : U) := by
+          have hh := half_add_half ε hε
+          rw [h, addQ_zero_left zeroQ zeroQ_mem_RatSet] at hh
+          exact hh.symm
+        exact hε_pos.2 this
+      · -- isNegativeQ (halfQ ε): halfQ ε < 0, so 2·(halfQ ε) < halfQ ε ≤ 0
+        exfalso
+        -- h : ltQ (halfQ ε) zeroQ, so h.1 : leQ (halfQ ε) zeroQ
+        have h_le : leQ (halfQ ε) (zeroQ : U) := h.1
+        -- leQ (halfQ ε + halfQ ε) (halfQ ε + 0) = leQ ε (halfQ ε)
+        have h_le2 : leQ (addQ (halfQ ε) (halfQ ε)) (addQ (halfQ ε) (zeroQ : U)) :=
+          addQ_leQ_addQ (halfQ ε) (zeroQ : U) (halfQ ε) hε₂ zeroQ_mem_RatSet hε₂ h_le
+        rw [addQ_zero_right (halfQ ε) hε₂, half_add_half ε hε] at h_le2
+        -- h_le2 : leQ ε (halfQ ε); h_le : leQ (halfQ ε) zeroQ
+        have h_le3 : leQ ε (zeroQ : U) :=
+          leQ_trans ε (halfQ ε) zeroQ hε hε₂ zeroQ_mem_RatSet h_le2 h_le
+        -- hε_pos.1 : leQ zeroQ ε, h_le3 : leQ ε zeroQ → ε = zeroQ
+        exact hε_pos.2 (leQ_antisymm ε zeroQ hε zeroQ_mem_RatSet h_le3 hε_pos.1).symm
+
+    /-- |x − y| = |y − x| -/
+    private theorem absQ_symm (x y : U) (hx : x ∈ (RatSet : U)) (hy : y ∈ (RatSet : U)) :
+        absQ (subQ x y) = absQ (subQ y x) := by
+      have hxy : subQ x y ∈ (RatSet : U) :=
+        addQ_in_RatSet x (negQ y) hx (negQ_in_RatSet y hy)
+      have hyx : subQ y x ∈ (RatSet : U) :=
+        addQ_in_RatSet y (negQ x) hy (negQ_in_RatSet x hx)
+      -- Show subQ y x = negQ (subQ x y)
+      have h_neg : subQ y x = negQ (subQ x y) := by
+        -- (subQ x y) + (subQ y x) = 0
+        have h_sum : addQ (subQ x y) (subQ y x) = (zeroQ : U) :=
+          calc addQ (addQ x (negQ y)) (addQ y (negQ x))
+              = addQ x (addQ (negQ y) (addQ y (negQ x))) := by
+                rw [addQ_assoc x (negQ y) (addQ y (negQ x)) hx
+                      (negQ_in_RatSet y hy) (addQ_in_RatSet y (negQ x) hy (negQ_in_RatSet x hx))]
+            _ = addQ x (addQ (addQ (negQ y) y) (negQ x)) := by
+                rw [← addQ_assoc (negQ y) y (negQ x) (negQ_in_RatSet y hy) hy (negQ_in_RatSet x hx)]
+            _ = addQ x (addQ zeroQ (negQ x)) := by rw [negQ_addQ_left y hy]
+            _ = addQ x (negQ x) := by rw [addQ_zero_left (negQ x) (negQ_in_RatSet x hx)]
+            _ = zeroQ := negQ_addQ_right x hx
+        -- From x + (-y + y + (-x)) = 0 we derive subQ y x = negQ (subQ x y)
+        calc subQ y x
+            = addQ (zeroQ : U) (subQ y x) := (addQ_zero_left (subQ y x) hyx).symm
+          _ = addQ (addQ (negQ (subQ x y)) (subQ x y)) (subQ y x) := by
+                rw [negQ_addQ_left (subQ x y) hxy]
+          _ = addQ (negQ (subQ x y)) (addQ (subQ x y) (subQ y x)) := by
+                rw [addQ_assoc (negQ (subQ x y)) (subQ x y) (subQ y x)
+                      (negQ_in_RatSet (subQ x y) hxy) hxy hyx]
+          _ = addQ (negQ (subQ x y)) (zeroQ : U) := by rw [h_sum]
+          _ = negQ (subQ x y) :=
+                addQ_zero_right (negQ (subQ x y)) (negQ_in_RatSet (subQ x y) hxy)
+      rw [h_neg, absQ_negQ (subQ x y) hxy]
+
+    /-- Triangle inequality for subtraction: |a − c| ≤ |a − b| + |b − c| -/
+    private theorem absQ_triangle_sub (a b c : U)
+        (ha : a ∈ (RatSet : U)) (hb : b ∈ (RatSet : U)) (hc : c ∈ (RatSet : U)) :
+        leQ (absQ (subQ a c)) (addQ (absQ (subQ a b)) (absQ (subQ b c))) := by
+      have hab : subQ a b ∈ (RatSet : U) :=
+        addQ_in_RatSet a (negQ b) ha (negQ_in_RatSet b hb)
+      have hbc : subQ b c ∈ (RatSet : U) :=
+        addQ_in_RatSet b (negQ c) hb (negQ_in_RatSet c hc)
+      -- subQ a c = addQ (subQ a b) (subQ b c)
+      have h_eq : subQ a c = addQ (subQ a b) (subQ b c) :=
+        calc addQ a (negQ c)
+            = addQ a (addQ (addQ (negQ b) b) (negQ c)) := by
+                rw [negQ_addQ_left b hb, addQ_zero_left (negQ c) (negQ_in_RatSet c hc)]
+          _ = addQ a (addQ (negQ b) (addQ b (negQ c))) := by
+                rw [addQ_assoc (negQ b) b (negQ c) (negQ_in_RatSet b hb) hb (negQ_in_RatSet c hc)]
+          _ = addQ (addQ a (negQ b)) (addQ b (negQ c)) := by
+                rw [← addQ_assoc a (negQ b) (addQ b (negQ c)) ha (negQ_in_RatSet b hb)
+                      (addQ_in_RatSet b (negQ c) hb (negQ_in_RatSet c hc))]
+      rw [h_eq]
+      exact absQ_triangle (subQ a b) (subQ b c) hab hbc
+
+    /-- Transitivity: a ≤ b < c → a < c -/
+    private theorem leQ_ltQ_trans (a b c : U)
+        (ha : a ∈ (RatSet : U)) (hb : b ∈ (RatSet : U)) (hc : c ∈ (RatSet : U))
+        (h_ab : leQ a b) (h_bc : ltQ b c) : ltQ a c :=
+      ⟨leQ_trans a b c ha hb hc h_ab h_bc.1,
+       fun h_ac => h_bc.2 (leQ_antisymm b c hb hc h_bc.1 (h_ac ▸ h_ab))⟩
+
+    /-- a ≤ c, b < d → a + b < c + d -/
+    private theorem ltQ_addQ_of_leQ_ltQ (a b c d : U)
+        (ha : a ∈ (RatSet : U)) (hb : b ∈ (RatSet : U))
+        (hc : c ∈ (RatSet : U)) (hd : d ∈ (RatSet : U))
+        (hac : leQ a c) (hbd : ltQ b d) :
+        ltQ (addQ a b) (addQ c d) := by
+      -- Step 1: leQ (addQ a b) (addQ a d) via addQ_leQ_addQ on the right slot
+      have h_le1 : leQ (addQ a b) (addQ a d) := by
+        have := addQ_leQ_addQ b d a hb hd ha hbd.1
+        rwa [addQ_comm b a hb ha, addQ_comm d a hd ha] at this
+      -- Step 2: leQ (addQ a d) (addQ c d) via addQ_leQ_addQ on the left slot
+      have h_le2 : leQ (addQ a d) (addQ c d) :=
+        addQ_leQ_addQ a c d ha hc hd hac
+      constructor
+      · exact leQ_trans (addQ a b) (addQ a d) (addQ c d)
+          (addQ_in_RatSet a b ha hb) (addQ_in_RatSet a d ha hd)
+          (addQ_in_RatSet c d hc hd) h_le1 h_le2
+      · -- addQ a b ≠ addQ c d
+        intro h_eq
+        -- From h_le1 and h_eq: leQ (addQ c d) (addQ a d)
+        have h_le_rev : leQ (addQ c d) (addQ a d) := h_eq ▸ h_le1
+        -- By antisymmetry: addQ a d = addQ c d
+        have h_ad_eq : addQ a d = addQ c d :=
+          leQ_antisymm (addQ a d) (addQ c d)
+            (addQ_in_RatSet a d ha hd) (addQ_in_RatSet c d hc hd) h_le2 h_le_rev
+        -- From h_eq and h_ad_eq: addQ a b = addQ a d
+        have h_ab_ad : addQ a b = addQ a d := by rw [h_eq, h_ad_eq.symm]
+        -- By addQ left cancellation: b = d
+        have h_bd : b = d := by
+          have step := congrArg (fun x => addQ (negQ a) x) h_ab_ad
+          rw [← addQ_assoc (negQ a) a b (negQ_in_RatSet a ha) ha hb,
+              ← addQ_assoc (negQ a) a d (negQ_in_RatSet a ha) ha hd,
+              negQ_addQ_left a ha, addQ_zero_left b hb, addQ_zero_left d hd] at step
+          exact step
+        exact hbd.2 h_bd
+
+    /-- ≤ is transitive in ω: m ≤ n, n ≤ k → m ≤ k  (where ≤ is ∈ ∨ =) -/
+    private theorem omega_le_trans (m n k : U) (hm : m ∈ ω) (hn : n ∈ ω) (hk : k ∈ ω)
+        (h1 : m ∈ n ∨ m = n) (h2 : n ∈ k ∨ n = k) : m ∈ k ∨ m = k := by
+      rcases h1 with hmn | rfl
+      · rcases h2 with hnk | rfl
+        · exact Or.inl (mem_trans m n k
+            (mem_Omega_is_Nat m hm) (mem_Omega_is_Nat n hn) (mem_Omega_is_Nat k hk)
+            hmn hnk)
+        · exact Or.inl hmn
+      · exact h2
 
     -- =========================================================================
     -- Section 1: Convergence definition
@@ -105,15 +326,83 @@ namespace ZFC
     -- Section 4: Uniqueness of limits
     -- =========================================================================
 
-    /-- Limits are unique: if f → L₁ and f → L₂ then L₁ = L₂.
-        Proof sketch: if L₁ ≠ L₂, take ε = |L₁ − L₂| / 2. For n large enough,
-        |L₁ − L₂| ≤ |f(n)−L₁| + |f(n)−L₂| < ε + ε = |L₁ − L₂|, contradiction.
-        The complete proof requires divQ, a "half epsilon" lemma, and the
-        generalized triangle inequality |a−c| ≤ |a−b| + |b−c|. -/
+    /-- Limits are unique: if f → L₁ and f → L₂ then L₁ = L₂. -/
     theorem limit_unique (f L₁ L₂ : U)
-        (hL₁ : L₁ ∈ (RatSet : U)) (hL₂ : L₂ ∈ (RatSet : U))
+        (hf : IsSeqQ f) (hL₁ : L₁ ∈ (RatSet : U)) (hL₂ : L₂ ∈ (RatSet : U))
         (h₁ : convergesToQ f L₁) (h₂ : convergesToQ f L₂) :
         L₁ = L₂ := by
+      by_contra h_ne
+      -- ε₀ = |L₁ − L₂| > 0
+      have hL₁L₂ : subQ L₁ L₂ ∈ (RatSet : U) :=
+        addQ_in_RatSet L₁ (negQ L₂) hL₁ (negQ_in_RatSet L₂ hL₂)
+      have h_sub_ne : subQ L₁ L₂ ≠ (zeroQ : U) := by
+        intro h_eq
+        apply h_ne
+        have step : addQ (addQ L₁ (negQ L₂)) L₂ = addQ (zeroQ : U) L₂ :=
+          congrArg (fun x => addQ x L₂) h_eq
+        rw [addQ_assoc L₁ (negQ L₂) L₂ hL₁ (negQ_in_RatSet L₂ hL₂) hL₂,
+            negQ_addQ_left L₂ hL₂,
+            addQ_zero_right L₁ hL₁,
+            addQ_zero_left L₂ hL₂] at step
+        exact step
+      have hε_pos : isPositiveQ (absQ (subQ L₁ L₂)) :=
+        absQ_pos (subQ L₁ L₂) hL₁L₂ h_sub_ne
+      let ε := absQ (subQ L₁ L₂)
+      have hε : ε ∈ (RatSet : U) := absQ_in_RatSet (subQ L₁ L₂) hL₁L₂
+      let ε₂ := halfQ ε
+      have hε₂ : ε₂ ∈ (RatSet : U) := halfQ_mem_RatSet ε hε
+      have hε₂_pos : isPositiveQ ε₂ := halfQ_pos ε hε hε_pos
+      -- Get N₁ and N₂
+      obtain ⟨N₁, hN₁, h₁'⟩ := h₁ ε₂ hε₂ hε₂_pos
+      obtain ⟨N₂, hN₂, h₂'⟩ := h₂ ε₂ hε₂ hε₂_pos
+      -- n = max(N₁, N₂) ≥ both thresholds
+      let n := maxOf N₁ N₂
+      have hn := maxOf_in_Omega N₁ N₂ hN₁ hN₂
+      have hn1 := h₁' n hn (le_maxOf_left N₁ N₂ hN₁ hN₂)
+      have hn2 := h₂' n hn (le_maxOf_right N₁ N₂ hN₁ hN₂)
+      -- f(n) ∈ RatSet
+      have hfn : (f⦅n⦆ : U) ∈ (RatSet : U) := seqTermQ_mem_RatSet f n hf hn
+      -- Triangle: ε = |L₁−L₂| ≤ |f(n)−L₁| + |f(n)−L₂|
+      have h_tri : leQ ε (addQ (absQ (subQ (f⦅n⦆) L₁)) (absQ (subQ (f⦅n⦆) L₂))) := by
+        have h_tri_sub :=
+          absQ_triangle_sub L₁ (f⦅n⦆) L₂ hL₁ hfn hL₂
+        -- |L₁ − f(n)| = |f(n) − L₁|
+        rwa [absQ_symm L₁ (f⦅n⦆) hL₁ hfn] at h_tri_sub
+      -- |f(n)−L₁| + |f(n)−L₂| < ε₂ + ε₂ = ε
+      have h_sum_lt :
+          ltQ (addQ (absQ (subQ (f⦅n⦆) L₁)) (absQ (subQ (f⦅n⦆) L₂))) ε := by
+        have h := ltQ_addQ_of_leQ_ltQ
+          (absQ (subQ (f⦅n⦆) L₁)) (absQ (subQ (f⦅n⦆) L₂)) ε₂ ε₂
+          (absQ_in_RatSet _ (addQ_in_RatSet (f⦅n⦆) (negQ L₁) hfn (negQ_in_RatSet L₁ hL₁)))
+          (absQ_in_RatSet _ (addQ_in_RatSet (f⦅n⦆) (negQ L₂) hfn (negQ_in_RatSet L₂ hL₂)))
+          hε₂ hε₂ hn1.1 hn2
+        rwa [half_add_half ε hε] at h
+      -- leQ ε X and ltQ X ε → ltQ ε ε → contradiction
+      exact ltQ_irrefl ε hε (leQ_ltQ_trans ε _ ε hε
+        (addQ_in_RatSet _ _ (absQ_in_RatSet _ (addQ_in_RatSet (f⦅n⦆) (negQ L₁) hfn (negQ_in_RatSet L₁ hL₁)))
+          (absQ_in_RatSet _ (addQ_in_RatSet (f⦅n⦆) (negQ L₂) hfn (negQ_in_RatSet L₂ hL₂))))
+        hε h_tri h_sum_lt)
+
+    -- =========================================================================
+    -- Section 5: Subsequences
+    -- =========================================================================
+
+    /-- g is a subsequence of f: there exists a strictly increasing function
+        φ : ω → ω such that g(n) = f(φ(n)) for all n ∈ ω. -/
+    def IsSubseqOf (g f : U) : Prop :=
+      ∃ φ : U, IsFunction φ (ω : U) (ω : U) ∧
+        (∀ m n : U, m ∈ (ω : U) → n ∈ (ω : U) → m ∈ n → (φ⦅m⦆) ∈ (φ⦅n⦆)) ∧
+        (∀ n : U, n ∈ (ω : U) → g⦅n⦆ = f⦅φ⦅n⦆⦆)
+
+    /-- Every subsequence of a convergent sequence converges to the same limit.
+        Proof sketch: given ε > 0, let N be the threshold from f → L.
+        Since φ is strictly increasing we have φ(n) ≥ n for all n ∈ ω
+        (proved by induction: φ(0) ≥ 0 trivially; φ(n+1) > φ(n) ≥ n implies φ(n+1) ≥ n+1).
+        So for n ≥ N we get φ(n) ≥ n ≥ N, hence |g(n) − L| = |f(φ(n)) − L| < ε. -/
+    theorem subseq_convergent (f g L : U)
+        (hL : L ∈ (RatSet : U)) (hf : IsSeqQ f) (hg : IsSeqQ g)
+        (hconv : convergesToQ f L) (hsub : IsSubseqOf g f) :
+        convergesToQ g L := by
       sorry
 
     -- =========================================================================
@@ -126,8 +415,95 @@ namespace ZFC
         (hf : IsSeqQ f) (hg : IsSeqQ g)
         (h₁ : convergesToQ f L₁) (h₂ : convergesToQ g L₂) :
         convergesToQ (addSeqQ f g) (addQ L₁ L₂) := by
-      -- Proof: use ε/2 for each; combine using triangle inequality.
-      sorry
+      intro ε hε hε_pos
+      let ε₂ := halfQ ε
+      have hε₂ : ε₂ ∈ (RatSet : U) := halfQ_mem_RatSet ε hε
+      have hε₂_pos : isPositiveQ ε₂ := halfQ_pos ε hε hε_pos
+      -- Get thresholds N₁, N₂ for f and g
+      obtain ⟨N₁, hN₁, h₁'⟩ := h₁ ε₂ hε₂ hε₂_pos
+      obtain ⟨N₂, hN₂, h₂'⟩ := h₂ ε₂ hε₂ hε₂_pos
+      let N := maxOf N₁ N₂
+      have hN := maxOf_in_Omega N₁ N₂ hN₁ hN₂
+      refine ⟨N, hN, fun n hn h_ge => ?_⟩
+      -- N₁ ≤ N ≤ n and N₂ ≤ N ≤ n
+      have hN1n : N₁ ∈ n ∨ N₁ = n :=
+        omega_le_trans N₁ N n hN₁ hN hn (le_maxOf_left N₁ N₂ hN₁ hN₂) h_ge
+      have hN2n : N₂ ∈ n ∨ N₂ = n :=
+        omega_le_trans N₂ N n hN₂ hN hn (le_maxOf_right N₁ N₂ hN₁ hN₂) h_ge
+      have hn1 := h₁' n hn hN1n  -- ltQ |f(n)−L₁| ε₂
+      have hn2 := h₂' n hn hN2n  -- ltQ |g(n)−L₂| ε₂
+      have hfn : (f⦅n⦆ : U) ∈ (RatSet : U) := seqTermQ_mem_RatSet f n hf hn
+      have hgn : (g⦅n⦆ : U) ∈ (RatSet : U) := seqTermQ_mem_RatSet g n hg hn
+      -- Goal: ltQ (absQ (subQ ((addSeqQ f g)⦅n⦆) (addQ L₁ L₂))) ε
+      rw [addSeqQ_apply f g hf hg n hn]
+      -- subQ (f(n)+g(n)) (L₁+L₂) = (f(n)−L₁) + (g(n)−L₂)
+      have h_sub_eq : subQ (addQ (f⦅n⦆) (g⦅n⦆)) (addQ L₁ L₂) =
+          addQ (subQ (f⦅n⦆) L₁) (subQ (g⦅n⦆) L₂) :=
+        calc addQ (addQ (f⦅n⦆) (g⦅n⦆)) (negQ (addQ L₁ L₂))
+            = addQ (f⦅n⦆) (addQ (g⦅n⦆) (negQ (addQ L₁ L₂))) := by
+                rw [addQ_assoc (f⦅n⦆) (g⦅n⦆) (negQ (addQ L₁ L₂)) hfn hgn
+                      (negQ_in_RatSet (addQ L₁ L₂) (addQ_in_RatSet L₁ L₂ hL₁ hL₂))]
+          _ = addQ (f⦅n⦆) (addQ (g⦅n⦆) (addQ (negQ L₁) (negQ L₂))) := by
+                rw [show negQ (addQ L₁ L₂) = addQ (negQ L₁) (negQ L₂) from by
+                      -- Use: negQ_addQ_distrib (from Abs.lean, re-proved inline)
+                      -- negQ (L₁+L₂) + (L₁+L₂) = 0 and (negQ L₁ + negQ L₂) + (L₁+L₂) = 0
+                      -- So they're equal by uniqueness of inverse
+                      have h1 : addQ (addQ (negQ L₁) (negQ L₂)) (addQ L₁ L₂) = zeroQ := by
+                        rw [addQ_assoc (negQ L₁) (negQ L₂) (addQ L₁ L₂)
+                              (negQ_in_RatSet L₁ hL₁) (negQ_in_RatSet L₂ hL₂)
+                              (addQ_in_RatSet L₁ L₂ hL₁ hL₂),
+                            ← addQ_assoc (negQ L₂) L₁ L₂ (negQ_in_RatSet L₂ hL₂) hL₁ hL₂,
+                            addQ_comm (negQ L₂) L₁ (negQ_in_RatSet L₂ hL₂) hL₁,
+                            addQ_assoc L₁ (negQ L₂) L₂ hL₁ (negQ_in_RatSet L₂ hL₂) hL₂,
+                            negQ_addQ_left L₂ hL₂, addQ_zero_right L₁ hL₁,
+                            negQ_addQ_left L₁ hL₁]
+                      have h2 : addQ (negQ (addQ L₁ L₂)) (addQ L₁ L₂) = zeroQ :=
+                        negQ_addQ_left (addQ L₁ L₂) (addQ_in_RatSet L₁ L₂ hL₁ hL₂)
+                      -- Both are inverses of (L₁+L₂), so equal
+                      have step : addQ (addQ (negQ L₁) (negQ L₂)) (addQ L₁ L₂) =
+                          addQ (negQ (addQ L₁ L₂)) (addQ L₁ L₂) := by rw [h1, h2]
+                      have step2 := congrArg (fun x => addQ x (negQ (addQ L₁ L₂))) step
+                      rw [addQ_assoc _ _ _ (addQ_in_RatSet (negQ L₁) (negQ L₂)
+                            (negQ_in_RatSet L₁ hL₁) (negQ_in_RatSet L₂ hL₂))
+                          (addQ_in_RatSet L₁ L₂ hL₁ hL₂)
+                          (negQ_in_RatSet (addQ L₁ L₂) (addQ_in_RatSet L₁ L₂ hL₁ hL₂)),
+                          negQ_addQ_right (addQ L₁ L₂) (addQ_in_RatSet L₁ L₂ hL₁ hL₂),
+                          addQ_zero_right _ (addQ_in_RatSet (negQ L₁) (negQ L₂)
+                            (negQ_in_RatSet L₁ hL₁) (negQ_in_RatSet L₂ hL₂)),
+                          addQ_assoc _ _ _ (negQ_in_RatSet (addQ L₁ L₂) (addQ_in_RatSet L₁ L₂ hL₁ hL₂))
+                          (addQ_in_RatSet L₁ L₂ hL₁ hL₂)
+                          (negQ_in_RatSet (addQ L₁ L₂) (addQ_in_RatSet L₁ L₂ hL₁ hL₂)),
+                          negQ_addQ_right (addQ L₁ L₂) (addQ_in_RatSet L₁ L₂ hL₁ hL₂),
+                          addQ_zero_right _ (negQ_in_RatSet (addQ L₁ L₂) (addQ_in_RatSet L₁ L₂ hL₁ hL₂))] at step2
+                      exact step2]
+          _ = addQ (addQ (f⦅n⦆) (negQ L₁)) (addQ (g⦅n⦆) (negQ L₂)) := by
+                rw [← addQ_assoc (f⦅n⦆) (negQ L₁) (addQ (g⦅n⦆) (negQ L₂))
+                      hfn (negQ_in_RatSet L₁ hL₁) (addQ_in_RatSet (g⦅n⦆) (negQ L₂) hgn (negQ_in_RatSet L₂ hL₂)),
+                    addQ_assoc (negQ L₁) (g⦅n⦆) (negQ L₂) (negQ_in_RatSet L₁ hL₁) hgn (negQ_in_RatSet L₂ hL₂),
+                    addQ_comm (negQ L₁) (g⦅n⦆) (negQ_in_RatSet L₁ hL₁) hgn,
+                    ← addQ_assoc (g⦅n⦆) (negQ L₁) (negQ L₂) hgn (negQ_in_RatSet L₁ hL₁) (negQ_in_RatSet L₂ hL₂),
+                    addQ_assoc (f⦅n⦆) (g⦅n⦆) (addQ (negQ L₁) (negQ L₂)) hfn hgn
+                      (addQ_in_RatSet (negQ L₁) (negQ L₂) (negQ_in_RatSet L₁ hL₁) (negQ_in_RatSet L₂ hL₂))]
+      have hfnL₁ : subQ (f⦅n⦆) L₁ ∈ (RatSet : U) :=
+        addQ_in_RatSet (f⦅n⦆) (negQ L₁) hfn (negQ_in_RatSet L₁ hL₁)
+      have hgnL₂ : subQ (g⦅n⦆) L₂ ∈ (RatSet : U) :=
+        addQ_in_RatSet (g⦅n⦆) (negQ L₂) hgn (negQ_in_RatSet L₂ hL₂)
+      rw [h_sub_eq]
+      -- |a + b| ≤ |a| + |b|
+      have h_tri : leQ (absQ (addQ (subQ (f⦅n⦆) L₁) (subQ (g⦅n⦆) L₂)))
+          (addQ (absQ (subQ (f⦅n⦆) L₁)) (absQ (subQ (g⦅n⦆) L₂))) :=
+        absQ_triangle (subQ (f⦅n⦆) L₁) (subQ (g⦅n⦆) L₂) hfnL₁ hgnL₂
+      -- |f(n)−L₁| + |g(n)−L₂| < ε₂ + ε₂ = ε
+      have h_sum_lt : ltQ (addQ (absQ (subQ (f⦅n⦆) L₁)) (absQ (subQ (g⦅n⦆) L₂))) ε := by
+        have h := ltQ_addQ_of_leQ_ltQ
+          (absQ (subQ (f⦅n⦆) L₁)) (absQ (subQ (g⦅n⦆) L₂)) ε₂ ε₂
+          (absQ_in_RatSet _ hfnL₁) (absQ_in_RatSet _ hgnL₂) hε₂ hε₂ hn1.1 hn2
+        rwa [half_add_half ε hε] at h
+      exact leQ_ltQ_trans (absQ (addQ (subQ (f⦅n⦆) L₁) (subQ (g⦅n⦆) L₂)))
+        (addQ (absQ (subQ (f⦅n⦆) L₁)) (absQ (subQ (g⦅n⦆) L₂))) ε
+        (absQ_in_RatSet _ (addQ_in_RatSet _ _ hfnL₁ hgnL₂))
+        (addQ_in_RatSet _ _ (absQ_in_RatSet _ hfnL₁) (absQ_in_RatSet _ hgnL₂))
+        hε h_tri h_sum_lt
 
     /-- If f → 0 then (f · g) → 0, provided g is bounded. -/
     theorem convergesToQ_mul_bounded (f g : U)
@@ -145,8 +521,10 @@ end ZFC
 export ZFC.Rat.Convergence (
   convergesToQ
   hasLimitQ
+  IsSubseqOf
   convergesToQ_const
   limit_unique
+  subseq_convergent
   convergesToQ_add
   convergesToQ_mul_bounded
 )

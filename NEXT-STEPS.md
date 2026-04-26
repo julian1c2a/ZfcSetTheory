@@ -70,9 +70,39 @@
 | # | Módulo | Exports clave | Contenido principal |
 |---|--------|---------------|---------------------|
 | 1 | `Rat/Sequences.lean` | `IsSeqQ`, `constSeqQ`, `addSeqQ`, `mulSeqQ` | Sucesiones f: ω → ℚ como predicado sobre funciones (`IsFunction f ω RatSet`), operaciones punto a punto, clausura |
-| 2 | `Rat/Convergence.lean` | `convergesToQ`, `limit_unique`, `convergesToQ_add`, `convergesToQ_mul` | Convergencia ε-N en ℚ, unicidad del límite, aritmética de límites (suma, producto, cociente) |
-| 3 | `Rat/CauchyQ.lean` | `IsCauchyQ`, `cauchy_of_convergentQ`, `cauchy_bounded`, `cauchyQ_add` | Sucesiones de Cauchy en ℚ; convergente ⟹ Cauchy; Cauchy ⟹ acotada; aritmética de Cauchy |
+| 2 | `Rat/Convergence.lean` | `convergesToQ`, `limit_unique`, `IsSubseqOf`, `subseq_convergent`, `convergesToQ_add`, `convergesToQ_mul` | Convergencia ε-N en ℚ; **unicidad del límite**; **subsucesiones de convergentes convergen al mismo límite**; aritmética de límites (suma, producto) |
+| 3 | `Rat/CauchyQ.lean` | `IsCauchyQ`, `cauchy_of_convergentQ`, `cauchy_bounded`, `cauchyQ_add` | Sucesiones de Cauchy en ℚ; **convergente ⟹ Cauchy** (`cauchy_of_convergentQ`); Cauchy ⟹ acotada; aritmética de Cauchy |
 | 4 | `Rat/SqrtApprox.lean` | `sqrtApprox`, `sqrtApprox_is_cauchy`, `sqrt2_irrational`, `sqrtApprox_not_convergent` | Sucesión de Newton-Raphson para √2: f(0)=3/2, f(n+1)=(f(n)+2/f(n))/2; es Cauchy en ℚ pero no converge en ℚ |
+
+**Teoremas clave de `Rat/Convergence.lean`** (plan detallado):
+
+1. `convergesToQ_const` — la sucesión constante converge a su valor (**✅ probado**)
+2. `limit_unique f L₁ L₂` — si f→L₁ y f→L₂ entonces L₁=L₂.
+   *Estrategia*: por contradicción; si L₁≠L₂ tomar ε=|L₁−L₂|/2 > 0;
+   para n suficientemente grande `|L₁−L₂| ≤ |f(n)−L₁| + |f(n)−L₂| < ε+ε = |L₁−L₂|`;
+   contradicción. Requiere `halfQ` (lema: ε>0 → ε/2 > 0) + `absQ_triangle`.
+3. `IsSubseqOf g f` — predicado: ∃ φ: ω→ω estrictamente creciente tal que g(n)=f(φ(n)) para todo n∈ω.
+4. `subseq_convergent f g L` — si f→L y g es subsucesión de f, entonces g→L.
+   *Estrategia*: dado ε>0, tomar N de la convergencia de f; para n≥N, como φ es
+   estrictamente creciente, φ(n)≥φ(N)≥N, así |g(n)−L|=|f(φ(n))−L|<ε.
+   Requiere `strictly_increasing_ge` (φ estrictamente creciente ⟹ φ(n)≥n por inducción).
+5. `convergesToQ_add f g L₁ L₂` — si f→L₁ y g→L₂ entonces (f+g)→L₁+L₂.
+   *Estrategia*: dado ε>0, tomar N₁ (para ε/2 sobre f) y N₂ (para ε/2 sobre g);
+   para n≥max(N₁,N₂): `|(f+g)(n)−(L₁+L₂)| ≤ |f(n)−L₁| + |g(n)−L₂| < ε/2+ε/2 = ε`.
+   Requiere `halfQ`, `maxOf`, `absQ_triangle`, `addQ_ltQ_ltQ`.
+6. `convergesToQ_mul_bounded` — si f→0 y g es acotada entonces (f·g)→0.
+
+**Teoremas clave de `Rat/CauchyQ.lean`** (plan detallado):
+
+1. `constSeqQ_isCauchy a` — la sucesión constante es de Cauchy (**✅ probado vía `cauchy_of_convergentQ`**)
+2. `cauchy_of_convergentQ f L` — si f→L entonces f es de Cauchy.
+   *Estrategia*: dado ε>0, tomar N tal que ∀n≥N, |f(n)−L|<ε/2;
+   para m,n≥N: `|f(m)−f(n)| ≤ |f(m)−L| + |L−f(n)| < ε/2+ε/2 = ε`.
+   Requiere `halfQ`, `absQ_triangle_sub` (`|a−c|≤|a−b|+|b−c|`).
+3. `cauchy_bounded f` — toda sucesión de Cauchy en ℚ está acotada.
+   *Estrategia*: tomar ε=1; para N dado por Cauchy, los términos n≥N tienen
+   `|f(n)|≤|f(N)|+1`; el máximo de |f(0)|,...,|f(N)|,|f(N)|+1 es la cota.
+   Requiere `maxOf` sobre una familia finita (inducción sobre N).
 
 **Teoremas clave de `Rat/SqrtApprox.lean`** (prueba completa de incompletitud de ℚ):
 
