@@ -45,6 +45,8 @@ namespace ZFC
   open ZFC.Nat.Basic
   open ZFC.Nat.MaxMin
   open ZFC.Int.Basic
+  open ZFC.Int.Mul
+  open ZFC.Int.Order
   open ZFC.Rat.Basic
   open ZFC.Rat.Add
   open ZFC.Rat.Neg
@@ -66,28 +68,28 @@ namespace ZFC
     /-- oneQ is positive: 0 < 1 in ℚ -/
     private theorem oneQ_pos : isPositiveQ (oneQ : U) := by
       constructor
-      · -- leQ zeroQ oneQ: use canonical reps and square_nonneg
-        rw [leQ_iff_repr zeroQ oneQ zeroQ_mem_RatSet oneQ_mem_RatSet]
+      · -- leQ zeroQ oneQ via canonical representatives zeroZ/oneZ and oneZ/oneZ
+        rw [leQ_iff_repr (zeroQ : U) (oneQ : U) zeroQ_mem_RatSet oneQ_mem_RatSet]
         have hone_i : (oneZ : U) ∈ (IntSet : U) := oneZ_mem_IntSet
         have hone_nz : (oneZ : U) ∈ (NonZeroIntSet : U) := oneZ_mem_NonZeroIntSet
-        have h_repr : leQ_repr zeroZ oneZ oneZ oneZ := by
+        -- leQ_repr zeroZ oneZ oneZ oneZ = leZ (mulZ (mulZ zeroZ oneZ) (mulZ oneZ oneZ))
+        --                                      (mulZ (mulZ oneZ oneZ) (mulZ oneZ oneZ))
+        -- = leZ zeroZ oneZ by mulZ_zero_left and mulZ_one_left and square_nonneg
+        have h_repr : leQ_repr (zeroZ : U) (oneZ : U) (oneZ : U) (oneZ : U) := by
           unfold leQ_repr
-          have h_one : mulZ oneZ oneZ = (oneZ : U) :=
-            mulZ_one_left oneZ hone_i
-          have h_zero : mulZ zeroZ oneZ = (zeroZ : U) :=
-            mulZ_zero_left oneZ hone_i
-          -- LHS = mulZ (mulZ zeroZ oneZ) (mulZ oneZ oneZ) = mulZ zeroZ oneZ = zeroZ
-          have lhs_eq : mulZ (mulZ zeroZ oneZ) (mulZ oneZ oneZ) = (zeroZ : U) := by
-            rw [h_one, h_zero, mulZ_zero_left oneZ hone_i]
-          -- RHS = mulZ (mulZ oneZ oneZ) (mulZ oneZ oneZ) = mulZ oneZ oneZ = oneZ
-          have rhs_eq : mulZ (mulZ oneZ oneZ) (mulZ oneZ oneZ) = (oneZ : U) := by
+          have h_one : mulZ (oneZ : U) (oneZ : U) = (oneZ : U) :=
+            mulZ_one_left (oneZ : U) hone_i
+          have h_zero : mulZ (zeroZ : U) (oneZ : U) = (zeroZ : U) :=
+            mulZ_zero_left (oneZ : U) hone_i
+          have lhs_eq : mulZ (mulZ (zeroZ : U) (oneZ : U)) (mulZ (oneZ : U) (oneZ : U)) = (zeroZ : U) := by
+            simp only [h_one, h_zero]
+          have rhs_eq : mulZ (mulZ (oneZ : U) (oneZ : U)) (mulZ (oneZ : U) (oneZ : U)) = (oneZ : U) := by
             simp only [h_one]
           rw [lhs_eq, rhs_eq]
-          -- Goal: leZ zeroZ oneZ. From square_nonneg oneZ : leZ zeroZ (mulZ oneZ oneZ) = leZ zeroZ oneZ
-          have sq := square_nonneg oneZ hone_i
+          have sq := square_nonneg (oneZ : U) hone_i
           rwa [h_one] at sq
-        exact ⟨zeroZ, oneZ, oneZ, oneZ, zeroZ_mem_IntSet, hone_nz,
-               hone_i, hone_nz, rfl, rfl, h_repr⟩
+        exact ⟨(zeroZ : U), (oneZ : U), (oneZ : U), (oneZ : U),
+               zeroZ_mem_IntSet, hone_nz, hone_i, hone_nz, rfl, rfl, h_repr⟩
       · exact zeroQ_ne_oneQ
 
     /-- 2 in ℚ -/
@@ -106,7 +108,10 @@ namespace ZFC
       have h_le : leQ (addQ (zeroQ : U) (oneQ : U)) (addQ (oneQ : U) (oneQ : U)) :=
         addQ_leQ_addQ zeroQ oneQ oneQ zeroQ_mem_RatSet oneQ_mem_RatSet oneQ_mem_RatSet
           oneQ_pos.1
-      rw [addQ_zero_left oneQ oneQ_mem_RatSet, h] at h_le
+      rw [addQ_zero_left oneQ oneQ_mem_RatSet] at h_le
+      -- h_le : leQ oneQ (addQ oneQ oneQ); h : twoQ = zeroQ (twoQ is addQ oneQ oneQ)
+      have h_two : addQ (oneQ : U) (oneQ : U) = (zeroQ : U) := h
+      rw [h_two] at h_le
       -- h_le : leQ oneQ zeroQ; oneQ_pos.1 : leQ zeroQ oneQ
       have h_eq : (oneQ : U) = zeroQ :=
         leQ_antisymm oneQ zeroQ oneQ_mem_RatSet zeroQ_mem_RatSet h_le oneQ_pos.1
@@ -119,25 +124,30 @@ namespace ZFC
         halfQ ε ∈ (RatSet : U) :=
       mulQ_in_RatSet ε (invQ twoQ) hε (invQ_in_RatSet twoQ twoQ_mem_RatSet)
 
-    /-- invQ(2) + invQ(2) = 1  (because (1/2 + 1/2)·2 = 1·2) -/
+    /-- invQ(2) + invQ(2) = 1  (because (1/2)·(1+1) = (1/2)·2 = 1) -/
     private theorem inv_twoQ_add :
         addQ (invQ (twoQ : U)) (invQ (twoQ : U)) = (oneQ : U) := by
       have hinv : invQ (twoQ : U) ∈ (RatSet : U) := invQ_in_RatSet twoQ twoQ_mem_RatSet
+      -- addQ (invQ twoQ) (invQ twoQ) = mulQ (invQ twoQ) (addQ oneQ oneQ)
+      --   by distributing: mulQ x (y+z) = mulQ x y + mulQ x z, then mulQ x 1 = x
+      have h1 : addQ (invQ (twoQ : U)) (invQ (twoQ : U)) =
+          mulQ (invQ (twoQ : U)) (addQ (oneQ : U) (oneQ : U)) := by
+        rw [mulQ_addQ_distrib_left (invQ twoQ) oneQ oneQ
+              hinv oneQ_mem_RatSet oneQ_mem_RatSet,
+            mulQ_one_right (invQ twoQ) hinv]
+      -- mulQ (invQ twoQ) (addQ oneQ oneQ) = mulQ (invQ twoQ) twoQ  (by def of twoQ)
+      have h2 : mulQ (invQ (twoQ : U)) (addQ (oneQ : U) (oneQ : U)) =
+          mulQ (invQ (twoQ : U)) (twoQ : U) := rfl
       -- mulQ (invQ twoQ) twoQ = oneQ
-      have h_mul := mulQ_invQ_left twoQ twoQ_mem_RatSet twoQ_ne_zeroQ
-      -- expand twoQ = oneQ + oneQ
-      show addQ (invQ twoQ) (invQ twoQ) = oneQ
-      rw [show (twoQ : U) = addQ (oneQ : U) (oneQ : U) from rfl] at h_mul
-      rw [mulQ_addQ_distrib_left (invQ twoQ) oneQ oneQ
-            hinv oneQ_mem_RatSet oneQ_mem_RatSet,
-          mulQ_one_right (invQ twoQ) hinv] at h_mul
-      exact h_mul
+      have h3 : mulQ (invQ (twoQ : U)) (twoQ : U) = (oneQ : U) :=
+        mulQ_invQ_left twoQ twoQ_mem_RatSet twoQ_ne_zeroQ
+      rw [h1, h2, h3]
 
     /-- ε/2 + ε/2 = ε -/
     private theorem half_add_half (ε : U) (hε : ε ∈ (RatSet : U)) :
         addQ (halfQ ε) (halfQ ε) = ε := by
       show addQ (mulQ ε (invQ twoQ)) (mulQ ε (invQ twoQ)) = ε
-      rw [← mulQ_addQ_distrib_right ε (invQ twoQ) (invQ twoQ)
+      rw [← mulQ_addQ_distrib_left ε (invQ twoQ) (invQ twoQ)
             hε (invQ_in_RatSet twoQ twoQ_mem_RatSet) (invQ_in_RatSet twoQ twoQ_mem_RatSet),
           inv_twoQ_add, mulQ_one_right ε hε]
 
@@ -153,15 +163,16 @@ namespace ZFC
           have hh := half_add_half ε hε
           rw [h, addQ_zero_left zeroQ zeroQ_mem_RatSet] at hh
           exact hh.symm
-        exact hε_pos.2 this
+        exact hε_pos.2 this.symm
       · -- isNegativeQ (halfQ ε): halfQ ε < 0, so 2·(halfQ ε) < halfQ ε ≤ 0
         exfalso
         -- h : ltQ (halfQ ε) zeroQ, so h.1 : leQ (halfQ ε) zeroQ
         have h_le : leQ (halfQ ε) (zeroQ : U) := h.1
-        -- leQ (halfQ ε + halfQ ε) (halfQ ε + 0) = leQ ε (halfQ ε)
-        have h_le2 : leQ (addQ (halfQ ε) (halfQ ε)) (addQ (halfQ ε) (zeroQ : U)) :=
+        -- leQ (halfQ ε + halfQ ε) (0 + halfQ ε) = leQ ε (halfQ ε)
+        -- Note: addQ_leQ_addQ x y z gives leQ (addQ x z) (addQ y z)
+        have h_le2 : leQ (addQ (halfQ ε) (halfQ ε)) (addQ (zeroQ : U) (halfQ ε)) :=
           addQ_leQ_addQ (halfQ ε) (zeroQ : U) (halfQ ε) hε₂ zeroQ_mem_RatSet hε₂ h_le
-        rw [addQ_zero_right (halfQ ε) hε₂, half_add_half ε hε] at h_le2
+        rw [addQ_zero_left (halfQ ε) hε₂, half_add_half ε hε] at h_le2
         -- h_le2 : leQ ε (halfQ ε); h_le : leQ (halfQ ε) zeroQ
         have h_le3 : leQ ε (zeroQ : U) :=
           leQ_trans ε (halfQ ε) zeroQ hε hε₂ zeroQ_mem_RatSet h_le2 h_le
@@ -257,12 +268,18 @@ namespace ZFC
         -- From h_eq and h_ad_eq: addQ a b = addQ a d
         have h_ab_ad : addQ a b = addQ a d := by rw [h_eq, h_ad_eq.symm]
         -- By addQ left cancellation: b = d
-        have h_bd : b = d := by
-          have step := congrArg (fun x => addQ (negQ a) x) h_ab_ad
-          rw [← addQ_assoc (negQ a) a b (negQ_in_RatSet a ha) ha hb,
-              ← addQ_assoc (negQ a) a d (negQ_in_RatSet a ha) ha hd,
-              negQ_addQ_left a ha, addQ_zero_left b hb, addQ_zero_left d hd] at step
-          exact step
+        have h_bd : b = d :=
+          calc b
+              = addQ zeroQ b := (addQ_zero_left b hb).symm
+            _ = addQ (addQ (negQ a) a) b := by rw [negQ_addQ_left a ha]
+            _ = addQ (negQ a) (addQ a b) :=
+                  addQ_assoc (negQ a) a b (negQ_in_RatSet a ha) ha hb
+            _ = addQ (negQ a) (addQ a d) :=
+                  congrArg (fun x => addQ (negQ a) x) h_ab_ad
+            _ = addQ (addQ (negQ a) a) d :=
+                  (addQ_assoc (negQ a) a d (negQ_in_RatSet a ha) ha hd).symm
+            _ = addQ zeroQ d := by rw [negQ_addQ_left a ha]
+            _ = d := addQ_zero_left d hd
         exact hbd.2 h_bd
 
     /-- ≤ is transitive in ω: m ≤ n, n ≤ k → m ≤ k  (where ≤ is ∈ ∨ =) -/
@@ -331,7 +348,8 @@ namespace ZFC
         (hf : IsSeqQ f) (hL₁ : L₁ ∈ (RatSet : U)) (hL₂ : L₂ ∈ (RatSet : U))
         (h₁ : convergesToQ f L₁) (h₂ : convergesToQ f L₂) :
         L₁ = L₂ := by
-      by_contra h_ne
+      apply Classical.byContradiction
+      intro h_ne
       -- ε₀ = |L₁ − L₂| > 0
       have hL₁L₂ : subQ L₁ L₂ ∈ (RatSet : U) :=
         addQ_in_RatSet L₁ (negQ L₂) hL₁ (negQ_in_RatSet L₂ hL₂)
@@ -376,7 +394,7 @@ namespace ZFC
           (absQ_in_RatSet _ (addQ_in_RatSet (f⦅n⦆) (negQ L₁) hfn (negQ_in_RatSet L₁ hL₁)))
           (absQ_in_RatSet _ (addQ_in_RatSet (f⦅n⦆) (negQ L₂) hfn (negQ_in_RatSet L₂ hL₂)))
           hε₂ hε₂ hn1.1 hn2
-        rwa [half_add_half ε hε] at h
+        rwa [show addQ ε₂ ε₂ = ε from half_add_half ε hε] at h
       -- leQ ε X and ltQ X ε → ltQ ε ε → contradiction
       exact ltQ_irrefl ε hε (leQ_ltQ_trans ε _ ε hε
         (addQ_in_RatSet _ _ (absQ_in_RatSet _ (addQ_in_RatSet (f⦅n⦆) (negQ L₁) hfn (negQ_in_RatSet L₁ hL₁)))
@@ -436,6 +454,34 @@ namespace ZFC
       have hgn : (g⦅n⦆ : U) ∈ (RatSet : U) := seqTermQ_mem_RatSet g n hg hn
       -- Goal: ltQ (absQ (subQ ((addSeqQ f g)⦅n⦆) (addQ L₁ L₂))) ε
       rw [addSeqQ_apply f g hf hg n hn]
+      -- negQ (L₁+L₂) = negQ L₁ + negQ L₂ (distributivity of negation)
+      have negQ_distrib : negQ (addQ L₁ L₂) = addQ (negQ L₁) (negQ L₂) := by
+        have hNL₁ := negQ_in_RatSet L₁ hL₁
+        have hNL₂ := negQ_in_RatSet L₂ hL₂
+        have hL₁L₂ := addQ_in_RatSet L₁ L₂ hL₁ hL₂
+        have hNL₁L₂ := negQ_in_RatSet (addQ L₁ L₂) hL₁L₂
+        have hNL₁NL₂ := addQ_in_RatSet (negQ L₁) (negQ L₂) hNL₁ hNL₂
+        have sum_inv : addQ (addQ (negQ L₁) (negQ L₂)) (addQ L₁ L₂) = zeroQ := by
+          rw [addQ_assoc (negQ L₁) (negQ L₂) (addQ L₁ L₂) hNL₁ hNL₂ hL₁L₂,
+              ← addQ_assoc (negQ L₂) L₁ L₂ hNL₂ hL₁ hL₂,
+              addQ_comm (negQ L₂) L₁ hNL₂ hL₁,
+              addQ_assoc L₁ (negQ L₂) L₂ hL₁ hNL₂ hL₂,
+              negQ_addQ_left L₂ hL₂, addQ_zero_right L₁ hL₁,
+              negQ_addQ_left L₁ hL₁]
+        symm
+        calc addQ (negQ L₁) (negQ L₂)
+            = addQ (addQ (negQ L₁) (negQ L₂)) zeroQ :=
+                  (addQ_zero_right (addQ (negQ L₁) (negQ L₂)) hNL₁NL₂).symm
+          _ = addQ (addQ (negQ L₁) (negQ L₂)) (addQ (addQ L₁ L₂) (negQ (addQ L₁ L₂))) :=
+                  congrArg (addQ (addQ (negQ L₁) (negQ L₂)))
+                    (negQ_addQ_right (addQ L₁ L₂) hL₁L₂).symm
+          _ = addQ (addQ (addQ (negQ L₁) (negQ L₂)) (addQ L₁ L₂)) (negQ (addQ L₁ L₂)) :=
+                  (addQ_assoc (addQ (negQ L₁) (negQ L₂)) (addQ L₁ L₂) (negQ (addQ L₁ L₂))
+                    hNL₁NL₂ hL₁L₂ hNL₁L₂).symm
+          _ = addQ zeroQ (negQ (addQ L₁ L₂)) :=
+                  congrArg (fun x => addQ x (negQ (addQ L₁ L₂))) sum_inv
+          _ = negQ (addQ L₁ L₂) :=
+                  addQ_zero_left (negQ (addQ L₁ L₂)) hNL₁L₂
       -- subQ (f(n)+g(n)) (L₁+L₂) = (f(n)−L₁) + (g(n)−L₂)
       have h_sub_eq : subQ (addQ (f⦅n⦆) (g⦅n⦆)) (addQ L₁ L₂) =
           addQ (subQ (f⦅n⦆) L₁) (subQ (g⦅n⦆) L₂) :=
@@ -443,47 +489,14 @@ namespace ZFC
             = addQ (f⦅n⦆) (addQ (g⦅n⦆) (negQ (addQ L₁ L₂))) := by
                 rw [addQ_assoc (f⦅n⦆) (g⦅n⦆) (negQ (addQ L₁ L₂)) hfn hgn
                       (negQ_in_RatSet (addQ L₁ L₂) (addQ_in_RatSet L₁ L₂ hL₁ hL₂))]
-          _ = addQ (f⦅n⦆) (addQ (g⦅n⦆) (addQ (negQ L₁) (negQ L₂))) := by
-                rw [show negQ (addQ L₁ L₂) = addQ (negQ L₁) (negQ L₂) from by
-                      -- Use: negQ_addQ_distrib (from Abs.lean, re-proved inline)
-                      -- negQ (L₁+L₂) + (L₁+L₂) = 0 and (negQ L₁ + negQ L₂) + (L₁+L₂) = 0
-                      -- So they're equal by uniqueness of inverse
-                      have h1 : addQ (addQ (negQ L₁) (negQ L₂)) (addQ L₁ L₂) = zeroQ := by
-                        rw [addQ_assoc (negQ L₁) (negQ L₂) (addQ L₁ L₂)
-                              (negQ_in_RatSet L₁ hL₁) (negQ_in_RatSet L₂ hL₂)
-                              (addQ_in_RatSet L₁ L₂ hL₁ hL₂),
-                            ← addQ_assoc (negQ L₂) L₁ L₂ (negQ_in_RatSet L₂ hL₂) hL₁ hL₂,
-                            addQ_comm (negQ L₂) L₁ (negQ_in_RatSet L₂ hL₂) hL₁,
-                            addQ_assoc L₁ (negQ L₂) L₂ hL₁ (negQ_in_RatSet L₂ hL₂) hL₂,
-                            negQ_addQ_left L₂ hL₂, addQ_zero_right L₁ hL₁,
-                            negQ_addQ_left L₁ hL₁]
-                      have h2 : addQ (negQ (addQ L₁ L₂)) (addQ L₁ L₂) = zeroQ :=
-                        negQ_addQ_left (addQ L₁ L₂) (addQ_in_RatSet L₁ L₂ hL₁ hL₂)
-                      -- Both are inverses of (L₁+L₂), so equal
-                      have step : addQ (addQ (negQ L₁) (negQ L₂)) (addQ L₁ L₂) =
-                          addQ (negQ (addQ L₁ L₂)) (addQ L₁ L₂) := by rw [h1, h2]
-                      have step2 := congrArg (fun x => addQ x (negQ (addQ L₁ L₂))) step
-                      rw [addQ_assoc _ _ _ (addQ_in_RatSet (negQ L₁) (negQ L₂)
-                            (negQ_in_RatSet L₁ hL₁) (negQ_in_RatSet L₂ hL₂))
-                          (addQ_in_RatSet L₁ L₂ hL₁ hL₂)
-                          (negQ_in_RatSet (addQ L₁ L₂) (addQ_in_RatSet L₁ L₂ hL₁ hL₂)),
-                          negQ_addQ_right (addQ L₁ L₂) (addQ_in_RatSet L₁ L₂ hL₁ hL₂),
-                          addQ_zero_right _ (addQ_in_RatSet (negQ L₁) (negQ L₂)
-                            (negQ_in_RatSet L₁ hL₁) (negQ_in_RatSet L₂ hL₂)),
-                          addQ_assoc _ _ _ (negQ_in_RatSet (addQ L₁ L₂) (addQ_in_RatSet L₁ L₂ hL₁ hL₂))
-                          (addQ_in_RatSet L₁ L₂ hL₁ hL₂)
-                          (negQ_in_RatSet (addQ L₁ L₂) (addQ_in_RatSet L₁ L₂ hL₁ hL₂)),
-                          negQ_addQ_right (addQ L₁ L₂) (addQ_in_RatSet L₁ L₂ hL₁ hL₂),
-                          addQ_zero_right _ (negQ_in_RatSet (addQ L₁ L₂) (addQ_in_RatSet L₁ L₂ hL₁ hL₂))] at step2
-                      exact step2]
+          _ = addQ (f⦅n⦆) (addQ (g⦅n⦆) (addQ (negQ L₁) (negQ L₂))) :=
+                congrArg (fun x => addQ (f⦅n⦆) (addQ (g⦅n⦆) x)) negQ_distrib
           _ = addQ (addQ (f⦅n⦆) (negQ L₁)) (addQ (g⦅n⦆) (negQ L₂)) := by
-                rw [← addQ_assoc (f⦅n⦆) (negQ L₁) (addQ (g⦅n⦆) (negQ L₂))
-                      hfn (negQ_in_RatSet L₁ hL₁) (addQ_in_RatSet (g⦅n⦆) (negQ L₂) hgn (negQ_in_RatSet L₂ hL₂)),
+                rw [← addQ_assoc (g⦅n⦆) (negQ L₁) (negQ L₂) hgn (negQ_in_RatSet L₁ hL₁) (negQ_in_RatSet L₂ hL₂),
+                    addQ_comm (g⦅n⦆) (negQ L₁) hgn (negQ_in_RatSet L₁ hL₁),
                     addQ_assoc (negQ L₁) (g⦅n⦆) (negQ L₂) (negQ_in_RatSet L₁ hL₁) hgn (negQ_in_RatSet L₂ hL₂),
-                    addQ_comm (negQ L₁) (g⦅n⦆) (negQ_in_RatSet L₁ hL₁) hgn,
-                    ← addQ_assoc (g⦅n⦆) (negQ L₁) (negQ L₂) hgn (negQ_in_RatSet L₁ hL₁) (negQ_in_RatSet L₂ hL₂),
-                    addQ_assoc (f⦅n⦆) (g⦅n⦆) (addQ (negQ L₁) (negQ L₂)) hfn hgn
-                      (addQ_in_RatSet (negQ L₁) (negQ L₂) (negQ_in_RatSet L₁ hL₁) (negQ_in_RatSet L₂ hL₂))]
+                    ← addQ_assoc (f⦅n⦆) (negQ L₁) (addQ (g⦅n⦆) (negQ L₂)) hfn (negQ_in_RatSet L₁ hL₁)
+                      (addQ_in_RatSet (g⦅n⦆) (negQ L₂) hgn (negQ_in_RatSet L₂ hL₂))]
       have hfnL₁ : subQ (f⦅n⦆) L₁ ∈ (RatSet : U) :=
         addQ_in_RatSet (f⦅n⦆) (negQ L₁) hfn (negQ_in_RatSet L₁ hL₁)
       have hgnL₂ : subQ (g⦅n⦆) L₂ ∈ (RatSet : U) :=
@@ -498,7 +511,7 @@ namespace ZFC
         have h := ltQ_addQ_of_leQ_ltQ
           (absQ (subQ (f⦅n⦆) L₁)) (absQ (subQ (g⦅n⦆) L₂)) ε₂ ε₂
           (absQ_in_RatSet _ hfnL₁) (absQ_in_RatSet _ hgnL₂) hε₂ hε₂ hn1.1 hn2
-        rwa [half_add_half ε hε] at h
+        rwa [show addQ ε₂ ε₂ = ε from half_add_half ε hε] at h
       exact leQ_ltQ_trans (absQ (addQ (subQ (f⦅n⦆) L₁) (subQ (g⦅n⦆) L₂)))
         (addQ (absQ (subQ (f⦅n⦆) L₁)) (absQ (subQ (g⦅n⦆) L₂))) ε
         (absQ_in_RatSet _ (addQ_in_RatSet _ _ hfnL₁ hgnL₂))
