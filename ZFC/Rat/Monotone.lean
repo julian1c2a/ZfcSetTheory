@@ -12,10 +12,9 @@ License: MIT
   A monotone bounded sequence in ℚ need NOT converge in ℚ
   (e.g., the Newton-Raphson approximations to √2 are decreasing and bounded
   below, converging to √2 ∉ ℚ). Therefore:
-  - `nondecreasing_bounded_isCauchy` and `nonincreasing_bounded_isCauchy`
-    are stated with `sorry` — they require completeness-style reasoning that
-    currently cannot be done purely in ℚ.
-  - `convergent_isBounded` is also `sorry` — it requires a finite maximum
+  - The theorem "nondecreasing bounded ⟹ Cauchy" requires completeness
+    (Real.Completeness) and belongs in `ZFC.Real.Monotone`, not here.
+  - `convergent_isBounded` is `sorry` — it requires a finite maximum
     over an initial segment, which needs more infrastructure.
 
   ## Main Definitions
@@ -38,8 +37,6 @@ License: MIT
   * `nonincreasing_convergent_limit_le`  — if f↘ and f→L then L ≤ f(n) for all n
   * `limit_le_of_bounded_above`          — if f→L and ∀n, f(n)≤M then L≤M
   * `le_limit_of_bounded_below`          — if f→L and ∀n, M≤f(n) then M≤L
-  * `nondecreasing_bounded_isCauchy`     — f↗, bounded above → IsCauchyQ f  (sorry)
-  * `nonincreasing_bounded_isCauchy`     — f↘, bounded below → IsCauchyQ f  (sorry)
   * `convergent_isBounded`               — convergent → bounded               (sorry)
   * `nondecreasing_convergent_isBoundedAbove` — f↗, f→L → bounded above by L
   * `nonincreasing_convergent_isBoundedBelow` — f↘, f→L → bounded below by L
@@ -477,29 +474,6 @@ namespace ZFC
     -- Section 5: Monotone + bounded → Cauchy  (sorry: needs completeness in ℝ)
     -- =========================================================================
 
-    /-- A nondecreasing sequence bounded above is Cauchy.
-
-        This follows from the Monotone Convergence Theorem (MCT), which holds in ℝ
-        but NOT in ℚ alone. ℚ is Archimedean but not complete, so a nondecreasing
-        bounded sequence in ℚ need not converge (or be Cauchy) in ℚ.
-        This theorem will be proved in `ZFC.Real.Completeness` once ℝ is available. -/
-    theorem nondecreasing_bounded_isCauchy (f M : U)
-        (hf : IsSeqQ f) (hM : M ∈ (RatSet : U))
-        (_hmon : isNondecreasingQ f)
-        (_hbound : isBoundedAboveByQ f M) :
-        IsCauchyQ f := by
-      sorry
-
-    /-- A nonincreasing sequence bounded below is Cauchy.
-
-        Dual of `nondecreasing_bounded_isCauchy`. Same sorry rationale. -/
-    theorem nonincreasing_bounded_isCauchy (f M : U)
-        (hf : IsSeqQ f) (hM : M ∈ (RatSet : U))
-        (_hmon : isNonincreasingQ f)
-        (_hbound : isBoundedBelowByQ f M) :
-        IsCauchyQ f := by
-      sorry
-
     -- =========================================================================
     -- Section 6: Corollaries
     -- =========================================================================
@@ -550,8 +524,6 @@ export ZFC.Rat.Monotone (
   nonincreasing_convergent_limit_le
   limit_le_of_bounded_above
   le_limit_of_bounded_below
-  nondecreasing_bounded_isCauchy
-  nonincreasing_bounded_isCauchy
   nondecreasing_convergent_isBoundedAbove
   nonincreasing_convergent_isBoundedBelow
   convergent_isBounded

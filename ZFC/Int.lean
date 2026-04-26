@@ -17,6 +17,7 @@ import ZFC.Int.Pow
 import ZFC.Int.Sub
 import ZFC.Int.DivMod
 import ZFC.Int.Order
+import ZFC.Int.MaxMin
 import ZFC.Int.Embedding
 import ZFC.Int.Abs
 import ZFC.Int.Div

@@ -25,6 +25,7 @@ REFERENCE.md: Este archivo debe proyectarse en REFERENCE.md cuando compile.
 
 import ZFC.Rat.Convergence
 import ZFC.Rat.Field
+import ZFC.Rat.MaxMin
 
 namespace ZFC
   open Classical
@@ -51,6 +52,7 @@ namespace ZFC
   open ZFC.Rat.Order
   open ZFC.Rat.Abs
   open ZFC.Rat.Field
+  open ZFC.Rat.MaxMin
   open ZFC.Rat.Sequences
   open ZFC.Rat.Convergence
 
@@ -275,14 +277,179 @@ namespace ZFC
     -- =========================================================================
 
     /-- Every Cauchy sequence is bounded: ∃ M > 0, ∀ n ∈ ω, |f(n)| ≤ M.
-        Proof sketch: take ε = 1; get N with |f(m)−f(n)| < 1 for m,n ≥ N.
-        Then M = max(|f(0)|, |f(1)|, ..., |f(N)|, |f(N)| + 1) bounds all terms.
-        Requires finite maximum over a set of rationals, which needs more infrastructure. -/
+        Proof: take ε=1, get N₀ via Cauchy. Prove by induction that for each N ∈ ω
+        there exists a bound for {|f(k)| : k ≤ N} using maxQ. Then for k > N₀ use
+        the triangle inequality: |f(k)| ≤ |f(k)−f(N₀)| + |f(N₀)| < 1 + M₀ = M. -/
     theorem cauchy_bounded (f : U)
         (hf : IsSeqQ f) (h_cauchy : IsCauchyQ f) :
         ∃ M : U, M ∈ (RatSet : U) ∧ isPositiveQ M ∧
           ∀ n : U, n ∈ (ω : U) → leQ (absQ (f⦅n⦆)) M := by
-      sorry
+      -- ① 0 < 1 in ℚ (same proof as private oneQ_pos in Convergence.lean)
+      have hone_pos : isPositiveQ (oneQ : U) := by
+        constructor
+        · rw [leQ_iff_repr zeroQ oneQ zeroQ_mem_RatSet oneQ_mem_RatSet]
+          have hone_i : (oneZ : U) ∈ (IntSet : U) := oneZ_mem_IntSet
+          have hone_nz : (oneZ : U) ∈ (NonZeroIntSet : U) := oneZ_mem_NonZeroIntSet
+          have h_repr : leQ_repr (zeroZ : U) (oneZ : U) (oneZ : U) (oneZ : U) := by
+            unfold leQ_repr
+            have h_one := mulZ_one_left (oneZ : U) hone_i
+            have h_zero := mulZ_zero_left (oneZ : U) hone_i
+            have lhs_eq : mulZ (mulZ (zeroZ : U) (oneZ : U))
+                            (mulZ (oneZ : U) (oneZ : U)) = (zeroZ : U) := by
+              simp only [h_one, h_zero]
+            have rhs_eq : mulZ (mulZ (oneZ : U) (oneZ : U))
+                            (mulZ (oneZ : U) (oneZ : U)) = (oneZ : U) := by
+              simp only [h_one]
+            rw [lhs_eq, rhs_eq]
+            have sq := square_nonneg (oneZ : U) hone_i; rwa [h_one] at sq
+          exact ⟨(zeroZ : U), (oneZ : U), (oneZ : U), (oneZ : U),
+                 zeroZ_mem_IntSet, hone_nz, hone_i, hone_nz, rfl, rfl, h_repr⟩
+        · exact zeroQ_ne_oneQ
+      -- ② Get N₀ from Cauchy at ε = 1
+      obtain ⟨N₀, hN₀, hcauchy1⟩ := h_cauchy oneQ oneQ_mem_RatSet hone_pos
+      -- ③ Inductive bound: ∀ N ∈ ω, ∃ M > 0, ∀ k ≤ N, |f(k)| ≤ M
+      -- Abbreviation for the sep predicate (avoids let-binding issues with rw)
+      let Q : U → Prop := fun n => ∃ M : U, M ∈ (RatSet : U) ∧ isPositiveQ M ∧
+            ∀ k : U, k ∈ (ω : U) → (k ∈ n ∨ k = n) → leQ (absQ (f⦅k⦆)) M
+      have hS_eq : sep (ω : U) Q = (ω : U) := by
+        apply induction_principle
+        · -- sep ω Q ⊆ ω
+          intro x hx; rw [mem_sep_iff] at hx; exact hx.1
+        · -- ∅ ∈ sep ω Q: bound M₀ = addQ oneQ (absQ (f⦅∅⦆)) ≥ 1 > 0 ≥ |f(0)|
+          rw [mem_sep_iff]
+          refine ⟨zero_in_Omega, ?_⟩
+          have hf0 : f⦅∅⦆ ∈ (RatSet : U) := seqTermQ_mem_RatSet f ∅ hf zero_in_Omega
+          have habs0 : absQ (f⦅∅⦆) ∈ (RatSet : U) := absQ_in_RatSet _ hf0
+          show ∃ M : U, M ∈ (RatSet : U) ∧ isPositiveQ M ∧
+              ∀ k : U, k ∈ (ω : U) → (k ∈ ∅ ∨ k = ∅) → leQ (absQ (f⦅k⦆)) M
+          refine ⟨addQ oneQ (absQ (f⦅∅⦆)),
+                  addQ_in_RatSet oneQ _ oneQ_mem_RatSet habs0, ?_, ?_⟩
+          · -- isPositiveQ
+            constructor
+            · exact leQ_trans zeroQ (absQ (f⦅∅⦆)) (addQ oneQ (absQ (f⦅∅⦆)))
+                zeroQ_mem_RatSet habs0 (addQ_in_RatSet oneQ _ oneQ_mem_RatSet habs0)
+                (absQ_nonneg _ hf0)
+                (by have h := addQ_leQ_addQ zeroQ oneQ (absQ (f⦅∅⦆))
+                          zeroQ_mem_RatSet oneQ_mem_RatSet habs0 hone_pos.1
+                    rwa [addQ_zero_left _ habs0] at h)
+            · intro heq
+              have h1 : leQ oneQ (addQ oneQ (absQ (f⦅∅⦆))) := by
+                have h2 := addQ_leQ_addQ zeroQ (absQ (f⦅∅⦆)) oneQ
+                  zeroQ_mem_RatSet habs0 oneQ_mem_RatSet (absQ_nonneg _ hf0)
+                rwa [addQ_zero_left oneQ oneQ_mem_RatSet,
+                     addQ_comm (absQ (f⦅∅⦆)) oneQ habs0 oneQ_mem_RatSet] at h2
+              rw [← heq] at h1
+              exact hone_pos.2 (leQ_antisymm oneQ zeroQ oneQ_mem_RatSet zeroQ_mem_RatSet
+                h1 hone_pos.1).symm
+          · -- bound: only k = ∅ is possible
+            intro k hk hkle
+            cases hkle with
+            | inl h => exact absurd h (EmptySet_is_empty k)
+            | inr h =>
+              rw [h]
+              have h2 := addQ_leQ_addQ zeroQ oneQ (absQ (f⦅∅⦆))
+                zeroQ_mem_RatSet oneQ_mem_RatSet habs0 hone_pos.1
+              rwa [addQ_zero_left _ habs0] at h2
+        · -- step: n ∈ sep ω Q → σn ∈ sep ω Q; use bound = maxQ M (absQ (f⦅σn⦆))
+          intro n hn_S
+          rw [mem_sep_iff] at hn_S
+          obtain ⟨hn, hQn⟩ := hn_S
+          obtain ⟨M, hM, hMpos, hbound⟩ := hQn
+          have hsn : σ n ∈ (ω : U) := succ_in_Omega n hn
+          rw [mem_sep_iff]
+          refine ⟨hsn, ?_⟩
+          show ∃ M' : U, M' ∈ (RatSet : U) ∧ isPositiveQ M' ∧
+              ∀ k : U, k ∈ (ω : U) → (k ∈ σ n ∨ k = σ n) → leQ (absQ (f⦅k⦆)) M'
+          have hfsn : f⦅σ n⦆ ∈ (RatSet : U) := seqTermQ_mem_RatSet f (σ n) hf hsn
+          have habssn : absQ (f⦅σ n⦆) ∈ (RatSet : U) := absQ_in_RatSet _ hfsn
+          refine ⟨maxQ M (absQ (f⦅σ n⦆)), maxQ_in_RatSet M _ hM habssn, ?_, ?_⟩
+          · -- isPositiveQ (maxQ M _): since M > 0 ≤ maxQ M _
+            constructor
+            · exact leQ_trans zeroQ M (maxQ M (absQ (f⦅σ n⦆)))
+                zeroQ_mem_RatSet hM (maxQ_in_RatSet M _ hM habssn)
+                hMpos.1 (leQ_maxQ_left M _ hM habssn)
+            · intro heq
+              exact hMpos.2 (leQ_antisymm M zeroQ hM zeroQ_mem_RatSet
+                (heq ▸ leQ_maxQ_left M _ hM habssn) hMpos.1).symm
+          · -- bound for k ≤ σn
+            intro k hk hkle
+            rw [mem_succ_iff] at hkle
+            cases hkle with
+            | inl hkin =>
+              -- after mem_succ_iff: hkin : k ∈ n ∨ k = n
+              have h_abs_k := absQ_in_RatSet _ (seqTermQ_mem_RatSet f k hf hk)
+              exact leQ_trans _ M (maxQ M _) h_abs_k hM (maxQ_in_RatSet M _ hM habssn)
+                (hbound k hk hkin) (leQ_maxQ_left M _ hM habssn)
+            | inr hksin =>
+              rw [hksin]; exact leQ_maxQ_right M _ hM habssn
+      have fin_bound : ∀ N : U, N ∈ (ω : U) →
+          ∃ M : U, M ∈ (RatSet : U) ∧ isPositiveQ M ∧
+            ∀ k : U, k ∈ (ω : U) → (k ∈ N ∨ k = N) → leQ (absQ (f⦅k⦆)) M := by
+        intro N hN
+        have hN_S : N ∈ sep (ω : U) Q := by rw [hS_eq]; exact hN
+        rw [mem_sep_iff] at hN_S
+        exact hN_S.2
+      -- ④ Get M₀ bounding f on [0, N₀]
+      obtain ⟨M₀, hM₀, hM₀pos, hbound₀⟩ := fin_bound N₀ hN₀
+      -- ⑤ Final bound M = M₀ + 1; M₀ ≤ M and for k > N₀: |f(k)| < 1 + M₀ ≤ M
+      have hM : addQ M₀ oneQ ∈ (RatSet : U) := addQ_in_RatSet M₀ oneQ hM₀ oneQ_mem_RatSet
+      -- M₀ ≤ M₀ + 1
+      have hM₀_le_M : leQ M₀ (addQ M₀ oneQ) := by
+        have h := addQ_leQ_addQ zeroQ oneQ M₀ zeroQ_mem_RatSet oneQ_mem_RatSet hM₀ hone_pos.1
+        rwa [addQ_zero_left M₀ hM₀, addQ_comm oneQ M₀ oneQ_mem_RatSet hM₀] at h
+      refine ⟨addQ M₀ oneQ, hM,
+              ⟨leQ_trans zeroQ M₀ _ zeroQ_mem_RatSet hM₀ hM hM₀pos.1 hM₀_le_M,
+               fun heq => hM₀pos.2 (leQ_antisymm M₀ zeroQ hM₀ zeroQ_mem_RatSet
+                 (heq ▸ hM₀_le_M) hM₀pos.1).symm⟩,
+              ?_⟩
+      intro n hn
+      have hfn : f⦅n⦆ ∈ (RatSet : U) := seqTermQ_mem_RatSet f n hf hn
+      have habsn : absQ (f⦅n⦆) ∈ (RatSet : U) := absQ_in_RatSet _ hfn
+      -- Trichotomy on n vs N₀
+      have hn_nat : IsNat n := mem_Omega_is_Nat n hn
+      have hN₀_nat : IsNat N₀ := mem_Omega_is_Nat N₀ hN₀
+      rcases natLt_trichotomy n N₀ hn_nat hN₀_nat with hlt | heq | hgt
+      · -- n ∈ N₀: use induction bound, then M₀ ≤ M
+        exact leQ_trans _ M₀ _ habsn hM₀ hM (hbound₀ n hn (Or.inl hlt)) hM₀_le_M
+      · -- n = N₀: heq : n = N₀
+        subst heq
+        exact leQ_trans _ M₀ _ habsn hM₀ hM (hbound₀ n hN₀ (Or.inr rfl)) hM₀_le_M
+      · -- N₀ ∈ n: use Cauchy at ε=1
+        have hfN₀ : f⦅N₀⦆ ∈ (RatSet : U) := seqTermQ_mem_RatSet f N₀ hf hN₀
+        have hsubf : subQ (f⦅n⦆) (f⦅N₀⦆) ∈ (RatSet : U) :=
+          addQ_in_RatSet _ _ hfn (negQ_in_RatSet _ hfN₀)
+        have habs_sub : absQ (subQ (f⦅n⦆) (f⦅N₀⦆)) ∈ (RatSet : U) := absQ_in_RatSet _ hsubf
+        have habs_N₀ : absQ (f⦅N₀⦆) ∈ (RatSet : U) := absQ_in_RatSet _ hfN₀
+        -- |f(n) − f(N₀)| < 1 (from Cauchy, m=n ≥ N₀, n'=N₀ ≥ N₀)
+        have hcauchy_n := hcauchy1 n N₀ hn hN₀ (Or.inl hgt) (Or.inr rfl)
+        have h_sub_le : leQ (absQ (subQ (f⦅n⦆) (f⦅N₀⦆))) oneQ := hcauchy_n.1
+        -- |f(N₀)| ≤ M₀
+        have h_absN₀ : leQ (absQ (f⦅N₀⦆)) M₀ := hbound₀ N₀ hN₀ (Or.inr rfl)
+        -- f(n) = (f(n) − f(N₀)) + f(N₀)
+        have hfn_eq : f⦅n⦆ = addQ (subQ (f⦅n⦆) (f⦅N₀⦆)) (f⦅N₀⦆) := by
+          unfold subQ
+          rw [addQ_assoc (f⦅n⦆) (negQ (f⦅N₀⦆)) (f⦅N₀⦆) hfn
+                (negQ_in_RatSet _ hfN₀) hfN₀,
+              negQ_addQ_left (f⦅N₀⦆) hfN₀, addQ_zero_right (f⦅n⦆) hfn]
+        -- |f(n)| ≤ |f(n)−f(N₀)| + |f(N₀)| by triangle
+        have h_tri : leQ (absQ (f⦅n⦆))
+            (addQ (absQ (subQ (f⦅n⦆) (f⦅N₀⦆))) (absQ (f⦅N₀⦆))) := by
+          have := absQ_triangle (subQ (f⦅n⦆) (f⦅N₀⦆)) (f⦅N₀⦆) hsubf hfN₀
+          rwa [← hfn_eq] at this
+        -- |f(n)−f(N₀)| + |f(N₀)| ≤ 1 + M₀ = M₀ + 1
+        have h_sum_le : leQ (addQ (absQ (subQ (f⦅n⦆) (f⦅N₀⦆))) (absQ (f⦅N₀⦆)))
+            (addQ M₀ oneQ) := by
+          have step1 : leQ (addQ (absQ (subQ (f⦅n⦆) (f⦅N₀⦆))) (absQ (f⦅N₀⦆)))
+              (addQ oneQ (absQ (f⦅N₀⦆))) :=
+            addQ_leQ_addQ _ oneQ (absQ (f⦅N₀⦆)) habs_sub oneQ_mem_RatSet habs_N₀ h_sub_le
+          have step2 : leQ (addQ oneQ (absQ (f⦅N₀⦆))) (addQ M₀ oneQ) := by
+            have h := addQ_leQ_addQ (absQ (f⦅N₀⦆)) M₀ oneQ
+              habs_N₀ hM₀ oneQ_mem_RatSet h_absN₀
+            rwa [addQ_comm (absQ (f⦅N₀⦆)) oneQ habs_N₀ oneQ_mem_RatSet] at h
+          exact leQ_trans _ _ _ (addQ_in_RatSet _ _ habs_sub habs_N₀)
+            (addQ_in_RatSet oneQ _ oneQ_mem_RatSet habs_N₀) hM step1 step2
+        exact leQ_trans _ _ _ habsn
+          (addQ_in_RatSet _ _ habs_sub habs_N₀) hM h_tri h_sum_le
 
     -- =========================================================================
     -- Section 4: Constant sequences are Cauchy

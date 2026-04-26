@@ -13,6 +13,7 @@ import ZFC.Rat.Add
 import ZFC.Rat.Neg
 import ZFC.Rat.Mul
 import ZFC.Rat.Order
+import ZFC.Rat.MaxMin
 import ZFC.Rat.Abs
 import ZFC.Rat.Embedding
 import ZFC.Rat.Field
