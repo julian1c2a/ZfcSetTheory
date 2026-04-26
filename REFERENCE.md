@@ -5319,6 +5319,120 @@ noncomputable def intToRat (n : U) : U := ratClass n oneZ
 
 ---
 
+### 3.63 Int.MaxMin.lean
+
+**Módulo**: `ZFC.Int.MaxMin`
+**Namespace**: `ZFC.Int.MaxMin`
+**Dependencias**: `ZFC.Int.Order`
+**Estrategia**: Define `maxZ`/`minZ` directamente desde el orden total `leZ` (sin recursión, a diferencia del caso ω). Demuestra clausura en ℤ, cotas universales, conmutatividad, idempotencia y asociatividad.
+
+**Definiciones públicas**:
+
+1. **`maxZ x y`** — máximo de $x$ e $y$ en ℤ: $y$ si $x \leq y$, $x$ en caso contrario.
+
+   ```lean
+   noncomputable def maxZ (x y : U) : U :=
+     if leZ x y then y else x
+   ```
+
+2. **`minZ x y`** — mínimo de $x$ e $y$ en ℤ: $x$ si $x \leq y$, $y$ en caso contrario.
+
+   ```lean
+   noncomputable def minZ (x y : U) : U :=
+     if leZ x y then x else y
+   ```
+
+---
+
+### 3.64 Rat.MaxMin.lean
+
+**Módulo**: `ZFC.Rat.MaxMin`
+**Namespace**: `ZFC.Rat.MaxMin`
+**Dependencias**: `ZFC.Rat.Order`
+**Estrategia**: Análogo exacto a `Int.MaxMin` para ℚ. Define `maxQ`/`minQ` desde el orden total `leQ`.
+
+**Definiciones públicas**:
+
+1. **`maxQ x y`** — máximo de $x$ e $y$ en ℚ: $y$ si $x \leq y$, $x$ en caso contrario.
+
+   ```lean
+   noncomputable def maxQ (x y : U) : U :=
+     if leQ x y then y else x
+   ```
+
+2. **`minQ x y`** — mínimo de $x$ e $y$ en ℚ: $x$ si $x \leq y$, $y$ en caso contrario.
+
+   ```lean
+   noncomputable def minQ (x y : U) : U :=
+     if leQ x y then x else y
+   ```
+
+---
+
+### 3.65 Rat.Sequences.lean
+
+**Módulo**: `ZFC.Rat.Sequences`
+**Namespace**: `ZFC.Rat.Sequences`
+**Dependencias**: `ZFC.Rat.Mul`, `ZFC.Rat.Abs` + anteriores
+**Estrategia**: Define sucesiones de racionales como funciones ZFC-nativas $f: \omega \to \mathbb{Q}$ (predicado `IsFunction f ω RatSet`) y construye las operaciones punto a punto: sucesión constante, suma, negación, producto.
+
+**Definiciones públicas**:
+
+1. **`IsSeqQ f`** — $f$ es una sucesión de racionales: `IsFunction f ω RatSet`.
+2. **`constSeqQ a`** — sucesión constante $n \mapsto a$: función constante en ℚ.
+3. **`addSeqQ f g`** — suma punto a punto: $(f+g)(n) = \text{addQ}(f(n), g(n))$.
+4. **`negSeqQ f`** — negación punto a punto: $(-f)(n) = \text{negQ}(f(n))$.
+5. **`mulSeqQ f g`** — producto punto a punto: $(f \cdot g)(n) = \text{mulQ}(f(n), g(n))$.
+
+---
+
+### 3.66 Rat.Convergence.lean
+
+**Módulo**: `ZFC.Rat.Convergence`
+**Namespace**: `ZFC.Rat.Convergence`
+**Dependencias**: `ZFC.Rat.Sequences`, `ZFC.Rat.Abs`, `ZFC.Nat.MaxMin` + anteriores
+**Estrategia**: Define convergencia $\varepsilon$-N en ℚ y demuestra unicidad del límite, aritmética básica (suma de límites, sucesión acotada × cero converge a cero) y convergencia de subsucesiones.
+
+**Definiciones públicas**:
+
+1. **`convergesToQ f L`** — $f \to L$ en ℚ: $\forall \varepsilon > 0 \in \mathbb{Q}, \exists N \in \omega, \forall n \in \omega, N \leq n \Rightarrow |f(n) - L| < \varepsilon$.
+2. **`hasLimitQ f`** — $f$ tiene límite en ℚ: $\exists L \in \mathbb{Q}, \text{convergesToQ}\ f\ L$.
+3. **`IsSubseqOf g f`** — $g$ es subsucesión de $f$: $\exists \phi: \omega \to \omega$ estrictamente creciente tal que $\forall n \in \omega, g(n) = f(\phi(n))$.
+
+---
+
+### 3.67 Rat.CauchyQ.lean
+
+**Módulo**: `ZFC.Rat.CauchyQ`
+**Namespace**: `ZFC.Rat.CauchyQ`
+**Dependencias**: `ZFC.Rat.Convergence`, `ZFC.Rat.MaxMin` + anteriores
+**Estrategia**: Define sucesiones de Cauchy en ℚ. `cauchy_bounded` se demuestra por inducción en ω: el predicado $Q(n) := \exists M \in \mathbb{Q}^+, \forall k \leq n, |f(k)| \leq M$ es hereditario (paso: $M' = \max(M, |f(\sigma n)|)$); extrae la cota para $N_0$ y usa tricotomía $n$ vs $N_0$.
+
+**Definiciones públicas**:
+
+1. **`IsCauchyQ f`** — $f$ es sucesión de Cauchy: $\forall \varepsilon > 0 \in \mathbb{Q}, \exists N \in \omega, \forall m, n \in \omega, N \leq m \Rightarrow N \leq n \Rightarrow |f(m) - f(n)| < \varepsilon$.
+
+---
+
+### 3.68 Rat.Monotone.lean
+
+**Módulo**: `ZFC.Rat.Monotone`
+**Namespace**: `ZFC.Rat.Monotone`
+**Dependencias**: `ZFC.Rat.CauchyQ`, `ZFC.Nat.MaxMin` + anteriores
+**Estrategia**: Define monotonía y acotamiento para sucesiones $f: \omega \to \mathbb{Q}$. **Nota**: "monótona acotada ⟹ Cauchy" requiere `Real.Completeness` y se reserva para `ZFC.Real.Monotone`. `convergent_isBounded` tiene un `sorry` por necesitar `maxQ` sobre segmento inicial con índice variable.
+
+**Definiciones públicas**:
+
+1. **`isNondecreasingQ f`** — no-decreciente: $\forall m, n \in \omega, m \leq n \Rightarrow f(m) \leq_\mathbb{Q} f(n)$.
+2. **`isNonincreasingQ f`** — no-creciente: $\forall m, n \in \omega, m \leq n \Rightarrow f(n) \leq_\mathbb{Q} f(m)$.
+3. **`isStrictlyIncreasingQ f`** — estrictamente creciente: $\forall m, n \in \omega, m \in n \Rightarrow f(m) <_\mathbb{Q} f(n)$.
+4. **`isStrictlyDecreasingQ f`** — estrictamente decreciente.
+5. **`isBoundedAboveByQ f M`** — acotada superiormente por $M$: $\forall n \in \omega, f(n) \leq_\mathbb{Q} M$.
+6. **`isBoundedBelowByQ f M`** — acotada inferiormente por $M$: $\forall n \in \omega, M \leq_\mathbb{Q} f(n)$.
+7. **`isBoundedQ f`** — acotada: $\exists M \in \mathbb{Q}^+, \forall n \in \omega, |f(n)| \leq_\mathbb{Q} M$.
+
+---
+
 ## 4. Teoremas Principales por Módulo
 
 ### 4.1 Extension.lean
@@ -16025,6 +16139,248 @@ theorem mulQ_addQ_distrib_right (x y z : U)
 
 ---
 
+### 4.59 Int.MaxMin.lean
+
+**Importancia por teorema**:
+
+- `maxZ_in_IntSet`: high — clausura de maxZ en ℤ
+- `minZ_in_IntSet`: high — clausura de minZ en ℤ
+- `leZ_maxZ_left`: high — x ≤ maxZ x y
+- `leZ_maxZ_right`: high — y ≤ maxZ x y
+- `maxZ_leZ`: high — cota superior universal
+- `minZ_leZ_left`: high — minZ x y ≤ x
+- `minZ_leZ_right`: high — minZ x y ≤ y
+- `leZ_minZ`: high — cota inferior universal
+- `maxZ_comm`: medium — conmutatividad de maxZ
+- `minZ_comm`: medium — conmutatividad de minZ
+- `maxZ_idem`: medium — idempotencia de maxZ
+- `minZ_idem`: medium — idempotencia de minZ
+- `maxZ_assoc`: medium — asociatividad de maxZ
+- `minZ_assoc`: medium — asociatividad de minZ
+- `maxZ_eq_right_iff_leZ`: medium — maxZ x y = y ↔ x ≤ y
+- `maxZ_eq_left_iff_leZ`: medium — maxZ x y = x ↔ y ≤ x
+- `minZ_eq_left_iff_leZ`: medium — minZ x y = x ↔ x ≤ y
+- `minZ_eq_right_iff_leZ`: medium — minZ x y = y ↔ y ≤ x
+
+#### Clausura de maxZ (maxZ_in_IntSet)
+
+**Enunciado Matemático**: Si $x, y \in \mathbb{Z}$ entonces $\max(x,y) \in \mathbb{Z}$.
+
+**Firma Lean4**:
+
+```lean
+theorem maxZ_in_IntSet (x y : U)
+    (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) :
+    maxZ x y ∈ (IntSet : U)
+```
+
+**Importancia**: high
+
+#### Cota Superior Universal (maxZ_leZ)
+
+**Enunciado Matemático**: Si $x \leq z$ e $y \leq z$ entonces $\max(x,y) \leq z$.
+
+**Firma Lean4**:
+
+```lean
+theorem maxZ_leZ (x y z : U)
+    (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) (hz : z ∈ (IntSet : U))
+    (hxz : leZ x z) (hyz : leZ y z) :
+    leZ (maxZ x y) z
+```
+
+**Importancia**: high
+
+---
+
+### 4.60 Rat.MaxMin.lean
+
+**Importancia por teorema**:
+
+- `maxQ_in_RatSet`: high — clausura de maxQ en ℚ
+- `minQ_in_RatSet`: high — clausura de minQ en ℚ
+- `leQ_maxQ_left`: high — x ≤ maxQ x y
+- `leQ_maxQ_right`: high — y ≤ maxQ x y
+- `maxQ_leQ`: high — cota superior universal
+- `minQ_leQ_left`: high — minQ x y ≤ x
+- `minQ_leQ_right`: high — minQ x y ≤ y
+- `leQ_minQ`: high — cota inferior universal
+- `maxQ_comm`: medium — conmutatividad de maxQ
+- `minQ_comm`: medium — conmutatividad de minQ
+- `maxQ_idem`: medium — idempotencia de maxQ
+- `minQ_idem`: medium — idempotencia de minQ
+- `maxQ_assoc`: medium — asociatividad de maxQ
+- `minQ_assoc`: medium — asociatividad de minQ
+- `maxQ_eq_right_iff_leQ`: medium — maxQ x y = y ↔ x ≤ y
+- `maxQ_eq_left_iff_leQ`: medium — maxQ x y = x ↔ y ≤ x
+- `minQ_eq_left_iff_leQ`: medium — minQ x y = x ↔ x ≤ y
+- `minQ_eq_right_iff_leQ`: medium — minQ x y = y ↔ y ≤ x
+
+#### Cota Superior Universal en ℚ (maxQ_leQ)
+
+**Enunciado Matemático**: Si $x \leq z$ e $y \leq z$ entonces $\max_\mathbb{Q}(x,y) \leq z$.
+
+**Firma Lean4**:
+
+```lean
+theorem maxQ_leQ (x y z : U)
+    (hx : x ∈ (RatSet : U)) (hy : y ∈ (RatSet : U)) (hz : z ∈ (RatSet : U))
+    (hxz : leQ x z) (hyz : leQ y z) :
+    leQ (maxQ x y) z
+```
+
+**Importancia**: high
+
+---
+
+### 4.61 Rat.Sequences.lean
+
+**Importancia por teorema**:
+
+- `seqTermQ_mem_RatSet`: high — f(n) ∈ ℚ para toda sucesión
+- `constSeqQ_isSeqQ`: high — clausura: constSeqQ a es una sucesión de ℚ
+- `constSeqQ_apply`: high — constSeqQ a ⦅n⦆ = a
+- `addSeqQ_isSeqQ`: high — clausura: addSeqQ f g es sucesión
+- `addSeqQ_apply`: high — (f+g)(n) = f(n) + g(n)
+- `negSeqQ_isSeqQ`: medium — clausura: negSeqQ f es sucesión
+- `negSeqQ_apply`: medium — (-f)(n) = -f(n)
+- `mulSeqQ_isSeqQ`: medium — clausura: mulSeqQ f g es sucesión
+- `mulSeqQ_apply`: medium — (f·g)(n) = f(n)·g(n)
+
+#### Término en ℚ (seqTermQ_mem_RatSet)
+
+**Enunciado Matemático**: Si $f$ es sucesión de racionales y $n \in \omega$, entonces $f(n) \in \mathbb{Q}$.
+
+**Firma Lean4**:
+
+```lean
+theorem seqTermQ_mem_RatSet (f : U) (hf : IsSeqQ f) (n : U) (hn : n ∈ (ω : U)) :
+    f⦅n⦆ ∈ (RatSet : U)
+```
+
+**Importancia**: high
+
+---
+
+### 4.62 Rat.Convergence.lean
+
+**Importancia por teorema**:
+
+- `convergesToQ_const`: high — sucesión constante converge a su valor
+- `limit_unique`: high — unicidad del límite
+- `convergesToQ_add`: high — (f→L₁, g→L₂) ⟹ f+g→L₁+L₂
+- `convergesToQ_mul_bounded`: high — (f→0, g acotada) ⟹ f·g→0
+- `subseq_convergent`: high — subsucesión de convergente es convergente
+- `strictly_increasing_ge`: medium — φ estrictamente creciente ⟹ φ(n) ≥ n
+
+#### Unicidad del Límite (limit_unique)
+
+**Enunciado Matemático**: Si $f \to L_1$ y $f \to L_2$ entonces $L_1 = L_2$.
+
+**Firma Lean4**:
+
+```lean
+theorem limit_unique (f L₁ L₂ : U)
+    (hf : IsSeqQ f)
+    (hL₁ : L₁ ∈ (RatSet : U)) (hL₂ : L₂ ∈ (RatSet : U))
+    (h₁ : convergesToQ f L₁) (h₂ : convergesToQ f L₂) :
+    L₁ = L₂
+```
+
+**Importancia**: high
+
+#### Convergencia de la Suma (convergesToQ_add)
+
+**Enunciado Matemático**: Si $f \to L_1$ y $g \to L_2$ entonces $(f+g) \to L_1 + L_2$.
+
+**Firma Lean4**:
+
+```lean
+theorem convergesToQ_add (f g L₁ L₂ : U)
+    (hf : IsSeqQ f) (hg : IsSeqQ g)
+    (hL₁ : L₁ ∈ (RatSet : U)) (hL₂ : L₂ ∈ (RatSet : U))
+    (h₁ : convergesToQ f L₁) (h₂ : convergesToQ g L₂) :
+    convergesToQ (addSeqQ f g) (addQ L₁ L₂)
+```
+
+**Importancia**: high
+
+---
+
+### 4.63 Rat.CauchyQ.lean
+
+**Importancia por teorema**:
+
+- `cauchy_of_convergentQ`: high — convergente ⟹ Cauchy
+- `cauchy_bounded`: high — Cauchy ⟹ acotada (0 sorry, probado completamente)
+- `constSeqQ_isCauchy`: medium — sucesión constante es de Cauchy
+
+#### Convergente implica Cauchy (cauchy_of_convergentQ)
+
+**Enunciado Matemático**: Si $f \to L$ entonces $f$ es de Cauchy.
+
+**Firma Lean4**:
+
+```lean
+theorem cauchy_of_convergentQ (f L : U)
+    (hf : IsSeqQ f) (hL : L ∈ (RatSet : U))
+    (hconv : convergesToQ f L) :
+    IsCauchyQ f
+```
+
+**Importancia**: high
+
+#### Cauchy implica Acotada (cauchy_bounded)
+
+**Enunciado Matemático**: Toda sucesión de Cauchy en ℚ está acotada.
+
+**Firma Lean4**:
+
+```lean
+theorem cauchy_bounded (f : U) (hf : IsSeqQ f) (hcauchy : IsCauchyQ f) :
+    isBoundedQ f
+```
+
+**Importancia**: high
+**@importance**: critical
+**Nota**: Demostrado completamente (0 sorry). La prueba usa inducción en ω sobre el predicado $Q(n) := \exists M > 0, \forall k \leq n, |f(k)| \leq M$, con `maxQ` en el paso inductivo y tricotomía $n$ vs $N_0$ en la conclusión.
+
+---
+
+### 4.64 Rat.Monotone.lean
+
+**Importancia por teorema**:
+
+- `constSeqQ_isNondecreasing`: medium — constante es no-decreciente
+- `constSeqQ_isNonincreasing`: medium — constante es no-creciente
+- `strictlyIncreasing_isNondecreasing`: medium — estrictamente creciente ⟹ no-decreciente
+- `strictlyDecreasing_isNonincreasing`: medium — estrictamente decreciente ⟹ no-creciente
+- `nondecreasing_convergent_limit_ge`: high — f↗, f→L ⟹ f(n)≤L para todo n
+- `nonincreasing_convergent_limit_le`: high — f↘, f→L ⟹ L≤f(n) para todo n
+- `limit_le_of_bounded_above`: high — f→L, ∀n f(n)≤M ⟹ L≤M
+- `le_limit_of_bounded_below`: high — f→L, ∀n M≤f(n) ⟹ M≤L
+- `nondecreasing_convergent_isBoundedAbove`: medium — f↗, f→L ⟹ acotada superiormente por L
+- `nonincreasing_convergent_isBoundedBelow`: medium — f↘, f→L ⟹ acotada inferiormente por L
+- `convergent_isBounded`: high — convergente ⟹ acotada (**sorry**)
+
+#### Límite ≤ Cota Superior (limit_le_of_bounded_above)
+
+**Enunciado Matemático**: Si $f \to L$ y $f(n) \leq M$ para todo $n \in \omega$, entonces $L \leq M$.
+
+**Firma Lean4**:
+
+```lean
+theorem limit_le_of_bounded_above (f L M : U)
+    (hf : IsSeqQ f) (hL : L ∈ (RatSet : U)) (hM : M ∈ (RatSet : U))
+    (hconv : convergesToQ f L)
+    (hbound : ∀ n, n ∈ (ω : U) → leQ (f⦅n⦆) M) :
+    leQ L M
+```
+
+**Importancia**: high
+
+---
+
 ## 5. Notación y Sintaxis
 
 ### 5.1 Operadores Básicos
@@ -17932,6 +18288,159 @@ export ZFC.Rat.Field (
 )
 ```
 
+### 6.60 Int.MaxMin.lean
+
+**Namespace**: `ZFC.Int.MaxMin` (exportado a `ZFC`)
+**Última modificación**: 2026-04-27
+**Dependencias**: `ZFC.Int.Order`
+
+```lean
+export Int.MaxMin (
+  maxZ
+  minZ
+  maxZ_in_IntSet
+  minZ_in_IntSet
+  leZ_maxZ_left
+  leZ_maxZ_right
+  maxZ_leZ
+  minZ_leZ_left
+  minZ_leZ_right
+  leZ_minZ
+  maxZ_comm
+  minZ_comm
+  maxZ_idem
+  minZ_idem
+  maxZ_assoc
+  minZ_assoc
+  maxZ_eq_right_iff_leZ
+  maxZ_eq_left_iff_leZ
+  minZ_eq_left_iff_leZ
+  minZ_eq_right_iff_leZ
+)
+```
+
+### 6.61 Rat.MaxMin.lean
+
+**Namespace**: `ZFC.Rat.MaxMin` (exportado a `ZFC`)
+**Última modificación**: 2026-04-27
+**Dependencias**: `ZFC.Rat.Order`
+
+```lean
+export Rat.MaxMin (
+  maxQ
+  minQ
+  maxQ_in_RatSet
+  minQ_in_RatSet
+  leQ_maxQ_left
+  leQ_maxQ_right
+  maxQ_leQ
+  minQ_leQ_left
+  minQ_leQ_right
+  leQ_minQ
+  maxQ_comm
+  minQ_comm
+  maxQ_idem
+  minQ_idem
+  maxQ_assoc
+  minQ_assoc
+  maxQ_eq_right_iff_leQ
+  maxQ_eq_left_iff_leQ
+  minQ_eq_left_iff_leQ
+  minQ_eq_right_iff_leQ
+)
+```
+
+### 6.62 Rat.Sequences.lean
+
+**Namespace**: `ZFC.Rat.Sequences` (exportado a `ZFC`)
+**Última modificación**: 2026-04-27
+**Dependencias**: `ZFC.Rat.Mul`, `ZFC.Rat.Abs`
+
+```lean
+export ZFC.Rat.Sequences (
+  IsSeqQ
+  seqTermQ_mem_RatSet
+  constSeqQ
+  constSeqQ_isSeqQ
+  constSeqQ_apply
+  addSeqQ
+  addSeqQ_isSeqQ
+  addSeqQ_apply
+  negSeqQ
+  negSeqQ_isSeqQ
+  negSeqQ_apply
+  mulSeqQ
+  mulSeqQ_isSeqQ
+  mulSeqQ_apply
+)
+```
+
+### 6.63 Rat.Convergence.lean
+
+**Namespace**: `ZFC.Rat.Convergence` (exportado a `ZFC`)
+**Última modificación**: 2026-04-27
+**Dependencias**: `ZFC.Rat.Sequences`, `ZFC.Rat.Abs`, `ZFC.Nat.MaxMin`
+**Nota**: 2 sorry restantes (teoremas de aritmética avanzada de límites: ×, inv, squeeze).
+
+```lean
+export ZFC.Rat.Convergence (
+  convergesToQ
+  hasLimitQ
+  IsSubseqOf
+  convergesToQ_const
+  limit_unique
+  subseq_convergent
+  convergesToQ_add
+  convergesToQ_mul_bounded
+)
+```
+
+### 6.64 Rat.CauchyQ.lean
+
+**Namespace**: `ZFC.Rat.CauchyQ` (exportado a `ZFC`)
+**Última modificación**: 2026-04-27
+**Dependencias**: `ZFC.Rat.Convergence`, `ZFC.Rat.MaxMin`
+**Nota**: 0 sorry — `cauchy_bounded` completamente demostrado.
+
+```lean
+export ZFC.Rat.CauchyQ (
+  IsCauchyQ
+  cauchy_of_convergentQ
+  cauchy_bounded
+  constSeqQ_isCauchy
+)
+```
+
+### 6.65 Rat.Monotone.lean
+
+**Namespace**: `ZFC.Rat.Monotone` (exportado a `ZFC`)
+**Última modificación**: 2026-04-27
+**Dependencias**: `ZFC.Rat.CauchyQ`, `ZFC.Nat.MaxMin`
+**Nota**: 1 sorry — `convergent_isBounded` (necesita maxQ sobre segmento inicial con índice variable).
+
+```lean
+export ZFC.Rat.Monotone (
+  isNondecreasingQ
+  isNonincreasingQ
+  isStrictlyIncreasingQ
+  isStrictlyDecreasingQ
+  isBoundedAboveByQ
+  isBoundedBelowByQ
+  isBoundedQ
+  constSeqQ_isNondecreasing
+  constSeqQ_isNonincreasing
+  strictlyIncreasing_isNondecreasing
+  strictlyDecreasing_isNonincreasing
+  nondecreasing_convergent_limit_ge
+  nonincreasing_convergent_limit_le
+  limit_le_of_bounded_above
+  le_limit_of_bounded_below
+  nondecreasing_convergent_isBoundedAbove
+  nonincreasing_convergent_isBoundedBelow
+  convergent_isBounded
+)
+```
+
 ## 7. Estado de Proyección por Módulo
 
 ### 7.1 Leyenda de Estados
@@ -18007,6 +18516,10 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `Int/Units.lean` - Unidades de ℤ: isUnitZ, unitZ_iff (x∈ℤ× ⇔ x=1∨x=-1). 1 definición + 1 teorema + 2 exports
 - `Rat/Embedding.lean` - Embedding ℤ→ℚ e identidades de homomorfismo de anillos ordenados: intToRat canónico (n↦n/1), clausura, inyectividad, preserva/refleja +/−/·/≤/<, no suryectivo, propiedad arquimediana. 1 definición + 14 teoremas + 15 exports
 - `Rat/Field.lean` - Axiomas de cuerpo de ℚ: no divisores de cero, cancelación, doble inverso, invQ(x·y), auto-división, división por 1, (x/y)·y=x, distribución de negación, distributividad ·/+. 0 definiciones + 14 teoremas + 14 exports
+- `Int/MaxMin.lean` - Máximo y mínimo en ℤ: maxZ/minZ directamente desde leZ, clausura en ℤ, cotas superior/inferior universales, conmutatividad, idempotencia, asociatividad, equivalencias caracterizadoras. 2 definiciones + 18 teoremas + 20 exports
+- `Rat/MaxMin.lean` - Máximo y mínimo en ℚ: maxQ/minQ directamente desde leQ (estructura idéntica a Int.MaxMin). 2 definiciones + 18 teoremas + 20 exports
+- `Rat/Sequences.lean` - Sucesiones de racionales: IsSeqQ, constSeqQ, addSeqQ, negSeqQ, mulSeqQ; clausura y aplicación de operaciones punto a punto. 5 definiciones + 9 teoremas + 14 exports
+- `Rat/CauchyQ.lean` - Sucesiones de Cauchy en ℚ: IsCauchyQ, cauchy_of_convergentQ (convergente⟹Cauchy), cauchy_bounded (Cauchy⟹acotada, 0 sorry), constSeqQ_isCauchy. 1 definición + 3 teoremas + 4 exports
 
 ### 7.3 Archivos Parcialmente Proyectados
 
@@ -18018,7 +18531,8 @@ Los siguientes archivos tienen **documentación parcial** (solo definiciones/teo
 
 Los siguientes archivos están **casi completos** pero contienen algunos `sorry` documentados:
 
-- (Ninguno actualmente - todos los módulos de Core Theory están 100% completos)
+- `Rat/Convergence.lean` - 2 sorry en aritmética avanzada de límites (multiplicación de límites, inverso de límite). 3 definiciones + 5 teoremas demostrados + 8 exports
+- `Rat/Monotone.lean` - 1 sorry en `convergent_isBounded` (maxQ sobre segmento finito con índice variable). 7 definiciones + 10 teoremas demostrados + 18 exports
 
 **Nota**: `SetOps.Functions.lean` está ahora ✅ **100% completo** (0 sorry).
 **Nota**: `Induction.Recursion.lean` está ahora ✅ **100% completo** (0 sorry, 0 errores de compilación).
@@ -18026,9 +18540,11 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 
 ### 7.5 Archivos Completos Pendientes de Proyectar
 
-(Ninguno — 64/64 módulos proyectados)
+(Ninguno — 70/70 módulos proyectados)
 
 ---
+
+*Última actualización: 2026-04-27 — Proyección de Int.MaxMin.lean (§3.63, §4.59, §6.60: 2 def + 18 teoremas + 20 exports, maxZ/minZ en ℤ), Rat.MaxMin.lean (§3.64, §4.60, §6.61: 2 def + 18 teoremas + 20 exports, maxQ/minQ en ℚ), Rat.Sequences.lean (§3.65, §4.61, §6.62: 5 def + 9 teoremas + 14 exports), Rat.Convergence.lean (§3.66, §4.62, §6.63: 3 def + 5 teoremas + 8 exports, 2 sorry), Rat.CauchyQ.lean (§3.67, §4.63, §6.64: 1 def + 3 teoremas + 4 exports, 0 sorry — `cauchy_bounded` demostrado), Rat.Monotone.lean (§3.68, §4.64, §6.65: 7 def + 10 teoremas + 18 exports, 1 sorry). §7.2, §7.4, §7.5 actualizados. 70/70 módulos proyectados.*
 
 *Última actualización: 2026-04-26 12:00 — Proyección completa de Rat.Embedding.lean (§3.61, §4.57, §6.58: 1 def + 14 teoremas + 15 exports, embedding canónico intToRat : ℤ→ℚ, homomorfismo de anillos ordenados, no suryectividad, propiedad arquimediana) y Rat.Field.lean (§3.62, §4.58, §6.59: 0 def + 14 teoremas + 14 exports, no divisores de cero, cancelación, doble inverso, propiedades de divQ, distributividad ·/+). Tabla §1.1 y §7.2 actualizadas. §7.5: 64/64 módulos proyectados. Estado: ✅ 100% completo, 0 sorry.*
 

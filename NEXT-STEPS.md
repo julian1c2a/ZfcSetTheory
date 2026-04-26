@@ -15,8 +15,9 @@
 - ✅ **Anotaciones REFERENCE.md** (Phase 4): @axiom_system, @importance, ~280 teoremas anotados
 - ✅ **Enteros ℤ** (Phase 5, 15 módulos): 190 exports, 0 sorry, 0 errores
 - ✅ **Racionales ℚ** (Phase 6, 9 módulos): `Equiv`, `Basic`, `Add`, `Neg`, `Mul`, `Order`, `Abs`, `Embedding`, `Field` — 0 sorry, 0 errores
+- 🔄 **Sucesiones en ℚ** (Phase 6.5, 6 módulos compilan): `Int/MaxMin`, `Rat/MaxMin`, `Rat/Sequences`, `Rat/Convergence`, `Rat/CauchyQ`, `Rat/Monotone` — `cauchy_bounded` demostrado sin sorry; ~3 sorry legítimos (Real.Completeness)
 
-**Estado**: 81 módulos, 0 sorry, 0 errores de compilación.
+**Estado**: 87 módulos, ~3 sorry legítimos (requieren Real.Completeness), 0 errores de compilación.
 
 ---
 
@@ -62,17 +63,20 @@
 
 ---
 
-## Phase 6.5: Sucesiones en ℚ — 📋 Planificado
+## Phase 6.5: Sucesiones en ℚ — � En progreso
 
 **Pre-requisito**: Phase 6 completa (ℚ cuerpo ordenado arquimediano)  
-**Directorio**: `ZFC/Rat/` (extensión del directorio de racionales)
+**Directorio**: `ZFC/Rat/` y `ZFC/Int/`
 
-| # | Módulo | Exports clave | Contenido principal |
-|---|--------|---------------|---------------------|
-| 1 | `Rat/Sequences.lean` | `IsSeqQ`, `constSeqQ`, `addSeqQ`, `mulSeqQ` | Sucesiones f: ω → ℚ como predicado sobre funciones (`IsFunction f ω RatSet`), operaciones punto a punto, clausura |
-| 2 | `Rat/Convergence.lean` | `convergesToQ`, `limit_unique`, `convergesToQ_neg`, `convergesToQ_add`, `convergesToQ_sub`, `convergesToQ_const_mul`, `convergesToQ_mul_bounded`, `convergesToQ_mul`, `convergesToQ_inv`, `convergesToQ_div`, `convergesToQ_abs`, `convergesToQ_zero_of_abs`, `convergesToQ_iff_abs`, `convergesToQ_tail`, `convergesToQ_of_eventually_eq`, `squeeze_theorem`, `convergesToQ_of_dominated`, `IsSubseqOf`, `strictly_increasing_ge`, `subseq_convergent` | Convergencia ε-N en ℚ; unicidad del límite; aritmética completa de límites (neg, +, −, ·escalar, ·, inv, div, abs); squeeze; colas; equivalencias eventuales; subsucesiones |
-| 3 | `Rat/CauchyQ.lean` | `IsCauchyQ`, `cauchy_of_convergentQ`, `cauchy_bounded`, `cauchyQ_neg`, `cauchyQ_add`, `cauchyQ_sub`, `cauchyQ_const_mul`, `cauchyQ_mul`, `subseq_of_cauchyQ`, `cauchyQ_of_convergent_subseq` | Sucesiones de Cauchy en ℚ; convergente ⟹ Cauchy; Cauchy ⟹ acotada; aritmética de Cauchy (neg, +, −, ·escalar, ·); subsucesiones; **`cauchyQ_of_convergent_subseq`** (corazón de la completitud de ℝ) |
-| 4 | `Rat/SqrtApprox.lean` | `sqrtApprox`, `sqrtApprox_is_cauchy`, `sqrt2_irrational`, `sqrtApprox_not_convergent` | Sucesión de Newton-Raphson para √2: f(0)=3/2, f(n+1)=(f(n)+2/f(n))/2; es Cauchy en ℚ pero no converge en ℚ |
+| # | Módulo | Exports clave | Estado |
+|---|--------|---------------|--------|
+| 0a | `Int/MaxMin.lean` | `maxZ`, `minZ`, 18 teoremas | ✅ 0 sorry |
+| 0b | `Rat/MaxMin.lean` | `maxQ`, `minQ`, 18 teoremas | ✅ 0 sorry |
+| 1 | `Rat/Sequences.lean` | `IsSeqQ`, `constSeqQ`, `addSeqQ`, `negSeqQ`, `mulSeqQ` | ✅ 0 sorry |
+| 2 | `Rat/Convergence.lean` | `convergesToQ`, `limit_unique`, `convergesToQ_add`, `convergesToQ_mul_bounded`, `subseq_convergent`, `IsSubseqOf` | 🔄 2 sorry (aritmética avanzada de límites) |
+| 3 | `Rat/CauchyQ.lean` | `IsCauchyQ`, `cauchy_of_convergentQ`, `cauchy_bounded`, `constSeqQ_isCauchy` | ✅ 0 sorry |
+| 4 | `Rat/Monotone.lean` | `isNondecreasingQ`, `isBoundedQ`, `limit_le_of_bounded_above`, `convergent_isBounded` | 🔄 1 sorry (`convergent_isBounded`) |
+| 5 | `Rat/SqrtApprox.lean` | `sqrtApprox`, `sqrtApprox_is_cauchy`, `sqrt2_irrational`, `sqrtApprox_not_convergent` | ❌ No iniciado |
 
 **Teoremas clave de `Rat/Convergence.lean`** (plan detallado):
 
@@ -144,11 +148,11 @@
 
 ### Acotamiento y monotonía (en `Rat/Monotone.lean`)
 
-1. `nondecreasing_bounded_isCauchy` — gₙ no-decreciente + acotada superiormente ⟹ Cauchy. (**sorry: necesita Real.Completeness**)
-2. `nonincreasing_bounded_isCauchy` — gₙ no-creciente + acotada inferiormente ⟹ Cauchy. (**sorry: necesita Real.Completeness**)
+1. `nondecreasing_bounded_isCauchy` — gₙ no-decreciente + acotada superiormente ⟹ Cauchy. (**eliminado de `Monotone.lean`** — requiere Real.Completeness; irá en `ZFC.Real.Monotone`)
+2. `nonincreasing_bounded_isCauchy` — gₙ no-creciente + acotada inferiormente ⟹ Cauchy. (**eliminado de `Monotone.lean`** — requiere Real.Completeness; irá en `ZFC.Real.Monotone`)
 3. `limit_le_of_bounded_above f L M` — f→L, ∀n f(n)≤M ⟹ L≤M. (**✅ probado**)
 4. `le_limit_of_bounded_below f L M` — f→L, ∀n M≤f(n) ⟹ M≤L. (**✅ probado**)
-5. `convergent_isBounded f L` — f→L ⟹ f está acotada (superior e inferiormente). (**sorry: depende de `cauchy_bounded`**)
+5. `convergent_isBounded f L` — f→L ⟹ f está acotada (superior e inferiormente). (**sorry: necesita `maxQ` iterado sobre segmento finito con índice variable**)
 
 **Teoremas clave de `Rat/CauchyQ.lean`** (plan detallado):
 
@@ -159,10 +163,8 @@
    *Estrategia*: dado ε>0, tomar N tal que ∀n≥N, |f(n)−L|<ε/2;
    para m,n≥N: `|f(m)−f(n)| ≤ |f(m)−L| + |L−f(n)| < ε/2+ε/2 = ε`.
    Requiere `halfQ`, `absQ_triangle_sub` (`|a−c|≤|a−b|+|b−c|`).
-3. `cauchy_bounded f` — toda sucesión de Cauchy en ℚ está acotada. (**sorry: necesita `maxQ` sobre familia finita**)
-   *Estrategia*: tomar ε=1; para N dado por Cauchy, los términos n≥N tienen
-   `|f(n)|≤|f(N)|+1`; el máximo de |f(0)|,...,|f(N)|,|f(N)|+1 es la cota.
-   Requiere `maxQ` iterado (inducción sobre N).
+3. `cauchy_bounded f` — toda sucesión de Cauchy en ℚ está acotada. (**✅ probado** vía inducción con `maxQ` sobre segmento inicial [0,N₀])
+   *Estrategia implementada*: ε=1; N₀ de Cauchy; Q(n) = ∃M, ∀k≤n, |f(k)|≤M; inducción en ω da Q(N₀); M = addQ M₀ oneQ; tricotomía n vs N₀.
 
 ### Aritmética de Cauchy
 
@@ -280,7 +282,7 @@
 | 4: Anotaciones | ✅ Completo | — | — |
 | 5: Enteros ℤ | ✅ Completo | 15 | 190 |
 | 6: Racionales ℚ | ✅ Completo | 9 | 90 |
-| 6.5: Sucesiones en ℚ | 📋 Planificado | 0/4 | — |
+| 6.5: Sucesiones en ℚ | � En progreso | 6/7 | ~84 |
 | 7a: Computables | 📋 Planificado | 0/4 | — |
 | 7b: Constructibles | 📋 Planificado | 0/2 | — |
 | 7c: Radicales | 📋 Planificado | 0/2 | — |
@@ -290,4 +292,4 @@
 
 ---
 
-*Última actualización: 2026-04-26. Phase 6 (ℚ) 100% completa: 9 módulos (~90 exports, 0 sorry). 81 módulos activos en total. Siguiente: Phase 6.5 — sucesiones en ℚ, 4 módulos en `ZFC/Rat/`: `Sequences`, `Convergence`, `CauchyQ`, `SqrtApprox` (prueba de incompletitud de ℚ como motivación de ℝ).*
+*Última actualización: 2026-04-27. Phase 6.5 (Sucesiones en ℚ) en progreso: 6/7 módulos compilan (~84 exports adicionales); `cauchy_bounded` demostrado sin sorry; `Int/MaxMin` y `Rat/MaxMin` añadidos como soporte. 87 módulos activos en total, ~3 sorry legítimos (Real.Completeness). Pendiente: `Rat/SqrtApprox.lean` (prueba de incompletitud de ℚ como motivación de ℝ).*
