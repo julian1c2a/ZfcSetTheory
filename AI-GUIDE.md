@@ -49,7 +49,42 @@ Este documento establece los requisitos y estándares para la documentación té
 
 ### (9.) Cada vez que cargas un archivo .lean, actualizas (si es necesario) el REFERENCE.md con lo que se ha demostrado o construido en ese archivo, siguiendo los puntos anteriores. Si hace falta anotar una fecha y la fecha de la última modificación del archivo .lean, estará bien, para trazar bien lo que de hecho tenemos
 
-### (10.) El archivo REFERENCE.md debe ser lo único que necesites para escribir la documentación, o para hacer un nuevo archivo/módulo .lean de forma que no haya que cargar la totalidad de los tokens que tiene actualmente el proyecto. Esto es especialmente importante para la IA, para que pueda entender claramente qué definiciones, axiomas, teoremas, módulos y espacios de nombre existen, cómo se relacionan entre sí, y cómo se pueden usar en demostraciones o construcciones más elaboradas sin necesidad de cargar el proyecto completo
+### (10.) Sistema de Documentación Modular
+
+**PROBLEMA RESUELTO**: REFERENCE.md alcanzó 234k tokens, excediendo la ventana de contexto.
+
+**SOLUCIÓN**: Sistema modular con archivos especializados:
+
+| Archivo | Contenido | Tokens aprox. | Propósito |
+|---------|-----------|---------------|-----------|
+| **REFERENCE.md** | Índice maestro + tabla de módulos | ~10k | Punto de entrada, siempre cargar primero |
+| **REFERENCE-AXIOMS.md** | Todos los axiomas (§2) | ~15k | Axiomas ZFC completos |
+| **REFERENCE-DEFINITIONS.md** | Definiciones principales (§3) | ~50k | Definiciones exportables |
+| **REFERENCE-THEOREMS.md** | Teoremas principales (§4) | ~80k | Teoremas sin demostraciones |
+| **REFERENCE-NOTATION.md** | Toda la notación (§5) | ~10k | Símbolos y prioridades |
+| **REFERENCE-EXPORTS.md** | Todos los exports (§6) | ~30k | API pública por módulo |
+
+**Total**: ~195k tokens distribuidos en 6 archivos manejables
+
+**Protocolo de carga**:
+1. Cargar siempre **REFERENCE.md** primero (índice maestro)
+2. Cargar **solo los submódulos necesarios** para la tarea actual:
+   - Para consultar axiomas → cargar REFERENCE-AXIOMS.md
+   - Para consultar definiciones → cargar REFERENCE-DEFINITIONS.md
+   - Para consultar teoremas → cargar REFERENCE-THEOREMS.md
+   - Para consultar notación → cargar REFERENCE-NOTATION.md
+   - Para consultar exports → cargar REFERENCE-EXPORTS.md
+3. Para proyectar un módulo .lean:
+   - Cargar REFERENCE.md
+   - Cargar REFERENCE-AXIOMS.md si el módulo define axiomas
+   - Cargar REFERENCE-DEFINITIONS.md si el módulo define definiciones
+   - Cargar REFERENCE-THEOREMS.md si el módulo prueba teoremas
+   - Cargar REFERENCE-NOTATION.md si el módulo introduce notación
+   - Cargar REFERENCE-EXPORTS.md siempre (para actualizar exports)
+   - Actualizar los archivos correspondientes
+   - Actualizar la tabla §1.1 en REFERENCE.md
+
+**Límite de tokens**: Cada archivo REFERENCE-*.md debe mantenerse **bajo 50k tokens**. Si un archivo crece demasiado, subdividirlo (ej: REFERENCE-THEOREMS-NAT.md, REFERENCE-THEOREMS-INT.md, etc.)
 
 ### (11.) Cuando leas este archivo introduce en cada archivo .lean una cabecera de instrucciones de su relación con REFERENCE.md, para que al entrar y leer, si es que es necesario, un archivo .lean, se recuerde la necesidad de **proyectar** ese archivo de código en REFERENCE.md
 
@@ -379,36 +414,49 @@ Para facilitar la revisión sistemática de módulos .lean y su proyección en R
 revisar PowerSet.lean
 ```
 
-#### Comando: `proyectar <módulo>`
+#### Comando: `proyecta <módulo>`
 
-**Sintaxis**: `proyectar <nombre_módulo.lean>`
+**Sintaxis**: `proyecta <nombre_módulo.lean>`
 
 **Acción**:
 
 1. Cargar el archivo `ZFC/<nombre_módulo.lean>` si no está ya en el chat
-2. Cargar REFERENCE.md si no está ya en el chat
-3. Extraer toda la información relevante del módulo:
+
+2. Cargar **REFERENCE.md** (índice maestro) si no está ya en el chat
+
+3. Identificar qué archivos REFERENCE-*.md necesitas y cargarlos:
+   - Si el módulo tiene axiomas → cargar **REFERENCE-AXIOMS.md**
+   - Si el módulo tiene definiciones → cargar **REFERENCE-DEFINITIONS.md**
+   - Si el módulo tiene teoremas → cargar **REFERENCE-THEOREMS.md**
+   - Si el módulo tiene notación → cargar **REFERENCE-NOTATION.md**
+   - Siempre cargar **REFERENCE-EXPORTS.md**
+
+4. Extraer toda la información relevante del módulo según AI-GUIDE.md:
    - Axiomas con ubicación, namespace, orden, enunciado matemático, firma Lean4, dependencias
    - Definiciones con ubicación, namespace, orden, enunciado matemático, firma Lean4, notación, computabilidad, terminación, dependencias
    - Teoremas principales con ubicación, namespace, orden, enunciado matemático, firma Lean4, dependencias (sin demostración)
    - Exports completos
-4. Actualizar REFERENCE.md:
-   - Crear/actualizar sección de axiomas (§2.X)
-   - Crear/actualizar sección de definiciones (§3.X)
-   - Crear/actualizar sección de teoremas (§4.X)
-   - Crear/actualizar sección de notación (§5.X)
-   - Crear/actualizar sección de exports (§6.X)
-   - Actualizar tabla de módulos (§1.1) con estado "✅ Completo"
+
+5. Actualizar **solo los archivos REFERENCE-*.md correspondientes**:
+   - **REFERENCE-AXIOMS.md**: crear/actualizar sección §2.X si hay axiomas
+   - **REFERENCE-DEFINITIONS.md**: crear/actualizar sección §3.X si hay definiciones
+   - **REFERENCE-THEOREMS.md**: crear/actualizar sección §4.X si hay teoremas
+   - **REFERENCE-NOTATION.md**: crear/actualizar sección §5.X si hay notación
+   - **REFERENCE-EXPORTS.md**: crear/actualizar sección §6.X con exports
+   - **REFERENCE.md**: actualizar tabla §1.1 con estado "✅ Completo" y contadores
    - Renumerar secciones si es necesario
-5. Actualizar REFERENCE.md §1.1 marcando el módulo como ✅ Completo
-6. Actualizar timestamp en REFERENCE.md (formato YYYY-MM-DD HH:MM)
+
+6. Actualizar timestamps en **todos los archivos modificados** (formato YYYY-MM-DD HH:MM)
+
 7. Descargar el módulo del chat al finalizar
 
 **Ejemplo de uso**:
 
 ```
-proyectar PowerSet.lean
+proyecta PowerSet.lean
 ```
+
+**Nota importante**: Este comando ahora trabaja con el sistema modular, cargando solo los archivos necesarios para evitar exceder la ventana de contexto (234k tokens).
 
 #### Comando: `siguiente módulo`
 
@@ -509,7 +557,7 @@ ciclo revisión completo
    ```
    siguiente módulo
    revisar <módulo>
-   proyectar <módulo>  # si es necesario
+   proyecta <módulo>  # proyectar según AI-GUIDE.md (sistema modular)
    ```
 
 3. **Revisión automática**:
@@ -524,6 +572,12 @@ ciclo revisión completo
    verificar proyección <módulo>
    ```
 
+5. **Guardar y subir cambios**:
+
+   ```
+   guarda_y_sube "Mensaje descriptivo del commit"
+   ```
+
 **Reglas de los comandos**:
 
 - Los comandos son **case-insensitive** (mayúsculas/minúsculas no importan)
@@ -532,6 +586,8 @@ ciclo revisión completo
 - Los comandos siempre actualizan timestamps en formato YYYY-MM-DD HH:MM
 - Los comandos siempre actualizan REFERENCE.md §1.1 con el estado actual
 - Los comandos respetan el sistema de bloqueo de archivos (§20)
+- `proyecta` ahora trabaja con el **sistema modular** (REFERENCE-*.md)
+- `guarda_y_sube` maneja automáticamente el ciclo completo de unlock → commit → push → lock
 
 ---
 
