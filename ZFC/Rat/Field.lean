@@ -441,8 +441,56 @@ namespace ZFC
                            (mulZ_in_IntSet a_den a_den ha_den_i ha_den_i)
                            (mulZ_in_IntSet b_num b_den hb_num hb_den_i))
                          hc_sq H_ab hc_sq_nn
-      -- Rearrange using mul4_comm to get the desired form
-      sorry -- Requiere álgebra de reordenamiento con mul4_comm
+      -- Rearrange using comm4_priv to get the desired form
+      -- LHS: ((a_num·a_den)·b_den²)·(c_num·c_den)²
+      --    = ((a_num·a_den)·(c_num·c_den))·(b_den²·(c_num·c_den))  [comm4_priv]
+      --    = ((a_num·c_num)·(a_den·c_den))·((b_den·c_den)·(b_den·c_den))  [comm4_priv twice]
+      have hab := mulZ_in_IntSet a_num a_den ha_num ha_den_i
+      have hb2 := mulZ_in_IntSet b_den b_den hb_den_i hb_den_i
+      have ha2 := mulZ_in_IntSet a_den a_den ha_den_i ha_den_i
+      have hbc := mulZ_in_IntSet b_num b_den hb_num hb_den_i
+      have hac_num := mulZ_in_IntSet a_num c_num ha_num hc_num
+      have hac_den := mulZ_in_IntSet a_den c_den ha_den_i hc_den_i
+      have hbc_den := mulZ_in_IntSet b_den c_den hb_den_i hc_den_i
+      have hbc_num := mulZ_in_IntSet b_num c_num hb_num hc_num
+      -- Rewrite LHS
+      have h_lhs : mulZ (mulZ (mulZ a_num a_den) (mulZ b_den b_den))
+                        (mulZ (mulZ c_num c_den) (mulZ c_num c_den)) =
+                   mulZ (mulZ (mulZ a_num c_num) (mulZ a_den c_den))
+                        (mulZ (mulZ b_den c_den) (mulZ b_den c_den)) := by
+        calc mulZ (mulZ (mulZ a_num a_den) (mulZ b_den b_den))
+                  (mulZ (mulZ c_num c_den) (mulZ c_num c_den))
+            = mulZ (mulZ (mulZ a_num a_den) (mulZ c_num c_den))
+                   (mulZ (mulZ b_den b_den) (mulZ c_num c_den)) :=
+                comm4_priv (mulZ a_num a_den) (mulZ b_den b_den)
+                          (mulZ c_num c_den) (mulZ c_num c_den)
+                          hab hb2 hc_num_den hc_num_den
+          _ = mulZ (mulZ (mulZ a_num c_num) (mulZ a_den c_den))
+                   (mulZ (mulZ b_den b_den) (mulZ c_num c_den)) :=
+                by rw [comm4_priv a_num a_den c_num c_den ha_num ha_den_i hc_num hc_den_i]
+          _ = mulZ (mulZ (mulZ a_num c_num) (mulZ a_den c_den))
+                   (mulZ (mulZ b_den c_den) (mulZ b_den c_den)) :=
+                by rw [comm4_priv b_den b_den c_num c_den hb_den_i hb_den_i hc_num hc_den_i]
+      -- Rewrite RHS
+      have h_rhs : mulZ (mulZ (mulZ a_den a_den) (mulZ b_num b_den))
+                        (mulZ (mulZ c_num c_den) (mulZ c_num c_den)) =
+                   mulZ (mulZ (mulZ a_den c_den) (mulZ a_den c_den))
+                        (mulZ (mulZ b_num c_num) (mulZ b_den c_den)) := by
+        calc mulZ (mulZ (mulZ a_den a_den) (mulZ b_num b_den))
+                  (mulZ (mulZ c_num c_den) (mulZ c_num c_den))
+            = mulZ (mulZ (mulZ a_den a_den) (mulZ c_num c_den))
+                   (mulZ (mulZ b_num b_den) (mulZ c_num c_den)) :=
+                comm4_priv (mulZ a_den a_den) (mulZ b_num b_den)
+                          (mulZ c_num c_den) (mulZ c_num c_den)
+                          ha2 hbc hc_num_den hc_num_den
+          _ = mulZ (mulZ (mulZ a_den c_den) (mulZ a_den c_den))
+                   (mulZ (mulZ b_num b_den) (mulZ c_num c_den)) :=
+                by rw [comm4_priv a_den a_den c_num c_den ha_den_i ha_den_i hc_num hc_den_i]
+          _ = mulZ (mulZ (mulZ a_den c_den) (mulZ a_den c_den))
+                   (mulZ (mulZ b_num c_num) (mulZ b_den c_den)) :=
+                by rw [comm4_priv b_num b_den c_num c_den hb_num hb_den_i hc_num hc_den_i]
+      rw [h_lhs, h_rhs] at H_ab_mul
+      exact H_ab_mul
 
     /-- Multiplication preserves order (right): c ≤ d → a·c ≤ a·d for a ≥ 0 -/
     theorem mulQ_leQ_mulQ_of_nonneg_left (a c d : U)
