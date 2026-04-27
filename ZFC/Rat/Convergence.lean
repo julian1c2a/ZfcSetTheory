@@ -420,10 +420,68 @@ namespace ZFC
         (hφ_incr : ∀ m n : U, m ∈ (ω : U) → n ∈ (ω : U) → m ∈ n → (φ⦅m⦆) ∈ (φ⦅n⦆))
         (n : U) (hn : n ∈ (ω : U)) :
         n ∈ (φ⦅n⦆) ∨ n = (φ⦅n⦆) := by
-      -- Inducción sobre n ∈ ω
-      -- Caso base: n = ∅, entonces φ(∅) ∈ ω, así ∅ ∈ φ(∅) ∨ ∅ = φ(∅)
-      -- Caso inductivo: si n ∈ φ(n), entonces σ(n) ∈ φ(σ(n))
-      sorry -- Requiere principio de inducción sobre ω
+      -- Inducción sobre n ∈ ω usando omega_induction
+      apply omega_induction (fun k => k ∈ (φ⦅k⦆) ∨ k = (φ⦅k⦆))
+      · -- Caso base: ∅ ∈ φ(∅) ∨ ∅ = φ(∅)
+        have hφ0 : (φ⦅∅⦆) ∈ (ω : U) := hφ.2.2.1 ∅ zero_in_Omega
+        have h0_nat : IsNat ∅ := mem_Omega_is_Nat ∅ zero_in_Omega
+        have hφ0_nat : IsNat (φ⦅∅⦆) := mem_Omega_is_Nat (φ⦅∅⦆) hφ0
+        rcases trichotomy ∅ (φ⦅∅⦆) h0_nat hφ0_nat with h | h | h
+        · exact Or.inl h
+        · exact Or.inr h
+        · -- φ(∅) ∈ ∅ es imposible
+          exfalso
+          exact EmptySet_is_empty (φ⦅∅⦆) h
+      · -- Caso inductivo: k ∈ φ(k) ∨ k = φ(k) → σ(k) ∈ φ(σ(k)) ∨ σ(k) = φ(σ(k))
+        intro k hk hIH
+        have hk_nat : IsNat k := mem_Omega_is_Nat k hk
+        have hsk : σ k ∈ (ω : U) := succ_in_Omega k hk
+        have hsk_nat : IsNat (σ k) := mem_Omega_is_Nat (σ k) hsk
+        have hφk : (φ⦅k⦆) ∈ (ω : U) := hφ.2.2.1 k hk
+        have hφsk : (φ⦅σ k⦆) ∈ (ω : U) := hφ.2.2.1 (σ k) hsk
+        have hφk_nat : IsNat (φ⦅k⦆) := mem_Omega_is_Nat (φ⦅k⦆) hφk
+        have hφsk_nat : IsNat (φ⦅σ k⦆) := mem_Omega_is_Nat (φ⦅σ k⦆) hφsk
+        -- φ es estrictamente creciente: k ∈ σ(k) → φ(k) ∈ φ(σ(k))
+        have h_incr : (φ⦅k⦆) ∈ (φ⦅σ k⦆) := hφ_incr k (σ k) hk hsk (mem_succ_self k)
+        -- Por IH: k ∈ φ(k) ∨ k = φ(k)
+        cases hIH with
+        | inl hk_in_φk =>
+          -- k ∈ φ(k) ∈ φ(σ(k)), así k ∈ φ(σ(k)) por transitividad
+          have hk_in_φsk : k ∈ (φ⦅σ k⦆) :=
+            mem_trans k (φ⦅k⦆) (φ⦅σ k⦆) hk_nat hφk_nat hφsk_nat hk_in_φk h_incr
+          -- σ(k) = k ∪ {k}, así σ(k) ⊆ φ(σ(k)) si k ∈ φ(σ(k))
+          have hsk_sub : σ k ⊆ (φ⦅σ k⦆) := by
+            intro x hx
+            rw [mem_succ_iff] at hx
+            cases hx with
+            | inl hx_in_k =>
+              -- x ∈ k ∈ φ(k) ∈ φ(σ(k)), así x ∈ φ(σ(k)) por transitividad doble
+              have hx_in_φk : x ∈ (φ⦅k⦆) :=
+                transitive_element_subset k x hk_nat hx_in_k (φ⦅k⦆) hk_in_φk
+              exact transitive_element_subset (φ⦅k⦆) x hφk_nat hx_in_φk (φ⦅σ k⦆) h_incr
+            | inr hx_eq_k =>
+              rw [hx_eq_k]
+              exact hk_in_φsk
+          -- Por nat_subset_mem_or_eq: σ(k) ⊆ φ(σ(k)) → σ(k) ∈ φ(σ(k)) ∨ σ(k) = φ(σ(k))
+          exact nat_subset_mem_or_eq (σ k) (φ⦅σ k⦆) hsk_nat hφsk_nat hsk_sub
+        | inr hk_eq_φk =>
+          -- k = φ(k), así φ(k) ∈ φ(σ(k)) se convierte en k ∈ φ(σ(k))
+          have hk_in_φsk : k ∈ (φ⦅σ k⦆) := hk_eq_φk ▸ h_incr
+          -- Mismo argumento que arriba
+          have hsk_sub : σ k ⊆ (φ⦅σ k⦆) := by
+            intro x hx
+            rw [mem_succ_iff] at hx
+            cases hx with
+            | inl hx_in_k =>
+              have hx_in_φk : x ∈ (φ⦅k⦆) :=
+                transitive_element_subset k x hk_nat hx_in_k (φ⦅k⦆) (hk_eq_φk.symm ▸ hk_in_φsk)
+              rw [← hk_eq_φk] at hx_in_φk
+              exact transitive_element_subset k x hk_nat hx_in_k (φ⦅σ k⦆) hk_in_φsk
+            | inr hx_eq_k =>
+              rw [hx_eq_k]
+              exact hk_in_φsk
+          exact nat_subset_mem_or_eq (σ k) (φ⦅σ k⦆) hsk_nat hφsk_nat hsk_sub
+      · exact hn
 
     /-- Every subsequence of a convergent sequence converges to the same limit.
         Proof sketch: given ε > 0, let N be the threshold from f → L.
