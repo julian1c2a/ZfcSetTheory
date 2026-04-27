@@ -55,6 +55,8 @@ namespace ZFC
   open ZFC.Rat.Abs
   open ZFC.Rat.Field
   open ZFC.Rat.Sequences
+  -- Importar lemas de monotonía de Field
+  open ZFC.Rat.Field (mulQ_leQ_mulQ_of_nonneg_right mulQ_leQ_mulQ_of_nonneg_left)
 
   universe u
   variable {U : Type u}
@@ -412,6 +414,17 @@ namespace ZFC
         (∀ m n : U, m ∈ (ω : U) → n ∈ (ω : U) → m ∈ n → (φ⦅m⦆) ∈ (φ⦅n⦆)) ∧
         (∀ n : U, n ∈ (ω : U) → g⦅n⦆ = f⦅φ⦅n⦆⦆)
 
+    /-- Strictly increasing functions φ: ω → ω satisfy φ(n) ≥ n for all n ∈ ω -/
+    private theorem strictly_increasing_ge (φ : U)
+        (hφ : IsFunction φ (ω : U) (ω : U))
+        (hφ_incr : ∀ m n : U, m ∈ (ω : U) → n ∈ (ω : U) → m ∈ n → (φ⦅m⦆) ∈ (φ⦅n⦆))
+        (n : U) (hn : n ∈ (ω : U)) :
+        n ∈ (φ⦅n⦆) ∨ n = (φ⦅n⦆) := by
+      -- Inducción sobre n ∈ ω
+      -- Caso base: n = ∅, entonces φ(∅) ∈ ω, así ∅ ∈ φ(∅) ∨ ∅ = φ(∅)
+      -- Caso inductivo: si n ∈ φ(n), entonces σ(n) ∈ φ(σ(n))
+      sorry -- Requiere principio de inducción sobre ω
+
     /-- Every subsequence of a convergent sequence converges to the same limit.
         Proof sketch: given ε > 0, let N be the threshold from f → L.
         Since φ is strictly increasing we have φ(n) ≥ n for all n ∈ ω
@@ -421,7 +434,19 @@ namespace ZFC
         (hL : L ∈ (RatSet : U)) (hf : IsSeqQ f) (hg : IsSeqQ g)
         (hconv : convergesToQ f L) (hsub : IsSubseqOf g f) :
         convergesToQ g L := by
-      sorry
+      obtain ⟨φ, hφ_fn, hφ_incr, hg_eq⟩ := hsub
+      intro ε hε hε_pos
+      obtain ⟨N, hN, hN_conv⟩ := hconv ε hε hε_pos
+      refine ⟨N, hN, fun n hn h_ge => ?_⟩
+      rw [hg_eq n hn]
+      have hφn : (φ⦅n⦆) ∈ (ω : U) := hφ_fn.2.2.1 n hn
+      -- Necesitamos N ≤ φ(n), es decir, N ∈ φ(n) ∨ N = φ(n)
+      -- Por strictly_increasing_ge: n ≤ φ(n)
+      -- Por transitividad: N ≤ n ≤ φ(n) implica N ≤ φ(n)
+      have hN_φn : N ∈ (φ⦅n⦆) ∨ N = (φ⦅n⦆) := by
+        have hφn_ge_n := strictly_increasing_ge φ hφ_fn hφ_incr n hn
+        exact omega_le_trans N n (φ⦅n⦆) hN hn hφn h_ge hφn_ge_n
+      exact hN_conv (φ⦅n⦆) hφn hN_φn
 
     -- =========================================================================
     -- Section 5: Arithmetic of limits
@@ -561,7 +586,24 @@ namespace ZFC
       have hgn_le : leQ (absQ (g⦅n⦆)) M := hM_bound n hn
       -- |f(n)|·|g(n)| ≤ ε'·M
       have h_prod_le : leQ (mulQ (absQ (f⦅n⦆)) (absQ (g⦅n⦆))) (mulQ ε' M) := by
-        sorry -- Requiere lema: a < b → c ≤ d → a·c ≤ b·d para positivos
+        have habs_fn := absQ_in_RatSet (f⦅n⦆) hfn
+        have habs_gn := absQ_in_RatSet (g⦅n⦆) hgn
+        -- |f(n)| < ε' implica |f(n)| ≤ ε'
+        have hfn_le : leQ (absQ (f⦅n⦆)) ε' := hfn_lt.1
+        -- Multiplicar por |g(n)| ≥ 0: |f(n)|·|g(n)| ≤ ε'·|g(n)|
+        have h1 : leQ (mulQ (absQ (f⦅n⦆)) (absQ (g⦅n⦆))) (mulQ ε' (absQ (g⦅n⦆))) :=
+          mulQ_leQ_mulQ_of_nonneg_right (absQ (f⦅n⦆)) ε' (absQ (g⦅n⦆))
+            habs_fn hε' habs_gn hfn_le (absQ_nonneg (g⦅n⦆) hgn)
+        -- |g(n)| ≤ M implica ε'·|g(n)| ≤ ε'·M
+        have h2 : leQ (mulQ ε' (absQ (g⦅n⦆))) (mulQ ε' M) :=
+          mulQ_leQ_mulQ_of_nonneg_left ε' (absQ (g⦅n⦆)) M
+            hε' habs_gn hM (hM_bound n hn) hε'_pos.1
+        -- Transitividad
+        exact leQ_trans (mulQ (absQ (f⦅n⦆)) (absQ (g⦅n⦆)))
+                (mulQ ε' (absQ (g⦅n⦆))) (mulQ ε' M)
+                (mulQ_in_RatSet (absQ (f⦅n⦆)) (absQ (g⦅n⦆)) habs_fn habs_gn)
+                (mulQ_in_RatSet ε' (absQ (g⦅n⦆)) hε' habs_gn)
+                (mulQ_in_RatSet ε' M hε' hM) h1 h2
       -- ε'·M = ε
       have h_eq_ε : mulQ ε' M = ε := by
         unfold ε'

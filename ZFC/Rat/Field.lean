@@ -377,6 +377,81 @@ namespace ZFC
           mulQ_comm z x hz hx,
           mulQ_comm z y hz hy]
 
+    -- =========================================================================
+    -- Section 7: Monotonicity of multiplication
+    -- =========================================================================
+
+    /-- Multiplication preserves order (left): a ≤ b → a·c ≤ b·c for c ≥ 0 -/
+    theorem mulQ_leQ_mulQ_of_nonneg_right (a b c : U)
+        (ha : a ∈ (RatSet : U)) (hb : b ∈ (RatSet : U)) (hc : c ∈ (RatSet : U))
+        (h_le : leQ a b) (h_c_nn : leQ (zeroQ : U) c) :
+        leQ (mulQ a c) (mulQ b c) := by
+      obtain ⟨a_num, a_den, ha_num, ha_den, ha_eq⟩ := mem_RatSet_is_ratClass a ha
+      obtain ⟨b_num, b_den, hb_num, hb_den, hb_eq⟩ := mem_RatSet_is_ratClass b hb
+      obtain ⟨c_num, c_den, hc_num, hc_den, hc_eq⟩ := mem_RatSet_is_ratClass c hc
+      have ha_den_i := NonZeroIntSet_mem_IntSet a_den ha_den
+      have hb_den_i := NonZeroIntSet_mem_IntSet b_den hb_den
+      have hc_den_i := NonZeroIntSet_mem_IntSet c_den hc_den
+      -- h_le: a ≤ b means (a_num·a_den)·b_den² ≤ a_den²·(b_num·b_den)
+      have H_ab := h_le a_num a_den b_num b_den ha_num ha_den hb_num hb_den ha_eq hb_eq
+      -- h_c_nn: 0 ≤ c means 0·c_den·c_den² ≤ c_den²·(c_num·c_den)
+      have H_c := h_c_nn zeroZ oneZ c_num c_den zeroZ_mem_IntSet oneZ_mem_NonZeroIntSet
+                    hc_num hc_den rfl hc_eq
+      unfold leQ_repr at H_ab H_c
+      -- Simplify H_c: 0 ≤ c_num·c_den
+      rw [mulZ_zero_left oneZ oneZ_mem_IntSet,
+          mulZ_zero_left (mulZ c_den c_den) (mulZ_in_IntSet c_den c_den hc_den_i hc_den_i),
+          mulZ_one_left oneZ oneZ_mem_IntSet,
+          mulZ_one_left (mulZ c_num c_den) (mulZ_in_IntSet c_num c_den hc_num hc_den_i)] at H_c
+      -- Goal: (a·c) ≤ (b·c)
+      rw [ha_eq, hb_eq, hc_eq,
+          mulQ_class a_num a_den c_num c_den ha_num ha_den hc_num hc_den,
+          mulQ_class b_num b_den c_num c_den hb_num hb_den hc_num hc_den]
+      intro a' b' c' d' ha' hb' hc' hd' hac_eq hbc_eq
+      have h1 : ratClass (mulZ a_num c_num) (mulZ a_den c_den) = ratClass a' b' := by
+        rw [← hac_eq]
+      have h2 : ratClass (mulZ b_num c_num) (mulZ b_den c_den) = ratClass c' d' := by
+        rw [← hbc_eq]
+      apply (leQ_repr_well_defined
+               (mulZ a_num c_num) (mulZ a_den c_den) a' b'
+               (mulZ b_num c_num) (mulZ b_den c_den) c' d'
+               (mulZ_in_IntSet a_num c_num ha_num hc_num)
+               (mul_nz a_den c_den ha_den hc_den)
+               ha' hb'
+               (mulZ_in_IntSet b_num c_num hb_num hc_num)
+               (mul_nz b_den c_den hb_den hc_den)
+               hc' hd' h1 h2).mp
+      unfold leQ_repr
+      -- Need: (a_num·c_num·a_den·c_den)·(b_den·c_den)² ≤ (a_den·c_den)²·(b_num·c_num·b_den·c_den)
+      -- From H_ab: (a_num·a_den)·b_den² ≤ a_den²·(b_num·b_den)
+      -- From H_c: 0 ≤ c_num·c_den
+      -- Multiply H_ab by (c_num·c_den)² ≥ 0
+      have hc_num_den := mulZ_in_IntSet c_num c_den hc_num hc_den_i
+      have hc_sq := mulZ_in_IntSet (mulZ c_num c_den) (mulZ c_num c_den) hc_num_den hc_num_den
+      have hc_sq_nn : leZ (zeroZ : U) (mulZ (mulZ c_num c_den) (mulZ c_num c_den)) :=
+        square_nonneg (mulZ c_num c_den) hc_num_den
+      have H_ab_mul := mulZ_le_mulZ_nonneg
+                         (mulZ (mulZ a_num a_den) (mulZ b_den b_den))
+                         (mulZ (mulZ a_den a_den) (mulZ b_num b_den))
+                         (mulZ (mulZ c_num c_den) (mulZ c_num c_den))
+                         (mulZ_in_IntSet (mulZ a_num a_den) (mulZ b_den b_den)
+                           (mulZ_in_IntSet a_num a_den ha_num ha_den_i)
+                           (mulZ_in_IntSet b_den b_den hb_den_i hb_den_i))
+                         (mulZ_in_IntSet (mulZ a_den a_den) (mulZ b_num b_den)
+                           (mulZ_in_IntSet a_den a_den ha_den_i ha_den_i)
+                           (mulZ_in_IntSet b_num b_den hb_num hb_den_i))
+                         hc_sq H_ab hc_sq_nn
+      -- Rearrange using mul4_comm to get the desired form
+      sorry -- Requiere álgebra de reordenamiento con mul4_comm
+
+    /-- Multiplication preserves order (right): c ≤ d → a·c ≤ a·d for a ≥ 0 -/
+    theorem mulQ_leQ_mulQ_of_nonneg_left (a c d : U)
+        (ha : a ∈ (RatSet : U)) (hc : c ∈ (RatSet : U)) (hd : d ∈ (RatSet : U))
+        (h_le : leQ c d) (h_a_nn : leQ (zeroQ : U) a) :
+        leQ (mulQ a c) (mulQ a d) := by
+      rw [mulQ_comm a c ha hc, mulQ_comm a d ha hd]
+      exact mulQ_leQ_mulQ_of_nonneg_right c d a hc hd ha h_le h_a_nn
+
   end Rat.Field
 
 end ZFC
@@ -396,4 +471,6 @@ export ZFC.Rat.Field (
   negQ_mulQ_right
   mulQ_addQ_distrib_left
   mulQ_addQ_distrib_right
+  mulQ_leQ_mulQ_of_nonneg_right
+  mulQ_leQ_mulQ_of_nonneg_left
 )
