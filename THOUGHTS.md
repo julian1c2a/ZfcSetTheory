@@ -3,6 +3,21 @@
 Notas de diseño, reflexiones y hoja de ruta del proyecto.
 
 ---
+## 🧠 REFLEXIONES 22:17/27-04-2026
+
+[1.] ACLÁRAME: Ejemplo de teoremas que no sé si están implementados: 'convergesToQ_neg f L', 'convergesToQ_sub f g L₁ L₂', 'convergesToQ_const_mul c f L', 'convergesToQ_mul f g L₁ L₂', 'convergesToQ_inv f L', 'convergesToQ_div f g L₁ L₂', 'convergesToQ_abs f L', 'convergesToQ_abs f L', 'convergesToQ_of_eventually_eq f g L', 'squeeze_theorem a f b L', convergesToQ_of_dominated f g L, IsSubseqOf g f, strictly_increasing_ge φ n, subseq_convergent f g L, cualquier subsucesión de cauchy es de cauchy, y establecemos que dos sucesiones de Cauchy, f, g, son equivalentes f ~ g \<=> f-g converge a 0 
+
+[2.] MARCA CLARAMENTE EN NEXT-STEPS.md lo hecho y lo no hecho 
+
+[3.] CUANDO EMPECEMOS CON LOS NÚMEROS COMPUTABLES: la igualdad entre dos sucesiones de cauchy (f,N) y (g,M) computables, será la relación de equivalencia entre ellas si (f-g,max(N*M,N+M)) converge a 0, (f,N) < (g,M) si solo si (g-f,max(N*M,N+M)) es positiva a partir de algún S(N,M) \in \Nat\_0, e idénticamente para negativa (serán computables y decidibles estas relaciones?) 
+
+[4.] SOBRE RAT/SQRTAPPROX.LEAN: En vez de la secuencia cuyo cuadrado tiende a 2, podemos ofrecer un número natural n (en los racionales) tal que no exista un natural m (en los racionales) cuyo cuadrado sea n, y así tenemos todos los no cuadrados perfectos direccionados a la vez. diagmos que ponemos un predicado NotSquare n = true (decidible), y si es verdad ya tenemos dónde aplicar la computación de la serie de Cauchy, para obtener incompletitudes infinitas. Son inifnitas porque cada primo cumple. 
+
+[5.] No tenemos una prueba que los primos son infinitos(dando un primo posterior a cualquiera primo dado). Si p es primo, entonces p! + 1 es primo. Si q := p! + 1 no es pirmo, existe un primo r < q que divide a q. r no puede ser ninguno de los primos menores o iguales a p, porque entonces dividiría a p!. Solo no squeda que r > p, y por tanto r es un primo posterior a p hasta q, r ∈ (p,q]. Quiero una solución plenamente constructiva.
+
+[6.] Tenemos que completar el Teorema de Wilson
+
+---
 
 ## ✅ COMPLETADO
 

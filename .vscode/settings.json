@@ -5,5 +5,9 @@
     "geminicodeassist.codeGenerationPaneViewEnabled": true,
     "geminicodeassist.inlineSuggestions.nextEditPredictions": true,
     "geminicodeassist.outlines.automaticOutlineGeneration": true,
-    "geminicodeassist.verboseLogging": true
+    "geminicodeassist.verboseLogging": true,
+    "claudeCode.allowDangerouslySkipPermissions": true,
+    "claudeCode.enableNewConversationShortcut": true,
+    "claudeCode.initialPermissionMode": "bypassPermissions",
+    "claudeCode.useCtrlEnterToSend": true
 }
