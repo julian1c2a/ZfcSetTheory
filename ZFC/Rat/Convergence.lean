@@ -525,7 +525,52 @@ namespace ZFC
         (hg_bounded : ∃ M : U, M ∈ (RatSet : U) ∧ isPositiveQ M ∧
           ∀ n : U, n ∈ (ω : U) → leQ (absQ (g⦅n⦆)) M) :
         convergesToQ (mulSeqQ f g) (zeroQ : U) := by
-      sorry
+      obtain ⟨M, hM, hM_pos, hM_bound⟩ := hg_bounded
+      intro ε hε hε_pos
+      -- Tomar ε' = ε / M > 0
+      let ε' := divQ ε M
+      have hε' : ε' ∈ (RatSet : U) := divQ_in_RatSet ε M hε hM
+      have hε'_pos : isPositiveQ ε' := by
+        constructor
+        · exact divQ_pos_of_pos_pos ε M hε hM hε_pos hM_pos
+        · intro h_eq
+          have := divQ_eq_zero_iff ε M hε hM |>.mp h_eq
+          exact hε_pos.2 this
+      -- Obtener N tal que |f(n)| < ε' para n ≥ N
+      obtain ⟨N, hN, hN_conv⟩ := hf_zero ε' hε' hε'_pos
+      refine ⟨N, hN, fun n hn h_ge => ?_⟩
+      have hfn := seqTermQ_mem_RatSet f n hf hn
+      have hgn := seqTermQ_mem_RatSet g n hg hn
+      -- Goal: |f(n)·g(n) - 0| < ε
+      rw [mulSeqQ_apply f g hf hg n hn]
+      have h_sub : subQ (mulQ (f⦅n⦆) (g⦅n⦆)) (zeroQ : U) = mulQ (f⦅n⦆) (g⦅n⦆) := by
+        show addQ (mulQ (f⦅n⦆) (g⦅n⦆)) (negQ zeroQ) = mulQ (f⦅n⦆) (g⦅n⦆)
+        rw [negQ_zero, addQ_zero_right (mulQ (f⦅n⦆) (g⦅n⦆)) (mulQ_in_RatSet (f⦅n⦆) (g⦅n⦆) hfn hgn)]
+      rw [h_sub]
+      -- |f(n)·g(n)| = |f(n)|·|g(n)| ≤ |f(n)|·M < ε'·M = ε
+      have h_abs_mul : absQ (mulQ (f⦅n⦆) (g⦅n⦆)) = mulQ (absQ (f⦅n⦆)) (absQ (g⦅n⦆)) :=
+        absQ_mulQ (f⦅n⦆) (g⦅n⦆) hfn hgn
+      rw [h_abs_mul]
+      -- |f(n) - 0| < ε'
+      have hfn_lt : ltQ (absQ (subQ (f⦅n⦆) zeroQ)) ε' := hN_conv n hn h_ge
+      have h_sub_fn : subQ (f⦅n⦆) (zeroQ : U) = (f⦅n⦆) := by
+        show addQ (f⦅n⦆) (negQ zeroQ) = (f⦅n⦆)
+        rw [negQ_zero, addQ_zero_right (f⦅n⦆) hfn]
+      rw [h_sub_fn] at hfn_lt
+      -- |g(n)| ≤ M
+      have hgn_le : leQ (absQ (g⦅n⦆)) M := hM_bound n hn
+      -- |f(n)|·|g(n)| ≤ ε'·M
+      have h_prod_le : leQ (mulQ (absQ (f⦅n⦆)) (absQ (g⦅n⦆))) (mulQ ε' M) := by
+        sorry -- Requiere lema: a < b → c ≤ d → a·c ≤ b·d para positivos
+      -- ε'·M = ε
+      have h_eq_ε : mulQ ε' M = ε := by
+        unfold ε'
+        exact divQ_mul_cancel ε M hε hM hM_pos.2.symm
+      rw [h_eq_ε] at h_prod_le
+      exact leQ_ltQ_trans (mulQ (absQ (f⦅n⦆)) (absQ (g⦅n⦆))) ε ε
+        (mulQ_in_RatSet (absQ (f⦅n⦆)) (absQ (g⦅n⦆))
+          (absQ_in_RatSet (f⦅n⦆) hfn) (absQ_in_RatSet (g⦅n⦆) hgn))
+        hε hε h_prod_le (ltQ_irrefl ε hε |> False.elim)
 
   end Rat.Convergence
 
