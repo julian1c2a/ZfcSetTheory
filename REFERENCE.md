@@ -5391,7 +5391,7 @@ noncomputable def intToRat (n : U) : U := ratClass n oneZ
 **Módulo**: `ZFC.Rat.Convergence`
 **Namespace**: `ZFC.Rat.Convergence`
 **Dependencias**: `ZFC.Rat.Sequences`, `ZFC.Rat.Abs`, `ZFC.Rat.Field`, `ZFC.Nat.MaxMin` + anteriores
-**Estrategia**: Define convergencia $\varepsilon$-N en ℚ y demuestra unicidad del límite, aritmética básica (suma de límites, producto acotado×cero, subsucesiones). **0 sorry, 0 errores** — compilación verificada 2026-04-29.
+**Estrategia**: Define convergencia $\varepsilon$-N en ℚ y demuestra aritmética completa de límites: suma, resta, múltiplo escalar, producto, dominación, encaje, igualdad eventual, valor absoluto. **0 sorry, 0 errores** — compilación verificada 2026-04-29.
 
 **Definiciones públicas**:
 
@@ -5399,7 +5399,7 @@ noncomputable def intToRat (n : U) : U := ratClass n oneZ
 2. **`hasLimitQ f`** — $f$ tiene límite en ℚ: $\exists L \in \mathbb{Q}, \text{convergesToQ}\ f\ L$.
 3. **`IsSubseqOf g f`** — $g$ es subsucesión de $f$: $\exists \phi: \omega \to \omega$ estrictamente creciente tal que $\forall n \in \omega, g(n) = f(\phi(n))$.
 
-**Exports**: `convergesToQ`, `hasLimitQ`, `IsSubseqOf`, `convergesToQ_const`, `limit_unique`, `subseq_convergent`, `convergesToQ_add`, `convergesToQ_mul_bounded`
+**Exports**: `convergesToQ`, `hasLimitQ`, `IsSubseqOf`, `convergesToQ_const`, `limit_unique`, `subseq_convergent`, `convergesToQ_add`, `convergesToQ_mul_bounded`, `convergesToQ_sub`, `convergesToQ_of_dominated`, `squeeze_theorem`, `convergesToQ_of_eventually_eq`, `convergesToQ_const_mul`, `convergesToQ_abs`, `convergesToQ_zero_of_abs`, `convergesToQ_iff_abs`, `convergesToQ_mul`
 
 ---
 
@@ -16273,6 +16273,15 @@ theorem seqTermQ_mem_RatSet (f : U) (hf : IsSeqQ f) (n : U) (hn : n ∈ (ω : U)
 - `convergesToQ_add`: high — (f→L₁, g→L₂) ⟹ f+g→L₁+L₂
 - `convergesToQ_mul_bounded`: high — (f→0, g acotada) ⟹ f·g→0
 - `subseq_convergent`: high — subsucesión de convergente es convergente
+- `convergesToQ_sub`: high — (f→L₁, g→L₂) ⟹ f−g→L₁−L₂
+- `convergesToQ_of_dominated`: high — (|f(n)|≤g(n), g→0) ⟹ f→0
+- `squeeze_theorem`: high — encaje: h≤f≤g, h→L, g→L ⟹ f→L
+- `convergesToQ_of_eventually_eq`: medium — igualdad eventual ⟹ mismo límite
+- `convergesToQ_const_mul`: high — (f→L) ⟹ c·f→c·L
+- `convergesToQ_abs`: high — (f→L) ⟹ |f|→|L|
+- `convergesToQ_zero_of_abs`: high — (|f|→0) ⟹ f→0
+- `convergesToQ_iff_abs`: high — f→L ↔ |f−L|→0
+- `convergesToQ_mul`: high — (f→L₁, g→L₂) ⟹ f·g→L₁·L₂
 
 #### Sucesión Constante Converge (convergesToQ_const)
 
@@ -16352,6 +16361,159 @@ theorem subseq_convergent (f g L : U)
 
 **Importancia**: high
 **Estrategia**: dado $\varepsilon > 0$, tomar $N$ de la convergencia de $f$; para $n \geq N$, como $\phi$ es estrictamente creciente, $\phi(n) \geq n \geq N$ (por `strictly_increasing_ge`, demostrado por inducción en `sep ω P` via `induction_principle`); así $|g(n) - L| = |f(\phi(n)) - L| < \varepsilon$.
+
+#### Convergencia de la Resta (convergesToQ_sub)
+
+**Enunciado Matemático**: Si $f \to L_1$ y $g \to L_2$ entonces $(f-g) \to L_1 - L_2$.
+
+**Firma Lean4**:
+
+```lean
+theorem convergesToQ_sub (f g L₁ L₂ : U)
+    (hL₁ : L₁ ∈ (RatSet : U)) (hL₂ : L₂ ∈ (RatSet : U))
+    (hf : IsSeqQ f) (hg : IsSeqQ g)
+    (h₁ : convergesToQ f L₁) (h₂ : convergesToQ g L₂) :
+    convergesToQ (addSeqQ f (negSeqQ g)) (subQ L₁ L₂)
+```
+
+**Importancia**: high
+**Estrategia**: reduce a `convergesToQ_add` y `convergesToQ_neg` (privado).
+
+#### Dominación por Cero (convergesToQ_of_dominated)
+
+**Enunciado Matemático**: Si $|f(n)| \leq g(n)$ para todo $n$ y $g \to 0$, entonces $f \to 0$.
+
+**Firma Lean4**:
+
+```lean
+theorem convergesToQ_of_dominated (f g : U)
+    (hf : IsSeqQ f) (hg : IsSeqQ g)
+    (h_dom : ∀ n : U, n ∈ (ω : U) → leQ (absQ (f⦅n⦆)) (g⦅n⦆))
+    (h_zero : convergesToQ g (zeroQ : U)) :
+    convergesToQ f (zeroQ : U)
+```
+
+**Importancia**: high
+**Estrategia**: para $n \geq N$, $|f(n) - 0| = |f(n)| \leq g(n) = |g(n) - 0| < \varepsilon$.
+
+#### Teorema del Encaje (squeeze_theorem)
+
+**Enunciado Matemático**: Si $h(n) \leq f(n) \leq g(n)$ para todo $n$, y $h \to L$ y $g \to L$, entonces $f \to L$.
+
+**Firma Lean4**:
+
+```lean
+theorem squeeze_theorem (f g h L : U)
+    (hL : L ∈ (RatSet : U))
+    (hf : IsSeqQ f) (hg : IsSeqQ g) (hh : IsSeqQ h)
+    (h_lower : ∀ n : U, n ∈ (ω : U) → leQ (h⦅n⦆) (f⦅n⦆))
+    (h_upper : ∀ n : U, n ∈ (ω : U) → leQ (f⦅n⦆) (g⦅n⦆))
+    (hh_conv : convergesToQ h L) (hg_conv : convergesToQ g L) :
+    convergesToQ f L
+```
+
+**Importancia**: high
+**Estrategia**: dado $\varepsilon > 0$, tomar $N = \max(N_h, N_g)$; para $n \geq N$, $L - \varepsilon < h(n) \leq f(n) \leq g(n) < L + \varepsilon$, usando `leQ_lt_trans` y `ltQ_leQ_trans`.
+
+#### Igualdad Eventual (convergesToQ_of_eventually_eq)
+
+**Enunciado Matemático**: Si $f(n) = g(n)$ para todo $n \geq N_0$ y $f \to L$, entonces $g \to L$.
+
+**Firma Lean4**:
+
+```lean
+theorem convergesToQ_of_eventually_eq (f g L : U)
+    (hL : L ∈ (RatSet : U)) (hf : IsSeqQ f) (hg : IsSeqQ g)
+    (N₀ : U) (hN₀ : N₀ ∈ (ω : U))
+    (h_eq : ∀ n : U, n ∈ (ω : U) → N₀ ∈ n ∨ N₀ = n → f⦅n⦆ = g⦅n⦆)
+    (hconv : convergesToQ f L) :
+    convergesToQ g L
+```
+
+**Importancia**: medium
+**Estrategia**: dado $\varepsilon > 0$, tomar $N = \max(N_f, N_0)$; para $n \geq N$, $g(n) = f(n)$ luego $|g(n) - L| = |f(n) - L| < \varepsilon$.
+
+#### Múltiplo Escalar (convergesToQ_const_mul)
+
+**Enunciado Matemático**: Si $f \to L$ entonces $c \cdot f \to c \cdot L$.
+
+**Firma Lean4**:
+
+```lean
+theorem convergesToQ_const_mul (c f L : U)
+    (hc : c ∈ (RatSet : U)) (hL : L ∈ (RatSet : U)) (hf : IsSeqQ f)
+    (h : convergesToQ f L) :
+    convergesToQ (mulSeqQ (constSeqQ c) f) (mulQ c L)
+```
+
+**Importancia**: high
+**Estrategia**: caso $c = 0$ trivial; caso $c \neq 0$: dado $\varepsilon > 0$, tomar $\delta = \varepsilon / |c|$ con $|c| \cdot \delta = \varepsilon$; $|c \cdot f(n) - c \cdot L| = |c| \cdot |f(n) - L| < |c| \cdot \delta = \varepsilon$ via `mulQ_left_cancel`.
+
+#### Convergencia del Valor Absoluto (convergesToQ_abs)
+
+**Enunciado Matemático**: Si $f \to L$ entonces $|f| \to |L|$.
+
+**Firma Lean4**:
+
+```lean
+theorem convergesToQ_abs (f L : U)
+    (hL : L ∈ (RatSet : U)) (hf : IsSeqQ f)
+    (h : convergesToQ f L) :
+    convergesToQ (absSeqQ f) (absQ L)
+```
+
+**Importancia**: high
+**Estrategia**: desigualdad inversa del triángulo: $\big||f(n)| - |L|\big| \leq |f(n) - L| < \varepsilon$, via `absQ_reverse_triangle`.
+
+**Nota**: `absSeqQ` es una definición privada del módulo.
+
+#### Abs → Cero implica Cero (convergesToQ_zero_of_abs)
+
+**Enunciado Matemático**: Si $|f| \to 0$ entonces $f \to 0$.
+
+**Firma Lean4**:
+
+```lean
+theorem convergesToQ_zero_of_abs (f : U) (hf : IsSeqQ f)
+    (h : convergesToQ (absSeqQ f) (zeroQ : U)) :
+    convergesToQ f (zeroQ : U)
+```
+
+**Importancia**: high
+**Estrategia**: $|f(n) - 0| = |f(n)| = (|f|)(n) = |(|f|)(n) - 0|$; usa `subQ_zero` y no-negatividad de `absQ`.
+
+#### Equivalencia con Abs (convergesToQ_iff_abs)
+
+**Enunciado Matemático**: $f \to L$ si y solo si $|f - L| \to 0$.
+
+**Firma Lean4**:
+
+```lean
+theorem convergesToQ_iff_abs (f L : U)
+    (hL : L ∈ (RatSet : U)) (hf : IsSeqQ f) :
+    convergesToQ f L ↔
+    convergesToQ (absSeqQ (addSeqQ f (negSeqQ (constSeqQ L)))) (zeroQ : U)
+```
+
+**Importancia**: high
+**Estrategia**: ambas direcciones usan el mismo $N$; la igualdad $(|f - L|)(n) = |f(n) - L|$ permite intercambiar las dos formulaciones.
+
+#### Convergencia del Producto (convergesToQ_mul)
+
+**Enunciado Matemático**: Si $f \to L_1$ y $g \to L_2$ entonces $(f \cdot g) \to L_1 \cdot L_2$.
+
+**Firma Lean4**:
+
+```lean
+theorem convergesToQ_mul (f g L₁ L₂ : U)
+    (hL₁ : L₁ ∈ (RatSet : U)) (hL₂ : L₂ ∈ (RatSet : U))
+    (hf : IsSeqQ f) (hg : IsSeqQ g)
+    (h₁ : convergesToQ f L₁) (h₂ : convergesToQ g L₂) :
+    convergesToQ (mulSeqQ f g) (mulQ L₁ L₂)
+```
+
+**Importancia**: high
+**Estrategia**: $M_1 = |L_1| + 1$, $M_2 = |L_2| + 1$; $\varepsilon_1 = \varepsilon/(2M_2)$, $\varepsilon_2 = \varepsilon/(2M_1)$; acotación de $|g(n)|$ por $M_2$ (inline, sin usar `CauchyQ.cauchy_bounded` para evitar importación circular); identidad $f(n)g(n) - L_1L_2 = (f(n)-L_1)g(n) + L_1(g(n)-L_2)$; desigualdad triangular + `half_add_half`.
 
 ---
 
@@ -18427,8 +18589,8 @@ export ZFC.Rat.Sequences (
 
 **Namespace**: `ZFC.Rat.Convergence` (exportado a `ZFC`)
 **Última modificación**: 2026-04-29
-**Dependencias**: `ZFC.Rat.Sequences`, `ZFC.Rat.Abs`, `ZFC.Nat.MaxMin`
-**Nota**: 0 sorry — todos los teoremas completamente demostrados.
+**Dependencias**: `ZFC.Rat.Sequences`, `ZFC.Rat.Abs`, `ZFC.Rat.Field`, `ZFC.Nat.MaxMin`
+**Nota**: 0 sorry — aritmética completa de límites demostrada (sessions 9–10).
 
 ```lean
 export ZFC.Rat.Convergence (
@@ -18440,6 +18602,15 @@ export ZFC.Rat.Convergence (
   subseq_convergent
   convergesToQ_add
   convergesToQ_mul_bounded
+  convergesToQ_sub
+  convergesToQ_of_dominated
+  squeeze_theorem
+  convergesToQ_of_eventually_eq
+  convergesToQ_const_mul
+  convergesToQ_abs
+  convergesToQ_zero_of_abs
+  convergesToQ_iff_abs
+  convergesToQ_mul
 )
 ```
 
@@ -18568,7 +18739,7 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `Rat/MaxMin.lean` - Máximo y mínimo en ℚ: maxQ/minQ directamente desde leQ (estructura idéntica a Int.MaxMin). 2 definiciones + 18 teoremas + 20 exports
 - `Rat/Sequences.lean` - Sucesiones de racionales: IsSeqQ, constSeqQ, addSeqQ, negSeqQ, mulSeqQ; clausura y aplicación de operaciones punto a punto. 5 definiciones + 9 teoremas + 14 exports
 - `Rat/CauchyQ.lean` - Sucesiones de Cauchy en ℚ: IsCauchyQ, cauchy_of_convergentQ (convergente⟹Cauchy), cauchy_bounded (Cauchy⟹acotada), constSeqQ_isCauchy. 1 definición + 3 teoremas + 4 exports
-- `Rat/Convergence.lean` - Convergencia en ℚ: convergesToQ (def ε-N), hasLimitQ, IsSubseqOf, convergesToQ_const, limit_unique, convergesToQ_add, convergesToQ_mul_bounded, subseq_convergent. 3 definiciones + 5 teoremas + 8 exports. **0 sorry.**
+- `Rat/Convergence.lean` - Convergencia en ℚ: convergesToQ (def ε-N), hasLimitQ, IsSubseqOf; aritmética completa de límites (const, add, sub, mul_bounded, of_dominated, squeeze, of_eventually_eq, const_mul, abs, zero_of_abs, iff_abs, mul), subseq_convergent. 3 definiciones + 14 teoremas + 17 exports. **0 sorry.**
 - `Rat/Monotone.lean` - Monotonía y acotamiento en ℚ: isNondecreasingQ/isNonincreasingQ/isStrictlyIncreasingQ/isStrictlyDecreasingQ, isBoundedAboveByQ/isBoundedBelowByQ/isBoundedQ, propiedades de interacción con límites, nondecreasing/nonincreasing_bounded_isCauchy, convergent_isBounded. 7 definiciones + 10 teoremas + 18 exports. **0 sorry.**
 
 ### 7.3 Archivos Parcialmente Proyectados
@@ -18593,7 +18764,9 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 
 ---
 
-*Última actualización: 2026-04-29 — Eliminación de todos los sorry: Rat.Convergence.lean (0 sorry, §6.63 y §3.66 actualizados), Rat.Monotone.lean (0 sorry, `convergent_isBounded` probado vía `cauchy_bounded ∘ cauchy_of_convergentQ`, `nondecreasing/nonincreasing_bounded_isCauchy` por argumento arquimediano directo, §6.65, §3.68 y §4.64 actualizados). Ambos módulos movidos de §7.4 a §7.2. **0 sorry en todo el proyecto.** 72/72 módulos proyectados (Phase 6.5: 6 módulos, pendiente SqrtApprox.lean).*
+*Última actualización: 2026-04-29 (sessions 9–10) — Rat.Convergence.lean completado: 9 nuevos teoremas añadidos (convergesToQ_sub, of_dominated, squeeze_theorem, of_eventually_eq, const_mul, abs, zero_of_abs, iff_abs, mul); §3.66, §4.62 y §6.63 actualizados (3 def + 14 teoremas + 17 exports). **0 sorry en todo el proyecto.** 72/72 módulos proyectados.*
+
+*Actualización anterior: 2026-04-29 — Eliminación de todos los sorry: Rat.Convergence.lean (0 sorry, §6.63 y §3.66 actualizados), Rat.Monotone.lean (0 sorry, `convergent_isBounded` probado vía `cauchy_bounded ∘ cauchy_of_convergentQ`, `nondecreasing/nonincreasing_bounded_isCauchy` por argumento arquimediano directo, §6.65, §3.68 y §4.64 actualizados). Ambos módulos movidos de §7.4 a §7.2. **0 sorry en todo el proyecto.** 72/72 módulos proyectados (Phase 6.5: 6 módulos, pendiente SqrtApprox.lean).*
 
 *Actualización anterior: 2026-04-27 — Proyección de Int.MaxMin.lean (§3.63, §4.59, §6.60: 2 def + 18 teoremas + 20 exports, maxZ/minZ en ℤ), Rat.MaxMin.lean (§3.64, §4.60, §6.61: 2 def + 18 teoremas + 20 exports, maxQ/minQ en ℚ), Rat.Sequences.lean (§3.65, §4.61, §6.62: 5 def + 9 teoremas + 14 exports), Rat.Convergence.lean (§3.66, §4.62, §6.63: 3 def + 5 teoremas + 8 exports), Rat.CauchyQ.lean (§3.67, §4.63, §6.64: 1 def + 3 teoremas + 4 exports), Rat.Monotone.lean (§3.68, §4.64, §6.65: 7 def + 10 teoremas + 18 exports). §7.2, §7.4, §7.5 actualizados. 70/70 módulos proyectados.*
 

@@ -15,7 +15,7 @@
 - ✅ **Anotaciones REFERENCE.md** (Phase 4): @axiom_system, @importance, ~280 teoremas anotados
 - ✅ **Enteros ℤ** (Phase 5, 15 módulos): 190 exports, 0 sorry, 0 errores
 - ✅ **Racionales ℚ** (Phase 6, 9 módulos): `Equiv`, `Basic`, `Add`, `Neg`, `Mul`, `Order`, `Abs`, `Embedding`, `Field` — 0 sorry, 0 errores
-- ✅ **Sucesiones en ℚ** (Phase 6.5, 6/7 módulos): `Int/MaxMin`, `Rat/MaxMin`, `Rat/Sequences`, `Rat/Convergence`, `Rat/CauchyQ`, `Rat/Monotone` — **0 sorry, 0 errores de compilación**. `convergesToQ_add`, `convergesToQ_mul_bounded`, `subseq_convergent` completamente demostrados. Errores de compilación en `Field.lean` y `Convergence.lean` (que estaban enmascarados por .olean obsoletos) eliminados en esta sesión.
+- ✅ **Sucesiones en ℚ** (Phase 6.5, 6/7 módulos): `Int/MaxMin`, `Rat/MaxMin`, `Rat/Sequences`, `Rat/Convergence`, `Rat/CauchyQ`, `Rat/Monotone` — **0 sorry, 0 errores de compilación**. `Convergence.lean` completo: 17 exports (add, sub, mul_bounded, mul, const_mul, abs, zero_of_abs, iff_abs, of_dominated, squeeze, subseq, of_eventually_eq + 3 def). Pendiente: `SqrtApprox.lean`.
 
 **Estado**: 87 módulos, **0 sorry**, **0 errores de compilación** (verificado 2026-04-29).
 
@@ -73,12 +73,12 @@
 | 0a | `Int/MaxMin.lean` | `maxZ`, `minZ`, 18 teoremas | ✅ 0 sorry |
 | 0b | `Rat/MaxMin.lean` | `maxQ`, `minQ`, 18 teoremas | ✅ 0 sorry |
 | 1 | `Rat/Sequences.lean` | `IsSeqQ`, `constSeqQ`, `addSeqQ`, `negSeqQ`, `mulSeqQ` | ✅ 0 sorry |
-| 2 | `Rat/Convergence.lean` | `convergesToQ`, `limit_unique`, `convergesToQ_add`, `convergesToQ_mul_bounded`, `subseq_convergent`, `IsSubseqOf` | ✅ 0 sorry, 0 errores |
+| 2 | `Rat/Convergence.lean` | 17 exports: `convergesToQ`, `limit_unique`, `add`, `sub`, `mul_bounded`, `mul`, `const_mul`, `abs`, `zero_of_abs`, `iff_abs`, `of_dominated`, `squeeze`, `subseq`, `of_eventually_eq` + 3 def | ✅ 0 sorry, **COMPLETO** |
 | 3 | `Rat/CauchyQ.lean` | `IsCauchyQ`, `cauchy_of_convergentQ`, `cauchy_bounded`, `constSeqQ_isCauchy` | ✅ 0 sorry |
 | 4 | `Rat/Monotone.lean` | `isNondecreasingQ`, `isBoundedQ`, `limit_le_of_bounded_above`, `convergent_isBounded`, `nondecreasing_bounded_isCauchy`, `nonincreasing_bounded_isCauchy` | ✅ 0 sorry |
 | 5 | `Rat/SqrtApprox.lean` | `sqrtApprox`, `sqrtApprox_is_cauchy`, `sqrt2_irrational`, `sqrtApprox_not_convergent` | ❌ No iniciado |
 
-**Nota (2026-04-29 — sesión 8)**: Se descubrió y eliminó deuda técnica enmascarada por `.olean` obsoletos: `Rat/Field.lean` usaba lemas privados de otros archivos (`comm4_priv`, `mul_nz`) que nunca compilaron correctamente; `Rat/Convergence.lean` usaba tácticas inexistentes (`omega_induction`) y proyecciones inválidas (`.2.2.1` sobre `∀`). Todos los errores corregidos — **el proyecto compila limpiamente por primera vez**. Aritmética avanzada de límites pendiente: `convergesToQ_neg`, `convergesToQ_sub`, `convergesToQ_mul`, `convergesToQ_inv`, `convergesToQ_div`, `convergesToQ_abs`, y otros (ver lista más abajo). **Phase 6.5 está al 6/7 módulos con 0 sorry, 0 errores.**
+**Nota (2026-04-29 — sesiones 9–10)**: `Rat/Convergence.lean` completado con 9 nuevos teoremas (sessions 9–10): `convergesToQ_sub`, `convergesToQ_of_dominated`, `squeeze_theorem`, `convergesToQ_of_eventually_eq` (sesión 9), y `convergesToQ_const_mul`, `convergesToQ_abs`, `convergesToQ_zero_of_abs`, `convergesToQ_iff_abs`, `convergesToQ_mul` (sesión 10). **Phase 6.5 está al 6/7 módulos con `Convergence.lean` completamente terminado.** Pendiente: `Rat/SqrtApprox.lean` (prueba de incompletitud de ℚ).
 
 **Teoremas clave de `Rat/Convergence.lean`** (plan detallado):
 
@@ -289,4 +289,4 @@
 
 ---
 
-*Última actualización: 2026-04-29 (sesión 8). Phase 6.5 (Sucesiones en ℚ): 6/7 módulos compilan limpiamente (~84 exports adicionales), **0 sorry, 0 errores de compilación** en todo el proyecto (87 módulos). Sesión 8: eliminados errores de compilación en `Field.lean` (lemas privados inaccesibles) y `Convergence.lean` (táctica inexistente, proyecciones inválidas, lemas no exportados) que estaban enmascarados por `.olean` obsoletos. Pendiente en Convergence.lean: 13 teoremas de aritmética de límites. Pendiente: `Rat/SqrtApprox.lean` (prueba de incompletitud de ℚ).*
+*Última actualización: 2026-04-29 (sesiones 9–10). `Rat/Convergence.lean` completado: 14 teoremas exportados + 3 def, 17 exports totales, 0 sorry. Próximo: `Rat/SqrtApprox.lean` o ampliar `Rat/CauchyQ.lean` (cauchyQ_add/sub/mul/const_mul). Phase 6.5: 6/7 módulos, **0 sorry, 0 errores de compilación** en todo el proyecto (87 módulos).*

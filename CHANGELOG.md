@@ -10,7 +10,23 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ## [Unreleased]
 
-### Añadido (2026-04-29)
+### Añadido (2026-04-29 — sesiones 9–10)
+
+- **`Rat/Convergence.lean` — Aritmética completa de límites (9 nuevos teoremas)**:
+  - ✅ `convergesToQ_sub` — convergencia de la resta
+  - ✅ `convergesToQ_of_dominated` — dominación por sucesión que tiende a 0
+  - ✅ `squeeze_theorem` — teorema del encaje (sandwich)
+  - ✅ `convergesToQ_of_eventually_eq` — igualdad eventual preserva límite
+  - ✅ `convergesToQ_const_mul` — múltiplo escalar (c·f → c·L)
+  - ✅ `convergesToQ_abs` — convergencia del valor absoluto
+  - ✅ `convergesToQ_zero_of_abs` — |f|→0 implica f→0
+  - ✅ `convergesToQ_iff_abs` — f→L ↔ |f−L|→0
+  - ✅ `convergesToQ_mul` — convergencia del producto (acotación inline, sin CauchyQ)
+  - Helpers privados: `negQ_subQ`, `absQ_le_of_bounds`, `absQ_reverse_triangle`, `absSeqQ`, `isPositiveQ_of_ge_oneQ`
+  - **Estado**: 17 exports · 0 sorry · módulo completamente terminado
+  - **REFERENCE.md**: §3.66, §4.62 y §6.63 actualizados
+
+### Añadido (2026-04-29 — sesión 8)
 
 - **Phase 6.5 — 0 sorry confirmado (todos los teoremas demostrados)**:
   - ✅ Eliminados los 2 sorry de `Rat/Convergence.lean` (aritmética avanzada de límites)
