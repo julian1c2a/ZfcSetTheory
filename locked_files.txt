@@ -37,17 +37,6 @@ ZFC/SetOps/FiniteSets.lean
 ZFC/Peano/FiniteSequencesArith.lean
 ZFC/BoolAlg/Complete.lean
 ZFC/BoolAlg/FiniteCofinite.lean
-ZFC/Peano/FiniteSequencesBridge.lean
-ZFC/BoolAlg.lean
-ZFC/BoolAlg/BoolRingBA.lean
-ZFC/BoolAlg/Representation.lean
-ZFC/Cardinal/FinitePowerSet.lean
-ZFC/Nat/Div.lean
-ZFC/Nat/Gcd.lean
-ZFC/Peano/FiniteSequencesBridge.lean
-ZFC/Nat/Primes.lean
-ZFC/Int/Abs.lean
-ZFC/Int/Order.lean
 
 
 
