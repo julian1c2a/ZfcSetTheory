@@ -1,6 +1,6 @@
 # Diagrama de Dependencias - ZfcSetTheory
 
-**Última actualización:** 2026-04-10
+**Última actualización:** 2026-04-29
 **Autor**: Julián Calderón Almendros
 
 > **Nota (Fase 3, 2026-04-02):** Los identificadores del proyecto han sido renombrados según convenciones Mathlib. Los nombres en las secciones "Exports por Módulo" pueden reflejar nombres anteriores; consultar REFERENCE.md §0 para la tabla completa de renombramientos.
@@ -9,54 +9,97 @@
 
 ```text
 ZfcSetTheory/
-├── Prelim.lean                          # Definiciones preliminares
-├── Extension.lean                       # Axioma de Extensionalidad
-├── Existence.lean                       # Axioma de Existencia (conjunto vacío)
-├── Specification.lean                   # Axioma de Especificación (sep, inter, sdiff)
-├── Pairing.lean                         # Axioma de Pares
-├── Union.lean                           # Axioma de Unión + union (∪) + symmDiff (△)
-├── PowerSet.lean                        # Axioma del Conjunto Potencia
-├── OrderedPair.lean                     # Extensiones del Par Ordenado
-├── SetOps.CartesianProduct.lean                # Producto Cartesiano A ×ₛ B
-├── Relations.lean                       # Relaciones: equivalencia, orden, clases, dominio, rango
-├── Functions.lean                       # Funciones, aplicación, composición, inversa
-├── Infinity.lean                        # Axioma del Infinito y conjunto ω (nat_mem_wf)
-├── Nat.Basic.lean                  # Números naturales (IsNat, succ, pred)
-├── Recursion.lean                       # Teorema de Recursión sobre ℕ
-├── PeanoImport.lean                     # Isomorfismo Von Neumann ↔ Peano
-├── Nat.Add.lean               # Suma en ω vía RecursiveFn + puente Peano
-├── Nat.Mul.lean               # Multiplicación en ω vía RecursiveFn + puente Peano
-├── Nat.Sub.lean               # Sustracción saturada en ω vía RecursiveFn
-├── Nat.Div.lean               # División euclídea Patrón B
-├── Nat.Pow.lean               # Potenciación en ω vía RecursiveFn
-├── Nat.Arith.lean             # Divisibilidad, GCD, LCM, Bézout
-├── Nat.Factorial.lean         # Factorial en ω Patrón B
-├── Nat.Gcd.lean               # GCD/LCM ZFC-nativo (algoritmo euclídeo)
-├── Nat.Primes.lean            # Primalidad ZFC-nativa + TFA
-├── Nat.Binom.lean             # Coeficientes binomiales Patrón B
-├── Nat.MaxMin.lean            # Máximo y mínimo en ω Patrón B
-├── Nat.NewtonBinom.lean       # Teorema binomial de Newton Patrón B
-├── Nat.WellFounded.lean       # Buen fundamento y buena ordenación de ω
-├── Peano.FiniteSequences.lean                 # Secuencias finitas en ZFC
-├── Peano.FiniteSequencesArith.lean            # Aritmética de secuencias finitas: seqSum, seqProd, familyProduct
-├── Peano.FiniteSequencesBridge.lean           # Puente DList ↔ ZFC, nth, isPrimeSeq, TFA nativo
-├── SetOps.FiniteSets.lean                      # Conjuntos finitos en ZFC
-├── BoolAlg.Basic.lean                  # Álgebra Booleana de conjuntos (teoremas)
-├── BoolAlg.Ring.lean                     # Anillo Booleano con symmDiff
-├── BoolAlg.PowerSetAlgebra.lean                 # Álgebra del conjunto potencia (complemento, compl_*)
-├── BoolAlg.GenDeMorgan.lean             # Leyes de De Morgan generalizadas para familias
-├── BoolAlg.GenDistributive.lean         # Leyes distributivas generalizadas
-├── BoolAlg.Atomic.lean            # Álgebra de Boole atómica
-├── BoolAlg.Complete.lean          # Álgebra booleana completa atómica (𝒫(A) retículo completo)
-├── BoolAlg.FiniteCofinite.lean                  # Álgebra finita/cofinita, contraejemplo no completo
-├── BoolAlg.Representation.lean          # Teorema de representación: BA completa atómica ≅ 𝒫(A)
-├── BoolAlg.FiniteBA.lean                # Toda BA finita tiene cardinalidad 2^n
-├── BoolAlg.BoolRingBA.lean              # Correspondencia Anillo Booleano ↔ Álgebra Booleana
-├── SetOps.SetOrder.lean                        # Orden parcial y retículos
-├── SetOps.SetStrictOrder.lean                  # Orden estricto
-├── Cardinal.Basic.lean                  # Teoremas de Cantor y Cantor-Schröder-Bernstein
-├── Cardinal.FinitePowerSet.lean         # |𝒫(F)| = 2^n para F finito
-└── ZfcSetTheory.lean                    # Módulo principal (exporta todo)
+├── ZFC.lean                             # Módulo raíz (exporta todo)
+├── lakefile.lean
+├── lean-toolchain                       # Lean v4.29.0
+└── ZFC/
+    ├── Axiom/
+    │   ├── Extension.lean               # Axioma de Extensionalidad
+    │   ├── Existence.lean               # Axioma de Existencia (conjunto vacío)
+    │   ├── Specification.lean           # Axioma de Especificación (sep, inter, sdiff)
+    │   ├── Pairing.lean                 # Axioma de Pares
+    │   ├── Union.lean                   # Axioma de Unión + union (∪) + symmDiff (△)
+    │   ├── PowerSet.lean                # Axioma del Conjunto Potencia
+    │   └── Infinity.lean                # Axioma del Infinito y conjunto ω
+    ├── Core/
+    │   └── Prelim.lean                  # ExistsUnique, infraestructura básica
+    ├── SetOps/
+    │   ├── OrderedPair.lean             # Par de Kuratowski, fst, snd
+    │   ├── CartesianProduct.lean        # A ×ₛ B, pertenencia, proyecciones
+    │   ├── Relations.lean               # Equivalencia, orden, clases de equivalencia
+    │   ├── Functions.lean               # Funciones, inyectivas, biyectivas
+    │   ├── FiniteSets.lean              # isFiniteSet, equipotencia refl/symm/trans
+    │   ├── SetOrder.lean                # Órdenes parciales, retículos
+    │   └── SetStrictOrder.lean          # Órdenes estrictos
+    ├── Induction/
+    │   └── Recursion.lean               # Teorema de Recursión sobre ω
+    ├── Nat/
+    │   ├── Basic.lean                   # IsNat, succ, pred, ω
+    │   ├── Add.lean                     # Suma vía RecursiveFn + puente Peano
+    │   ├── Mul.lean                     # Multiplicación vía RecursiveFn + puente Peano
+    │   ├── Sub.lean                     # Sustracción saturada (monus)
+    │   ├── Div.lean                     # División euclídea Patrón B
+    │   ├── Pow.lean                     # Potenciación vía RecursiveFn
+    │   ├── Arith.lean                   # Divisibilidad, GCD/LCM, Bézout (ZFC-nativo)
+    │   ├── Factorial.lean               # Factorial Patrón B
+    │   ├── Gcd.lean                     # GCD/LCM ZFC-nativo (algoritmo euclídeo)
+    │   ├── Primes.lean                  # isPrime ZFC-nativo, TFA
+    │   ├── Binom.lean                   # Coeficientes binomiales Patrón B
+    │   ├── MaxMin.lean                  # maxOf/minOf Patrón B, 31 teoremas
+    │   ├── NewtonBinom.lean             # Teorema binomial de Newton Patrón B
+    │   └── WellFounded.lean             # Buen fundamento de ω
+    ├── Peano/
+    │   ├── Import.lean                  # Isomorfismo Von Neumann ↔ Peano
+    │   ├── FiniteSequences.lean         # isFinSeq, FinSeqSet, appendElem
+    │   ├── FiniteSequencesArith.lean    # seqSum, seqProd, familyProduct
+    │   └── FiniteSequencesBridge.lean   # nth, dlistToSeq, TFA nativo
+    ├── BoolAlg/
+    │   ├── Basic.lean                   # Álgebra Booleana de conjuntos
+    │   ├── Ring.lean                    # Anillo Booleano con symmDiff
+    │   ├── PowerSetAlgebra.lean         # Álgebra del conjunto potencia
+    │   ├── GenDeMorgan.lean             # De Morgan generalizadas para familias
+    │   ├── GenDistributive.lean         # Distributividad generalizada
+    │   ├── Atomic.lean                  # Átomos, atomicidad, 𝒫(A) atómica
+    │   ├── Complete.lean                # 𝒫(A) retículo completo + BA completa atómica
+    │   ├── FiniteCofinite.lean          # FinCofAlg(ω), contraejemplo no completa
+    │   ├── Representation.lean          # Teorema de Stone: BA completa atómica ≅ 𝒫(A)
+    │   ├── FiniteBA.lean               # |BA finita| = 2^n
+    │   └── BoolRingBA.lean             # Correspondencia Anillo Booleano ↔ BA
+    ├── Cardinal/
+    │   ├── Basic.lean                   # Cantor, Cantor-Schröder-Bernstein
+    │   └── FinitePowerSet.lean          # |𝒫(F)| = 2^n para F finito
+    ├── Int/
+    │   ├── Equiv.lean                   # IntEquivRel en ω×ω
+    │   ├── Basic.lean                   # IntSet, intClass, zeroZ, oneZ
+    │   ├── Add.lean                     # addZ, grupo abeliano
+    │   ├── Neg.lean                     # negZ, subZ, inversos aditivos
+    │   ├── Mul.lean                     # mulZ, anillo conmutativo
+    │   ├── Ring.lean                    # Distributividad, dominio de integridad
+    │   ├── Sub.lean                     # Propiedades derivadas de subZ
+    │   ├── Pow.lean                     # powZ, leyes de exponentes
+    │   ├── Order.lean                   # leZ, ltZ, orden total
+    │   ├── DivMod.lean                  # dividesZ, divisibilidad
+    │   ├── Embedding.lean               # natToInt : ω ↪ ℤ, zigzag ℤ ≃ ω
+    │   ├── Abs.lean                     # absZ, signZ, desigualdad triangular
+    │   ├── Div.lean                     # gcdZ, modZ, bezoutZ, tfa_Z
+    │   ├── Induction.lean               # Inducción en ℤ por |·|, descenso
+    │   ├── Units.lean                   # isUnitZ, unitZ_iff (unidades = {±1})
+    │   └── MaxMin.lean                  # maxZ, minZ, 18 teoremas de retículo
+    └── Rat/
+        ├── Equiv.lean                   # RatEquivRel en ℤ×ℤ*
+        ├── Basic.lean                   # RatSet, ratClass, zeroQ, oneQ
+        ├── Add.lean                     # addQ, grupo abeliano
+        ├── Neg.lean                     # negQ, subQ, inverso aditivo
+        ├── Mul.lean                     # mulQ, invQ, divQ, cuerpo
+        ├── Order.lean                   # leQ, ltQ, orden total, densidad
+        ├── Abs.lean                     # absQ, signQ, desigualdad triangular
+        ├── Embedding.lean               # intToRat : ℤ ↪ ℚ, archQ
+        ├── Field.lean                   # Axiomas de cuerpo ordenado
+        ├── MaxMin.lean                  # maxQ, minQ, 18 teoremas de retículo
+        ├── Sequences.lean               # IsSeqQ, constSeqQ, addSeqQ, negSeqQ, mulSeqQ
+        ├── Convergence.lean             # convergesToQ, limit_unique, subseq_convergent
+        ├── CauchyQ.lean                 # IsCauchyQ, cauchy_bounded
+        └── Monotone.lean                # nondecreasing/nonincreasing_bounded_isCauchy
 ```
 
 ## Diagrama de Dependencias
@@ -180,8 +223,55 @@ graph TD
     Func --> Card[Cardinal.Basic.lean]
     Pot --> Card
     
+    %% Nivel 12: Enteros ℤ (Phase 5)
+    Nat --> IE[Int/Equiv.lean]
+    Inf --> IE
+    IE --> IB[Int/Basic.lean]
+    IB --> IA[Int/Add.lean]
+    IA --> IN[Int/Neg.lean]
+    IN --> IM[Int/Mul.lean]
+    IM --> IR[Int/Ring.lean]
+    IM --> IPo[Int/Pow.lean]
+    IA --> ISub[Int/Sub.lean]
+    IB --> IDM[Int/DivMod.lean]
+    IB --> IO[Int/Order.lean]
+    IA --> IEmb[Int/Embedding.lean]
+    IO --> IAbs[Int/Abs.lean]
+    IAbs --> IDiv[Int/Div.lean]
+    IDM --> IDiv
+    NG --> IDiv
+    IB --> IInd[Int/Induction.lean]
+    IR --> IU[Int/Units.lean]
+    IO --> IMM[Int/MaxMin.lean]
+
+    %% Nivel 13: Racionales ℚ (Phase 6)
+    IE --> RE[Rat/Equiv.lean]
+    IM --> RE
+    RE --> RB[Rat/Basic.lean]
+    RB --> RA[Rat/Add.lean]
+    RA --> RN[Rat/Neg.lean]
+    RN --> RM[Rat/Mul.lean]
+    RM --> RO[Rat/Order.lean]
+    RO --> RAbs[Rat/Abs.lean]
+    RAbs --> REmb[Rat/Embedding.lean]
+    IInd --> REmb
+    IEmb --> REmb
+    RM --> RF[Rat/Field.lean]
+    RO --> RF
+    RO --> RMM[Rat/MaxMin.lean]
+
+    %% Nivel 14: Sucesiones en ℚ (Phase 6.5)
+    RB --> RS[Rat/Sequences.lean]
+    RAbs --> RC[Rat/Convergence.lean]
+    RS --> RC
+    NMM --> RC
+    RC --> RMM
+    RMM --> RC
+    RC --> RCQ[Rat/CauchyQ.lean]
+    RCQ --> RMon[Rat/Monotone.lean]
+
     %% Nivel 11: Módulo principal
-    E --> Z[ZfcSetTheory.lean]
+    E --> Z[ZFC.lean]
     Ex --> Z
     S --> Z
     Pa --> Z
@@ -227,6 +317,17 @@ graph TD
     FBA --> Z
     BRB --> Z
     FPS --> Z
+    IB --> Z
+    IM --> Z
+    IO --> Z
+    IDiv --> Z
+    RB --> Z
+    RM --> Z
+    RO --> Z
+    RF --> Z
+    RC --> Z
+    RCQ --> Z
+    RMon --> Z
 
     %% Estilos
     classDef axiom fill:#e1f5fe,stroke:#01579b,stroke-width:2px
@@ -236,15 +337,19 @@ graph TD
     classDef relation fill:#fce4ec,stroke:#880e4f,stroke-width:2px
     classDef functions fill:#e3f2fd,stroke:#0d47a1,stroke-width:2px
     classDef natural fill:#fff8e1,stroke:#f57c00,stroke-width:2px
+    classDef integer fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    classDef rational fill:#ede7f6,stroke:#4527a0,stroke-width:2px
     classDef main fill:#fff3e0,stroke:#e65100,stroke-width:3px
     classDef external fill:#fafafa,stroke:#424242,stroke-width:1px
-    
+
     class E,Ex,S,Pa,U,Pot axiom
     class BA,PSA,BR,ABA,CBA,FC,GDM,GDD,Rep,FBA,BRB algebra
     class SO,SSO order
     class OP,CP extension
     class Rel,Func relation
     class Inf,Nat,Rec,PI,NA,NM,NS,ND,NP,NAR,NF,NG,NPR,NB,NMM,NNB,NWF,FSeq,FSets,FSA,FSB,FPS natural
+    class IE,IB,IA,IN,IM,IR,IPo,ISub,IDM,IO,IEmb,IAbs,IDiv,IInd,IU,IMM integer
+    class RE,RB,RA,RN,RM,RO,RAbs,REmb,RF,RMM,RS,RC,RCQ,RMon rational
     class Z main
     class IC,P,PL external
 ```
@@ -1177,6 +1282,42 @@ export ZFC.BoolAlg.BoolRingBA (
     ring_add_complement_eq_universe
 )
 ```
+
+## Phase 5: Enteros ℤ — Namespaces
+
+### **ZFC.Int.Equiv / Basic / Add / Neg / Mul / Ring / Sub / Pow / Order / DivMod / Embedding / Abs / Div / Induction / Units / MaxMin**
+
+```lean
+-- Cadena de dependencias interna Int/:
+-- Equiv → Basic → Add → Neg → Mul → Ring
+--                         ↓         ↓
+--                        Sub      Pow
+-- Basic → DivMod → Div (depende también de Abs, Nat.Gcd)
+-- Basic → Order → Abs → Div
+-- Add → Embedding
+-- Basic → Induction
+-- Ring → Units
+-- Order → MaxMin
+```
+
+Exports clave (selección): `IntSet`, `intClass`, `zeroZ`, `oneZ`, `addZ`, `negZ`, `subZ`, `mulZ`, `powZ`, `leZ`, `ltZ`, `absZ`, `signZ`, `gcdZ`, `modZ`, `bezoutZ`, `tfa_Z`, `natToInt`, `isUnitZ`, `maxZ`, `minZ`.
+
+## Phase 6: Racionales ℚ — Namespaces
+
+### **ZFC.Rat.Equiv / Basic / Add / Neg / Mul / Order / Abs / Embedding / Field / MaxMin / Sequences / Convergence / CauchyQ / Monotone**
+
+```lean
+-- Cadena de dependencias interna Rat/:
+-- Int.Equiv + Int.Mul → Rat.Equiv → Rat.Basic → Rat.Add → Rat.Neg → Rat.Mul
+--                                                                        ↓
+--                                                                    Rat.Order → Rat.Abs → Rat.Embedding
+--                                                                        ↓
+--                                                                    Rat.Field
+--                                                                    Rat.MaxMin
+-- Rat.Abs + Rat.Sequences + Nat.MaxMin → Rat.Convergence → Rat.CauchyQ → Rat.Monotone
+```
+
+Exports clave: `RatSet`, `ratClass`, `zeroQ`, `oneQ`, `addQ`, `negQ`, `subQ`, `mulQ`, `invQ`, `divQ`, `leQ`, `ltQ`, `absQ`, `intToRat`, `archQ`, `maxQ`, `minQ`, `IsSeqQ`, `convergesToQ`, `IsCauchyQ`, `cauchy_bounded`, `isNondecreasingQ`, `nondecreasing_bounded_isCauchy`.
 
 ## Notas de Diseño
 

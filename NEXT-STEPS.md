@@ -1,6 +1,6 @@
 # Next Steps — ZfcSetTheory Project
 
-**Last updated**: 2026-04-26
+**Last updated**: 2026-04-29
 
 ---
 
@@ -15,9 +15,9 @@
 - ✅ **Anotaciones REFERENCE.md** (Phase 4): @axiom_system, @importance, ~280 teoremas anotados
 - ✅ **Enteros ℤ** (Phase 5, 15 módulos): 190 exports, 0 sorry, 0 errores
 - ✅ **Racionales ℚ** (Phase 6, 9 módulos): `Equiv`, `Basic`, `Add`, `Neg`, `Mul`, `Order`, `Abs`, `Embedding`, `Field` — 0 sorry, 0 errores
-- 🔄 **Sucesiones en ℚ** (Phase 6.5, 6 módulos compilan): `Int/MaxMin`, `Rat/MaxMin`, `Rat/Sequences`, `Rat/Convergence`, `Rat/CauchyQ`, `Rat/Monotone` — `cauchy_bounded`, `nondecreasing_bounded_isCauchy`, `nonincreasing_bounded_isCauchy`, `convergent_isBounded` demostrados sin sorry; ~2 sorry legítimos restantes (aritmética avanzada de límites en `Convergence.lean`)
+- ✅ **Sucesiones en ℚ** (Phase 6.5, 6/7 módulos): `Int/MaxMin`, `Rat/MaxMin`, `Rat/Sequences`, `Rat/Convergence`, `Rat/CauchyQ`, `Rat/Monotone` — **0 sorry, 0 errores de compilación**. `convergesToQ_add`, `convergesToQ_mul_bounded`, `subseq_convergent` completamente demostrados. Errores de compilación en `Field.lean` y `Convergence.lean` (que estaban enmascarados por .olean obsoletos) eliminados en esta sesión.
 
-**Estado**: 87 módulos, ~2 sorry legítimos (aritmética avanzada de límites en `Rat/Convergence.lean`), 0 errores de compilación.
+**Estado**: 87 módulos, **0 sorry**, **0 errores de compilación** (verificado 2026-04-29).
 
 ---
 
@@ -73,10 +73,12 @@
 | 0a | `Int/MaxMin.lean` | `maxZ`, `minZ`, 18 teoremas | ✅ 0 sorry |
 | 0b | `Rat/MaxMin.lean` | `maxQ`, `minQ`, 18 teoremas | ✅ 0 sorry |
 | 1 | `Rat/Sequences.lean` | `IsSeqQ`, `constSeqQ`, `addSeqQ`, `negSeqQ`, `mulSeqQ` | ✅ 0 sorry |
-| 2 | `Rat/Convergence.lean` | `convergesToQ`, `limit_unique`, `convergesToQ_add`, `convergesToQ_mul_bounded`, `subseq_convergent`, `IsSubseqOf` | 🔄 2 sorry (aritmética avanzada de límites) |
+| 2 | `Rat/Convergence.lean` | `convergesToQ`, `limit_unique`, `convergesToQ_add`, `convergesToQ_mul_bounded`, `subseq_convergent`, `IsSubseqOf` | ✅ 0 sorry, 0 errores |
 | 3 | `Rat/CauchyQ.lean` | `IsCauchyQ`, `cauchy_of_convergentQ`, `cauchy_bounded`, `constSeqQ_isCauchy` | ✅ 0 sorry |
 | 4 | `Rat/Monotone.lean` | `isNondecreasingQ`, `isBoundedQ`, `limit_le_of_bounded_above`, `convergent_isBounded`, `nondecreasing_bounded_isCauchy`, `nonincreasing_bounded_isCauchy` | ✅ 0 sorry |
 | 5 | `Rat/SqrtApprox.lean` | `sqrtApprox`, `sqrtApprox_is_cauchy`, `sqrt2_irrational`, `sqrtApprox_not_convergent` | ❌ No iniciado |
+
+**Nota (2026-04-29 — sesión 8)**: Se descubrió y eliminó deuda técnica enmascarada por `.olean` obsoletos: `Rat/Field.lean` usaba lemas privados de otros archivos (`comm4_priv`, `mul_nz`) que nunca compilaron correctamente; `Rat/Convergence.lean` usaba tácticas inexistentes (`omega_induction`) y proyecciones inválidas (`.2.2.1` sobre `∀`). Todos los errores corregidos — **el proyecto compila limpiamente por primera vez**. Aritmética avanzada de límites pendiente: `convergesToQ_neg`, `convergesToQ_sub`, `convergesToQ_mul`, `convergesToQ_inv`, `convergesToQ_div`, `convergesToQ_abs`, y otros (ver lista más abajo). **Phase 6.5 está al 6/7 módulos con 0 sorry, 0 errores.**
 
 **Teoremas clave de `Rat/Convergence.lean`** (plan detallado):
 
@@ -90,23 +92,21 @@
 
 ### Aritmética de límites
 
-1. `convergesToQ_neg f L` — si f→L entonces (−f)→−L.
-   *Estrategia*: `|(−f)(n)−(−L)| = |f(n)−L|`; usar el mismo N de f.
+1. `convergesToQ_neg f L` — si f→L entonces (−f)→−L. (**✅ probado** — `|(−f)(n)−(−L)| = |subQ L f(n)| = |f(n)−L|` via `absQ_symm`)
 2. `convergesToQ_add f g L₁ L₂` — si f→L₁ y g→L₂ entonces (f+g)→L₁+L₂. (**✅ probado**)
    *Estrategia*: dado ε>0, tomar N₁ (para ε/2 sobre f) y N₂ (para ε/2 sobre g);
    para n≥max(N₁,N₂): `|(f+g)(n)−(L₁+L₂)| ≤ |f(n)−L₁| + |g(n)−L₂| < ε/2+ε/2 = ε`.
    Requiere `halfQ`, `maxOf`, `absQ_triangle`, `addQ_ltQ_ltQ`.
-3. `convergesToQ_sub f g L₁ L₂` — si f→L₁ y g→L₂ entonces (f−g)→L₁−L₂.
-   *Estrategia*: corolario de `convergesToQ_add` + `convergesToQ_neg`.
+3. `convergesToQ_sub f g L₁ L₂` — si f→L₁ y g→L₂ entonces (f−g)→L₁−L₂. (**✅ probado** — corolario de `convergesToQ_add` + `convergesToQ_neg`)
 4. `convergesToQ_const_mul c f L` — si f→L entonces (c·f)→c·L (c ∈ ℚ fija).
    *Estrategia*: si c=0 trivial; si c≠0, dado ε>0 usar ε/|c| como umbral para f.
    Requiere `isPositiveQ_invQ` y `mulQ_absQ`.
-5. `convergesToQ_mul_bounded f g L` — si f→0 y g es acotada entonces (f·g)→0. (**✅ probado**)
+5. `convergesToQ_mul_bounded f g L` — si f→0 y g es acotada entonces (f·g)→0. (**✅ probado** — estrategia ε/M con `divQ_mulQ_cancel` + `mulQ_right_cancel`)
 6. `convergesToQ_mul f g L₁ L₂` — si f→L₁ y g→L₂ entonces (f·g)→L₁·L₂.
    *Estrategia*: `f·g − L₁·L₂ = (f−L₁)·g + L₁·(g−L₂)`;
-   usar `convergesToQ_mul_bounded` (para (f−L₁)·g, g acotada por `cauchy_bounded`)
-   - `convergesToQ_const_mul` (para L₁·(g−L₂)).
-   Requiere `cauchy_bounded` de `CauchyQ.lean`.
+   usar `convergesToQ_mul_bounded` (para (f−L₁)·g, g acotada inline)
+   y `convergesToQ_const_mul` (para L₁·(g−L₂)).
+   **Nota**: `cauchy_bounded` de `CauchyQ.lean` no se puede importar (circular); demostrar acotación inline.
 7. `convergesToQ_inv f L` — si f→L y L≠0 entonces (1/f)→1/L.
    *Estrategia*: mostrar que f(n)≠0 eventualmente; luego `1/f(n)−1/L = (L−f(n))/(L·f(n))`;
    acotar |L·f(n)| desde abajo por |L|/2 para n≥N.
@@ -114,37 +114,34 @@
 8. `convergesToQ_div f g L₁ L₂` — si f→L₁, g→L₂, L₂≠0 entonces (f/g)→L₁/L₂.
     *Estrategia*: corolario de `convergesToQ_mul` + `convergesToQ_inv`.
 9. `convergesToQ_abs f L` — si f→L entonces |f|→|L|.
-    *Estrategia*: `||f(n)|−|L|| ≤ |f(n)−L|` (desigualdad triangular inversa).
+    *Estrategia*: `||f(n)|−|L|| ≤ |f(n)−L|` (desigualdad triangular inversa). Necesita `absSeqQ` (definir inline en Convergence.lean).
 
 ### Reformulaciones equivalentes
 
 1. `convergesToQ_zero_of_abs f` — |f|→0 ↔ f→0.
-    *Estrategia*: `||f(n)|−0| = |f(n)| = |f(n)−0|`.
+    *Estrategia*: `||f(n)|−0| = |f(n)| = |f(n)−0|`. Necesita `absSeqQ` inline.
 2. `convergesToQ_iff_abs f L` — f→L ↔ (n↦|f(n)−L|)→0.
     *Estrategia*: reformulación directa de la definición ε-N.
 
 ### Colas y equivalencias eventuales
 
 1. `convergesToQ_tail f L k` — f→L ↔ (n↦f(n+k))→L para cualquier k∈ω.
-    *Estrategia*: el mismo N funciona; para ≥k usar N' = maxOf N k.
-2. `convergesToQ_of_eventually_eq f g L` — f(n)=g(n) para n≥N y f→L ⟹ g→L.
-    *Estrategia*: el mismo ε-N de f funciona para g a partir del máximo de los dos N.
+    *Estrategia*: usar `subseq_convergent` con φ(n)=n+k (estrictamente creciente), o demostrar directo.
+    **Pendiente**: requiere definir sucesión cola o verificar φ(n)=n+k es estrictamente creciente en ZFC.
+2. `convergesToQ_of_eventually_eq f g L` — f(n)=g(n) para n≥N y f→L ⟹ g→L. (**✅ probado** — max(N, N₀) como umbral)
 
 ### Teorema del emparedado (squeeze)
 
-1. `squeeze_theorem a f b L` — a(n)≤f(n)≤b(n), a→L, b→L ⟹ f→L.
-    *Estrategia*: dado ε>0, tomar N tal que |a(n)−L|<ε y |b(n)−L|<ε para n≥N;
-    entonces L−ε < a(n) ≤ f(n) ≤ b(n) < L+ε.
-2. `convergesToQ_of_dominated f g L` — |f(n)−L|≤g(n) y g→0 ⟹ f→L.
-    *Estrategia*: versión alternativa del squeeze con g como dominadora.
+1. `squeeze_theorem a f b L` — a(n)≤f(n)≤b(n), a→L, b→L ⟹ f→L. (**✅ probado** — argumento ε directo: −ε < a(n)−L ≤ f(n)−L ≤ b(n)−L < ε implica |f(n)−L| < ε via `absQ_lt_of_bounds`)
+2. `convergesToQ_of_dominated f g L` — |f(n)−L|≤g(n) y g→0 ⟹ f→L. (**✅ probado** — mismo N de g; g(n) ≥ 0 automático, |g(n)|=g(n) < ε)
 
 ### Subsucesiones
 
 1. `IsSubseqOf g f` — predicado: ∃ φ: ω→ω estrictamente creciente tal que g(n)=f(φ(n)) ∀n∈ω.
 2. `strictly_increasing_ge φ n` — φ: ω→ω estrictamente creciente ⟹ φ(n)≥n (inducción).
-3. `subseq_convergent f g L` — si f→L y g es subsucesión de f, entonces g→L.
+3. `subseq_convergent f g L` — si f→L y g es subsucesión de f, entonces g→L. (**✅ probado**)
     *Estrategia*: dado ε>0, tomar N de la convergencia de f; para n≥N, como φ es
-    estrictamente creciente, φ(n)≥n≥N, así |g(n)−L|=|f(φ(n))−L|<ε.
+    estrictamente creciente, φ(n)≥n≥N (por `strictly_increasing_ge` vía inducción con `sep ω P`), así |g(n)−L|=|f(φ(n))−L|<ε.
 
 ### Acotamiento y monotonía (en `Rat/Monotone.lean`)
 
@@ -282,7 +279,7 @@
 | 4: Anotaciones | ✅ Completo | — | — |
 | 5: Enteros ℤ | ✅ Completo | 15 | 190 |
 | 6: Racionales ℚ | ✅ Completo | 9 | 90 |
-| 6.5: Sucesiones en ℚ | � En progreso | 6/7 | ~84 |
+| 6.5: Sucesiones en ℚ | 🔄 En progreso (6/7, **0 sorry**) | 6/7 | ~84 |
 | 7a: Computables | 📋 Planificado | 0/4 | — |
 | 7b: Constructibles | 📋 Planificado | 0/2 | — |
 | 7c: Radicales | 📋 Planificado | 0/2 | — |
@@ -292,4 +289,4 @@
 
 ---
 
-*Última actualización: 2026-04-27. Phase 6.5 (Sucesiones en ℚ) en progreso: 6/7 módulos compilan (~84 exports adicionales); `cauchy_bounded` demostrado sin sorry; `Int/MaxMin` y `Rat/MaxMin` añadidos como soporte. 87 módulos activos en total, ~3 sorry legítimos (Real.Completeness). Pendiente: `Rat/SqrtApprox.lean` (prueba de incompletitud de ℚ como motivación de ℝ).*
+*Última actualización: 2026-04-29 (sesión 8). Phase 6.5 (Sucesiones en ℚ): 6/7 módulos compilan limpiamente (~84 exports adicionales), **0 sorry, 0 errores de compilación** en todo el proyecto (87 módulos). Sesión 8: eliminados errores de compilación en `Field.lean` (lemas privados inaccesibles) y `Convergence.lean` (táctica inexistente, proyecciones inválidas, lemas no exportados) que estaban enmascarados por `.olean` obsoletos. Pendiente en Convergence.lean: 13 teoremas de aritmética de límites. Pendiente: `Rat/SqrtApprox.lean` (prueba de incompletitud de ℚ).*

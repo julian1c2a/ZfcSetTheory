@@ -416,35 +416,37 @@ namespace ZFC
                (mulZ a_num c_num) (mulZ a_den c_den) a' b'
                (mulZ b_num c_num) (mulZ b_den c_den) c' d'
                (mulZ_in_IntSet a_num c_num ha_num hc_num)
-               (mul_nz a_den c_den ha_den hc_den)
+               (mulZ_in_NonZeroIntSet a_den c_den ha_den hc_den)
                ha' hb'
                (mulZ_in_IntSet b_num c_num hb_num hc_num)
-               (mul_nz b_den c_den hb_den hc_den)
+               (mulZ_in_NonZeroIntSet b_den c_den hb_den hc_den)
                hc' hd' h1 h2).mp
       unfold leQ_repr
       -- Need: (a_num·c_num·a_den·c_den)·(b_den·c_den)² ≤ (a_den·c_den)²·(b_num·c_num·b_den·c_den)
       -- From H_ab: (a_num·a_den)·b_den² ≤ a_den²·(b_num·b_den)
       -- From H_c: 0 ≤ c_num·c_den
-      -- Multiply H_ab by (c_num·c_den)² ≥ 0
+      -- Multiply H_ab by (c_num·c_den)·c_den² ≥ 0
       have hc_num_den := mulZ_in_IntSet c_num c_den hc_num hc_den_i
-      have hc_sq := mulZ_in_IntSet (mulZ c_num c_den) (mulZ c_num c_den) hc_num_den hc_num_den
-      have hc_sq_nn : leZ (zeroZ : U) (mulZ (mulZ c_num c_den) (mulZ c_num c_den)) :=
-        square_nonneg (mulZ c_num c_den) hc_num_den
+      have hc_den_sq := mulZ_in_IntSet c_den c_den hc_den_i hc_den_i
+      have hc_mul := mulZ_in_IntSet (mulZ c_num c_den) (mulZ c_den c_den) hc_num_den hc_den_sq
+      have hc_mul_nn : leZ (zeroZ : U) (mulZ (mulZ c_num c_den) (mulZ c_den c_den)) := by
+        have step := mulZ_le_mulZ_nonneg zeroZ (mulZ c_num c_den) (mulZ c_den c_den)
+                       zeroZ_mem_IntSet hc_num_den hc_den_sq H_c (square_nonneg c_den hc_den_i)
+        rw [mulZ_zero_right (mulZ c_den c_den) hc_den_sq,
+            mulZ_comm (mulZ c_den c_den) (mulZ c_num c_den) hc_den_sq hc_num_den] at step
+        exact step
       have H_ab_mul := mulZ_le_mulZ_nonneg
                          (mulZ (mulZ a_num a_den) (mulZ b_den b_den))
                          (mulZ (mulZ a_den a_den) (mulZ b_num b_den))
-                         (mulZ (mulZ c_num c_den) (mulZ c_num c_den))
+                         (mulZ (mulZ c_num c_den) (mulZ c_den c_den))
                          (mulZ_in_IntSet (mulZ a_num a_den) (mulZ b_den b_den)
                            (mulZ_in_IntSet a_num a_den ha_num ha_den_i)
                            (mulZ_in_IntSet b_den b_den hb_den_i hb_den_i))
                          (mulZ_in_IntSet (mulZ a_den a_den) (mulZ b_num b_den)
                            (mulZ_in_IntSet a_den a_den ha_den_i ha_den_i)
                            (mulZ_in_IntSet b_num b_den hb_num hb_den_i))
-                         hc_sq H_ab hc_sq_nn
-      -- Rearrange using comm4_priv to get the desired form
-      -- LHS: ((a_num·a_den)·b_den²)·(c_num·c_den)²
-      --    = ((a_num·a_den)·(c_num·c_den))·(b_den²·(c_num·c_den))  [comm4_priv]
-      --    = ((a_num·c_num)·(a_den·c_den))·((b_den·c_den)·(b_den·c_den))  [comm4_priv twice]
+                         hc_mul H_ab hc_mul_nn
+      -- Rearrange using mul4_comm to get the desired form
       have hab := mulZ_in_IntSet a_num a_den ha_num ha_den_i
       have hb2 := mulZ_in_IntSet b_den b_den hb_den_i hb_den_i
       have ha2 := mulZ_in_IntSet a_den a_den ha_den_i ha_den_i
@@ -453,42 +455,55 @@ namespace ZFC
       have hac_den := mulZ_in_IntSet a_den c_den ha_den_i hc_den_i
       have hbc_den := mulZ_in_IntSet b_den c_den hb_den_i hc_den_i
       have hbc_num := mulZ_in_IntSet b_num c_num hb_num hc_num
-      -- Rewrite LHS
-      have h_lhs : mulZ (mulZ (mulZ a_num a_den) (mulZ b_den b_den))
-                        (mulZ (mulZ c_num c_den) (mulZ c_num c_den)) =
+      -- Rewrite LHS (M on left, then commute then mul4_comm)
+      have h_lhs : mulZ (mulZ (mulZ c_num c_den) (mulZ c_den c_den))
+                        (mulZ (mulZ a_num a_den) (mulZ b_den b_den)) =
                    mulZ (mulZ (mulZ a_num c_num) (mulZ a_den c_den))
                         (mulZ (mulZ b_den c_den) (mulZ b_den c_den)) := by
-        calc mulZ (mulZ (mulZ a_num a_den) (mulZ b_den b_den))
-                  (mulZ (mulZ c_num c_den) (mulZ c_num c_den))
-            = mulZ (mulZ (mulZ a_num a_den) (mulZ c_num c_den))
-                   (mulZ (mulZ b_den b_den) (mulZ c_num c_den)) :=
-                comm4_priv (mulZ a_num a_den) (mulZ b_den b_den)
-                          (mulZ c_num c_den) (mulZ c_num c_den)
-                          hab hb2 hc_num_den hc_num_den
+        calc mulZ (mulZ (mulZ c_num c_den) (mulZ c_den c_den))
+                  (mulZ (mulZ a_num a_den) (mulZ b_den b_den))
+            = mulZ (mulZ (mulZ a_num a_den) (mulZ b_den b_den))
+                   (mulZ (mulZ c_num c_den) (mulZ c_den c_den)) :=
+                mulZ_comm (mulZ (mulZ c_num c_den) (mulZ c_den c_den))
+                          (mulZ (mulZ a_num a_den) (mulZ b_den b_den))
+                          hc_mul (mulZ_in_IntSet (mulZ a_num a_den) (mulZ b_den b_den) hab hb2)
+          _ = mulZ (mulZ (mulZ a_num a_den) (mulZ c_num c_den))
+                   (mulZ (mulZ b_den b_den) (mulZ c_den c_den)) :=
+                mul4_comm (mulZ a_num a_den) (mulZ b_den b_den)
+                          (mulZ c_num c_den) (mulZ c_den c_den)
+                          hab hb2 hc_num_den hc_den_sq
           _ = mulZ (mulZ (mulZ a_num c_num) (mulZ a_den c_den))
-                   (mulZ (mulZ b_den b_den) (mulZ c_num c_den)) :=
-                by rw [comm4_priv a_num a_den c_num c_den ha_num ha_den_i hc_num hc_den_i]
+                   (mulZ (mulZ b_den b_den) (mulZ c_den c_den)) :=
+                by rw [mul4_comm a_num a_den c_num c_den ha_num ha_den_i hc_num hc_den_i]
           _ = mulZ (mulZ (mulZ a_num c_num) (mulZ a_den c_den))
                    (mulZ (mulZ b_den c_den) (mulZ b_den c_den)) :=
-                by rw [comm4_priv b_den b_den c_num c_den hb_den_i hb_den_i hc_num hc_den_i]
-      -- Rewrite RHS
-      have h_rhs : mulZ (mulZ (mulZ a_den a_den) (mulZ b_num b_den))
-                        (mulZ (mulZ c_num c_den) (mulZ c_num c_den)) =
+                by rw [mul4_comm b_den b_den c_den c_den hb_den_i hb_den_i hc_den_i hc_den_i]
+      -- Rewrite RHS (M on left, then commute then mul4_comm)
+      have h_rhs : mulZ (mulZ (mulZ c_num c_den) (mulZ c_den c_den))
+                        (mulZ (mulZ a_den a_den) (mulZ b_num b_den)) =
                    mulZ (mulZ (mulZ a_den c_den) (mulZ a_den c_den))
                         (mulZ (mulZ b_num c_num) (mulZ b_den c_den)) := by
-        calc mulZ (mulZ (mulZ a_den a_den) (mulZ b_num b_den))
-                  (mulZ (mulZ c_num c_den) (mulZ c_num c_den))
-            = mulZ (mulZ (mulZ a_den a_den) (mulZ c_num c_den))
+        calc mulZ (mulZ (mulZ c_num c_den) (mulZ c_den c_den))
+                  (mulZ (mulZ a_den a_den) (mulZ b_num b_den))
+            = mulZ (mulZ (mulZ a_den a_den) (mulZ b_num b_den))
+                   (mulZ (mulZ c_num c_den) (mulZ c_den c_den)) :=
+                mulZ_comm (mulZ (mulZ c_num c_den) (mulZ c_den c_den))
+                          (mulZ (mulZ a_den a_den) (mulZ b_num b_den))
+                          hc_mul (mulZ_in_IntSet (mulZ a_den a_den) (mulZ b_num b_den) ha2 hbc)
+          _ = mulZ (mulZ (mulZ a_den a_den) (mulZ b_num b_den))
+                   (mulZ (mulZ c_den c_den) (mulZ c_num c_den)) :=
+                by rw [mulZ_comm (mulZ c_num c_den) (mulZ c_den c_den) hc_num_den hc_den_sq]
+          _ = mulZ (mulZ (mulZ a_den a_den) (mulZ c_den c_den))
                    (mulZ (mulZ b_num b_den) (mulZ c_num c_den)) :=
-                comm4_priv (mulZ a_den a_den) (mulZ b_num b_den)
-                          (mulZ c_num c_den) (mulZ c_num c_den)
-                          ha2 hbc hc_num_den hc_num_den
+                mul4_comm (mulZ a_den a_den) (mulZ b_num b_den)
+                          (mulZ c_den c_den) (mulZ c_num c_den)
+                          ha2 hbc hc_den_sq hc_num_den
           _ = mulZ (mulZ (mulZ a_den c_den) (mulZ a_den c_den))
                    (mulZ (mulZ b_num b_den) (mulZ c_num c_den)) :=
-                by rw [comm4_priv a_den a_den c_num c_den ha_den_i ha_den_i hc_num hc_den_i]
+                by rw [mul4_comm a_den a_den c_den c_den ha_den_i ha_den_i hc_den_i hc_den_i]
           _ = mulZ (mulZ (mulZ a_den c_den) (mulZ a_den c_den))
                    (mulZ (mulZ b_num c_num) (mulZ b_den c_den)) :=
-                by rw [comm4_priv b_num b_den c_num c_den hb_num hb_den_i hc_num hc_den_i]
+                by rw [mul4_comm b_num b_den c_num c_den hb_num hb_den_i hc_num hc_den_i]
       rw [h_lhs, h_rhs] at H_ab_mul
       exact H_ab_mul
 

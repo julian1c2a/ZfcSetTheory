@@ -1,6 +1,6 @@
 # Referencia Técnica - ZfcSetTheory
 
-*Última actualización: 2026-04-26 12:00*
+*Última actualización: 2026-04-29 (sesión 8)*
 **Autor**: Julián Calderón Almendros
 
 ## 0. Guía de Convenciones de Nombres para el Estudioso
@@ -5390,14 +5390,16 @@ noncomputable def intToRat (n : U) : U := ratClass n oneZ
 
 **Módulo**: `ZFC.Rat.Convergence`
 **Namespace**: `ZFC.Rat.Convergence`
-**Dependencias**: `ZFC.Rat.Sequences`, `ZFC.Rat.Abs`, `ZFC.Nat.MaxMin` + anteriores
-**Estrategia**: Define convergencia $\varepsilon$-N en ℚ y demuestra unicidad del límite, aritmética básica (suma de límites, sucesión acotada × cero converge a cero) y convergencia de subsucesiones.
+**Dependencias**: `ZFC.Rat.Sequences`, `ZFC.Rat.Abs`, `ZFC.Rat.Field`, `ZFC.Nat.MaxMin` + anteriores
+**Estrategia**: Define convergencia $\varepsilon$-N en ℚ y demuestra unicidad del límite, aritmética básica (suma de límites, producto acotado×cero, subsucesiones). **0 sorry, 0 errores** — compilación verificada 2026-04-29.
 
 **Definiciones públicas**:
 
 1. **`convergesToQ f L`** — $f \to L$ en ℚ: $\forall \varepsilon > 0 \in \mathbb{Q}, \exists N \in \omega, \forall n \in \omega, N \leq n \Rightarrow |f(n) - L| < \varepsilon$.
 2. **`hasLimitQ f`** — $f$ tiene límite en ℚ: $\exists L \in \mathbb{Q}, \text{convergesToQ}\ f\ L$.
 3. **`IsSubseqOf g f`** — $g$ es subsucesión de $f$: $\exists \phi: \omega \to \omega$ estrictamente creciente tal que $\forall n \in \omega, g(n) = f(\phi(n))$.
+
+**Exports**: `convergesToQ`, `hasLimitQ`, `IsSubseqOf`, `convergesToQ_const`, `limit_unique`, `subseq_convergent`, `convergesToQ_add`, `convergesToQ_mul_bounded`
 
 ---
 
@@ -5419,7 +5421,7 @@ noncomputable def intToRat (n : U) : U := ratClass n oneZ
 **Módulo**: `ZFC.Rat.Monotone`
 **Namespace**: `ZFC.Rat.Monotone`
 **Dependencias**: `ZFC.Rat.CauchyQ`, `ZFC.Nat.MaxMin` + anteriores
-**Estrategia**: Define monotonía y acotamiento para sucesiones $f: \omega \to \mathbb{Q}$. **Nota**: "monótona acotada ⟹ Cauchy" requiere `Real.Completeness` y se reserva para `ZFC.Real.Monotone`. `convergent_isBounded` tiene un `sorry` por necesitar `maxQ` sobre segmento inicial con índice variable.
+**Estrategia**: Define monotonía y acotamiento para sucesiones $f: \omega \to \mathbb{Q}$. `nondecreasing_bounded_isCauchy` y `nonincreasing_bounded_isCauchy` se demuestran directamente por el argumento arquimediano en ℚ (sin `Real.Completeness`). `convergent_isBounded` se prueba vía `cauchy_bounded ∘ cauchy_of_convergentQ`. **0 sorry** — todos los teoremas completamente demostrados.
 
 **Definiciones públicas**:
 
@@ -16271,7 +16273,19 @@ theorem seqTermQ_mem_RatSet (f : U) (hf : IsSeqQ f) (n : U) (hn : n ∈ (ω : U)
 - `convergesToQ_add`: high — (f→L₁, g→L₂) ⟹ f+g→L₁+L₂
 - `convergesToQ_mul_bounded`: high — (f→0, g acotada) ⟹ f·g→0
 - `subseq_convergent`: high — subsucesión de convergente es convergente
-- `strictly_increasing_ge`: medium — φ estrictamente creciente ⟹ φ(n) ≥ n
+
+#### Sucesión Constante Converge (convergesToQ_const)
+
+**Enunciado Matemático**: La sucesión constante $a, a, a, \ldots$ converge a $a$.
+
+**Firma Lean4**:
+
+```lean
+theorem convergesToQ_const (a : U) (ha : a ∈ (RatSet : U)) :
+    convergesToQ (constSeqQ a) a
+```
+
+**Importancia**: high
 
 #### Unicidad del Límite (limit_unique)
 
@@ -16297,13 +16311,47 @@ theorem limit_unique (f L₁ L₂ : U)
 
 ```lean
 theorem convergesToQ_add (f g L₁ L₂ : U)
-    (hf : IsSeqQ f) (hg : IsSeqQ g)
     (hL₁ : L₁ ∈ (RatSet : U)) (hL₂ : L₂ ∈ (RatSet : U))
+    (hf : IsSeqQ f) (hg : IsSeqQ g)
     (h₁ : convergesToQ f L₁) (h₂ : convergesToQ g L₂) :
     convergesToQ (addSeqQ f g) (addQ L₁ L₂)
 ```
 
 **Importancia**: high
+
+#### Producto Acotado × Cero (convergesToQ_mul_bounded)
+
+**Enunciado Matemático**: Si $f \to 0$ y $\exists M > 0, \forall n \in \omega, |g(n)| \leq M$, entonces $(f \cdot g) \to 0$.
+
+**Firma Lean4**:
+
+```lean
+theorem convergesToQ_mul_bounded (f g : U)
+    (hf : IsSeqQ f) (hg : IsSeqQ g)
+    (hf_zero : convergesToQ f (zeroQ : U))
+    (hg_bounded : ∃ M : U, M ∈ (RatSet : U) ∧ isPositiveQ M ∧
+      ∀ n : U, n ∈ (ω : U) → leQ (absQ (g⦅n⦆)) M) :
+    convergesToQ (mulSeqQ f g) (zeroQ : U)
+```
+
+**Importancia**: high
+**Estrategia**: dado $\varepsilon > 0$, tomar $\varepsilon' = \varepsilon/M$; obtener $N$ tal que $|f(n)| < \varepsilon'$ para $n \geq N$; entonces $|f(n) \cdot g(n)| = |f(n)| \cdot |g(n)| \leq |f(n)| \cdot M < \varepsilon' \cdot M = \varepsilon$. La desigualdad estricta final usa `mulQ_right_cancel`.
+
+#### Subsucesión de Convergente (subseq_convergent)
+
+**Enunciado Matemático**: Si $f \to L$ y $g$ es subsucesión de $f$, entonces $g \to L$.
+
+**Firma Lean4**:
+
+```lean
+theorem subseq_convergent (f g L : U)
+    (hL : L ∈ (RatSet : U)) (hf : IsSeqQ f) (hg : IsSeqQ g)
+    (hconv : convergesToQ f L) (hsub : IsSubseqOf g f) :
+    convergesToQ g L
+```
+
+**Importancia**: high
+**Estrategia**: dado $\varepsilon > 0$, tomar $N$ de la convergencia de $f$; para $n \geq N$, como $\phi$ es estrictamente creciente, $\phi(n) \geq n \geq N$ (por `strictly_increasing_ge`, demostrado por inducción en `sep ω P` via `induction_principle`); así $|g(n) - L| = |f(\phi(n)) - L| < \varepsilon$.
 
 ---
 
@@ -16361,7 +16409,7 @@ theorem cauchy_bounded (f : U) (hf : IsSeqQ f) (hcauchy : IsCauchyQ f) :
 - `le_limit_of_bounded_below`: high — f→L, ∀n M≤f(n) ⟹ M≤L
 - `nondecreasing_convergent_isBoundedAbove`: medium — f↗, f→L ⟹ acotada superiormente por L
 - `nonincreasing_convergent_isBoundedBelow`: medium — f↘, f→L ⟹ acotada inferiormente por L
-- `convergent_isBounded`: high — convergente ⟹ acotada (**sorry**)
+- `convergent_isBounded`: high — convergente ⟹ acotada (0 sorry, vía `cauchy_bounded ∘ cauchy_of_convergentQ`)
 
 #### Límite ≤ Cota Superior (limit_le_of_bounded_above)
 
@@ -18378,9 +18426,9 @@ export ZFC.Rat.Sequences (
 ### 6.63 Rat.Convergence.lean
 
 **Namespace**: `ZFC.Rat.Convergence` (exportado a `ZFC`)
-**Última modificación**: 2026-04-27
+**Última modificación**: 2026-04-29
 **Dependencias**: `ZFC.Rat.Sequences`, `ZFC.Rat.Abs`, `ZFC.Nat.MaxMin`
-**Nota**: 2 sorry restantes (teoremas de aritmética avanzada de límites: ×, inv, squeeze).
+**Nota**: 0 sorry — todos los teoremas completamente demostrados.
 
 ```lean
 export ZFC.Rat.Convergence (
@@ -18414,9 +18462,9 @@ export ZFC.Rat.CauchyQ (
 ### 6.65 Rat.Monotone.lean
 
 **Namespace**: `ZFC.Rat.Monotone` (exportado a `ZFC`)
-**Última modificación**: 2026-04-27
+**Última modificación**: 2026-04-29
 **Dependencias**: `ZFC.Rat.CauchyQ`, `ZFC.Nat.MaxMin`
-**Nota**: 1 sorry — `convergent_isBounded` (necesita maxQ sobre segmento inicial con índice variable).
+**Nota**: 0 sorry — `convergent_isBounded` se prueba vía `cauchy_bounded ∘ cauchy_of_convergentQ`; `nondecreasing/nonincreasing_bounded_isCauchy` por argumento arquimediano directo en ℚ.
 
 ```lean
 export ZFC.Rat.Monotone (
@@ -18519,7 +18567,9 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `Int/MaxMin.lean` - Máximo y mínimo en ℤ: maxZ/minZ directamente desde leZ, clausura en ℤ, cotas superior/inferior universales, conmutatividad, idempotencia, asociatividad, equivalencias caracterizadoras. 2 definiciones + 18 teoremas + 20 exports
 - `Rat/MaxMin.lean` - Máximo y mínimo en ℚ: maxQ/minQ directamente desde leQ (estructura idéntica a Int.MaxMin). 2 definiciones + 18 teoremas + 20 exports
 - `Rat/Sequences.lean` - Sucesiones de racionales: IsSeqQ, constSeqQ, addSeqQ, negSeqQ, mulSeqQ; clausura y aplicación de operaciones punto a punto. 5 definiciones + 9 teoremas + 14 exports
-- `Rat/CauchyQ.lean` - Sucesiones de Cauchy en ℚ: IsCauchyQ, cauchy_of_convergentQ (convergente⟹Cauchy), cauchy_bounded (Cauchy⟹acotada, 0 sorry), constSeqQ_isCauchy. 1 definición + 3 teoremas + 4 exports
+- `Rat/CauchyQ.lean` - Sucesiones de Cauchy en ℚ: IsCauchyQ, cauchy_of_convergentQ (convergente⟹Cauchy), cauchy_bounded (Cauchy⟹acotada), constSeqQ_isCauchy. 1 definición + 3 teoremas + 4 exports
+- `Rat/Convergence.lean` - Convergencia en ℚ: convergesToQ (def ε-N), hasLimitQ, IsSubseqOf, convergesToQ_const, limit_unique, convergesToQ_add, convergesToQ_mul_bounded, subseq_convergent. 3 definiciones + 5 teoremas + 8 exports. **0 sorry.**
+- `Rat/Monotone.lean` - Monotonía y acotamiento en ℚ: isNondecreasingQ/isNonincreasingQ/isStrictlyIncreasingQ/isStrictlyDecreasingQ, isBoundedAboveByQ/isBoundedBelowByQ/isBoundedQ, propiedades de interacción con límites, nondecreasing/nonincreasing_bounded_isCauchy, convergent_isBounded. 7 definiciones + 10 teoremas + 18 exports. **0 sorry.**
 
 ### 7.3 Archivos Parcialmente Proyectados
 
@@ -18531,8 +18581,7 @@ Los siguientes archivos tienen **documentación parcial** (solo definiciones/teo
 
 Los siguientes archivos están **casi completos** pero contienen algunos `sorry` documentados:
 
-- `Rat/Convergence.lean` - 2 sorry en aritmética avanzada de límites (multiplicación de límites, inverso de límite). 3 definiciones + 5 teoremas demostrados + 8 exports
-- `Rat/Monotone.lean` - 1 sorry en `convergent_isBounded` (maxQ sobre segmento finito con índice variable). 7 definiciones + 10 teoremas demostrados + 18 exports
+- (Ninguno actualmente — 0 sorry en todo el proyecto desde 2026-04-29)
 
 **Nota**: `SetOps.Functions.lean` está ahora ✅ **100% completo** (0 sorry).
 **Nota**: `Induction.Recursion.lean` está ahora ✅ **100% completo** (0 sorry, 0 errores de compilación).
@@ -18544,7 +18593,9 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 
 ---
 
-*Última actualización: 2026-04-27 — Proyección de Int.MaxMin.lean (§3.63, §4.59, §6.60: 2 def + 18 teoremas + 20 exports, maxZ/minZ en ℤ), Rat.MaxMin.lean (§3.64, §4.60, §6.61: 2 def + 18 teoremas + 20 exports, maxQ/minQ en ℚ), Rat.Sequences.lean (§3.65, §4.61, §6.62: 5 def + 9 teoremas + 14 exports), Rat.Convergence.lean (§3.66, §4.62, §6.63: 3 def + 5 teoremas + 8 exports, 2 sorry), Rat.CauchyQ.lean (§3.67, §4.63, §6.64: 1 def + 3 teoremas + 4 exports, 0 sorry — `cauchy_bounded` demostrado), Rat.Monotone.lean (§3.68, §4.64, §6.65: 7 def + 10 teoremas + 18 exports, 1 sorry). §7.2, §7.4, §7.5 actualizados. 70/70 módulos proyectados.*
+*Última actualización: 2026-04-29 — Eliminación de todos los sorry: Rat.Convergence.lean (0 sorry, §6.63 y §3.66 actualizados), Rat.Monotone.lean (0 sorry, `convergent_isBounded` probado vía `cauchy_bounded ∘ cauchy_of_convergentQ`, `nondecreasing/nonincreasing_bounded_isCauchy` por argumento arquimediano directo, §6.65, §3.68 y §4.64 actualizados). Ambos módulos movidos de §7.4 a §7.2. **0 sorry en todo el proyecto.** 72/72 módulos proyectados (Phase 6.5: 6 módulos, pendiente SqrtApprox.lean).*
+
+*Actualización anterior: 2026-04-27 — Proyección de Int.MaxMin.lean (§3.63, §4.59, §6.60: 2 def + 18 teoremas + 20 exports, maxZ/minZ en ℤ), Rat.MaxMin.lean (§3.64, §4.60, §6.61: 2 def + 18 teoremas + 20 exports, maxQ/minQ en ℚ), Rat.Sequences.lean (§3.65, §4.61, §6.62: 5 def + 9 teoremas + 14 exports), Rat.Convergence.lean (§3.66, §4.62, §6.63: 3 def + 5 teoremas + 8 exports), Rat.CauchyQ.lean (§3.67, §4.63, §6.64: 1 def + 3 teoremas + 4 exports), Rat.Monotone.lean (§3.68, §4.64, §6.65: 7 def + 10 teoremas + 18 exports). §7.2, §7.4, §7.5 actualizados. 70/70 módulos proyectados.*
 
 *Última actualización: 2026-04-26 12:00 — Proyección completa de Rat.Embedding.lean (§3.61, §4.57, §6.58: 1 def + 14 teoremas + 15 exports, embedding canónico intToRat : ℤ→ℚ, homomorfismo de anillos ordenados, no suryectividad, propiedad arquimediana) y Rat.Field.lean (§3.62, §4.58, §6.59: 0 def + 14 teoremas + 14 exports, no divisores de cero, cancelación, doble inverso, propiedades de divQ, distributividad ·/+). Tabla §1.1 y §7.2 actualizadas. §7.5: 64/64 módulos proyectados. Estado: ✅ 100% completo, 0 sorry.*
 

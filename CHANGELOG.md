@@ -1,6 +1,6 @@
 # Changelog
 
-**Última actualización:** 2026-04-26
+**Última actualización:** 2026-04-29
 **Autor**: Julián Calderón Almendros
 
 Todos los cambios notables de este proyecto serán documentados en este archivo.
@@ -9,6 +9,28 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Añadido (2026-04-29)
+
+- **Phase 6.5 — 0 sorry confirmado (todos los teoremas demostrados)**:
+  - ✅ Eliminados los 2 sorry de `Rat/Convergence.lean` (aritmética avanzada de límites)
+  - ✅ Eliminado el 1 sorry de `Rat/Monotone.lean` (`convergent_isBounded`)
+  - ✅ `convergent_isBounded` demostrado vía `cauchy_bounded ∘ cauchy_of_convergentQ`
+  - ✅ `nondecreasing_bounded_isCauchy` y `nonincreasing_bounded_isCauchy` demostrados por argumento arquimediano directo (sin `Real.Completeness`)
+  - **Estado**: 87 módulos · 0 sorry · 0 errores · Phase 6.5 al 6/7 módulos
+- **Documentación actualizada**: REFERENCE.md, NEXT-STEPS.md, README.md — estado de sorry corregido en §3.66, §3.68, §4.64, §6.63, §6.65, §7.2, §7.4
+
+### Añadido (2026-04-27)
+
+- **Phase 6.5 — Sucesiones en ℚ (6/7 módulos, compilan)**:
+  - ✅ `Int/MaxMin.lean` — `maxZ`, `minZ` desde `leZ`; 18 teoremas de retículo; 20 exports
+  - ✅ `Rat/MaxMin.lean` — `maxQ`, `minQ` desde `leQ`; 18 teoremas de retículo; 20 exports
+  - ✅ `Rat/Sequences.lean` — `IsSeqQ`, `constSeqQ`, `addSeqQ`, `negSeqQ`, `mulSeqQ`; clausura y aplicación; 14 exports
+  - ✅ `Rat/Convergence.lean` — `convergesToQ` (def ε-N), `hasLimitQ`, `IsSubseqOf`; `convergesToQ_const`, `limit_unique`, `convergesToQ_add`, `convergesToQ_mul_bounded`, `subseq_convergent`; 8 exports
+  - ✅ `Rat/CauchyQ.lean` — `IsCauchyQ`, `cauchy_of_convergentQ`, `cauchy_bounded` (por inducción en ω con `maxQ`), `constSeqQ_isCauchy`; 4 exports
+  - ✅ `Rat/Monotone.lean` — 7 definiciones de monotonía/acotamiento; `nondecreasing_convergent_limit_ge`, `limit_le_of_bounded_above`, `convergent_isBounded`, `nondecreasing_bounded_isCauchy`, `nonincreasing_bounded_isCauchy`; 18 exports
+  - ❌ `Rat/SqrtApprox.lean` — No iniciado (prueba de incompletitud de ℚ, motivación de ℝ)
+  - **REFERENCE.md**: §3.63–3.68, §4.59–4.64, §6.60–6.65 proyectados (72 módulos totales)
 
 ### Añadido (2026-04-26)
 

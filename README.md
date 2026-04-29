@@ -3,13 +3,13 @@
 [![Lean 4](https://img.shields.io/badge/Lean-v4.29.0-blue)](https://leanprover.github.io/)
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](REFERENCE.md)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![Modules](https://img.shields.io/badge/módulos-81-blue)](REFERENCE.md)
+[![Modules](https://img.shields.io/badge/módulos-87-blue)](REFERENCE.md)
 [![Sorry](https://img.shields.io/badge/sorry-0-brightgreen)](REFERENCE.md)
 
 Una implementación formal de la **Teoría de Conjuntos de Zermelo-Fraenkel (ZFC)** en Lean 4, sin dependencias de Mathlib.
 
-> **Estado actual** (2026-04-26): 81 módulos activos · 0 sorry · 0 errores.
-> Phase 5 (ℤ) 100% completa — 190 exports. Phase 6 (ℚ) 100% completa — 9 módulos.
+> **Estado actual** (2026-04-29): 87 módulos activos · **0 sorry** · 0 errores.
+> Phase 6 (ℚ) 100% completa — 9 módulos. Phase 6.5 (Sucesiones en ℚ) — 6/7 módulos, 0 sorry.
 
 ---
 
@@ -26,6 +26,7 @@ Construye las matemáticas desde los axiomas de ZFC hacia arriba, en Lean 4 puro
 7. **Cardinalidad** — Cantor, Cantor-Schröder-Bernstein
 8. **Enteros ℤ** — Construcción completa: +, −, ×, ÷ euclídea, ^, GCD, LCM, Bézout, TFA, valor absoluto, signo, orden total, inducción
 9. **Racionales ℚ** — Construcción completa: equivalencia en ℤ×ℤ*, +, −, ×, ÷, |·|, orden total, embedding ℤ↪ℚ, propiedad arquimediana, axiomas de cuerpo
+10. **Sucesiones en ℚ** — IsSeqQ, convergencia ε-N, límite único, aritmética de límites, sucesiones de Cauchy, acotamiento, monotonía; `nondecreasing_bounded_isCauchy` y `nonincreasing_bounded_isCauchy` por argumento arquimediano
 
 ---
 
@@ -127,6 +128,18 @@ Construye las matemáticas desde los axiomas de ZFC hacia arriba, en Lean 4 puro
 | `Rat/Embedding.lean` | intToRat, homomorfismo +/−/×/≤/<, intToRat_injective, archQ |
 | `Rat/Field.lean` | mulQ_eq_zero_iff, mulQ_left_cancel, invQ_invQ, invQ_mulQ, divQ_self, distribQ |
 
+### Phase 6.5: Sucesiones en ℚ (🔄 En progreso — 6/7, 0 sorry)
+
+| Módulo | Exports clave |
+|--------|---------------|
+| `Int/MaxMin.lean` | maxZ, minZ, 18 teoremas de retículo en ℤ |
+| `Rat/MaxMin.lean` | maxQ, minQ, 18 teoremas de retículo en ℚ |
+| `Rat/Sequences.lean` | IsSeqQ, constSeqQ, addSeqQ, negSeqQ, mulSeqQ |
+| `Rat/Convergence.lean` | convergesToQ, hasLimitQ, IsSubseqOf, limit_unique, convergesToQ_add, convergesToQ_mul_bounded, subseq_convergent |
+| `Rat/CauchyQ.lean` | IsCauchyQ, cauchy_of_convergentQ, cauchy_bounded, constSeqQ_isCauchy |
+| `Rat/Monotone.lean` | isNondecreasingQ, isNonincreasingQ, isBoundedQ, nondecreasing_bounded_isCauchy, nonincreasing_bounded_isCauchy, convergent_isBounded |
+| `Rat/SqrtApprox.lean` | *(no iniciado — prueba de incompletitud de ℚ)* |
+
 ---
 
 ## 🏆 Teoremas Destacados
@@ -189,8 +202,8 @@ ZfcSetTheory/
     ├── Peano/                  # Puentes Peano ↔ von Neumann (4 módulos)
     ├── BoolAlg/                # Álgebras de Boole (11 módulos)
     ├── Cardinal/               # Cardinalidad (2 módulos)
-    ├── Int/                    # ℤ completo (15 módulos)
-    └── Rat/                    # ℚ completo (9 módulos)
+    ├── Int/                    # ℤ completo (16 módulos, incl. MaxMin)
+    └── Rat/                    # ℚ + Sucesiones (14 módulos)
 ```
 
 ---
