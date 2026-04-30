@@ -21,3 +21,4 @@ import ZFC.Rat.Sequences
 import ZFC.Rat.Convergence
 import ZFC.Rat.CauchyQ
 import ZFC.Rat.Monotone
+import ZFC.Rat.SqrtApprox

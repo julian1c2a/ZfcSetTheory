@@ -1320,6 +1320,321 @@ namespace ZFC
         hhε_half hhε_half
         h_fn_gn_lt.1 h_L₁_gn_lt
 
+    -- =========================================================================
+    -- Section 10: Inverse and division limits
+    -- =========================================================================
+    --
+    -- Strategy for convergesToQ_inv:
+    --   Let ε₀ = |L|/2 > 0. Take N₀ with |f(n)−L| < ε₀ for n ≥ N₀.
+    --   Then |f(n)| ≥ |L| − |f(n)−L| > |L|/2 = ε₀, so f(n) ≠ 0.
+    --   For the limit: 1/f(n) − 1/L = (L−f(n))/(L·f(n)), so
+    --     |1/f(n) − 1/L| = |f(n)−L| / (|L|·|f(n)|) ≤ |f(n)−L| / ε₀²
+    --   Choose δ = ε·ε₀². Then |f(n)−L| < δ implies |1/f(n)−1/L| < ε.
+    --   Key missing lemma: invQ_antitone — if 0 < a ≤ b then invQ b ≤ invQ a.
+    --   (Proof: multiply a ≤ b by invQ a · invQ b > 0; use mulQ_invQ_right twice.)
+    --   Also needed: absQ_invQ — absQ (invQ x) = invQ (absQ x) when x ≠ 0.
+    --   These should be added to ZFC/Rat/Mul.lean before completing this proof.
+
+    /-- invQ sequence: (invSeqQ f)(n) = 1/f(n).
+        Well-defined as a ZFC function only when f(n) ≠ 0 for all n.
+        We define it pointwise and use it only when f is eventually nonzero. -/
+    noncomputable def invSeqQ (f : U) : U :=
+      sep ((ω : U) ×ₛ (RatSet : U)) (fun p => snd p = invQ (f⦅fst p⦆))
+
+    private theorem invSeqQ_mem_iff (f p : U) :
+        p ∈ invSeqQ f ↔
+        p ∈ (ω : U) ×ₛ (RatSet : U) ∧ snd p = invQ (f⦅fst p⦆) := by
+      unfold invSeqQ; exact mem_sep_iff _ p _
+
+    private theorem invSeqQ_isSeqQ (f : U) (hf : IsSeqQ f) : IsSeqQ (invSeqQ f) := by
+      unfold IsSeqQ
+      constructor
+      · intro p hp; exact ((invSeqQ_mem_iff f p).mp hp).1
+      · intro n hn
+        have hfn := seqTermQ_mem_RatSet f n hf hn
+        refine ⟨invQ (f⦅n⦆), ?_, ?_⟩
+        · show ⟨n, invQ (f⦅n⦆)⟩ ∈ invSeqQ f
+          rw [invSeqQ_mem_iff]
+          refine ⟨(OrderedPair_mem_CartesianProduct n _ (ω : U) RatSet).mpr
+                   ⟨hn, invQ_in_RatSet _ hfn⟩, ?_⟩
+          rw [fst_of_ordered_pair, snd_of_ordered_pair]
+        · intro z hz
+          show z = invQ (f⦅n⦆)
+          have h := ((invSeqQ_mem_iff f ⟨n, z⟩).mp hz).2
+          rw [fst_of_ordered_pair, snd_of_ordered_pair] at h; exact h
+
+    private theorem invSeqQ_apply (f : U) (hf : IsSeqQ f)
+        (n : U) (hn : n ∈ (ω : U)) :
+        (invSeqQ f)⦅n⦆ = invQ (f⦅n⦆) := by
+      apply apply_eq _ n _ ((invSeqQ_isSeqQ f hf).2 n hn)
+      show ⟨n, invQ (f⦅n⦆)⟩ ∈ invSeqQ f
+      rw [invSeqQ_mem_iff]
+      refine ⟨(OrderedPair_mem_CartesianProduct n _ (ω : U) RatSet).mpr
+               ⟨hn, invQ_in_RatSet _ (seqTermQ_mem_RatSet f n hf hn)⟩, ?_⟩
+      rw [fst_of_ordered_pair, snd_of_ordered_pair]
+
+    /-- If f → L and L ≠ 0, then eventually f(n) ≠ 0 and 1/f → 1/L. -/
+    theorem convergesToQ_inv (f L : U)
+        (hL : L ∈ (RatSet : U)) (hf : IsSeqQ f)
+        (hL_nz : L ≠ (zeroQ : U))
+        (h : convergesToQ f L) :
+        ∃ N₀ : U, N₀ ∈ (ω : U) ∧
+          (∀ n : U, n ∈ (ω : U) → N₀ ∈ n ∨ N₀ = n → f⦅n⦆ ≠ (zeroQ : U)) ∧
+          convergesToQ (invSeqQ f) (invQ L) := by
+      -- Basic membership facts
+      have hAL     : absQ L ∈ (RatSet : U)  := absQ_in_RatSet L hL
+      have hAL_pos : isPositiveQ (absQ L)    := absQ_pos L hL hL_nz
+      have hIL     : invQ L ∈ (RatSet : U)  := invQ_in_RatSet L hL
+      -- ε₀ = |L|/2 > 0
+      let ε₀       := halfQ (absQ L)
+      have hε₀     : ε₀ ∈ (RatSet : U)     := halfQ_mem_RatSet (absQ L) hAL
+      have hε₀_pos : isPositiveQ ε₀         := halfQ_pos (absQ L) hAL hAL_pos
+      have hε₀_ne  : ε₀ ≠ (zeroQ : U)      := hε₀_pos.2.symm
+      have hAL_eq  : absQ L = addQ ε₀ ε₀   := (half_add_half (absQ L) hAL).symm
+      -- ε₀² = ε₀·ε₀ > 0
+      have hε₀sq    : mulQ ε₀ ε₀ ∈ (RatSet : U) := mulQ_in_RatSet ε₀ ε₀ hε₀ hε₀
+      have hε₀sq_ne : mulQ ε₀ ε₀ ≠ (zeroQ : U)  :=
+        mulQ_ne_zeroQ ε₀ ε₀ hε₀ hε₀ hε₀_ne hε₀_ne
+      have hε₀sq_pos : isPositiveQ (mulQ ε₀ ε₀) := by
+        constructor
+        · have h1 := mulQ_leQ_mulQ_of_nonneg_right (zeroQ : U) ε₀ ε₀
+                       zeroQ_mem_RatSet hε₀ hε₀ hε₀_pos.1 hε₀_pos.1
+          rwa [mulQ_zero_left ε₀ hε₀] at h1
+        · exact fun h_eq => hε₀sq_ne h_eq.symm
+      have hIε₀sq     : invQ (mulQ ε₀ ε₀) ∈ (RatSet : U) := invQ_in_RatSet _ hε₀sq
+      have hIε₀sq_pos : isPositiveQ (invQ (mulQ ε₀ ε₀))   := invQ_pos _ hε₀sq hε₀sq_pos
+      -- Helpers: 0 ≤ 2ε₀ and ε₀ ≤ 2ε₀
+      have h_2ε₀       : addQ ε₀ ε₀ ∈ (RatSet : U) := addQ_in_RatSet ε₀ ε₀ hε₀ hε₀
+      have h_ε₀_le_2ε₀ : leQ ε₀ (addQ ε₀ ε₀) := by
+        have := addQ_leQ_addQ (zeroQ : U) ε₀ ε₀ zeroQ_mem_RatSet hε₀ hε₀ hε₀_pos.1
+        rwa [addQ_zero_left ε₀ hε₀] at this
+      have h_2ε₀_pos : leQ (zeroQ : U) (addQ ε₀ ε₀) :=
+        leQ_trans (zeroQ : U) ε₀ (addQ ε₀ ε₀) zeroQ_mem_RatSet hε₀ h_2ε₀ hε₀_pos.1 h_ε₀_le_2ε₀
+      -- Get N₀ with |f(n) − L| < ε₀ for n ≥ N₀
+      obtain ⟨N₀, hN₀, hN₀_conv⟩ := h ε₀ hε₀ hε₀_pos
+      refine ⟨N₀, hN₀, ?_, ?_⟩
+      -- ── Part 1: f(n) ≠ 0 for all n ≥ N₀ ──────────────────────────────────
+      · intro n hn h_ge
+        have hfn  := seqTermQ_mem_RatSet f n hf hn
+        have hAfn := absQ_in_RatSet (f⦅n⦆) hfn
+        -- ||L| − |f(n)|| ≤ |L − f(n)| = |f(n) − L| < ε₀
+        have h_rev    := absQ_reverse_triangle L (f⦅n⦆) hL hfn
+        have h_AL_Afn := addQ_in_RatSet (absQ L) (negQ (absQ (f⦅n⦆))) hAL (negQ_in_RatSet _ hAfn)
+        have h_fn_dif := addQ_in_RatSet L (negQ (f⦅n⦆)) hL (negQ_in_RatSet _ hfn)
+        have h_diff_lt : ltQ (absQ (subQ (absQ L) (absQ (f⦅n⦆)))) ε₀ :=
+          leQ_ltQ_trans _ _ _
+            (absQ_in_RatSet _ h_AL_Afn) (absQ_in_RatSet _ h_fn_dif) hε₀
+            h_rev (absQ_symm (f⦅n⦆) L hfn hL ▸ hN₀_conv n hn h_ge)
+        have h_sub_lt : ltQ (subQ (absQ L) (absQ (f⦅n⦆))) ε₀ :=
+          leQ_ltQ_trans _ _ _ h_AL_Afn (absQ_in_RatSet _ h_AL_Afn) hε₀
+            (leQ_le_absQ _ h_AL_Afn) h_diff_lt
+        -- ε₀ ≤ |f(n)| by contradiction
+        have h_fn_lower : leQ ε₀ (absQ (f⦅n⦆)) := by
+          rcases leQ_total ε₀ (absQ (f⦅n⦆)) hε₀ hAfn with h | h
+          · exact h
+          · exfalso
+            have h_neg := negQ_anti (absQ (f⦅n⦆)) ε₀ hAfn hε₀ h
+            have h_ge2 := addQ_leQ_addQ (negQ ε₀) (negQ (absQ (f⦅n⦆)))
+                            (addQ ε₀ ε₀)
+                            (negQ_in_RatSet _ hε₀) (negQ_in_RatSet _ hAfn) h_2ε₀ h_neg
+            have h_lhs' : addQ (negQ ε₀) (addQ ε₀ ε₀) = ε₀ := by
+              rw [addQ_comm (negQ ε₀) (addQ ε₀ ε₀) (negQ_in_RatSet _ hε₀) h_2ε₀,
+                  addQ_assoc ε₀ ε₀ (negQ ε₀) hε₀ hε₀ (negQ_in_RatSet _ hε₀),
+                  negQ_addQ_right ε₀ hε₀, addQ_zero_right ε₀ hε₀]
+            have h_rhs' : addQ (negQ (absQ (f⦅n⦆))) (addQ ε₀ ε₀) =
+                          subQ (absQ L) (absQ (f⦅n⦆)) := by
+              rw [addQ_comm (negQ (absQ (f⦅n⦆))) (addQ ε₀ ε₀)
+                    (negQ_in_RatSet _ hAfn) h_2ε₀, hAL_eq]
+              rfl
+            rw [h_lhs', h_rhs'] at h_ge2
+            exact h_sub_lt.2 (leQ_antisymm (subQ (absQ L) (absQ (f⦅n⦆))) ε₀
+                                h_AL_Afn hε₀ h_sub_lt.1 h_ge2)
+        -- f(n) ≠ 0 from |f(n)| ≥ ε₀ > 0
+        intro h_fn_zero
+        have h1 : absQ (f⦅n⦆) = (zeroQ : U) := (absQ_eq_zero_iff _ hfn).mpr h_fn_zero
+        exact hε₀_pos.2 (leQ_antisymm ε₀ (zeroQ : U) hε₀ zeroQ_mem_RatSet
+                           (h1 ▸ h_fn_lower) hε₀_pos.1).symm
+      -- ── Part 2: convergesToQ (invSeqQ f) (invQ L) ─────────────────────────
+      · intro ε hε hε_pos
+        -- δ = ε · ε₀²
+        have hδ : mulQ ε (mulQ ε₀ ε₀) ∈ (RatSet : U) :=
+          mulQ_in_RatSet ε (mulQ ε₀ ε₀) hε hε₀sq
+        have hδ_pos : isPositiveQ (mulQ ε (mulQ ε₀ ε₀)) := by
+          constructor
+          · have h1 := mulQ_leQ_mulQ_of_nonneg_right (zeroQ : U) ε (mulQ ε₀ ε₀)
+                         zeroQ_mem_RatSet hε hε₀sq hε_pos.1 hε₀sq_pos.1
+            rwa [mulQ_zero_left (mulQ ε₀ ε₀) hε₀sq] at h1
+          · exact fun h_eq => mulQ_ne_zeroQ ε (mulQ ε₀ ε₀) hε hε₀sq
+                                 hε_pos.2.symm hε₀sq_ne h_eq.symm
+        -- Get N₁ with |f(n) − L| < δ
+        obtain ⟨N₁, hN₁, hN₁_conv⟩ := h (mulQ ε (mulQ ε₀ ε₀)) hδ hδ_pos
+        let N := maxOf N₀ N₁
+        have hN := maxOf_in_Omega N₀ N₁ hN₀ hN₁
+        refine ⟨N, hN, fun n hn h_ge => ?_⟩
+        have h_ge_N₀ := omega_le_trans N₀ N n hN₀ hN hn (le_maxOf_left N₀ N₁ hN₀ hN₁) h_ge
+        have h_ge_N₁ := omega_le_trans N₁ N n hN₁ hN hn (le_maxOf_right N₀ N₁ hN₀ hN₁) h_ge
+        have hfn  := seqTermQ_mem_RatSet f n hf hn
+        have hAfn := absQ_in_RatSet (f⦅n⦆) hfn
+        have hIfn := invQ_in_RatSet (f⦅n⦆) hfn
+        -- |f(n) − L| < δ
+        have h_fn_lt := hN₁_conv n hn h_ge_N₁
+        -- ε₀ ≤ |f(n)| (using N₀-bound)
+        have h_rev    := absQ_reverse_triangle L (f⦅n⦆) hL hfn
+        have h_AL_Afn := addQ_in_RatSet (absQ L) (negQ (absQ (f⦅n⦆))) hAL (negQ_in_RatSet _ hAfn)
+        have h_fn_dif := addQ_in_RatSet L (negQ (f⦅n⦆)) hL (negQ_in_RatSet _ hfn)
+        have h_diff_lt : ltQ (absQ (subQ (absQ L) (absQ (f⦅n⦆)))) ε₀ :=
+          leQ_ltQ_trans _ _ _
+            (absQ_in_RatSet _ h_AL_Afn) (absQ_in_RatSet _ h_fn_dif) hε₀
+            h_rev (absQ_symm (f⦅n⦆) L hfn hL ▸ hN₀_conv n hn h_ge_N₀)
+        have h_sub_lt : ltQ (subQ (absQ L) (absQ (f⦅n⦆))) ε₀ :=
+          leQ_ltQ_trans _ _ _ h_AL_Afn (absQ_in_RatSet _ h_AL_Afn) hε₀
+            (leQ_le_absQ _ h_AL_Afn) h_diff_lt
+        have h_fn_lower : leQ ε₀ (absQ (f⦅n⦆)) := by
+          rcases leQ_total ε₀ (absQ (f⦅n⦆)) hε₀ hAfn with h | h
+          · exact h
+          · exfalso
+            have h_neg := negQ_anti (absQ (f⦅n⦆)) ε₀ hAfn hε₀ h
+            have h_ge2 := addQ_leQ_addQ (negQ ε₀) (negQ (absQ (f⦅n⦆)))
+                            (addQ ε₀ ε₀)
+                            (negQ_in_RatSet _ hε₀) (negQ_in_RatSet _ hAfn) h_2ε₀ h_neg
+            have h_lhs' : addQ (negQ ε₀) (addQ ε₀ ε₀) = ε₀ := by
+              rw [addQ_comm (negQ ε₀) (addQ ε₀ ε₀) (negQ_in_RatSet _ hε₀) h_2ε₀,
+                  addQ_assoc ε₀ ε₀ (negQ ε₀) hε₀ hε₀ (negQ_in_RatSet _ hε₀),
+                  negQ_addQ_right ε₀ hε₀, addQ_zero_right ε₀ hε₀]
+            have h_rhs' : addQ (negQ (absQ (f⦅n⦆))) (addQ ε₀ ε₀) =
+                          subQ (absQ L) (absQ (f⦅n⦆)) := by
+              rw [addQ_comm (negQ (absQ (f⦅n⦆))) (addQ ε₀ ε₀)
+                    (negQ_in_RatSet _ hAfn) h_2ε₀, hAL_eq]
+              rfl
+            rw [h_lhs', h_rhs'] at h_ge2
+            exact h_sub_lt.2 (leQ_antisymm (subQ (absQ L) (absQ (f⦅n⦆))) ε₀
+                                h_AL_Afn hε₀ h_sub_lt.1 h_ge2)
+        -- f(n) ≠ 0
+        have h_fn_nz : f⦅n⦆ ≠ (zeroQ : U) := by
+          intro h_fn_zero
+          have h1 : absQ (f⦅n⦆) = (zeroQ : U) := (absQ_eq_zero_iff _ hfn).mpr h_fn_zero
+          exact hε₀_pos.2 (leQ_antisymm ε₀ (zeroQ : U) hε₀ zeroQ_mem_RatSet
+                             (h1 ▸ h_fn_lower) hε₀_pos.1).symm
+        -- L·f(n) ≠ 0
+        have hLfn     := mulQ_in_RatSet L (f⦅n⦆) hL hfn
+        have hLfn_ne  : mulQ L (f⦅n⦆) ≠ (zeroQ : U) :=
+          mulQ_ne_zeroQ L (f⦅n⦆) hL hfn hL_nz h_fn_nz
+        have hALfn    := absQ_in_RatSet (mulQ L (f⦅n⦆)) hLfn
+        have hALfn_ne : absQ (mulQ L (f⦅n⦆)) ≠ (zeroQ : U) :=
+          fun h_eq => hLfn_ne ((absQ_eq_zero_iff _ hLfn).mp h_eq)
+        have hILfn    := invQ_in_RatSet (mulQ L (f⦅n⦆)) hLfn
+        have hIALfn   := invQ_in_RatSet (absQ (mulQ L (f⦅n⦆))) hALfn
+        have hLfn_sub := addQ_in_RatSet L (negQ (f⦅n⦆)) hL (negQ_in_RatSet _ hfn)
+        -- |L·f(n)| ≥ ε₀² (since |L| = 2ε₀ and |f(n)| ≥ ε₀)
+        have h_ALfn_lb : leQ (mulQ ε₀ ε₀) (absQ (mulQ L (f⦅n⦆))) := by
+          rw [absQ_mulQ L (f⦅n⦆) hL hfn, hAL_eq]
+          exact leQ_trans (mulQ ε₀ ε₀) (mulQ (addQ ε₀ ε₀) ε₀) (mulQ (addQ ε₀ ε₀) (absQ (f⦅n⦆)))
+                  hε₀sq (mulQ_in_RatSet _ _ h_2ε₀ hε₀) (mulQ_in_RatSet _ _ h_2ε₀ hAfn)
+                  (mulQ_leQ_mulQ_of_nonneg_right ε₀ (addQ ε₀ ε₀) ε₀
+                     hε₀ h_2ε₀ hε₀ h_ε₀_le_2ε₀ hε₀_pos.1)
+                  (mulQ_leQ_mulQ_of_nonneg_left (addQ ε₀ ε₀) ε₀ (absQ (f⦅n⦆))
+                     h_2ε₀ hε₀ hAfn h_fn_lower h_2ε₀_pos)
+        -- invQ |L·f(n)| ≤ invQ ε₀²
+        have h_invALfn : leQ (invQ (absQ (mulQ L (f⦅n⦆)))) (invQ (mulQ ε₀ ε₀)) :=
+          ZFC.Rat.Field.invQ_antitone (mulQ ε₀ ε₀) (absQ (mulQ L (f⦅n⦆)))
+            hε₀sq hALfn hε₀sq_pos h_ALfn_lb
+        -- absQ (invQ (L·f(n))) = invQ (absQ (L·f(n)))
+        have h_absQ_invQ : absQ (invQ (mulQ L (f⦅n⦆))) = invQ (absQ (mulQ L (f⦅n⦆))) := by
+          have h_mul := absQ_mulQ (invQ (mulQ L (f⦅n⦆))) (mulQ L (f⦅n⦆)) hILfn hLfn
+          rw [mulQ_invQ_left (mulQ L (f⦅n⦆)) hLfn hLfn_ne] at h_mul
+          rw [show absQ (oneQ : U) = (oneQ : U) from if_pos oneQ_pos.1] at h_mul
+          -- h_mul : oneQ = mulQ (absQ (invQ (mulQ L fn))) (absQ (mulQ L fn))
+          exact mulQ_right_cancel (absQ (invQ (mulQ L (f⦅n⦆)))) (invQ (absQ (mulQ L (f⦅n⦆))))
+                  (absQ (mulQ L (f⦅n⦆)))
+                  (absQ_in_RatSet _ hILfn) hIALfn hALfn hALfn_ne
+                  (h_mul.symm.trans (mulQ_invQ_left (absQ (mulQ L (f⦅n⦆))) hALfn hALfn_ne).symm)
+        -- Algebraic identity: invQ f(n) − invQ L = (L − f(n)) · invQ (L·f(n))
+        have h_id : subQ (invQ (f⦅n⦆)) (invQ L) =
+                    mulQ (subQ L (f⦅n⦆)) (invQ (mulQ L (f⦅n⦆))) := by
+          apply mulQ_left_cancel
+                  (subQ (invQ (f⦅n⦆)) (invQ L))
+                  (mulQ (subQ L (f⦅n⦆)) (invQ (mulQ L (f⦅n⦆))))
+                  (mulQ L (f⦅n⦆))
+                  (addQ_in_RatSet _ _ hIfn (negQ_in_RatSet _ hIL))
+                  (mulQ_in_RatSet _ _ hLfn_sub hILfn)
+                  hLfn hLfn_ne
+          -- LHS: (L·f(n))·(invQ f(n) − invQ L) = L − f(n)
+          have h_LHS : mulQ (mulQ L (f⦅n⦆)) (subQ (invQ (f⦅n⦆)) (invQ L)) =
+                       subQ L (f⦅n⦆) := by
+            rw [show subQ (invQ (f⦅n⦆)) (invQ L) =
+                    addQ (invQ (f⦅n⦆)) (negQ (invQ L)) from rfl,
+                mulQ_addQ_distrib_left (mulQ L (f⦅n⦆)) (invQ (f⦅n⦆)) (negQ (invQ L))
+                  hLfn hIfn (negQ_in_RatSet _ hIL),
+                ← negQ_mulQ_right (mulQ L (f⦅n⦆)) (invQ L) hLfn hIL,
+                mulQ_assoc L (f⦅n⦆) (invQ (f⦅n⦆)) hL hfn hIfn,
+                mulQ_invQ_right (f⦅n⦆) hfn h_fn_nz,
+                mulQ_one_right L hL,
+                mulQ_comm L (f⦅n⦆) hL hfn,
+                mulQ_assoc (f⦅n⦆) L (invQ L) hfn hL hIL,
+                mulQ_invQ_right L hL hL_nz,
+                mulQ_one_right (f⦅n⦆) hfn]
+            rfl
+          -- RHS: (L·f(n))·((L−f(n))·invQ(L·f(n))) = L − f(n)
+          have h_RHS : mulQ (mulQ L (f⦅n⦆)) (mulQ (subQ L (f⦅n⦆)) (invQ (mulQ L (f⦅n⦆)))) =
+                       subQ L (f⦅n⦆) := by
+            rw [mulQ_comm (subQ L (f⦅n⦆)) (invQ (mulQ L (f⦅n⦆))) hLfn_sub hILfn,
+                ← mulQ_assoc (mulQ L (f⦅n⦆)) (invQ (mulQ L (f⦅n⦆))) (subQ L (f⦅n⦆))
+                    hLfn hILfn hLfn_sub,
+                mulQ_invQ_right (mulQ L (f⦅n⦆)) hLfn hLfn_ne,
+                mulQ_one_left (subQ L (f⦅n⦆)) hLfn_sub]
+          exact h_LHS.trans h_RHS.symm
+        -- Main bound: |invQ f(n) − invQ L| < ε
+        rw [invSeqQ_apply f hf n hn, h_id,
+            absQ_mulQ (subQ L (f⦅n⦆)) (invQ (mulQ L (f⦅n⦆))) hLfn_sub hILfn,
+            h_absQ_invQ,
+            absQ_symm L (f⦅n⦆) hL hfn]
+        -- Goal: ltQ (mulQ (absQ (subQ fn L)) (invQ (absQ (mulQ L fn)))) ε
+        have hAfnL := absQ_in_RatSet _ (addQ_in_RatSet (f⦅n⦆) (negQ L) hfn (negQ_in_RatSet _ hL))
+        have h_step1 : leQ (mulQ (absQ (subQ (f⦅n⦆) L)) (invQ (absQ (mulQ L (f⦅n⦆)))))
+                           (mulQ (absQ (subQ (f⦅n⦆) L)) (invQ (mulQ ε₀ ε₀))) :=
+          mulQ_leQ_mulQ_of_nonneg_left
+            (absQ (subQ (f⦅n⦆) L)) (invQ (absQ (mulQ L (f⦅n⦆)))) (invQ (mulQ ε₀ ε₀))
+            hAfnL hIALfn hIε₀sq h_invALfn
+            (absQ_nonneg _ (addQ_in_RatSet _ _ hfn (negQ_in_RatSet _ hL)))
+        have h_step2 : ltQ (mulQ (absQ (subQ (f⦅n⦆) L)) (invQ (mulQ ε₀ ε₀))) ε := by
+          have h_δ_inv : mulQ (mulQ ε (mulQ ε₀ ε₀)) (invQ (mulQ ε₀ ε₀)) = ε := by
+            rw [mulQ_assoc ε (mulQ ε₀ ε₀) (invQ (mulQ ε₀ ε₀)) hε hε₀sq hIε₀sq,
+                mulQ_invQ_right (mulQ ε₀ ε₀) hε₀sq hε₀sq_ne,
+                mulQ_one_right ε hε]
+          have h_le := mulQ_leQ_mulQ_of_nonneg_right
+                         (absQ (subQ (f⦅n⦆) L)) (mulQ ε (mulQ ε₀ ε₀)) (invQ (mulQ ε₀ ε₀))
+                         hAfnL hδ hIε₀sq h_fn_lt.1 hIε₀sq_pos.1
+          have h_ne : mulQ (absQ (subQ (f⦅n⦆) L)) (invQ (mulQ ε₀ ε₀)) ≠ ε :=
+            fun h_eq =>
+              h_fn_lt.2
+              (mulQ_right_cancel (absQ (subQ (f⦅n⦆) L)) (mulQ ε (mulQ ε₀ ε₀))
+                (invQ (mulQ ε₀ ε₀))
+                hAfnL hδ hIε₀sq (invQ_ne_zeroQ (mulQ ε₀ ε₀) hε₀sq hε₀sq_ne)
+                (h_eq.trans h_δ_inv.symm))
+          rw [h_δ_inv] at h_le
+          exact ⟨h_le, h_ne⟩
+        exact leQ_ltQ_trans _ _ ε
+                (mulQ_in_RatSet _ _ hAfnL hIALfn)
+                (mulQ_in_RatSet _ _ hAfnL hIε₀sq)
+                hε h_step1 h_step2
+
+    /-- If f → L₁ and g → L₂ and L₂ ≠ 0, then (f/g) → L₁/L₂. -/
+    theorem convergesToQ_div (f g L₁ L₂ : U)
+        (hL₁ : L₁ ∈ (RatSet : U)) (hL₂ : L₂ ∈ (RatSet : U))
+        (hf : IsSeqQ f) (hg : IsSeqQ g)
+        (hL₂_nz : L₂ ≠ (zeroQ : U))
+        (h₁ : convergesToQ f L₁) (h₂ : convergesToQ g L₂) :
+        ∃ N₀ : U, N₀ ∈ (ω : U) ∧
+          convergesToQ (mulSeqQ f (invSeqQ g)) (divQ L₁ L₂) := by
+      obtain ⟨N₀, hN₀, hg_nz, hInvg_conv⟩ := convergesToQ_inv g L₂ hL₂ hg hL₂_nz h₂
+      refine ⟨N₀, hN₀, ?_⟩
+      have hInvL₂ := invQ_in_RatSet L₂ hL₂
+      -- f · (1/g) → L₁ · (1/L₂) = L₁/L₂
+      exact convergesToQ_mul f (invSeqQ g) L₁ (invQ L₂) hL₁ hInvL₂ hf
+        (by -- invSeqQ g is IsSeqQ
+            exact invSeqQ_isSeqQ g hg)
+        h₁ hInvg_conv
+
   end Rat.Convergence
 
 end ZFC
@@ -1342,4 +1657,6 @@ export ZFC.Rat.Convergence (
   convergesToQ_zero_of_abs
   convergesToQ_iff_abs
   convergesToQ_mul
+  convergesToQ_inv
+  convergesToQ_div
 )

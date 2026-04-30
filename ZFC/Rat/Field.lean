@@ -515,6 +515,88 @@ namespace ZFC
       rw [mulQ_comm a c ha hc, mulQ_comm a d ha hd]
       exact mulQ_leQ_mulQ_of_nonneg_right c d a hc hd ha h_le h_a_nn
 
+    -- =========================================================================
+    -- Section 8: Monotonicity of inversion
+    -- =========================================================================
+
+    /-- Reciprocal of a positive rational is positive -/
+    theorem invQ_pos (x : U) (hx : x ∈ (RatSet : U)) (hx_pos : isPositiveQ x) :
+        isPositiveQ (invQ x) := by
+      obtain ⟨a, b, ha, hb, hx_eq⟩ := mem_RatSet_is_ratClass x hx
+      subst hx_eq
+      have hb_i := NonZeroIntSet_mem_IntSet b hb
+      have hx_ne : ratClass a b ≠ (zeroQ : U) := fun h => hx_pos.2 h.symm
+      have ha_ne : a ≠ (zeroZ : U) := (ratClass_ne_zeroQ_iff a b ha hb).mp hx_ne
+      have ha_nz : a ∈ (NonZeroIntSet : U) := (mem_NonZeroIntSet a).mpr ⟨ha, ha_ne⟩
+      rw [invQ_class a b ha_nz hb]
+      -- Extract: 0 ≤ a·b from hx_pos.1
+      have h_ab_nn : leZ (zeroZ : U) (mulZ a b) := by
+        have h := hx_pos.1 zeroZ oneZ a b
+          zeroZ_mem_IntSet oneZ_mem_NonZeroIntSet ha hb
+          (show (zeroQ : U) = ratClass zeroZ oneZ from rfl) rfl
+        unfold leQ_repr at h
+        rw [mulZ_zero_left oneZ oneZ_mem_IntSet,
+            mulZ_zero_left (mulZ b b) (mulZ_in_IntSet b b hb_i hb_i),
+            mulZ_one_left oneZ oneZ_mem_IntSet,
+            mulZ_one_left (mulZ a b) (mulZ_in_IntSet a b ha hb_i)] at h
+        exact h
+      -- isPositiveQ (ratClass b a) = ltQ zeroQ (ratClass b a)
+      constructor
+      · -- leQ zeroQ (ratClass b a)
+        rw [leQ_iff_repr (zeroQ : U) (ratClass b a) zeroQ_mem_RatSet
+              (ratClass_mem_RatSet b a hb_i ha_nz)]
+        refine ⟨zeroZ, oneZ, b, a, zeroZ_mem_IntSet, oneZ_mem_NonZeroIntSet, hb_i, ha_nz,
+                show (zeroQ : U) = ratClass zeroZ oneZ from rfl, rfl, ?_⟩
+        unfold leQ_repr
+        rw [mulZ_zero_left oneZ oneZ_mem_IntSet,
+            mulZ_zero_left (mulZ a a) (mulZ_in_IntSet a a ha ha),
+            mulZ_one_left oneZ oneZ_mem_IntSet,
+            mulZ_one_left (mulZ b a) (mulZ_in_IntSet b a hb_i ha),
+            mulZ_comm b a hb_i ha]
+        exact h_ab_nn
+      · -- zeroQ ≠ ratClass b a: b ≠ 0 since b ∈ NonZeroIntSet
+        intro h_eq
+        rw [show (zeroQ : U) = ratClass zeroZ oneZ from rfl] at h_eq
+        have h_cross := (ratClass_eq_iff zeroZ oneZ b a
+                          zeroZ_mem_IntSet oneZ_mem_NonZeroIntSet hb_i ha_nz).mp h_eq
+        rw [mulZ_zero_left a ha, mulZ_one_left b hb_i] at h_cross
+        exact absurd h_cross.symm (NonZeroIntSet_ne_zero b hb)
+
+    /-- Inversion is antitone on positives: if 0 < a ≤ b then invQ b ≤ invQ a -/
+    theorem invQ_antitone (a b : U)
+        (ha : a ∈ (RatSet : U)) (hb : b ∈ (RatSet : U))
+        (ha_pos : isPositiveQ a) (h_le : leQ a b) :
+        leQ (invQ b) (invQ a) := by
+      have ha_ne : a ≠ (zeroQ : U) := fun h => ha_pos.2 h.symm
+      have hb_pos : isPositiveQ b :=
+        ⟨leQ_trans _ _ _ zeroQ_mem_RatSet ha hb ha_pos.1 h_le,
+         fun h_eq => ha_pos.2 (leQ_antisymm _ _ zeroQ_mem_RatSet ha ha_pos.1
+                                 (h_eq ▸ h_le))⟩
+      have hb_ne : b ≠ (zeroQ : U) := fun h => hb_pos.2 h.symm
+      have hIa := invQ_in_RatSet a ha
+      have hIb := invQ_in_RatSet b hb
+      have hIa_pos := invQ_pos a ha ha_pos
+      have hIb_pos := invQ_pos b hb hb_pos
+      have hIaIb := mulQ_in_RatSet (invQ a) (invQ b) hIa hIb
+      -- invQ a · invQ b ≥ 0
+      have hIaIb_nn : leQ (zeroQ : U) (mulQ (invQ a) (invQ b)) := by
+        have h1 := mulQ_leQ_mulQ_of_nonneg_right (zeroQ : U) (invQ a) (invQ b)
+          zeroQ_mem_RatSet hIa hIb hIa_pos.1 hIb_pos.1
+        rwa [mulQ_zero_left (invQ b) hIb] at h1
+      -- Multiply a ≤ b by invQ a · invQ b ≥ 0
+      have h_mul_le := mulQ_leQ_mulQ_of_nonneg_right a b (mulQ (invQ a) (invQ b))
+        ha hb hIaIb h_le hIaIb_nn
+      -- LHS: a · (invQ a · invQ b) = (a · invQ a) · invQ b = 1 · invQ b = invQ b
+      have h_lhs : mulQ a (mulQ (invQ a) (invQ b)) = invQ b := by
+        rw [← mulQ_assoc a (invQ a) (invQ b) ha hIa hIb,
+            mulQ_invQ_right a ha ha_ne, mulQ_one_left (invQ b) hIb]
+      -- RHS: b · (invQ a · invQ b) = b · (invQ b · invQ a) = (b · invQ b) · invQ a = invQ a
+      have h_rhs : mulQ b (mulQ (invQ a) (invQ b)) = invQ a := by
+        rw [mulQ_comm (invQ a) (invQ b) hIa hIb,
+            ← mulQ_assoc b (invQ b) (invQ a) hb hIb hIa,
+            mulQ_invQ_right b hb hb_ne, mulQ_one_left (invQ a) hIa]
+      rwa [h_lhs, h_rhs] at h_mul_le
+
   end Rat.Field
 
 end ZFC
@@ -536,4 +618,6 @@ export ZFC.Rat.Field (
   mulQ_addQ_distrib_right
   mulQ_leQ_mulQ_of_nonneg_right
   mulQ_leQ_mulQ_of_nonneg_left
+  invQ_pos
+  invQ_antitone
 )

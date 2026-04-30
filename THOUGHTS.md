@@ -12,11 +12,11 @@ Notas de diseño, reflexiones y hoja de ruta del proyecto.
 
 [3.] SOBRE LA DEFINICIÓN DE NÚMEROS COMPUTABLES: Sea $f : \Nat_0 → \Rat$ una sucesión de racionales, y $∃ N_0 ∈ \Nat_0$ tal que $∀ N > N_0$, $∀ n, m > N, |f(n)-f(m)| < \frac 1 {2^N}$. Entonces $\< f, hexN_0: ∃ N_0 ∈ \Nat_0, ∀ N > N_0, ∀ n, m > N, |f(n)-f(m)| < \frac 1 {2^N} \>$ es un número computable. Es decir, un número computable es una sucesión de racionales de Cauchy con una tasa de convergencia dada por $N$. Este par de función de \Nat₀ a \Rat y la prueba de que existe un $N_0$ natural que cumple la condición de Cauchy con esa tasa de convergencia, no define un número computable, sino solo una representación.
 
-[4.] CUANDO DOS REPRESENTACIONES DE NÚMEROS COMPUTABLES SON IGUALES: Dadas dos sucesiones de Cauchy $\< f, ∃ N_0 \>$ y $\< g, ∃ M_0 \>$, serán iguales, cuando la sucesión (número computable) $\< |f-g| , max(N*M, N+M) \>$, no solo es de Cauchy, sino que converge a 0. Es decir, si la diferencia entre las dos sucesiones converge a 0 con una tasa de convergencia dada por $max(N*M, N+M)$. De esta forma, establecemos una relación de equivalencia entre las sucesiones de Cauchy computables. Esto será una relación de equivalencia, ya que es reflexiva (la diferencia entre una sucesión y sí misma es 0), simétrica (si la diferencia entre f y g converge a 0, entonces la diferencia entre g y f también converge a 0) y transitiva (si la diferencia entre f y g converge a 0, y la diferencia entre g y h converge a 0, entonces la diferencia entre f y h también converge a 0). De esta forma, si llamamos a esa relación de equivalencia ~, entonces el número computable será $[\< f, ∃ N_0 \>] = [\< g, ∃ M_0 \>] ∈ {\RatSet / ~}$.
+[4.] CUANDO DOS REPRESENTACIONES DE NÚMEROS COMPUTABLES SON IGUALES: Dadas dos sucesiones de Cauchy $\left< f, ∃ N_0 \right>$ y $\left< g, ∃ M_0 \right>$, serán iguales, cuando la sucesión (número computable) $\left< |f-g| , max(N*M, N+M) \right>$, no solo es de Cauchy, sino que converge a 0. Es decir, si la diferencia entre las dos sucesiones converge a 0 con una tasa de convergencia dada por $max(N*M, N+M)$. De esta forma, establecemos una relación de equivalencia entre las sucesiones de Cauchy computables. Esto será una relación de equivalencia, ya que es reflexiva (la diferencia entre una sucesión y sí misma es 0), simétrica (si la diferencia entre f y g converge a 0, entonces la diferencia entre g y f también converge a 0) y transitiva (si la diferencia entre f y g converge a 0, y la diferencia entre g y h converge a 0, entonces la diferencia entre f y h también converge a 0). De esta forma, si llamamos a esa relación de equivalencia ~, entonces el número computable será $[\left< f, ∃ N_0 \right>] = [\left< g, ∃ M_0 \right>] ∈ {\RatSet / ~}$.
 
-[5.] CUANDO UN NÚMERO COMPUTABLE ES MENOR QUE OTRO: Dadas dos sucesiones de Cauchy $[\< f, ∃ N_0 \>]$ y $[\< g, ∃ M_0 \>]$, diremos que $[\< f, ∃ N_0 \>] < [\< g, ∃ M_0 \>]$ si la sucesión (número computable) $[\< g-f , max(N*M, N+M) \>]$ es de Cauchy y siempre positivo, y no converge a 0. Es decir, si la diferencia entre las dos sucesiones converge a un número positivo con una tasa de convergencia dada por $max(N*M, N+M)$. De esta forma, establecemos una relación de orden entre las clases de equivalencia de sucesiones de Cauchy computables. Hay que demostrar que esta relación no solo es de orden sino que está bien definida.
+[5.] CUANDO UN NÚMERO COMPUTABLE ES MENOR QUE OTRO: Dadas dos sucesiones de Cauchy $[\left< f, ∃ N_0 \right>]$ y $[\left< g, ∃ M_0 \right>]$, diremos que $[\left< f, ∃ N_0 \right>] < [\left< g, ∃ M_0 \right>]$ si la sucesión (número computable) $[\left< g-f , max(N*M, N+M) \right>]$ es de Cauchy y siempre positivo, y no converge a 0. Es decir, si la diferencia entre las dos sucesiones converge a un número positivo con una tasa de convergencia dada por $max(N*M, N+M)$. De esta forma, establecemos una relación de orden entre las clases de equivalencia de sucesiones de Cauchy computables. Hay que demostrar que esta relación no solo es de orden sino que está bien definida.
 
-[6.] DADOS DOS NÚMEROS COMPUTABLES, CUALES SON EL PRODUCTO Y LA SUMA DE AMBOS: Dadas dos sucesiones de Cauchy $[\< f, ∃ N_0 \>]$ y $[\< g, ∃ M_0 \>]$, el producto de ambos será la sucesión de Cauchy $[\< f*g, max(N*M, N+M) \>]$, y la suma de ambos será la sucesión de Cauchy $[\< f+g, max(N*M, N+M) \>]$. De esta forma, establecemos las operaciones de suma y producto entre las clases de equivalencia de sucesiones de Cauchy computables. Hay que demostrar que estas operaciones están bien definidas.
+[6.] DADOS DOS NÚMEROS COMPUTABLES, CUALES SON EL PRODUCTO Y LA SUMA DE AMBOS: Dadas dos sucesiones de Cauchy $[\left< f, ∃ N_0 \right>]$ y $[\left< g, ∃ M_0 \right>]$, el producto de ambos será la sucesión de Cauchy $[\left< f*g, max(N*M, N+M) \right>]$, y la suma de ambos será la sucesión de Cauchy $[\left< f+g, max(N*M, N+M) \right>]$. De esta forma, establecemos las operaciones de suma y producto entre las clases de equivalencia de sucesiones de Cauchy computables. Hay que demostrar que estas operaciones están bien definidas.
 
 [7.] NÚMEROS CONSTRUCTIBLES: Son aquellos números que se pueden construir a partir de los racionales usando un número finito de operaciones de suma, resta, multiplicación, división y extracción de raíces cuadradas. Estos números forman un subcuerpo de los números reales, y son exactamente los números que se pueden construir con regla y compás en geometría clásica. Sin embargo, este cuerpo no es completo, ya que hay sucesiones de Cauchy de números constructibles que no convergen a ningún número constructible (por ejemplo, la sucesión definida por el método de Newton para aproximar $\sqrt{2}$).
 
@@ -39,26 +39,87 @@ f(0) = {\frac 2 3}​ \newline
 f(n+1)= {\frac 1 2} ⋅ ​(f(n) + {\frac c {f(n)}}) \text{ para } n≥0
 $$
 
-que en código lean sería algo como 
+que en código lean sería algo como:
+
 ```lean
-def NewtonRaphsonSqrt (n : ℕ₀) (c : Constructible) (hneq0 : c ≠ 0) : ℕ₀ → Constructible := 
-    if n = 0 then 
-        (rat (2/3)) 
+
+-- Deberíamos buscar un forma de dado un c, tener una aproximación inicial r, tal que r^2 > c, 
+-- para así garantizar que la sucesión de Newton es monótonamente decreciente y acotada inferiormente 
+-- por sqrt c, lo que nos permitiría demostrar que converge a sqrt c.
+
+-- Como primera aproximación podríamos coger un racional tal que r_1 < r_0/2 < r_1 + 1, por ejemplo, 
+-- r_1 := {{r_0}-2}/2, tomando r_0 como la r anterior.
+def initial_aproximation (c : Constructible) (h : c ≥ 0) : Rat := 
+    let r2 : Rat := |intToRat E[c]| + rat 1 -- r2 es un entero aquí, por lo que es un racional, 
+                         -- y es mayor que sqrt c, porque sqrt c ≤ |c| + 1
+    let r : Rat := (r2 / (rat 2)) + (rat 1)
+    let r_1 : Rat := div (sub r (rat 2)) (rat 2)
+    if mul r_1 r_1 > c then 
+        r_1 
     else 
-        (add (mul (rat (1/2)) (NewtonRaphsonSqrt c hneq0 n)) (mul (rat (1/2)) (div c (NewtonRaphsonSqrt c hneq0 n))))
+        r_1 + (rat 1) -- FALTARÍA UNA RECURSIÓN HAS TA QUE FUESE MAYOR QUE c
+
+def NewtonRaphsonSqrt 
+    (n : ℕ₀) (c : Constructible) (hneq0 : c ≠ 0) : 
+        ℕ₀ → Constructible 
+            := 
+    if n = 0 then 
+        initial_aproximation c hneq0 
+    else 
+        (add 
+            (mul (rat (1/2)) (NewtonRaphsonSqrt (n-1) c hneq0)) 
+            (mul (rat (1/2)) (div c (NewtonRaphsonSqrt (n-1) c hneq0)))
+        )
+
 def sqrt (c : Constructible) (h : c ≥ 0) : Constructible
-    let f : ℕ₀ → Constructible := 
-        λ n, if n = 0 then (rat (2/3)) 
-             else (add (mul (rat (1/2)) (f n)) (mul (rat (1/2)) (div c (f n))))
     -- Aquí deberíamos demostrar que f es una sucesión de Cauchy y que su límite es la raíz cuadrada de c
-    -- Luego podríamos definir sqrt c como el límite de f
+    -- Luego podríamos definir sqrt c como el límite de f (con un `existe ese límite`, 
+    -- con la precisión necesaria que se pida) )
+    -- Debería devolver esta función sqrt como una aproximación de Newton-Raphson, y la prueba de que es de Cauchy y con una
+    -- tasa de convergencia que para n, m > N, |f(n)-f(m)| < 1/2^N, el límite es esa pareja 
 ```
 
-[5.] SOBRE RAT/SQRTAPPROX.LEAN: En vez de la secuencia cuyo cuadrado tiende a 2, podemos ofrecer un número natural n (en los racionales) tal que no exista un natural m (en los racionales) cuyo cuadrado sea n, y así tenemos todos los no cuadrados perfectos direccionados a la vez. diagmos que ponemos un predicado NotSquare n = true (decidible), y si es verdad ya tenemos dónde aplicar la computación de la serie de Cauchy, para obtener incompletitudes infinitas. Son inifnitas porque cada primo cumple.
+[9.] SOBRE LOS NÚMEROS RADICALES: La diferencia fundamental con los números constructibles es que los números radicales perminten no solo raíces cuadradas, sino también raíces n-ésimas:
 
-[6.] No tenemos una prueba que los primos son infinitos(dando un primo posterior a cualquiera primo dado). Si p es primo, entonces p! + 1 es primo. Si q := p! + 1 no es primo, existe un primo r < q que divide a q. r no puede ser ninguno de los primos menores o iguales a p, porque entonces dividiría a p!. Solo no squeda que r > p, y por tanto r es un primo posterior a p hasta q, r ∈ (p,q]. Quiero una solución plenamente constructiva.
+```lean
+inductive Radical
+| rat (q : Rat)                                    : Radical
+| root (n : ℕ₀) (c : Radical) (h : c ≥ 0)          : Radical
+| add (c1 c2 : Radical)                            : Radical
+| sub (c1 c2 : Radical)                            : Radical
+| mul (c1 c2 : Radical)                            : Radical
+| div (c1 c2 : Radical) (h : c2 ≠ 0)               : Radical
+```
 
-[7.] Tenemos que completar el Teorema de Wilson
+Dado que la raíz n-ésima cumple que ${\sqrt[n]{c}}^n = c$, que si c debe ser positivo, entonces podemos encontrar un la ecuación dada por el método de Newton-Raphson para aproximar la raíz n-ésima de c, que es la sucesión dada por:
+$$
+f(0) = {\frac 2 3}​ \newline
+f(n+1)= {\frac 1 n} ⋅ ​((n-1)f(n) + {\frac c {f(n)^{n-1}}}) \text{ para } n≥0
+$$
+
+$$
+x^n = c \iff x = c / x^(n-1) \iff f(n+1) = (1/n) * ((n-1)f(n) + \frac c {f(n)^{(n-1)}})
+$$
+
+Así obtenemos la situación de la sucesión aproximación:
+
+$$
+x_0 = \text{IntitialApproximation } (c, h) \newline
+x_{n+1} = (\frac 1 n) * ((n-1) * x_n + \frac c {x_{n}^{(n-1)}})
+$$
+Todo lo demás se parece mucho a la situcación de los múmeros constructibles.
+
+[10.] SOBRE LOS NÚMEROS CONSTRUCTIBLES Y RADICALES: Ambos cuerpos no son completos, ya que hay sucesiones de Cauchy de números constructibles o radicales que no convergen a ningún número constructible o radical. Por ejemplo, la sucesión dada por el método de Newton para aproximar $\sqrt{2}$ es una sucesión de Cauchy de números racionales (que son constructibles), pero su límite $\sqrt{2}$ no es un número racional, por lo que no es un número constructible. Sin embargo, $\sqrt{2}$ sí es un número radical, ya que se puede expresar como la raíz cuadrada de 2, que es un número constructible. Habrá que demostrar que ambos cuerpos no son completos. Esto también habrá de hacerse con los números computables.
+
+[11.] SOBRE LOS NÚMEROS ALGEBRÁICOS: Este cuerpo requerirá la introducción de polinomios, toda una infraestructura de álgebra abstracta, y la demostración de que los números algebraicos forman un cuerpo. Además, habrá que demostrar que este cuerpo no es completo, ya que hay sucesiones de Cauchy de números algebraicos que no convergen a ningún número algebraico (por ejemplo, la sucesión dada por el método de Newton para aproximar $1 + \frac 1 {2!} + \frac 1 {3!} + \frac 1 {4!} + ... + \frac 1 {n!} + ...$ es una sucesión de Cauchy de números racionales, pero su límite $exp(1)$ no es un número algebraico (y habría que demostrarlo), por lo que no es un número algebraico). Para dar una definición computable de números algebraicos, el algoritmo es fuertemente más complejo, ya que no solo hay que dar una sucesión de racionales de Cauchy, sino también un algoritmo para encontrar el polinomio mínimo de ese número algebraico, y un algoritmo para encontrar las raíces de ese polinomio mínimo. De hecho no sé si valdrá con soluciones de polinomios en una indeterminada, o si tendremos que dar  soluciones de sistemas de polinomios en varias indeterminadas: es una duda que tengo.
+
+[12.] SOBRE RAT/SQRTAPPROX.LEAN: En vez de la secuencia cuyo cuadrado tiende a 2, podemos ofrecer un número natural n (en los racionales) tal que no exista un natural m (en los racionales) cuyo cuadrado sea n, y así tenemos todos los no cuadrados perfectos direccionados a la vez. diagmos que ponemos un predicado NotSquare n = true (decidible), y si es verdad ya tenemos dónde aplicar la computación de la serie de Cauchy, para obtener incompletitudes infinitas. Son inifnitas porque cada primo cumple.
+
+[13.] No tenemos una prueba que los primos son infinitos(dando un primo posterior a cualquiera primo dado). Si p es primo, entonces p! + 1 es primo. Si q := p! + 1 no es primo, cualquier número r entre 1 (no igual a 1) y q (sin incluir q), r no divide a q. Si (div q r)*r + (mod q r) = q = p! + 1, entonces si r | q, entonces (div q r)*r = q, lo que implica que (mod q r) = 0, lo que es una contradicción (sabemos que todos los factores de p! son menores o iguales a p, y esos factores no dividen a p! + 1). Por tanto, ningún número entre 1 y q divide a q, lo que implica que q es primo. Por tanto, dado un primo p, podemos encontrar un primo posterior a p, que es p! + 1. Hay afinar la prueba.
+
+[14.] Tenemos que completar el Teorema de Wilson (vendrá de Peano)
+
+[15.] Tenemos que probar `cauchyQ_of_convergent_subseq f g L`
 
 ---
 
