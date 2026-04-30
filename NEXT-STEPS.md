@@ -1,6 +1,6 @@
 # Next Steps — ZfcSetTheory Project
 
-**Last updated**: 2026-04-29
+**Last updated**: 2026-04-30
 
 ---
 
@@ -15,7 +15,7 @@
 - ✅ **Anotaciones REFERENCE.md** (Phase 4): @axiom_system, @importance, ~280 teoremas anotados
 - ✅ **Enteros ℤ** (Phase 5, 15 módulos): 190 exports, 0 sorry, 0 errores
 - ✅ **Racionales ℚ** (Phase 6, 9 módulos): `Equiv`, `Basic`, `Add`, `Neg`, `Mul`, `Order`, `Abs`, `Embedding`, `Field` — 0 sorry, 0 errores
-- ✅ **Sucesiones en ℚ** (Phase 6.5, 6/7 módulos): `Int/MaxMin`, `Rat/MaxMin`, `Rat/Sequences`, `Rat/Convergence`, `Rat/CauchyQ`, `Rat/Monotone` — **0 sorry, 0 errores de compilación**. `Convergence.lean` completo: 17 exports (add, sub, mul_bounded, mul, const_mul, abs, zero_of_abs, iff_abs, of_dominated, squeeze, subseq, of_eventually_eq + 3 def). Pendiente: `SqrtApprox.lean`.
+- ✅ **Sucesiones en ℚ** (Phase 6.5, 6/7 módulos): `Int/MaxMin`, `Rat/MaxMin`, `Rat/Sequences`, `Rat/Convergence`, `Rat/CauchyQ`, `Rat/Monotone` — **0 sorry, 0 errores de compilación**. `Convergence.lean` completo: 17 exports. `CauchyQ.lean` completo: 14 exports (aritmética Cauchy + CauchyEquivQ). Pendiente: `SqrtApprox.lean`.
 
 **Estado**: 87 módulos, **0 sorry**, **0 errores de compilación** (verificado 2026-04-29).
 
@@ -70,15 +70,15 @@
 
 | # | Módulo | Exports clave | Estado |
 |---|--------|---------------|--------|
-| 0a | `Int/MaxMin.lean` | `maxZ`, `minZ`, 18 teoremas | ✅ 0 sorry |
-| 0b | `Rat/MaxMin.lean` | `maxQ`, `minQ`, 18 teoremas | ✅ 0 sorry |
-| 1 | `Rat/Sequences.lean` | `IsSeqQ`, `constSeqQ`, `addSeqQ`, `negSeqQ`, `mulSeqQ` | ✅ 0 sorry |
-| 2 | `Rat/Convergence.lean` | 17 exports: `convergesToQ`, `limit_unique`, `add`, `sub`, `mul_bounded`, `mul`, `const_mul`, `abs`, `zero_of_abs`, `iff_abs`, `of_dominated`, `squeeze`, `subseq`, `of_eventually_eq` + 3 def | ✅ 0 sorry, **COMPLETO** |
-| 3 | `Rat/CauchyQ.lean` | `IsCauchyQ`, `cauchy_of_convergentQ`, `cauchy_bounded`, `constSeqQ_isCauchy` | ✅ 0 sorry |
-| 4 | `Rat/Monotone.lean` | `isNondecreasingQ`, `isBoundedQ`, `limit_le_of_bounded_above`, `convergent_isBounded`, `nondecreasing_bounded_isCauchy`, `nonincreasing_bounded_isCauchy` | ✅ 0 sorry |
-| 5 | `Rat/SqrtApprox.lean` | `sqrtApprox`, `sqrtApprox_is_cauchy`, `sqrt2_irrational`, `sqrtApprox_not_convergent` | ❌ No iniciado |
+| 0a | `Int/MaxMin.lean` | `maxZ`, `minZ`, 18 teoremas | ✅ **COMPLETO** |
+| 0b | `Rat/MaxMin.lean` | `maxQ`, `minQ`, 18 teoremas | ✅ **COMPLETO** |
+| 1 | `Rat/Sequences.lean` | `IsSeqQ`, `constSeqQ`, `addSeqQ`, `negSeqQ`, `mulSeqQ` | ✅ **COMPLETO** |
+| 2 | `Rat/Convergence.lean` | 17 exports: `convergesToQ`, `limit_unique`, `add`, `sub`, `mul_bounded`, `mul`, `const_mul`, `abs`, `zero_of_abs`, `iff_abs`, `of_dominated`, `squeeze`, `subseq`, `of_eventually_eq` + 3 def | ✅ **COMPLETO** |
+| 3 | `Rat/CauchyQ.lean` | 14 exports: `IsCauchyQ`, `cauchy_of_convergentQ`, `cauchy_bounded`, `constSeqQ_isCauchy`, `cauchyQ_neg/add/sub/const_mul/mul`, `subseq_of_cauchyQ`, `CauchyEquivQ`, `cauchyQ_equiv_refl/symm/trans` | ✅ **COMPLETO** |
+| 4 | `Rat/Monotone.lean` | `isNondecreasingQ`, `isBoundedQ`, `limit_le_of_bounded_above`, `convergent_isBounded`, `nondecreasing_bounded_isCauchy`, `nonincreasing_bounded_isCauchy` | ✅ **COMPLETO** |
+| 5 | `Rat/SqrtApprox.lean` | `sqrtApprox`, `sqrtApprox_is_cauchy`, `sqrt2_irrational`, `sqrtApprox_not_convergent` | ❌ **NO INICIADO** |
 
-**Nota (2026-04-29 — sesiones 9–10)**: `Rat/Convergence.lean` completado con 9 nuevos teoremas (sessions 9–10): `convergesToQ_sub`, `convergesToQ_of_dominated`, `squeeze_theorem`, `convergesToQ_of_eventually_eq` (sesión 9), y `convergesToQ_const_mul`, `convergesToQ_abs`, `convergesToQ_zero_of_abs`, `convergesToQ_iff_abs`, `convergesToQ_mul` (sesión 10). **Phase 6.5 está al 6/7 módulos con `Convergence.lean` completamente terminado.** Pendiente: `Rat/SqrtApprox.lean` (prueba de incompletitud de ℚ).
+**Nota (2026-04-30 — sesiones 9–10)**: `Rat/Convergence.lean` completado con 9 nuevos teoremas (sesiones 9–10): `convergesToQ_sub`, `convergesToQ_of_dominated`, `squeeze_theorem`, `convergesToQ_of_eventually_eq` (sesión 9), y `convergesToQ_const_mul`, `convergesToQ_abs`, `convergesToQ_zero_of_abs`, `convergesToQ_iff_abs`, `convergesToQ_mul` (sesión 10). `Rat/CauchyQ.lean` completado: aritmética completa `cauchyQ_neg/add/sub/const_mul/mul`, subsucesiones, y relación de equivalencia `CauchyEquivQ` con pruebas refl/symm/trans. **Phase 6.5 está al 6/7 módulos, 0 sorry, 0 errores de compilación (88 módulos totales).** Pendiente: `Rat/SqrtApprox.lean`.
 
 **Teoremas clave de `Rat/Convergence.lean`** (plan detallado):
 
@@ -98,37 +98,37 @@
    para n≥max(N₁,N₂): `|(f+g)(n)−(L₁+L₂)| ≤ |f(n)−L₁| + |g(n)−L₂| < ε/2+ε/2 = ε`.
    Requiere `halfQ`, `maxOf`, `absQ_triangle`, `addQ_ltQ_ltQ`.
 3. `convergesToQ_sub f g L₁ L₂` — si f→L₁ y g→L₂ entonces (f−g)→L₁−L₂. (**✅ probado** — corolario de `convergesToQ_add` + `convergesToQ_neg`)
-4. `convergesToQ_const_mul c f L` — si f→L entonces (c·f)→c·L (c ∈ ℚ fija).
+4. `convergesToQ_const_mul c f L` — si f→L entonces (c·f)→c·L (c ∈ ℚ fija). (**✅ PROBADO**)
    *Estrategia*: si c=0 trivial; si c≠0, dado ε>0 usar ε/|c| como umbral para f.
    Requiere `isPositiveQ_invQ` y `mulQ_absQ`.
-5. `convergesToQ_mul_bounded f g L` — si f→0 y g es acotada entonces (f·g)→0. (**✅ probado** — estrategia ε/M con `divQ_mulQ_cancel` + `mulQ_right_cancel`)
-6. `convergesToQ_mul f g L₁ L₂` — si f→L₁ y g→L₂ entonces (f·g)→L₁·L₂.
+5. `convergesToQ_mul_bounded f g L` — si f→0 y g es acotada entonces (f·g)→0. (**✅ PROBADO** — estrategia ε/M con `divQ_mulQ_cancel` + `mulQ_right_cancel**)
+6. `convergesToQ_mul f g L₁ L₂` — si f→L₁ y g→L₂ entonces (f·g)→L₁·L₂. (**✅ PROBADO**)
    *Estrategia*: `f·g − L₁·L₂ = (f−L₁)·g + L₁·(g−L₂)`;
    usar `convergesToQ_mul_bounded` (para (f−L₁)·g, g acotada inline)
    y `convergesToQ_const_mul` (para L₁·(g−L₂)).
    **Nota**: `cauchy_bounded` de `CauchyQ.lean` no se puede importar (circular); demostrar acotación inline.
-7. `convergesToQ_inv f L` — si f→L y L≠0 entonces (1/f)→1/L.
+7. `convergesToQ_inv f L` — si f→L y L≠0 entonces (1/f)→1/L. ❌ **NO HECHO**
    *Estrategia*: mostrar que f(n)≠0 eventualmente; luego `1/f(n)−1/L = (L−f(n))/(L·f(n))`;
    acotar |L·f(n)| desde abajo por |L|/2 para n≥N.
    Requiere `archQ` para el control de denominadores.
-8. `convergesToQ_div f g L₁ L₂` — si f→L₁, g→L₂, L₂≠0 entonces (f/g)→L₁/L₂.
+8. `convergesToQ_div f g L₁ L₂` — si f→L₁, g→L₂, L₂≠0 entonces (f/g)→L₁/L₂. ❌ **NO HECHO**
     *Estrategia*: corolario de `convergesToQ_mul` + `convergesToQ_inv`.
-9. `convergesToQ_abs f L` — si f→L entonces |f|→|L|.
+9. `convergesToQ_abs f L` — si f→L entonces |f|→|L|. (**✅ PROBADO**)
     *Estrategia*: `||f(n)|−|L|| ≤ |f(n)−L|` (desigualdad triangular inversa). Necesita `absSeqQ` (definir inline en Convergence.lean).
 
 ### Reformulaciones equivalentes
 
-1. `convergesToQ_zero_of_abs f` — |f|→0 ↔ f→0.
+1. `convergesToQ_zero_of_abs f` — |f|→0 ↔ f→0. (**✅ PROBADO**)
     *Estrategia*: `||f(n)|−0| = |f(n)| = |f(n)−0|`. Necesita `absSeqQ` inline.
-2. `convergesToQ_iff_abs f L` — f→L ↔ (n↦|f(n)−L|)→0.
+2. `convergesToQ_iff_abs f L` — f→L ↔ (n↦|f(n)−L|)→0. (**✅ PROBADO**)
     *Estrategia*: reformulación directa de la definición ε-N.
 
 ### Colas y equivalencias eventuales
 
-1. `convergesToQ_tail f L k` — f→L ↔ (n↦f(n+k))→L para cualquier k∈ω.
+1. `convergesToQ_tail f L k` — f→L ↔ (n↦f(n+k))→L para cualquier k∈ω. ❌ **NO HECHO**
     *Estrategia*: usar `subseq_convergent` con φ(n)=n+k (estrictamente creciente), o demostrar directo.
     **Pendiente**: requiere definir sucesión cola o verificar φ(n)=n+k es estrictamente creciente en ZFC.
-2. `convergesToQ_of_eventually_eq f g L` — f(n)=g(n) para n≥N y f→L ⟹ g→L. (**✅ probado** — max(N, N₀) como umbral)
+2. `convergesToQ_of_eventually_eq f g L` — f(n)=g(n) para n≥N y f→L ⟹ g→L. (**✅ PROBADO** — max(N, N₀) como umbral)
 
 ### Teorema del emparedado (squeeze)
 
@@ -155,37 +155,43 @@
 
 ### Casos base
 
-1. `constSeqQ_isCauchy a` — la sucesión constante es de Cauchy (**✅ probado vía `cauchy_of_convergentQ`**)
-2. `cauchy_of_convergentQ f L` — si f→L entonces f es de Cauchy. (**✅ probado**)
+1. `constSeqQ_isCauchy a` — la sucesión constante es de Cauchy (**✅ PROBADO** vía `cauchy_of_convergentQ`)
+2. `cauchy_of_convergentQ f L` — si f→L entonces f es de Cauchy. (**✅ PROBADO**)
    *Estrategia*: dado ε>0, tomar N tal que ∀n≥N, |f(n)−L|<ε/2;
    para m,n≥N: `|f(m)−f(n)| ≤ |f(m)−L| + |L−f(n)| < ε/2+ε/2 = ε`.
    Requiere `halfQ`, `absQ_triangle_sub` (`|a−c|≤|a−b|+|b−c|`).
-3. `cauchy_bounded f` — toda sucesión de Cauchy en ℚ está acotada. (**✅ probado** vía inducción con `maxQ` sobre segmento inicial [0,N₀])
+3. `cauchy_bounded f` — toda sucesión de Cauchy en ℚ está acotada. (**✅ PROBADO** vía inducción con `maxQ` sobre segmento inicial [0,N₀])
    *Estrategia implementada*: ε=1; N₀ de Cauchy; Q(n) = ∃M, ∀k≤n, |f(k)|≤M; inducción en ω da Q(N₀); M = addQ M₀ oneQ; tricotomía n vs N₀.
 
 ### Aritmética de Cauchy
 
-1. `cauchyQ_neg f` — f Cauchy ⟹ (−f) Cauchy.
+1. `cauchyQ_neg f` — f Cauchy ⟹ (−f) Cauchy. (**✅ PROBADO**)
    *Estrategia*: `|(−f)(m)−(−f)(n)| = |f(m)−f(n)|`; mismo N.
-2. `cauchyQ_add f g` — f,g Cauchy ⟹ (f+g) Cauchy.
+2. `cauchyQ_add f g` — f,g Cauchy ⟹ (f+g) Cauchy. (**✅ PROBADO**)
    *Estrategia*: dado ε>0, tomar Nf (para ε/2 sobre f) y Ng (para ε/2 sobre g);
    para m,n≥max(Nf,Ng): `|(f+g)(m)−(f+g)(n)| ≤ |f(m)−f(n)| + |g(m)−g(n)| < ε`.
-3. `cauchyQ_sub f g` — f,g Cauchy ⟹ (f−g) Cauchy.
-   *Estrategia*: corolario de `cauchyQ_add` + `cauchyQ_neg`.
-4. `cauchyQ_const_mul c f` — c∈ℚ, f Cauchy ⟹ (c·f) Cauchy.
+3. `cauchyQ_sub f g` — f,g Cauchy ⟹ (f−g) Cauchy. (**✅ PROBADO** — corolario de `cauchyQ_add` + `cauchyQ_neg`)
+4. `cauchyQ_const_mul c f` — c∈ℚ, f Cauchy ⟹ (c·f) Cauchy. (**✅ PROBADO**)
    *Estrategia*: si c=0 trivial; si c≠0, usar umbral ε/|c| para f.
-5. `cauchyQ_mul f g` — f,g Cauchy ⟹ (f·g) Cauchy.
+5. `cauchyQ_mul f g` — f,g Cauchy ⟹ (f·g) Cauchy. (**✅ PROBADO**)
    *Estrategia*: `f(m)g(m)−f(n)g(n) = (f(m)−f(n))g(m) + f(n)(g(m)−g(n))`;
    acotar con `cauchy_bounded` para f y g. Requiere `cauchy_bounded`.
 
 ### Subsucesiones y Cauchy
 
-1. `subseq_of_cauchyQ f g` — g subsucesión de f Cauchy ⟹ g Cauchy.
-   *Estrategia*: el mismo N de f funciona porque φ es creciente.
-2. `cauchyQ_of_convergent_subseq f g L` — f Cauchy + g subsucesión de f con g→L ⟹ f→L.
+1. `subseq_of_cauchyQ f g` — g subsucesión de f Cauchy ⟹ g Cauchy. (**✅ PROBADO**)
+   *Estrategia*: el mismo N de f funciona porque φ es creciente (φ(n) ≥ n via `strictly_increasing_ge'`).
+2. `cauchyQ_of_convergent_subseq f g L` — f Cauchy + g subsucesión de f con g→L ⟹ f→L. ❌ **NO HECHO**
     *Estrategia*: dado ε>0, tomar Nf (Cauchy de f, umbral ε/2) y Ng (convergencia de g, umbral ε/2);
     para n≥max(Nf,Ng): |f(n)−L| ≤ |f(n)−f(φ(n))| + |f(φ(n))−L| < ε/2+ε/2.
     **Teorema clave para la completitud de ℝ.**
+
+### Equivalencia de Cauchy
+
+1. `CauchyEquivQ f g` — def: `convergesToQ (f − g) 0`. (**✅ PROBADO**)
+2. `cauchyQ_equiv_refl f` — `CauchyEquivQ f f`. (**✅ PROBADO**)
+3. `cauchyQ_equiv_symm f g` — `CauchyEquivQ f g → CauchyEquivQ g f`. (**✅ PROBADO** — prueba ε-N directa con `absQ_negQ`)
+4. `cauchyQ_equiv_trans f g h` — transitiva. (**✅ PROBADO** vía `convergesToQ_add` + `convergesToQ_of_eventually_eq`)
 
 **Teoremas clave de `Rat/SqrtApprox.lean`** (prueba completa de incompletitud de ℚ):
 
@@ -279,7 +285,7 @@
 | 4: Anotaciones | ✅ Completo | — | — |
 | 5: Enteros ℤ | ✅ Completo | 15 | 190 |
 | 6: Racionales ℚ | ✅ Completo | 9 | 90 |
-| 6.5: Sucesiones en ℚ | 🔄 En progreso (6/7, **0 sorry**) | 6/7 | ~84 |
+| 6.5: Sucesiones en ℚ | 🔄 En progreso (6/7, **0 sorry**) | 6/7 | ~98 |
 | 7a: Computables | 📋 Planificado | 0/4 | — |
 | 7b: Constructibles | 📋 Planificado | 0/2 | — |
 | 7c: Radicales | 📋 Planificado | 0/2 | — |
@@ -289,4 +295,4 @@
 
 ---
 
-*Última actualización: 2026-04-29 (sesiones 9–10). `Rat/Convergence.lean` completado: 14 teoremas exportados + 3 def, 17 exports totales, 0 sorry. Próximo: `Rat/SqrtApprox.lean` o ampliar `Rat/CauchyQ.lean` (cauchyQ_add/sub/mul/const_mul). Phase 6.5: 6/7 módulos, **0 sorry, 0 errores de compilación** en todo el proyecto (87 módulos).*
+*Última actualización: 2026-04-30 (sesión 11). `Rat/CauchyQ.lean` completado: aritmética de Cauchy (neg/add/sub/const_mul/mul), subsucesiones, y relación de equivalencia `CauchyEquivQ` (refl/symm/trans) — 14 exports, 0 sorry. REFERENCE.md actualizado (secciones 3.67 y 4.63). **Siguiente**: `Rat/SqrtApprox.lean` (incompletitud de ℚ). Phase 6.5: 6/7 módulos, 0 sorry, 0 errores en los 88 módulos totales.*

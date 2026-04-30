@@ -18,6 +18,42 @@ Notas de diseño, reflexiones y hoja de ruta del proyecto.
 
 [6.] DADOS DOS NÚMEROS COMPUTABLES, CUALES SON EL PRODUCTO Y LA SUMA DE AMBOS: Dadas dos sucesiones de Cauchy $[\< f, ∃ N_0 \>]$ y $[\< g, ∃ M_0 \>]$, el producto de ambos será la sucesión de Cauchy $[\< f*g, max(N*M, N+M) \>]$, y la suma de ambos será la sucesión de Cauchy $[\< f+g, max(N*M, N+M) \>]$. De esta forma, establecemos las operaciones de suma y producto entre las clases de equivalencia de sucesiones de Cauchy computables. Hay que demostrar que estas operaciones están bien definidas.
 
+[7.] NÚMEROS CONSTRUCTIBLES: Son aquellos números que se pueden construir a partir de los racionales usando un número finito de operaciones de suma, resta, multiplicación, división y extracción de raíces cuadradas. Estos números forman un subcuerpo de los números reales, y son exactamente los números que se pueden construir con regla y compás en geometría clásica. Sin embargo, este cuerpo no es completo, ya que hay sucesiones de Cauchy de números constructibles que no convergen a ningún número constructible (por ejemplo, la sucesión definida por el método de Newton para aproximar $\sqrt{2}$).
+
+[8.] DEFINICIÓN DE NÚMEROS CONSTRUCTIBLES EN LEAN 4 EN NUESTRO PROYECTO: Para COPILOT: ayúdame a ver como podríamos definirlo en Lean 4. ¿Cual sería la definición de tipo inductivo? Supongamos que decimos que los números constructibles son o bien un número racional, o bien la raíz cuadrada de un número constructible, o bien la suma, resta, multiplicación o división de dos números constructibles. Entonces podríamos definir el tipo inductivo Constructible como sigue:
+
+```lean
+inductive Constructible
+| rat (q : Rat)                             : Constructible
+| sqrt (c : Constructible) (h : c ≥ 0)      : Constructible
+| add (c1 c2 : Constructible)               : Constructible
+| sub (c1 c2 : Constructible)               : Constructible
+| mul (c1 c2 : Constructible)               : Constructible
+| div (c1 c2 : Constructible) (h : c2 ≠ 0)  : Constructible
+```
+
+Para esta definición debemos tener la definición de `sqrt` o bien como una definición no expresamente computable, por sus propiedades: `sqrt c` es un número constructible positivo tal que `sqrt c * sqrt c = c`. Para esto, podríamos definir `sqrt c` como el límite de la sucesión de Cauchy dada por el método de Newton para aproximar la raíz cuadrada de `c`, es decir, la sucesión `f(n)` definida por:
+
+$$
+f(0) = {\frac 2 3}​ \newline
+f(n+1)= {\frac 1 2} ⋅ ​(f(n) + {\frac c {f(n)}}) \text{ para } n≥0
+$$
+
+que en código lean sería algo como 
+```lean
+def NewtonRaphsonSqrt (n : ℕ₀) (c : Constructible) (hneq0 : c ≠ 0) : ℕ₀ → Constructible := 
+    if n = 0 then 
+        (rat (2/3)) 
+    else 
+        (add (mul (rat (1/2)) (NewtonRaphsonSqrt c hneq0 n)) (mul (rat (1/2)) (div c (NewtonRaphsonSqrt c hneq0 n))))
+def sqrt (c : Constructible) (h : c ≥ 0) : Constructible
+    let f : ℕ₀ → Constructible := 
+        λ n, if n = 0 then (rat (2/3)) 
+             else (add (mul (rat (1/2)) (f n)) (mul (rat (1/2)) (div c (f n))))
+    -- Aquí deberíamos demostrar que f es una sucesión de Cauchy y que su límite es la raíz cuadrada de c
+    -- Luego podríamos definir sqrt c como el límite de f
+```
+
 [5.] SOBRE RAT/SQRTAPPROX.LEAN: En vez de la secuencia cuyo cuadrado tiende a 2, podemos ofrecer un número natural n (en los racionales) tal que no exista un natural m (en los racionales) cuyo cuadrado sea n, y así tenemos todos los no cuadrados perfectos direccionados a la vez. diagmos que ponemos un predicado NotSquare n = true (decidible), y si es verdad ya tenemos dónde aplicar la computación de la serie de Cauchy, para obtener incompletitudes infinitas. Son inifnitas porque cada primo cumple.
 
 [6.] No tenemos una prueba que los primos son infinitos(dando un primo posterior a cualquiera primo dado). Si p es primo, entonces p! + 1 es primo. Si q := p! + 1 no es primo, existe un primo r < q que divide a q. r no puede ser ninguno de los primos menores o iguales a p, porque entonces dividiría a p!. Solo no squeda que r > p, y por tanto r es un primo posterior a p hasta q, r ∈ (p,q]. Quiero una solución plenamente constructiva.
