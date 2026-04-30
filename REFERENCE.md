@@ -5407,12 +5407,15 @@ noncomputable def intToRat (n : U) : U := ratClass n oneZ
 
 **Módulo**: `ZFC.Rat.CauchyQ`
 **Namespace**: `ZFC.Rat.CauchyQ`
-**Dependencias**: `ZFC.Rat.Convergence`, `ZFC.Rat.MaxMin` + anteriores
-**Estrategia**: Define sucesiones de Cauchy en ℚ. `cauchy_bounded` se demuestra por inducción en ω: el predicado $Q(n) := \exists M \in \mathbb{Q}^+, \forall k \leq n, |f(k)| \leq M$ es hereditario (paso: $M' = \max(M, |f(\sigma n)|)$); extrae la cota para $N_0$ y usa tricotomía $n$ vs $N_0$.
+**Dependencias**: `ZFC.Rat.Convergence`, `ZFC.Rat.Field`, `ZFC.Rat.MaxMin` + anteriores
+**Estrategia**: Define sucesiones de Cauchy en ℚ y establece toda la aritmética de Cauchy. `cauchy_bounded` se demuestra por inducción en ω: el predicado $Q(n) := \exists M \in \mathbb{Q}^+, \forall k \leq n, |f(k)| \leq M$ es hereditario (paso: $M' = \max(M, |f(\sigma n)|)$); extrae la cota para $N_0$ y usa tricotomía $n$ vs $N_0$. `cauchyQ_mul` usa `cauchy_bounded` para acotar ambas sucesiones y divide $\varepsilon$ por $M = M_f + M_g$. `subseq_of_cauchyQ` usa `strictly_increasing_ge'` para levantar la cota $N$ de $f$ a la subsucesión. `CauchyEquivQ f g` se define como convergencia de $f - g$ a $0$; la simetría se prueba por $\varepsilon$-$N$ directo usando `absQ_negQ`. **0 sorry, 0 errores** — compilación verificada 2026-04-29.
 
 **Definiciones públicas**:
 
 1. **`IsCauchyQ f`** — $f$ es sucesión de Cauchy: $\forall \varepsilon > 0 \in \mathbb{Q}, \exists N \in \omega, \forall m, n \in \omega, N \leq m \Rightarrow N \leq n \Rightarrow |f(m) - f(n)| < \varepsilon$.
+2. **`CauchyEquivQ f g`** — equivalencia de Cauchy: $\text{convergesToQ}\ (f - g)\ 0$, es decir, $f - g \to 0$ en ℚ.
+
+**Exports**: `IsCauchyQ`, `cauchy_of_convergentQ`, `cauchy_bounded`, `constSeqQ_isCauchy`, `cauchyQ_neg`, `cauchyQ_add`, `cauchyQ_sub`, `cauchyQ_const_mul`, `cauchyQ_mul`, `subseq_of_cauchyQ`, `CauchyEquivQ`, `cauchyQ_equiv_refl`, `cauchyQ_equiv_symm`, `cauchyQ_equiv_trans`
 
 ---
 
@@ -16522,8 +16525,18 @@ theorem convergesToQ_mul (f g L₁ L₂ : U)
 **Importancia por teorema**:
 
 - `cauchy_of_convergentQ`: high — convergente ⟹ Cauchy
-- `cauchy_bounded`: high — Cauchy ⟹ acotada (0 sorry, probado completamente)
+- `cauchy_bounded`: critical — Cauchy ⟹ acotada
 - `constSeqQ_isCauchy`: medium — sucesión constante es de Cauchy
+- `cauchyQ_neg`: high — negativo de Cauchy es Cauchy
+- `cauchyQ_add`: high — suma de Cauchy es Cauchy
+- `cauchyQ_sub`: high — diferencia de Cauchy es Cauchy
+- `cauchyQ_const_mul`: high — múltiplo escalar de Cauchy es Cauchy
+- `cauchyQ_mul`: high — producto de Cauchy es Cauchy
+- `subseq_of_cauchyQ`: high — subsucesión de Cauchy es Cauchy
+- `CauchyEquivQ`: critical — definición de equivalencia de Cauchy
+- `cauchyQ_equiv_refl`: high — reflexividad
+- `cauchyQ_equiv_symm`: high — simetría
+- `cauchyQ_equiv_trans`: high — transitividad
 
 #### Convergente implica Cauchy (cauchy_of_convergentQ)
 
@@ -16551,9 +16564,171 @@ theorem cauchy_bounded (f : U) (hf : IsSeqQ f) (hcauchy : IsCauchyQ f) :
     isBoundedQ f
 ```
 
+**Importancia**: critical
+**Nota**: La prueba usa inducción en ω sobre $Q(n) := \exists M > 0, \forall k \leq n, |f(k)| \leq M$, con `maxQ` en el paso inductivo y tricotomía $n$ vs $N_0$ en la conclusión.
+
+#### Sucesión Constante es de Cauchy (constSeqQ_isCauchy)
+
+**Enunciado Matemático**: Si $a \in \mathbb{Q}$ entonces la sucesión constante $f \equiv a$ es de Cauchy.
+
+**Firma Lean4**:
+
+```lean
+theorem constSeqQ_isCauchy (a : U) (ha : a ∈ (RatSet : U)) :
+    IsCauchyQ (constSeqQ a)
+```
+
+**Importancia**: medium
+
+#### Negativo de Cauchy es Cauchy (cauchyQ_neg)
+
+**Enunciado Matemático**: Si $f$ es de Cauchy entonces $-f$ es de Cauchy.
+
+**Firma Lean4**:
+
+```lean
+theorem cauchyQ_neg (f : U) (hf : IsSeqQ f) (h : IsCauchyQ f) :
+    IsCauchyQ (negSeqQ f)
+```
+
 **Importancia**: high
-**@importance**: critical
-**Nota**: Demostrado completamente (0 sorry). La prueba usa inducción en ω sobre el predicado $Q(n) := \exists M > 0, \forall k \leq n, |f(k)| \leq M$, con `maxQ` en el paso inductivo y tricotomía $n$ vs $N_0$ en la conclusión.
+**Nota**: $|(-f(m)) - (-f(n))| = |f(n) - f(m)|$; se usa el mismo $N$ y se intercambian $m, n$.
+
+#### Suma de Cauchy es Cauchy (cauchyQ_add)
+
+**Enunciado Matemático**: Si $f$ y $g$ son de Cauchy entonces $f + g$ es de Cauchy.
+
+**Firma Lean4**:
+
+```lean
+theorem cauchyQ_add (f g : U)
+    (hf : IsSeqQ f) (hg : IsSeqQ g)
+    (hf_c : IsCauchyQ f) (hg_c : IsCauchyQ g) :
+    IsCauchyQ (addSeqQ f g)
+```
+
+**Importancia**: high
+**Nota**: Estrategia $\varepsilon/2$: se toman $N_f, N_g$ con $|f(m)-f(n)| < \varepsilon/2$ y $|g(m)-g(n)| < \varepsilon/2$; luego $N = \max(N_f, N_g)$.
+
+#### Diferencia de Cauchy es Cauchy (cauchyQ_sub)
+
+**Enunciado Matemático**: Si $f$ y $g$ son de Cauchy entonces $f - g$ es de Cauchy.
+
+**Firma Lean4**:
+
+```lean
+theorem cauchyQ_sub (f g : U)
+    (hf : IsSeqQ f) (hg : IsSeqQ g)
+    (hf_c : IsCauchyQ f) (hg_c : IsCauchyQ g) :
+    IsCauchyQ (addSeqQ f (negSeqQ g))
+```
+
+**Importancia**: high
+**Nota**: Corolario inmediato de `cauchyQ_add` y `cauchyQ_neg`.
+
+#### Múltiplo Escalar de Cauchy es Cauchy (cauchyQ_const_mul)
+
+**Enunciado Matemático**: Si $c \in \mathbb{Q}$ y $f$ es de Cauchy entonces $c \cdot f$ es de Cauchy.
+
+**Firma Lean4**:
+
+```lean
+theorem cauchyQ_const_mul (c f : U)
+    (hc : c ∈ (RatSet : U)) (hf : IsSeqQ f) (h : IsCauchyQ f) :
+    IsCauchyQ (mulSeqQ (constSeqQ c) f)
+```
+
+**Importancia**: high
+**Nota**: Caso $c = 0$: trivial. Caso $c \neq 0$: se usa $\delta = \varepsilon / |c|$ y `mulQ_leQ_mulQ_of_nonneg_left`.
+
+#### Producto de Cauchy es Cauchy (cauchyQ_mul)
+
+**Enunciado Matemático**: Si $f$ y $g$ son de Cauchy entonces $f \cdot g$ es de Cauchy.
+
+**Firma Lean4**:
+
+```lean
+theorem cauchyQ_mul (f g : U)
+    (hf : IsSeqQ f) (hg : IsSeqQ g)
+    (hf_c : IsCauchyQ f) (hg_c : IsCauchyQ g) :
+    IsCauchyQ (mulSeqQ f g)
+```
+
+**Importancia**: high
+**Nota**: Identidad $f(m)g(m) - f(n)g(n) = (f(m)-f(n))g(m) + f(n)(g(m)-g(n))$; cotas $M_f, M_g$ de `cauchy_bounded`; $\delta = \varepsilon/(M_f+M_g)$.
+
+#### Subsucesión de Cauchy es Cauchy (subseq_of_cauchyQ)
+
+**Enunciado Matemático**: Si $f$ es de Cauchy y $g$ es subsucesión de $f$, entonces $g$ es de Cauchy.
+
+**Firma Lean4**:
+
+```lean
+theorem subseq_of_cauchyQ (f g : U)
+    (hf : IsSeqQ f) (hg : IsSeqQ g)
+    (hf_c : IsCauchyQ f) (hsub : IsSubseqOf g f) :
+    IsCauchyQ g
+```
+
+**Importancia**: high
+**Nota**: Si $g(n) = f(\varphi(n))$ con $\varphi$ estrictamente creciente, entonces $\varphi(n) \geq n$ (por `strictly_increasing_ge'`), luego para $m, n \geq N$ se tiene $\varphi(m), \varphi(n) \geq N$ y se aplica la condición de Cauchy de $f$.
+
+#### Equivalencia de Cauchy (CauchyEquivQ)
+
+**Enunciado Matemático**: $f \sim g \iff f - g \to 0$ en ℚ.
+
+**Firma Lean4**:
+
+```lean
+def CauchyEquivQ (f g : U) : Prop :=
+    convergesToQ (addSeqQ f (negSeqQ g)) (zeroQ : U)
+```
+
+**Importancia**: critical
+
+#### Reflexividad (cauchyQ_equiv_refl)
+
+**Enunciado Matemático**: $f \sim f$.
+
+**Firma Lean4**:
+
+```lean
+theorem cauchyQ_equiv_refl (f : U) (hf : IsSeqQ f) :
+    CauchyEquivQ f f
+```
+
+**Importancia**: high
+
+#### Simetría (cauchyQ_equiv_symm)
+
+**Enunciado Matemático**: Si $f \sim g$ entonces $g \sim f$.
+
+**Firma Lean4**:
+
+```lean
+theorem cauchyQ_equiv_symm (f g : U)
+    (hf : IsSeqQ f) (hg : IsSeqQ g)
+    (h : CauchyEquivQ f g) : CauchyEquivQ g f
+```
+
+**Importancia**: high
+**Nota**: Prueba directa $\varepsilon$-$N$: se expande la definición, se usa $g(n)-f(n) = -(f(n)-g(n))$ y `absQ_negQ` para concluir que el valor absoluto coincide.
+
+#### Transitividad (cauchyQ_equiv_trans)
+
+**Enunciado Matemático**: Si $f \sim g$ y $g \sim h$ entonces $f \sim h$.
+
+**Firma Lean4**:
+
+```lean
+theorem cauchyQ_equiv_trans (f g h : U)
+    (hf : IsSeqQ f) (hg : IsSeqQ g) (hh : IsSeqQ h)
+    (h_fg : CauchyEquivQ f g) (h_gh : CauchyEquivQ g h) :
+    CauchyEquivQ f h
+```
+
+**Importancia**: high
+**Nota**: $(f-g) + (g-h) \to 0+0 = 0$ por `convergesToQ_add`; luego $((f-g)+(g-h))(n) = (f-h)(n)$ puntualmente, y se concluye con `convergesToQ_of_eventually_eq`.
 
 ---
 
