@@ -133,6 +133,7 @@ inductive Monomial  : Type where
   | mk_from_rat (n : ℕ₀) (s : Rat) : Monomial -- grado n, coeficiente s
 
 -- Primero vamos a hacer las funciones extractoras de grado y coeficiente de un monomio.
+-- Tendríamos que conseguir que el grado del monomio zero fuese -1
 def grado : Monomial → ℕ₀
     | Monomial.mk_nat _ => 0
     | Monomial.mk_int _ => 0
@@ -196,14 +197,14 @@ def divMonomial (m1 : Monomial) (m2 : Monomial) (hneq0 : coeficiente m2 ≠ 0) :
 
 --
 inductive Polynomial : Type where
-  | mk_from_monoms (mon : Monomial) : Polynomial
-  | mk : Tuple (n+2) Integer → Polynomial n
-  | mk_from_rats : Tuple (n+1) Rat → Polynomial n
+  | mk_nat (n : ℕ₀) : Polynomial -- polinomio de grado 0 y coeficiente n
+  | mk_int (z : IntSet) : Polynomial -- polinomio de grado 0 y coeficiente z
+  | mk_rat (q : Rat) : Polynomial  -- polinomio de grado 0 y coeficiente q 
+  | mk_from_monomial (mon : Monomial) : Polynomial -- un monomio es un polinomio
+  | mk Tuple (n+2) Integer : Polynomial
+  | mk_from_rats Tuple (n+1) Rat : Polynomial
+  | mk_from_list_of_monomials ( list : List Monomial ) : Polynomial 
 ```
-
-La suma directa de polinomios será la suma de los coeficientes del mismo grado, y el producto de dos polinomios se puede definir utilizando la propiedad distributiva, es decir, multiplicando cada término de un polinomio por cada término del otro polinomio y luego sumando los resultados. Sería interesante tener una definición de monomio, que es un polinomio con un solo término, y luego definir el producto de monomios, que es simplemente la multiplicación de los coeficientes y la suma de los grados.
-
-Los polinomios en general serán de cualquier grado, por lo que habrá que definirlos como tuple n+2 integer como un tipo inductivo sobre las tuplas de enteros de tamaño n+2 (el extra es para el denominador), o bien la suma de dos tuplas de enteros, cada una con su grado, o bien como el producto de dos polinomios, cada uno con su grado.
 
 Lo que dará algo más de trabajo es definir la división de polinomios. Esto nos dará el anillo conmutativo de los polinomios con coeficientes racionales, que es un dominio de integridad, y luego el cuerpo de fracciones de ese anillo, que es el campo de los números racionales con una indeterminada, que es un cuerpo. Luego habrá que definir la raíz de un polinomio, que es un número $r$ tal que $P(r) = 0$, y el teorema del residuo, que establece que si $r$ es una raíz de un polinomio $P(X)$, entonces $P(X)$ es divisible por $X - r$. El teorema de factorización establece que cualquier polinomio se puede factorizar como un producto de factores irreducibles. El polinomio mínimo de un número algebraico $\alpha$ es el polinomio no nulo de menor grado con coeficientes racionales tal que $P(\alpha) = 0$.
 

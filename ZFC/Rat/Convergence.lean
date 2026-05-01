@@ -503,6 +503,68 @@ namespace ZFC
       exact hN_conv (φ⦅n⦆) hφn hN_φn
 
     -- =========================================================================
+    -- Section 5b: Tail (shift) of a sequence
+    -- =========================================================================
+
+    /-- The tail (shift by 1) of a sequence: (tailSeqQ f)(n) = f(σ n). -/
+    noncomputable def tailSeqQ (f : U) : U :=
+      sep ((ω : U) ×ₛ (RatSet : U)) (fun p => snd p = f⦅σ (fst p)⦆)
+
+    private theorem tailSeqQ_mem_iff (f p : U) :
+        p ∈ tailSeqQ f ↔
+        p ∈ (ω : U) ×ₛ (RatSet : U) ∧ snd p = f⦅σ (fst p)⦆ := by
+      unfold tailSeqQ; exact mem_sep_iff _ p _
+
+    /-- tailSeqQ f is a sequence in ℚ whenever f is. -/
+    theorem tailSeqQ_isSeqQ (f : U) (hf : IsSeqQ f) : IsSeqQ (tailSeqQ f) := by
+      unfold IsSeqQ
+      constructor
+      · intro p hp; exact ((tailSeqQ_mem_iff f p).mp hp).1
+      · intro n hn
+        have hσn : σ n ∈ (ω : U) := succ_in_Omega n hn
+        have hfσn := seqTermQ_mem_RatSet f (σ n) hf hσn
+        refine ⟨f⦅σ n⦆, ?_, ?_⟩
+        · show ⟨n, f⦅σ n⦆⟩ ∈ tailSeqQ f
+          rw [tailSeqQ_mem_iff]
+          refine ⟨(OrderedPair_mem_CartesianProduct n _ (ω : U) RatSet).mpr
+                   ⟨hn, hfσn⟩, ?_⟩
+          rw [fst_of_ordered_pair, snd_of_ordered_pair]
+        · intro z hz
+          show z = f⦅σ n⦆
+          have h := ((tailSeqQ_mem_iff f ⟨n, z⟩).mp hz).2
+          rw [fst_of_ordered_pair, snd_of_ordered_pair] at h
+          exact h
+
+    /-- Computation rule: (tailSeqQ f)(n) = f(σ n). -/
+    theorem tailSeqQ_apply (f : U) (hf : IsSeqQ f)
+        (n : U) (hn : n ∈ (ω : U)) :
+        (tailSeqQ f)⦅n⦆ = f⦅σ n⦆ := by
+      apply apply_eq _ n _ ((tailSeqQ_isSeqQ f hf).2 n hn)
+      show ⟨n, f⦅σ n⦆⟩ ∈ tailSeqQ f
+      rw [tailSeqQ_mem_iff]
+      have hσn : σ n ∈ (ω : U) := succ_in_Omega n hn
+      have hfσn := seqTermQ_mem_RatSet f (σ n) hf hσn
+      refine ⟨(OrderedPair_mem_CartesianProduct n _ (ω : U) RatSet).mpr
+               ⟨hn, hfσn⟩, ?_⟩
+      rw [fst_of_ordered_pair, snd_of_ordered_pair]
+
+    /-- If f → L then tailSeqQ f → L (shifting does not change the limit). -/
+    theorem convergesToQ_tail (f L : U) (hf : IsSeqQ f)
+        (h : convergesToQ f L) : convergesToQ (tailSeqQ f) L := by
+      intro ε hε hε_pos
+      obtain ⟨N, hN, hN_conv⟩ := h ε hε hε_pos
+      refine ⟨N, hN, fun n hn h_ge => ?_⟩
+      -- (tailSeqQ f)(n) = f(σ n)
+      rw [tailSeqQ_apply f hf n hn]
+      have hσn : σ n ∈ (ω : U) := succ_in_Omega n hn
+      -- N ≤ n ≤ σ n  ⟹  N ∈ σ n  (strict, via mem_succ_iff)
+      have hN_σn : N ∈ σ n ∨ N = σ n := by
+        rcases h_ge with hN_in_n | hN_eq_n
+        · left; exact (mem_succ_iff n N).mpr (Or.inl hN_in_n)
+        · left; exact (mem_succ_iff n N).mpr (Or.inr hN_eq_n)
+      exact hN_conv (σ n) hσn hN_σn
+
+    -- =========================================================================
     -- Section 5: Arithmetic of limits
     -- =========================================================================
 
@@ -1662,4 +1724,8 @@ export ZFC.Rat.Convergence (
   invSeqQ
   invSeqQ_isSeqQ
   invSeqQ_apply
+  tailSeqQ
+  tailSeqQ_isSeqQ
+  tailSeqQ_apply
+  convergesToQ_tail
 )
