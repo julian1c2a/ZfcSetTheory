@@ -1,6 +1,6 @@
 # Referencia Técnica - ZfcSetTheory
 
-*Última actualización: 2026-04-29 (sesión 8)*
+*Última actualización: 2026-05-01 (sesión 9)*
 **Autor**: Julián Calderón Almendros
 
 ## 0. Guía de Convenciones de Nombres para el Estudioso
@@ -158,6 +158,8 @@ Este documento cumple con todos los requisitos especificados en [AI-GUIDE.md](AI
 | `Int/Units.lean` | `ZFC.Int.Ring` | `Int.Ring`, `Int.Mul` + anteriores | ✅ Completo |
 | `Rat/Embedding.lean` | `ZFC.Rat.Embedding` | `Rat.Abs`, `Int.Embedding`, `Int.Induction` + anteriores | ✅ Completo |
 | `Rat/Field.lean` | `ZFC.Rat.Field` | `Rat.Mul`, `Rat.Order` + anteriores | ✅ Completo |
+| `Rat/SqrtApprox.lean` | `ZFC.Rat.SqrtApprox` | `Rat.CauchyQ`, `Rat.Monotone`, `Rat.Field` + anteriores | ✅ Completo (2026-05-01) |
+| `Rat/SqrtIrrational.lean` | `ZFC.Rat.SqrtIrrational` | `Rat.SqrtApprox`, `Nat.Primes` | ✅ Completo (2026-05-01) — 0 sorry |
 
 ### 1.2 Axiomas ZFC por Módulo
 
@@ -16766,6 +16768,160 @@ theorem limit_le_of_bounded_above (f L M : U)
 
 ---
 
+### 4.65 Rat.SqrtApprox.lean
+
+**Módulo**: `ZFC.Rat.SqrtApprox`
+**Namespace**: `ZFC.Rat.SqrtApprox`
+**Dependencias**: `ZFC.Rat.CauchyQ`, `ZFC.Rat.Monotone`, `ZFC.Rat.Field`, `ZFC.Rat.Convergence`, `ZFC.Rat.Sequences` + anteriores
+**Estrategia**: Construye la sucesión Newton–Raphson para aproximar $\sqrt{2}$ en $\mathbb{Q}$,
+$f(0) = 2$ y $f(\sigma n) = \tfrac{f(n) + 2/f(n)}{2}$, y prueba que es positiva, $\geq 1$,
+satisface $f(n)^2 > 2$, es no-creciente y de Cauchy. Junto con `SqrtIrrational` demuestra
+que $\mathbb{Q}$ no es secuencialmente completo.
+
+**Importancia por teorema**:
+
+- `twoQ`: high — definición de $2 \in \mathbb{Q}$ como `addQ oneQ oneQ`
+- `twoQ_mem`: high — $2 \in \mathbb{Q}$
+- `twoQ_ne_zeroQ`: medium — $2 \neq 0$
+- `twoQ_pos`: medium — $2 > 0$
+- `sqrtApproxSeq`: high — sucesión Newton–Raphson
+- `sqrtApproxSeq_isSeqQ`: high — clausura como sucesión racional
+- `sqrtApproxSeq_apply_zero`: high — $f(0) = 2$
+- `sqrtApproxSeq_apply_succ`: high — recurrencia $f(\sigma n) = (f(n) + 2/f(n))/2$
+- `sqrtApproxSeq_pos`: high — $f(n) > 0$ para todo $n \in \omega$
+- `sqrtApproxSeq_sq_gt_two`: high — $f(n)^2 > 2$ para todo $n \in \omega$ (clave para evitar división por cero y para descenso)
+- `sqrtApproxSeq_ge_one`: medium — $f(n) \geq 1$
+- `sqrtApproxSeq_nonincreasing`: high — sucesión no-creciente
+- `sqrtApproxSeq_isCauchy`: high — sucesión de Cauchy en $\mathbb{Q}$
+
+#### Constante 2 en ℚ (twoQ)
+
+**Enunciado Matemático**: Definición $2 := 1 + 1 \in \mathbb{Q}$.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def twoQ : U := addQ (oneQ : U) (oneQ : U)
+
+theorem twoQ_mem : (twoQ : U) ∈ (RatSet : U)
+theorem twoQ_ne_zeroQ : (twoQ : U) ≠ (zeroQ : U)
+theorem twoQ_pos : isPositiveQ (twoQ : U)
+```
+
+**Importancia**: high
+
+#### Sucesión Newton–Raphson (sqrtApproxSeq)
+
+**Enunciado Matemático**: La sucesión $f : \omega \to \mathbb{Q}$ dada por $f(0) = 2$ y $f(\sigma n) = \tfrac{f(n) + 2/f(n)}{2}$ es una sucesión racional bien definida.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def sqrtApproxSeq : U
+theorem sqrtApproxSeq_isSeqQ : IsSeqQ (sqrtApproxSeq : U)
+theorem sqrtApproxSeq_apply_zero :
+    (sqrtApproxSeq : U)⦅(∅ : U)⦆ = (twoQ : U)
+theorem sqrtApproxSeq_apply_succ (n : U) (hn : n ∈ (ω : U)) :
+    (sqrtApproxSeq : U)⦅σ n⦆ =
+      divQ (addQ ((sqrtApproxSeq : U)⦅n⦆)
+                 (divQ (twoQ : U) ((sqrtApproxSeq : U)⦅n⦆)))
+           (twoQ : U)
+```
+
+**Importancia**: high
+
+#### Cota Cuadrática (sqrtApproxSeq_sq_gt_two)
+
+**Enunciado Matemático**: Para todo $n \in \omega$, $f(n)^2 > 2$. Esta desigualdad asegura que $f(n) > 0$ y, por tanto, que la división en la recurrencia está bien definida.
+
+**Firma Lean4**:
+
+```lean
+theorem sqrtApproxSeq_sq_gt_two (n : U) (hn : n ∈ (ω : U)) :
+    ltQ (twoQ : U) (mulQ ((sqrtApproxSeq : U)⦅n⦆) ((sqrtApproxSeq : U)⦅n⦆))
+```
+
+**Importancia**: high
+
+#### Sucesión de Cauchy (sqrtApproxSeq_isCauchy)
+
+**Enunciado Matemático**: La sucesión Newton–Raphson es de Cauchy en $\mathbb{Q}$. Combinado con su no-convergencia, demuestra la no-completitud secuencial de $\mathbb{Q}$.
+
+**Firma Lean4**:
+
+```lean
+theorem sqrtApproxSeq_isCauchy : IsCauchyQ (sqrtApproxSeq : U)
+```
+
+**Importancia**: high
+
+---
+
+### 4.66 Rat.SqrtIrrational.lean
+
+**Módulo**: `ZFC.Rat.SqrtIrrational`
+**Namespace**: `ZFC.Rat.SqrtIrrational`
+**Dependencias**: `ZFC.Rat.SqrtApprox`, `ZFC.Nat.Primes` (descenso 2-ádico vía Peano)
+**Estrategia**: (1) Irracionalidad de $\sqrt{2}$ por descenso infinito 2-ádico sobre $\omega$ (vía
+`omega_descent_two_squares` en `Nat.Primes`). (2) No-convergencia de `sqrtApproxSeq` razonando por
+contradicción: si $f \to L$, los tres pasos al límite (`convergesToQ_tail`, `convergesToQ_mul`,
+`convergesToQ_add`, `convergesToQ_const`) sobre la identidad puntual $2 \cdot f(\sigma n) \cdot f(n)
+= f(n)^2 + 2$ y unicidad del límite (`limit_unique`) producen $2 L^2 = L^2 + 2$, luego $L^2 = 2$,
+contradiciendo `sqrt2_irrational`.
+
+**Nota técnica**: Este módulo se mantiene separado de `SqrtApprox.lean` por un conflicto de notación:
+la cadena `Nat.Primes → PeanoNatLib.PeanoNatArith` declara `notation:50 a " ∈ " l => DList.Mem a l`
+que rompe patrones del estilo `p ∈ X ↔ p ∈ Y ∧ ...` usados en `SqrtApprox.lean`.
+
+**Importancia por teorema**:
+
+- `sqrt2_irrational`: high — $\nexists L \in \mathbb{Q},\ L \cdot L = 1 + 1$
+- `sqrtApproxSeq_not_convergent`: high — la sucesión Newton–Raphson no converge en $\mathbb{Q}$;
+  junto con `sqrtApproxSeq_isCauchy`, demuestra que $(\mathbb{Q}, |\cdot|)$ no es secuencialmente completo
+
+#### √2 es Irracional (sqrt2_irrational)
+
+**Enunciado Matemático**: No existe $L \in \mathbb{Q}$ con $L^2 = 2$.
+
+**Firma Lean4**:
+
+```lean
+theorem sqrt2_irrational :
+    ¬ ∃ L : U, (L ∈ (RatSet : U)) ∧ mulQ L L = addQ (oneQ : U) (oneQ : U)
+```
+
+**Esquema**: Si $L = a/b$ con $b \neq 0$ y $L^2 = 2$, entonces $a^2 = 2 b^2$ en $\mathbb{Z}$.
+Tomando valores absolutos en $\omega$ se obtiene $|a|^2 = 2 |b|^2$, y `omega_descent_two_squares`
+fuerza $|a| = 0$, luego $a = 0$. Sustituyendo, $0 = 2 b^2$ contradice que el producto de no-nulos es no-nulo.
+
+**Importancia**: high
+
+#### No-convergencia de la Sucesión Newton–Raphson (sqrtApproxSeq_not_convergent)
+
+**Enunciado Matemático**: La sucesión `sqrtApproxSeq` no converge en $\mathbb{Q}$.
+
+**Firma Lean4**:
+
+```lean
+theorem sqrtApproxSeq_not_convergent :
+    ¬ ∃ L : U, (L ∈ (RatSet : U)) ∧ convergesToQ (sqrtApproxSeq : U) L
+```
+
+**Esquema**: Asumimos $f \to L$. Por la identidad puntual `sqrtApproxSeq_pointwise_identity`
+$2 \cdot f(\sigma n) \cdot f(n) = f(n)^2 + 2$ para todo $n \in \omega$. Las dos sucesiones
+$A(n) := 2 \cdot f(\sigma n) \cdot f(n)$ y $B(n) := f(n)^2 + 2$ coinciden puntualmente, luego
+sus límites coinciden. Calculando: $A \to 2 L^2$ (vía `convergesToQ_tail`, `convergesToQ_mul`,
+`convergesToQ_const`) y $B \to L^2 + 2$ (vía `convergesToQ_mul`, `convergesToQ_add`). Por
+`convergesToQ_of_eventually_eq` y `limit_unique`: $2 L^2 = L^2 + 2$. Cancelando $L^2$ en
+$\mathbb{Q}$ queda $L^2 = 2$, que contradice `sqrt2_irrational`.
+
+**Corolario informal**: $(\mathbb{Q}, |\cdot|_\mathbb{Q})$ no es secuencialmente completo; existe
+una sucesión de Cauchy (`sqrtApproxSeq_isCauchy`) sin límite racional.
+
+**Importancia**: high
+
+---
+
 ## 5. Notación y Sintaxis
 
 ### 5.1 Operadores Básicos
@@ -18832,6 +18988,45 @@ export ZFC.Rat.Monotone (
   nondecreasing_convergent_isBoundedAbove
   nonincreasing_convergent_isBoundedBelow
   convergent_isBounded
+)
+```
+
+### 6.66 Rat.SqrtApprox.lean
+
+**Namespace**: `ZFC.Rat.SqrtApprox` (exportado a `ZFC`)
+**Última modificación**: 2026-05-01
+**Dependencias**: `ZFC.Rat.CauchyQ`, `ZFC.Rat.Monotone`, `ZFC.Rat.Field`, `ZFC.Rat.Convergence`, `ZFC.Rat.Sequences`
+**Nota**: 0 sorry — sucesión Newton–Raphson para √2 con todas sus propiedades estructurales (positiva, $\geq 1$, cuadrado $> 2$, no-creciente, Cauchy).
+
+```lean
+export ZFC.Rat.SqrtApprox (
+  sqrtApproxSeq
+  sqrtApproxSeq_isSeqQ
+  sqrtApproxSeq_apply_zero
+  sqrtApproxSeq_apply_succ
+  sqrtApproxSeq_pos
+  sqrtApproxSeq_sq_gt_two
+  sqrtApproxSeq_ge_one
+  sqrtApproxSeq_nonincreasing
+  sqrtApproxSeq_isCauchy
+  twoQ
+  twoQ_mem
+  twoQ_ne_zeroQ
+  twoQ_pos
+)
+```
+
+### 6.67 Rat.SqrtIrrational.lean
+
+**Namespace**: `ZFC.Rat.SqrtIrrational` (exportado a `ZFC`)
+**Última modificación**: 2026-05-01
+**Dependencias**: `ZFC.Rat.SqrtApprox`, `ZFC.Nat.Primes` (descenso 2-ádico vía Peano)
+**Nota**: 0 sorry — incompletitud secuencial de $\mathbb{Q}$. La sucesión `sqrtApproxSeq` es de Cauchy pero no converge en $\mathbb{Q}$.
+
+```lean
+export ZFC.Rat.SqrtIrrational (
+  sqrt2_irrational
+  sqrtApproxSeq_not_convergent
 )
 ```
 

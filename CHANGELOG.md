@@ -1,6 +1,6 @@
 # Changelog
 
-**Última actualización:** 2026-04-29
+**Última actualización:** 2026-05-01
 **Autor**: Julián Calderón Almendros
 
 Todos los cambios notables de este proyecto serán documentados en este archivo.
@@ -9,6 +9,18 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Añadido (2026-05-01 — sesión 11)
+
+- **`Rat/SqrtIrrational.lean` — Incompletitud secuencial de $\mathbb{Q}$ COMPLETA (0 sorry)**:
+  - ✅ `sqrt2_irrational` — $\nexists L \in \mathbb{Q},\ L^2 = 2$, vía descenso 2-ádico (`omega_descent_two_squares`).
+  - ✅ `sqrtApproxSeq_not_convergent` — la sucesión Newton–Raphson de Cauchy no converge en $\mathbb{Q}$.
+  - Estrategia: identidad puntual $2 \cdot f(\sigma n) \cdot f(n) = f(n)^2 + 2$ + paso al límite (`convergesToQ_tail/mul/add/const`, `convergesToQ_of_eventually_eq`, `limit_unique`) ⟹ $2 L^2 = L^2 + 2$ ⟹ $L^2 = 2$, contradicción con `sqrt2_irrational`.
+  - **Corolario**: $(\mathbb{Q}, |\cdot|_\mathbb{Q})$ no es secuencialmente completo (combina `sqrtApproxSeq_isCauchy` con `sqrtApproxSeq_not_convergent`).
+- **`Rat/SqrtApprox.lean` — Exposición pública de `twoQ`**:
+  - `twoQ`, `twoQ_mem`, `twoQ_ne_zeroQ`, `twoQ_pos` añadidos a `export`.
+- **`Rat/Convergence.lean` — Helpers para corrimientos**:
+  - `tailSeqQ`, `tailSeqQ_isSeqQ`, `tailSeqQ_apply`, `convergesToQ_tail` (cola converge al mismo límite).
 
 ### Añadido (2026-04-29 — sesiones 9–10)
 

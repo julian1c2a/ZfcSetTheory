@@ -1,6 +1,6 @@
 # Next Steps — ZfcSetTheory Project
 
-**Last updated**: 2026-04-30
+**Last updated**: 2026-05-01
 
 ---
 
@@ -15,9 +15,10 @@
 - ✅ **Anotaciones REFERENCE.md** (Phase 4): @axiom_system, @importance, ~280 teoremas anotados
 - ✅ **Enteros ℤ** (Phase 5, 15 módulos): 190 exports, 0 sorry, 0 errores
 - ✅ **Racionales ℚ** (Phase 6, 9 módulos): `Equiv`, `Basic`, `Add`, `Neg`, `Mul`, `Order`, `Abs`, `Embedding`, `Field` — 0 sorry, 0 errores
-- ✅ **Sucesiones en ℚ** (Phase 6.5, 6/7 módulos): `Int/MaxMin`, `Rat/MaxMin`, `Rat/Sequences`, `Rat/Convergence`, `Rat/CauchyQ`, `Rat/Monotone` — **0 sorry, 0 errores de compilación**. `Convergence.lean` completo: 17 exports. `CauchyQ.lean` completo: 14 exports (aritmética Cauchy + CauchyEquivQ). Pendiente: `SqrtApprox.lean`.
+- ✅ **Sucesiones en ℚ** (Phase 6.5, 7/7 módulos): `Int/MaxMin`, `Rat/MaxMin`, `Rat/Sequences`, `Rat/Convergence`, `Rat/CauchyQ`, `Rat/Monotone`, `Rat/SqrtApprox` — **0 sorry, 0 errores**.
+- ✅ **Incompletitud secuencial de ℚ** (Phase 6.6, 1 módulo): `Rat/SqrtIrrational` — `sqrt2_irrational` y `sqrtApproxSeq_not_convergent` — **0 sorry**. Combinado con `sqrtApproxSeq_isCauchy`, demuestra que $(\mathbb{Q}, |\cdot|_\mathbb{Q})$ no es secuencialmente completo.
 
-**Estado**: 87 módulos, **0 sorry**, **0 errores de compilación** (verificado 2026-04-29).
+**Estado**: 89 módulos, **0 sorry**, **0 errores de compilación** (verificado 2026-05-01).
 
 ---
 
@@ -76,7 +77,8 @@
 | 2 | `Rat/Convergence.lean` | 17 exports: `convergesToQ`, `limit_unique`, `add`, `sub`, `mul_bounded`, `mul`, `const_mul`, `abs`, `zero_of_abs`, `iff_abs`, `of_dominated`, `squeeze`, `subseq`, `of_eventually_eq` + 3 def | ✅ **COMPLETO** |
 | 3 | `Rat/CauchyQ.lean` | 14 exports: `IsCauchyQ`, `cauchy_of_convergentQ`, `cauchy_bounded`, `constSeqQ_isCauchy`, `cauchyQ_neg/add/sub/const_mul/mul`, `subseq_of_cauchyQ`, `CauchyEquivQ`, `cauchyQ_equiv_refl/symm/trans` | ✅ **COMPLETO** |
 | 4 | `Rat/Monotone.lean` | `isNondecreasingQ`, `isBoundedQ`, `limit_le_of_bounded_above`, `convergent_isBounded`, `nondecreasing_bounded_isCauchy`, `nonincreasing_bounded_isCauchy` | ✅ **COMPLETO** |
-| 5 | `Rat/SqrtApprox.lean` | `sqrtApprox`, `sqrtApprox_is_cauchy`, `sqrt2_irrational`, `sqrtApprox_not_convergent` | ❌ **NO INICIADO** |
+| 5 | `Rat/SqrtApprox.lean` | `sqrtApproxSeq`, `sqrtApproxSeq_isCauchy`, `sqrtApproxSeq_pos/sq_gt_two/ge_one/nonincreasing`, `twoQ` (público) | ✅ **COMPLETO** (2026-05-01) |
+| 6 | `Rat/SqrtIrrational.lean` | `sqrt2_irrational`, `sqrtApproxSeq_not_convergent` | ✅ **COMPLETO** (2026-05-01) |
 
 **Nota (2026-04-30 — sesiones 9–10)**: `Rat/Convergence.lean` completado con 9 nuevos teoremas (sesiones 9–10): `convergesToQ_sub`, `convergesToQ_of_dominated`, `squeeze_theorem`, `convergesToQ_of_eventually_eq` (sesión 9), y `convergesToQ_const_mul`, `convergesToQ_abs`, `convergesToQ_zero_of_abs`, `convergesToQ_iff_abs`, `convergesToQ_mul` (sesión 10). `Rat/CauchyQ.lean` completado: aritmética completa `cauchyQ_neg/add/sub/const_mul/mul`, subsucesiones, y relación de equivalencia `CauchyEquivQ` con pruebas refl/symm/trans. **Phase 6.5 está al 6/7 módulos, 0 sorry, 0 errores de compilación (88 módulos totales).** Pendiente: `Rat/SqrtApprox.lean`.
 
@@ -285,7 +287,8 @@
 | 4: Anotaciones | ✅ Completo | — | — |
 | 5: Enteros ℤ | ✅ Completo | 15 | 190 |
 | 6: Racionales ℚ | ✅ Completo | 9 | 90 |
-| 6.5: Sucesiones en ℚ | 🔄 En progreso (6/7, **0 sorry**) | 6/7 | ~98 |
+| 6.5: Sucesiones en ℚ | ✅ Completo | 7/7 | ~111 |
+| 6.6: Incompletitud de ℚ | ✅ Completo (sqrt2 irracional + sqrtApproxSeq no converge) | 1 | 2 |
 | 7a: Computables | 📋 Planificado | 0/4 | — |
 | 7b: Constructibles | 📋 Planificado | 0/2 | — |
 | 7c: Radicales | 📋 Planificado | 0/2 | — |
@@ -295,4 +298,4 @@
 
 ---
 
-*Última actualización: 2026-04-30 (sesión 11). `Rat/CauchyQ.lean` completado: aritmética de Cauchy (neg/add/sub/const_mul/mul), subsucesiones, y relación de equivalencia `CauchyEquivQ` (refl/symm/trans) — 14 exports, 0 sorry. REFERENCE.md actualizado (secciones 3.67 y 4.63). **Siguiente**: `Rat/SqrtApprox.lean` (incompletitud de ℚ). Phase 6.5: 6/7 módulos, 0 sorry, 0 errores en los 88 módulos totales.*
+*Última actualización: 2026-05-01 (sesión 11). `Rat/SqrtApprox.lean` y `Rat/SqrtIrrational.lean` completados (0 sorry). Phase 6.5 finalizada (7/7) y Phase 6.6 (incompletitud de ℚ) cerrada: `sqrt2_irrational` + `sqrtApproxSeq_not_convergent`. REFERENCE.md actualizado (secciones 4.65, 4.66, 6.66, 6.67). 89 módulos totales, **0 sorry, 0 errores**.*
