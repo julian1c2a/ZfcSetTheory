@@ -93,7 +93,7 @@ namespace ZFC
     -- =========================================================================
 
     /-- 2 ∈ ℚ, defined as 1 + 1. -/
-    private noncomputable def twoQ : U := addQ (oneQ : U) (oneQ : U)
+    noncomputable def twoQ : U := addQ (oneQ : U) (oneQ : U)
 
     /-- 3 ∈ ℚ, defined as 1 + 2. -/
     private noncomputable def threeQ : U := addQ (oneQ : U) (twoQ : U)
@@ -101,7 +101,7 @@ namespace ZFC
     /-- 3/2 ∈ ℚ, the initial value f(0). -/
     private noncomputable def threeHalvesQ : U := divQ (threeQ : U) (twoQ : U)
 
-    private theorem twoQ_mem : (twoQ : U) ∈ (RatSet : U) :=
+    theorem twoQ_mem : (twoQ : U) ∈ (RatSet : U) :=
       addQ_in_RatSet (oneQ : U) (oneQ : U) oneQ_mem_RatSet oneQ_mem_RatSet
 
     private theorem threeQ_mem : (threeQ : U) ∈ (RatSet : U) :=
@@ -130,7 +130,7 @@ namespace ZFC
                zeroZ_mem_IntSet, hone_nz, hone_i, hone_nz, rfl, rfl, h_repr⟩
       · exact zeroQ_ne_oneQ
 
-    private theorem twoQ_ne_zeroQ : (twoQ : U) ≠ (zeroQ : U) := by
+    theorem twoQ_ne_zeroQ : (twoQ : U) ≠ (zeroQ : U) := by
       intro h
       have h_le : leQ (addQ (zeroQ : U) (oneQ : U)) (addQ (oneQ : U) (oneQ : U)) :=
         addQ_leQ_addQ zeroQ oneQ oneQ zeroQ_mem_RatSet oneQ_mem_RatSet oneQ_mem_RatSet
@@ -142,7 +142,7 @@ namespace ZFC
         leQ_antisymm oneQ zeroQ oneQ_mem_RatSet zeroQ_mem_RatSet h_le oneQ_pos.1
       exact zeroQ_ne_oneQ h_eq.symm
 
-    private theorem twoQ_pos : isPositiveQ (twoQ : U) := by
+    theorem twoQ_pos : isPositiveQ (twoQ : U) := by
       constructor
       · have h_le : leQ (addQ (zeroQ : U) (oneQ : U)) (addQ (oneQ : U) (oneQ : U)) :=
           addQ_leQ_addQ zeroQ oneQ oneQ zeroQ_mem_RatSet oneQ_mem_RatSet oneQ_mem_RatSet
@@ -1049,4 +1049,8 @@ export ZFC.Rat.SqrtApprox (
   sqrtApproxSeq_ge_one
   sqrtApproxSeq_nonincreasing
   sqrtApproxSeq_isCauchy
+  twoQ
+  twoQ_mem
+  twoQ_ne_zeroQ
+  twoQ_pos
 )

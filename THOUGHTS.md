@@ -116,7 +116,72 @@ Todo lo demás se parece mucho a la situcación de los múmeros constructibles.
 
 [11.] SOBRE LOS NÚMEROS ALGEBRÁICOS: Este cuerpo requerirá la introducción de polinomios, toda una infraestructura de álgebra abstracta, y la demostración de que los números algebraicos forman un cuerpo. Además, habrá que demostrar que este cuerpo no es completo, ya que hay sucesiones de Cauchy de números algebraicos que no convergen a ningún número algebraico (por ejemplo, la sucesión dada por el método de Newton para aproximar $1 + \frac 1 {2!} + \frac 1 {3!} + \frac 1 {4!} + ... + \frac 1 {n!} + ...$ es una sucesión de Cauchy de números racionales, pero su límite $exp(1)$ no es un número algebraico (y habría que demostrarlo), por lo que no es un número algebraico). Para dar una definición computable de números algebraicos, el algoritmo es fuertemente más complejo, ya que no solo hay que dar una sucesión de racionales de Cauchy, sino también un algoritmo para encontrar el polinomio mínimo de ese número algebraico, y un algoritmo para encontrar las raíces de ese polinomio mínimo. De hecho no sé si valdrá con soluciones de polinomios en una indeterminada, o si tendremos que dar  soluciones de sistemas de polinomios en varias indeterminadas: es una duda que tengo.
 
-[12.] DESARROLLO DE POLINOMIOS: Para desarrollar la teoría de los números algebraicos, necesitaremos una teoría de polinomios. Esto incluirá la definición de polinomios, operaciones con polinomios (suma, producto, división), el concepto de raíz de un polinomio, el teorema del residuo, el teorema de factorización, y la definición de polinomio mínimo. Además, habrá que demostrar que el conjunto de números algebraicos es cerrado bajo las operaciones de suma, resta, multiplicación y división (excepto por cero), lo que implica que forman un cuerpo.
+[12.] DESARROLLO DE N-TUPLAS EN ZFC: Para desarrollar la teoría de números algebráicos me hacen falta los polinomios, y para ello me hará falta desarrollar la teoría de n-tuplas en ZFC. Como tengo definidos los naturales, los enteros y los racionales, y también tenemos definidos los pares ordenados de Kuratowski y los naturales de Von Neumann, podemos definir las n-tuplas como funciones finitas indexadas por los naturales.
+
+**Idea básica.** En ZFC una "n-tupla" sobre un conjunto $\Omega$ con coordenadas $a_0, a_1, \dots, a_{n-1}$ se identifica con su gráfica como función $\{0,1,\dots,n-1\} \to \Omega$. Como $\sigma n = \{0, 1, \dots, n-1, n\} \setminus \{n\}$ no nos sirve directamente, conviene fijar el dominio $n$ (el natural de Von Neumann, que coincide con $\{0,1,\dots,n-1\}$) o bien $\sigma n$ si queremos $n+1$ coordenadas indexadas $0, \dots, n$. Eligiremos esta segunda variante por simetría con la notación $\langle a_0, \dots, a_n\rangle$ ("tupla de grado $n$" para polinomios de grado $n$).
+
+**Infraestructura ya disponible en el proyecto.**
+- Axioma de separación: `sep S P` (`ZFC/Axiom/Specification.lean`).
+- Pares ordenados Kuratowski: `⟨a, b⟩`, `fst`, `snd`, `OrderedPair_eq_iff` (`ZFC/SetOps/OrderedPair.lean`).
+- Producto cartesiano: `A ×ₛ B`, `OrderedPair_mem_CartesianProduct` (`ZFC/SetOps/CartesianProduct.lean`).
+- Funciones como conjuntos: `IsFunction f A B := f ⊆ A ×ₛ B ∧ ∀ x ∈ A, ∃! y, ⟨x,y⟩ ∈ f`.
+- Aplicación: `f⦅x⦆`, `apply_mem`, `apply_eq` (`ZFC/SetOps/Functions.lean`).
+- Naturales de Von Neumann: `ω`, `σ n`, `mem_succ_iff` (`ZFC/Nat/Basic.lean`, `ZFC/Axiom/Infinity.lean`).
+- Recursión sobre $\omega$: `RecursiveFn` (`ZFC/Induction/Recursion.lean`) — ya usada para sucesiones.
+- Sucesiones $\omega \to \mathbb{Q}$: `IsSeqQ` (`ZFC/Rat/Sequences.lean`) — patrón a seguir.
+
+**Definición propuesta — Tupla de longitud $n+1$ sobre $\Omega$.**
+
+Dados $n \in \omega$, un conjunto $\Omega \in U$ y una función "fuente" $f$ con $\mathrm{dom}(f) \supseteq \sigma n$ y valores en $\Omega$ (formalmente, $f$ tal que $\sigma n \times_s \Omega$ contiene la gráfica restringida), definimos
+$$
+\mathrm{tuple}(n, f, \Omega) \;:=\; \mathrm{sep}\,(\sigma n \times_s \Omega)\,\bigl(\lambda p.\; \mathrm{snd}(p) = f\!\left(\mathrm{fst}(p)\right)\bigr).
+$$
+Es decir, es el subconjunto de $\sigma n \times_s \Omega$ formado por los pares $\langle k, f(k)\rangle$ con $k \in \sigma n$. Esta es exactamente la gráfica de $f \restriction \sigma n$ vista como conjunto, y patrón ya validado en el proyecto (cf. `addSeqQ`, `tailSeqQ` en `ZFC/Rat/Convergence.lean`, `ZFC/Rat/Sequences.lean`).
+
+**Definición alternativa más algebraica — Tupla por enumeración explícita.** Cuando los coeficientes son fijos $a_0, \dots, a_n \in \Omega$ podemos construir la tupla sin necesidad de una función previa: por recursión sobre $n$,
+$$
+T_0(a_0) := \{\langle 0, a_0\rangle\}, \qquad
+T_{n+1}(a_0,\dots,a_{n+1}) := T_n(a_0,\dots,a_n) \cup \{\langle \sigma n, a_{n+1}\rangle\}.
+$$
+Esta definición conviene para escribir polinomios literales y se conecta con la primera vía recursión.
+
+**Predicado "ser una n-tupla".** En lugar de una definición posicional, podemos preferir el predicado
+$$
+\mathrm{IsTuple}(t, n, \Omega) \;:\Leftrightarrow\; \mathrm{IsFunction}(t,\,\sigma n,\,\Omega).
+$$
+Una n-tupla **es** una función con dominio $\sigma n$ y codominio $\Omega$. Esto reusa toda la maquinaria de funciones sin definiciones nuevas: el "elemento $i$-ésimo" es $t\!⦅i⦆$, la igualdad de tuplas se hereda de igualdad de funciones (extensionalidad), etc. **Recomiendo esta vía como definición primaria** y reservar `tuple n f Ω` como _constructor_ a partir de una función dada.
+
+**Lemas mínimos a probar (esqueleto).**
+1. `tuple_isFunction : IsFunction (tuple n f Ω) (σ n) Ω` — usando `mem_succ_iff` y `apply_eq` por el patrón de `addSeqQ_isSeqQ`.
+2. `tuple_apply : ∀ k ∈ σ n, (tuple n f Ω)⦅k⦆ = f⦅k⦆` — patrón de `addSeqQ_apply`.
+3. `tuple_ext : IsTuple t₁ n Ω → IsTuple t₂ n Ω → (∀ k ∈ σ n, t₁⦅k⦆ = t₂⦅k⦆) → t₁ = t₂` — extensionalidad de funciones.
+4. `tuple_zero_eq_singleton_pair : tuple ∅ f Ω = {⟨∅, f⦅∅⦆⟩}` — caso base.
+5. `tuple_succ_eq_union : tuple (σ n) f Ω = tuple n f Ω ∪ {⟨σ n, f⦅σ n⦆⟩}` — paso recursivo (puente entre las dos definiciones).
+
+**Concatenación y operaciones derivadas (para polinomios).**
+- `concat (s n) (t m) := s ∪ shift_by (σ n) t` donde `shift_by k t := { ⟨add k i, v⟩ : ⟨i, v⟩ ∈ t }` — concatena una tupla de longitud $n+1$ con una de longitud $m+1$ para dar una de longitud $n+m+2$. Necesita `add` en $\omega$ (ya lo tenemos: `ZFC/Nat/Add.lean`).
+- `head : tuple → Ω`, `tail : tuple → tuple` — útiles para polinomios mediante el isomorfismo recursivo $\Omega^{n+1} \cong \Omega \times \Omega^n$.
+- `update t i v := (t \setminus \{⟨i, t⦅i⦆⟩\}) ∪ \{⟨i, v⟩\}` — modificar una coordenada.
+
+**Ubicación sugerida en el árbol de módulos.**
+- `ZFC/SetOps/Tuple.lean` (nuevo): definiciones `tuple`, `IsTuple`, lemas básicos 1–5.
+- `ZFC/SetOps/TupleOps.lean` (nuevo): `concat`, `head`, `tail`, `update`, `shift_by`, isomorfismos.
+- Importar desde `ZFC/SetOps.lean` y desde donde se necesite (futuro `ZFC/Algebra/Polynomial.lean`).
+
+**Notación informal sugerida (sintaxis Lean).**
+- `⟨a₀, a₁, …, aₙ⟩ₜ` (subíndice `ₜ` para distinguir del par ordenado de Kuratowski). Implementable como macro de Lean que despliega a `tuple n (constructed from list)` o directamente como union iterada de singletons.
+- `t⦅i⦆` ya disponible para acceso por índice (porque las tuplas serán funciones).
+
+**Cuidado con el dominio.** Dos convenios posibles, **fija uno y mantenlo en todo el proyecto**:
+- (A) "Tupla de grado $n$" = tupla de longitud $n+1$, dominio $\sigma n = \{0,\dots,n\}$. Encaja con polinomios de grado $n$.
+- (B) "Tupla de longitud $n$", dominio $n = \{0,\dots,n-1\}$. Encaja con la convención clásica $\Omega^n$.
+
+Recomiendo **(A)** para polinomios (`tuple n f` ≡ polinomio de grado $\le n$ con coeficientes $f(0),\dots,f(n)$), y un alias `tupleOfLength k f := tuple (predecessor k) f` para casos en que se piense en longitud.
+
+**Compatibilidad con `RecursiveFn`.** Como `RecursiveFn` ya construye funciones $\omega \to A$ a partir de un valor inicial y un paso, una n-tupla puede obtenerse "truncando" una sucesión: `tuple n (RecursiveFn …) Ω`. Esto unifica el tratamiento con sucesiones y simplifica las pruebas.
+
+
+[13.] DESARROLLO DE POLINOMIOS: Para desarrollar la teoría de los números algebraicos, necesitaremos una teoría de polinomios. Esto incluirá la definición de polinomios, operaciones con polinomios (suma, producto, división), el concepto de raíz de un polinomio, el teorema del residuo, el teorema de factorización, y la definición de polinomio mínimo. Además, habrá que demostrar que el conjunto de números algebraicos es cerrado bajo las operaciones de suma, resta, multiplicación y división (excepto por cero), lo que implica que forman un cuerpo.
 
 Podemos definir un polinomio en una indeterminada $X$ de grado $n$ como una tupla de $n+1$ números racionales $\left< a₀, a₁, ..., aₙ \right>$ que representa el polinomio $a₀ + a₁X + a₂X² + ... + aₙXⁿ$, o incluso más fácil como una tupla de enteros multiplicada por un un racional positivo tipo $1 / n$ dónde $n ∈ \mathbb{N}_1$. Las operaciones de suma y producto de polinomios se pueden definir de manera estándar utilizando las operaciones de los coeficientes racionales. La división de polinomios se puede definir utilizando el algoritmo de división de polinomios, que también se basa en las operaciones con los coeficientes racionales.
 
@@ -201,14 +266,33 @@ inductive Polynomial : Type where
   | mk_int (z : IntSet) : Polynomial -- polinomio de grado 0 y coeficiente z
   | mk_rat (q : Rat) : Polynomial  -- polinomio de grado 0 y coeficiente q 
   | mk_from_monomial (mon : Monomial) : Polynomial -- un monomio es un polinomio
-  | mk Tuple (n+2) Integer : Polynomial
-  | mk_from_rats Tuple (n+1) Rat : Polynomial
-  | mk_from_list_of_monomials ( list : List Monomial ) : Polynomial 
+  | mk (tupla : Tuple (n+1) IntSet) (k : ℕ₁) : Polynomial
+  | mk_from_rats (tupla : Tuple (n+1) Rat) : Polynomial
+  | mk_from_list_of_monomials (list : List Monomial) : Polynomial 
+
+def mainCoefficient (P : Polynomial) : Rat := 
+    match P with
+    | Polynomial.mk_nat n => rat (int n)
+    | Polynomial.mk_int z => rat z
+    | Polynomial.mk_rat q => q
+    | Polynomial.mk_from_monomial mon => coeficiente mon
+    | Polynomial.mk Tuple tupla k => 
+        -- aquí habría que definir cómo extraer el coeficiente principal de un 
+        -- polinomio dado por una tupla de enteros
+        -- Dada una tupla de n+2 enteros, el coeficiente principal sería el n-ésimo 
+        -- elemento de la tupla dividido por natToIntSet k 
+        -- que es el denominador común de los coeficientes del polinomio.
+        -- En el caso que el n-ésimo elemento de la tupla fuese cero, el coeficiente principal
+        -- pasaría a considerarse el n-1-ésimo elemento de la tupla dividido por el valor
+        -- k, y así sucesivamente hasta encontrar el
+        -- primer elemento de la tupla que no sea cero, o llegar al elemento 0 de la tupla, 
+        -- en cuyo caso el coeficiente principal sería cero. 
+        
+    | Polynomial.mk_from_rats Tuple _ => -- aquí habría que definir cómo extraer el coeficiente principal de un polinomio dado por una tupla de racionales
+        sorry
+    | Polynomial.mk_from_list_of_monomials list => -- aquí habría que definir cómo extraer el coeficiente principal de un polinomio dado por una lista de monomios, que sería el coeficiente del monomio de mayor grado
+        sorry
 ```
-
-Lo que dará algo más de trabajo es definir la división de polinomios. Esto nos dará el anillo conmutativo de los polinomios con coeficientes racionales, que es un dominio de integridad, y luego el cuerpo de fracciones de ese anillo, que es el campo de los números racionales con una indeterminada, que es un cuerpo. Luego habrá que definir la raíz de un polinomio, que es un número $r$ tal que $P(r) = 0$, y el teorema del residuo, que establece que si $r$ es una raíz de un polinomio $P(X)$, entonces $P(X)$ es divisible por $X - r$. El teorema de factorización establece que cualquier polinomio se puede factorizar como un producto de factores irreducibles. El polinomio mínimo de un número algebraico $\alpha$ es el polinomio no nulo de menor grado con coeficientes racionales tal que $P(\alpha) = 0$.
-
-[13.] SOBRE RAT/SQRTAPPROX.LEAN: En vez de la secuencia cuyo cuadrado tiende a 2, podemos ofrecer un número natural n (en los racionales) tal que no exista un natural m (en los racionales) cuyo cuadrado sea n, y así tenemos todos los no cuadrados perfectos direccionados a la vez. diagmos que ponemos un predicado NotSquare n = true (decidible), y si es verdad ya tenemos dónde aplicar la computación de la serie de Cauchy, para obtener incompletitudes infinitas. Son inifnitas porque cada primo cumple.
 
 [14.] No tenemos una prueba que los primos son infinitos(dando un primo posterior a cualquiera primo dado). Si p es primo, entonces p! + 1 es primo. Si q := p! + 1 no es primo, cualquier número r entre 1 (no igual a 1) y q (sin incluir q), r no divide a q. Si (div q r)*r + (mod q r) = q = p! + 1, entonces si r | q, entonces (div q r)*r = q, lo que implica que (mod q r) = 0, lo que es una contradicción (sabemos que todos los factores de p! son menores o iguales a p, y esos factores no dividen a p! + 1). Por tanto, ningún número entre 1 y q divide a q, lo que implica que q es primo. Por tanto, dado un primo p, podemos encontrar un primo posterior a p, que es p! + 1. Hay afinar la prueba.
 

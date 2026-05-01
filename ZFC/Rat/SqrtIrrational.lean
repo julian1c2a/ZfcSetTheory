@@ -151,6 +151,48 @@ namespace ZFC
           h_bb_ne h_twoZint_ne
       exact h_prod_ne hLsq.symm
 
+    /-- Identidad puntual de la recurrencia Newton–Raphson:
+        para todo `n ∈ ω`, si `f := sqrtApproxSeq`, entonces
+        `2 · (f(σn) · f(n)) = f(n) · f(n) + 2`.
+
+        Sale de `f(σn) = (f(n) + 2/f(n)) / 2` multiplicando por `2·f(n)`
+        y usando que `f(n) > 0` (en particular `f(n) ≠ 0`). -/
+    private theorem sqrtApproxSeq_pointwise_identity (n : U) (hn : n ∈ (ω : U)) :
+        mulQ (twoQ : U) (mulQ ((sqrtApproxSeq : U)⦅σ n⦆) ((sqrtApproxSeq : U)⦅n⦆)) =
+        addQ (mulQ ((sqrtApproxSeq : U)⦅n⦆) ((sqrtApproxSeq : U)⦅n⦆)) (twoQ : U) := by
+      have hf : IsSeqQ (sqrtApproxSeq : U) := sqrtApproxSeq_isSeqQ
+      have hfn : (sqrtApproxSeq : U)⦅n⦆ ∈ (RatSet : U) :=
+        seqTermQ_mem_RatSet (sqrtApproxSeq : U) n hf hn
+      have hf_pos : isPositiveQ ((sqrtApproxSeq : U)⦅n⦆) := sqrtApproxSeq_pos n hn
+      have hfn_ne : (sqrtApproxSeq : U)⦅n⦆ ≠ (zeroQ : U) := fun h => hf_pos.2 h.symm
+      have h2 : (twoQ : U) ∈ (RatSet : U) := twoQ_mem
+      have h2_ne : (twoQ : U) ≠ (zeroQ : U) := twoQ_ne_zeroQ
+      have h2overFn : divQ (twoQ : U) ((sqrtApproxSeq : U)⦅n⦆) ∈ (RatSet : U) :=
+        divQ_in_RatSet (twoQ : U) ((sqrtApproxSeq : U)⦅n⦆) h2 hfn
+      have h_sum :
+          addQ ((sqrtApproxSeq : U)⦅n⦆) (divQ (twoQ : U) ((sqrtApproxSeq : U)⦅n⦆))
+            ∈ (RatSet : U) :=
+        addQ_in_RatSet ((sqrtApproxSeq : U)⦅n⦆)
+          (divQ (twoQ : U) ((sqrtApproxSeq : U)⦅n⦆)) hfn h2overFn
+      have h_succ : (sqrtApproxSeq : U)⦅σ n⦆ =
+          divQ (addQ ((sqrtApproxSeq : U)⦅n⦆)
+            (divQ (twoQ : U) ((sqrtApproxSeq : U)⦅n⦆))) (twoQ : U) :=
+        sqrtApproxSeq_apply_succ n hn
+      rw [h_succ]
+      rw [← mulQ_assoc (twoQ : U)
+            (divQ (addQ ((sqrtApproxSeq : U)⦅n⦆)
+              (divQ (twoQ : U) ((sqrtApproxSeq : U)⦅n⦆))) (twoQ : U))
+            ((sqrtApproxSeq : U)⦅n⦆)
+            h2 (divQ_in_RatSet _ _ h_sum h2) hfn]
+      rw [mulQ_divQ_cancel
+            (addQ ((sqrtApproxSeq : U)⦅n⦆)
+              (divQ (twoQ : U) ((sqrtApproxSeq : U)⦅n⦆)))
+            (twoQ : U) h_sum h2 h2_ne]
+      rw [mulQ_addQ_distrib_right ((sqrtApproxSeq : U)⦅n⦆)
+            (divQ (twoQ : U) ((sqrtApproxSeq : U)⦅n⦆))
+            ((sqrtApproxSeq : U)⦅n⦆) hfn h2overFn hfn]
+      rw [divQ_mulQ_cancel (twoQ : U) ((sqrtApproxSeq : U)⦅n⦆) h2 hfn hfn_ne]
+
     /-- La sucesión Newton–Raphson `sqrtApproxSeq` no tiene límite en ℚ.
         Esto demuestra que ℚ no es (secuencialmente) completo. -/
     theorem sqrtApproxSeq_not_convergent :
