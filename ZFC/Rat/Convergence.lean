@@ -1346,7 +1346,7 @@ namespace ZFC
         p ∈ (ω : U) ×ₛ (RatSet : U) ∧ snd p = invQ (f⦅fst p⦆) := by
       unfold invSeqQ; exact mem_sep_iff _ p _
 
-    private theorem invSeqQ_isSeqQ (f : U) (hf : IsSeqQ f) : IsSeqQ (invSeqQ f) := by
+    theorem invSeqQ_isSeqQ (f : U) (hf : IsSeqQ f) : IsSeqQ (invSeqQ f) := by
       unfold IsSeqQ
       constructor
       · intro p hp; exact ((invSeqQ_mem_iff f p).mp hp).1
@@ -1363,7 +1363,7 @@ namespace ZFC
           have h := ((invSeqQ_mem_iff f ⟨n, z⟩).mp hz).2
           rw [fst_of_ordered_pair, snd_of_ordered_pair] at h; exact h
 
-    private theorem invSeqQ_apply (f : U) (hf : IsSeqQ f)
+    theorem invSeqQ_apply (f : U) (hf : IsSeqQ f)
         (n : U) (hn : n ∈ (ω : U)) :
         (invSeqQ f)⦅n⦆ = invQ (f⦅n⦆) := by
       apply apply_eq _ n _ ((invSeqQ_isSeqQ f hf).2 n hn)
@@ -1659,4 +1659,7 @@ export ZFC.Rat.Convergence (
   convergesToQ_mul
   convergesToQ_inv
   convergesToQ_div
+  invSeqQ
+  invSeqQ_isSeqQ
+  invSeqQ_apply
 )
