@@ -72,10 +72,12 @@ def NewtonRaphsonSqrt
         )
 
 def sqrt (c : Constructible) (h : c ≥ 0) : Constructible
-    -- Aquí deberíamos demostrar que f es una sucesión de Cauchy y que su límite es la raíz cuadrada de c
+    -- Aquí deberíamos demostrar que f es una sucesión de Cauchy y 
+    -- que su límite es la raíz cuadrada de c
     -- Luego podríamos definir sqrt c como el límite de f (con un `existe ese límite`, 
     -- con la precisión necesaria que se pida) )
-    -- Debería devolver esta función sqrt como una aproximación de Newton-Raphson, y la prueba de que es de Cauchy y con una
+    -- Debería devolver esta función sqrt como una aproximación de Newton-Raphson, 
+    -- y la prueba de que es de Cauchy y con una
     -- tasa de convergencia que para n, m > N, |f(n)-f(m)| < 1/2^N, el límite es esa pareja 
 ```
 
@@ -107,19 +109,39 @@ $$
 x_0 = \text{IntitialApproximation } (c, h) \newline
 x_{n+1} = (\frac 1 n) * ((n-1) * x_n + \frac c {x_{n}^{(n-1)}})
 $$
+
 Todo lo demás se parece mucho a la situcación de los múmeros constructibles.
 
 [10.] SOBRE LOS NÚMEROS CONSTRUCTIBLES Y RADICALES: Ambos cuerpos no son completos, ya que hay sucesiones de Cauchy de números constructibles o radicales que no convergen a ningún número constructible o radical. Por ejemplo, la sucesión dada por el método de Newton para aproximar $\sqrt{2}$ es una sucesión de Cauchy de números racionales (que son constructibles), pero su límite $\sqrt{2}$ no es un número racional, por lo que no es un número constructible. Sin embargo, $\sqrt{2}$ sí es un número radical, ya que se puede expresar como la raíz cuadrada de 2, que es un número constructible. Habrá que demostrar que ambos cuerpos no son completos. Esto también habrá de hacerse con los números computables.
 
 [11.] SOBRE LOS NÚMEROS ALGEBRÁICOS: Este cuerpo requerirá la introducción de polinomios, toda una infraestructura de álgebra abstracta, y la demostración de que los números algebraicos forman un cuerpo. Además, habrá que demostrar que este cuerpo no es completo, ya que hay sucesiones de Cauchy de números algebraicos que no convergen a ningún número algebraico (por ejemplo, la sucesión dada por el método de Newton para aproximar $1 + \frac 1 {2!} + \frac 1 {3!} + \frac 1 {4!} + ... + \frac 1 {n!} + ...$ es una sucesión de Cauchy de números racionales, pero su límite $exp(1)$ no es un número algebraico (y habría que demostrarlo), por lo que no es un número algebraico). Para dar una definición computable de números algebraicos, el algoritmo es fuertemente más complejo, ya que no solo hay que dar una sucesión de racionales de Cauchy, sino también un algoritmo para encontrar el polinomio mínimo de ese número algebraico, y un algoritmo para encontrar las raíces de ese polinomio mínimo. De hecho no sé si valdrá con soluciones de polinomios en una indeterminada, o si tendremos que dar  soluciones de sistemas de polinomios en varias indeterminadas: es una duda que tengo.
 
-[12.] SOBRE RAT/SQRTAPPROX.LEAN: En vez de la secuencia cuyo cuadrado tiende a 2, podemos ofrecer un número natural n (en los racionales) tal que no exista un natural m (en los racionales) cuyo cuadrado sea n, y así tenemos todos los no cuadrados perfectos direccionados a la vez. diagmos que ponemos un predicado NotSquare n = true (decidible), y si es verdad ya tenemos dónde aplicar la computación de la serie de Cauchy, para obtener incompletitudes infinitas. Son inifnitas porque cada primo cumple.
+[12.] DESARROLLO DE POLINOMIOS: Para desarrollar la teoría de los números algebraicos, necesitaremos una teoría de polinomios. Esto incluirá la definición de polinomios, operaciones con polinomios (suma, producto, división), el concepto de raíz de un polinomio, el teorema del residuo, el teorema de factorización, y la definición de polinomio mínimo. Además, habrá que demostrar que el conjunto de números algebraicos es cerrado bajo las operaciones de suma, resta, multiplicación y división (excepto por cero), lo que implica que forman un cuerpo.
 
-[13.] No tenemos una prueba que los primos son infinitos(dando un primo posterior a cualquiera primo dado). Si p es primo, entonces p! + 1 es primo. Si q := p! + 1 no es primo, cualquier número r entre 1 (no igual a 1) y q (sin incluir q), r no divide a q. Si (div q r)*r + (mod q r) = q = p! + 1, entonces si r | q, entonces (div q r)*r = q, lo que implica que (mod q r) = 0, lo que es una contradicción (sabemos que todos los factores de p! son menores o iguales a p, y esos factores no dividen a p! + 1). Por tanto, ningún número entre 1 y q divide a q, lo que implica que q es primo. Por tanto, dado un primo p, podemos encontrar un primo posterior a p, que es p! + 1. Hay afinar la prueba.
+Podemos definir un polinomio en una indeterminada $X$ de grado $n$ como una tupla de $n+1$ números racionales $\left< a₀, a₁, ..., aₙ \right>$ que representa el polinomio $a₀ + a₁X + a₂X² + ... + aₙXⁿ$, o incluso más fácil como una tupla de enteros multiplicada por un un racional positivo tipo $1 / n$ dónde $n ∈ \mathbb{N}_1$. Las operaciones de suma y producto de polinomios se pueden definir de manera estándar utilizando las operaciones de los coeficientes racionales. La división de polinomios se puede definir utilizando el algoritmo de división de polinomios, que también se basa en las operaciones con los coeficientes racionales.
 
-[14.] Tenemos que completar el Teorema de Wilson (vendrá de Peano)
+```lean
+inductive Monomial (n : ℕ₀) : Type where
+  | mk : Nat → Integer → Nat → Monomial n
+  | mk_from_rat : Rat → Nat → Monomial n
+inductive Polynomial (n : ℕ₀) : Type where
+  | mk : Tuple (n+2) Integer → Polynomial n
+  | mk_from_rats : Tuple (n+1) Rat → Polynomial n
+```
 
-[15.] Tenemos que probar `cauchyQ_of_convergent_subseq f g L`
+La suma directa de polinomios será la suma de los coeficientes del mismo grado, y el producto de dos polinomios se puede definir utilizando la propiedad distributiva, es decir, multiplicando cada término de un polinomio por cada término del otro polinomio y luego sumando los resultados. Sería interesante tener una definición de monomio, que es un polinomio con un solo término, y luego definir el producto de monomios, que es simplemente la multiplicación de los coeficientes y la suma de los grados.
+
+Los polinomios en general serán de cualquier grado, por lo que habrá que definirlos como tuple n+2 integer como un tipo inductivo sobre las tuplas de enteros de tamaño n+2 (el extra es para el denominador), o bien la suma de dos tuplas de enteros, cada una con su grado, o bien como el producto de dos polinomios, cada uno con su grado.
+
+Lo que dará algo más de trabajo es definir la división de polinomios. Esto nos dará el anillo conmutativo de los polinomios con coeficientes racionales, que es un dominio de integridad, y luego el cuerpo de fracciones de ese anillo, que es el campo de los números racionales con una indeterminada, que es un cuerpo. Luego habrá que definir la raíz de un polinomio, que es un número $r$ tal que $P(r) = 0$, y el teorema del residuo, que establece que si $r$ es una raíz de un polinomio $P(X)$, entonces $P(X)$ es divisible por $X - r$. El teorema de factorización establece que cualquier polinomio se puede factorizar como un producto de factores irreducibles. El polinomio mínimo de un número algebraico $\alpha$ es el polinomio no nulo de menor grado con coeficientes racionales tal que $P(\alpha) = 0$.
+
+[13.] SOBRE RAT/SQRTAPPROX.LEAN: En vez de la secuencia cuyo cuadrado tiende a 2, podemos ofrecer un número natural n (en los racionales) tal que no exista un natural m (en los racionales) cuyo cuadrado sea n, y así tenemos todos los no cuadrados perfectos direccionados a la vez. diagmos que ponemos un predicado NotSquare n = true (decidible), y si es verdad ya tenemos dónde aplicar la computación de la serie de Cauchy, para obtener incompletitudes infinitas. Son inifnitas porque cada primo cumple.
+
+[14.] No tenemos una prueba que los primos son infinitos(dando un primo posterior a cualquiera primo dado). Si p es primo, entonces p! + 1 es primo. Si q := p! + 1 no es primo, cualquier número r entre 1 (no igual a 1) y q (sin incluir q), r no divide a q. Si (div q r)*r + (mod q r) = q = p! + 1, entonces si r | q, entonces (div q r)*r = q, lo que implica que (mod q r) = 0, lo que es una contradicción (sabemos que todos los factores de p! son menores o iguales a p, y esos factores no dividen a p! + 1). Por tanto, ningún número entre 1 y q divide a q, lo que implica que q es primo. Por tanto, dado un primo p, podemos encontrar un primo posterior a p, que es p! + 1. Hay afinar la prueba.
+
+[15.] Tenemos que completar el Teorema de Wilson (vendrá de Peano)
+
+[16.] Tenemos que probar `cauchyQ_of_convergent_subseq f g L`
 
 ---
 

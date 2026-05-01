@@ -429,41 +429,586 @@ namespace ZFC
                 (addQ_in_RatSet _ _ hfk (divQ_in_RatSet twoQ _ twoQ_mem hfk))
                 twoQ_pos h_sum
 
+    /-- mulQ twoQ x = addQ x x  (porque twoQ = 1+1, distributividad por la derecha). -/
+    private theorem mulQ_two_eq_addSelf (x : U) (hx : x ∈ (RatSet : U)) :
+        mulQ (twoQ : U) x = addQ x x := by
+      show mulQ (addQ (oneQ : U) (oneQ : U)) x = addQ x x
+      rw [mulQ_addQ_distrib_right (oneQ : U) (oneQ : U) x oneQ_mem_RatSet oneQ_mem_RatSet hx,
+          mulQ_one_left x hx]
+
+    /-- mulQ x twoQ = addQ x x. -/
+    private theorem mulQ_two_eq_addSelf' (x : U) (hx : x ∈ (RatSet : U)) :
+        mulQ x (twoQ : U) = addQ x x := by
+      rw [mulQ_comm x (twoQ : U) hx twoQ_mem]
+      exact mulQ_two_eq_addSelf x hx
+
+    /-- Producto de positivos es positivo. -/
+    private theorem mulQ_pos_of_pos_pos (x y : U)
+        (hx : x ∈ (RatSet : U)) (hy : y ∈ (RatSet : U))
+        (hx_pos : isPositiveQ x) (hy_pos : isPositiveQ y) :
+        isPositiveQ (mulQ x y) := by
+      have hxy := mulQ_in_RatSet x y hx hy
+      constructor
+      · have h := mulQ_leQ_mulQ_of_nonneg_right (zeroQ : U) x y
+                    zeroQ_mem_RatSet hx hy hx_pos.1 hy_pos.1
+        rwa [mulQ_zero_left y hy] at h
+      · intro h_eq
+        exact mulQ_ne_zeroQ x y hx hy hx_pos.2.symm hy_pos.2.symm h_eq.symm
+
+    /-- Cuadrado de algo no nulo es positivo. -/
+    private theorem mulQ_self_pos_of_ne_zero (x : U)
+        (hx : x ∈ (RatSet : U)) (hx_ne : x ≠ (zeroQ : U)) :
+        isPositiveQ (mulQ x x) := by
+      have hxx := mulQ_in_RatSet x x hx hx
+      have hxx_ne : mulQ x x ≠ (zeroQ : U) := mulQ_ne_zeroQ x x hx hx hx_ne hx_ne
+      constructor
+      · -- Caso por leQ_total: si zeroQ ≤ x, usar mulQ_leQ_mulQ_of_nonneg_right;
+        -- si x ≤ zeroQ, usar negQ.
+        rcases leQ_total (zeroQ : U) x zeroQ_mem_RatSet hx with h | h
+        · have h1 := mulQ_leQ_mulQ_of_nonneg_right (zeroQ : U) x x
+                       zeroQ_mem_RatSet hx hx h h
+          rwa [mulQ_zero_left x hx] at h1
+        · -- x ≤ 0, entonces -x ≥ 0, y x*x = (-x)*(-x) ≥ 0
+          have h_neg_pos : leQ (zeroQ : U) (negQ x) := by
+            have := addQ_leQ_addQ x (zeroQ : U) (negQ x) hx zeroQ_mem_RatSet
+                      (negQ_in_RatSet x hx) h
+            rwa [negQ_addQ_right x hx, addQ_zero_left (negQ x) (negQ_in_RatSet x hx)] at this
+          have h2 := mulQ_leQ_mulQ_of_nonneg_right (zeroQ : U) (negQ x) (negQ x)
+                       zeroQ_mem_RatSet (negQ_in_RatSet x hx) (negQ_in_RatSet x hx)
+                       h_neg_pos h_neg_pos
+          rw [mulQ_zero_left (negQ x) (negQ_in_RatSet x hx)] at h2
+          -- (negQ x) * (negQ x) = x * x
+          have h_eq : mulQ (negQ x) (negQ x) = mulQ x x := by
+            rw [← negQ_mulQ_left x (negQ x) hx (negQ_in_RatSet x hx),
+                ← negQ_mulQ_right x x hx hx]
+            exact negQ_negQ (mulQ x x) hxx
+          rwa [h_eq] at h2
+      · exact fun h => hxx_ne h.symm
+
+    /-- Identidad clave: para `x ∈ ℚ` con `x ≠ 0`, `mulQ twoQ (mulQ (invQ twoQ) x) = x`. -/
+    private theorem mulQ_two_invTwo (x : U) (hx : x ∈ (RatSet : U)) :
+        mulQ (twoQ : U) (mulQ (invQ (twoQ : U)) x) = x := by
+      have hinv := invQ_in_RatSet (twoQ : U) twoQ_mem
+      rw [← mulQ_assoc (twoQ : U) (invQ (twoQ : U)) x twoQ_mem hinv hx,
+          mulQ_invQ_right (twoQ : U) twoQ_mem twoQ_ne_zeroQ,
+          mulQ_one_left x hx]
+
+    /-- Multiplicación por positivo preserva orden estricto (izquierda). -/
+    private theorem mulQ_pos_ltQ_left (a b c : U)
+        (ha : a ∈ (RatSet : U)) (hb : b ∈ (RatSet : U)) (hc : c ∈ (RatSet : U))
+        (ha_pos : isPositiveQ a) (h : ltQ b c) : ltQ (mulQ a b) (mulQ a c) :=
+      ⟨mulQ_leQ_mulQ_of_nonneg_left a b c ha hb hc h.1 ha_pos.1,
+       fun h_eq => h.2 (mulQ_left_cancel b c a hb hc ha ha_pos.2.symm h_eq)⟩
+
+    /-- Cancelación de positivo (izquierda) preservando ltQ. -/
+    private theorem ltQ_of_mulQ_pos_ltQ_left (a b c : U)
+        (ha : a ∈ (RatSet : U)) (hb : b ∈ (RatSet : U)) (hc : c ∈ (RatSet : U))
+        (ha_pos : isPositiveQ a) (h : ltQ (mulQ a b) (mulQ a c)) : ltQ b c := by
+      refine ⟨?_, fun heq => h.2 (by rw [heq])⟩
+      rcases leQ_total b c hb hc with hbc | hcb
+      · exact hbc
+      · exfalso
+        have h_le : leQ (mulQ a c) (mulQ a b) :=
+          mulQ_leQ_mulQ_of_nonneg_left a c b ha hc hb hcb ha_pos.1
+        exact h.2 (leQ_antisymm (mulQ a b) (mulQ a c)
+          (mulQ_in_RatSet a b ha hb) (mulQ_in_RatSet a c ha hc) h.1 h_le)
 
     /-- Every term satisfies f(n)² > 2. -/
     theorem sqrtApproxSeq_sq_gt_two (n : U) (hn : n ∈ (ω : U)) :
         ltQ (addQ (oneQ : U) (oneQ : U))
           (mulQ ((sqrtApproxSeq : U)⦅n⦆) ((sqrtApproxSeq : U)⦅n⦆)) := by
-      sorry
-      /- Proof by induction on n:
-         Base: f(0) = 3/2, f(0)² = 9/4 > 2 = 8/4. Arithmetic in ℚ.
-         Step: use the identity
-           f(n+1)² − 2 = ((f(n)² − 2) / (2·f(n)))²  ≥ 0, hence f(n+1)² ≥ 2.
-         More precisely:
-           f(n+1) = (f(n) + 2/f(n))/2
-           f(n+1)² = (f(n)² + 4 + 4/f(n)²) / 4
-           f(n+1)² − 2 = (f(n)² − 2)² / (4·f(n)²) > 0  (since f(n) > 0). -/
+      let P : U → Prop := fun k => ltQ (addQ (oneQ : U) (oneQ : U))
+                                        (mulQ ((sqrtApproxSeq : U)⦅k⦆) ((sqrtApproxSeq : U)⦅k⦆))
+      let S := sep (ω : U) P
+      suffices hS : S = ω by
+        have hmem : n ∈ S := by rw [hS]; exact hn
+        exact ((mem_sep_iff (ω : U) n P).mp hmem).2
+      apply induction_principle S
+      · exact fun x hx => ((mem_sep_iff (ω : U) x P).mp hx).1
+      · -- Base: f(0) = threeHalvesQ. (3/2)² = 9/4 > 2 = 8/4.
+        -- Proof: write threeHalvesQ = 1 + h, then (1+h)² = 2 + h², and h² > 0.
+        rw [mem_sep_iff]
+        refine ⟨zero_in_Omega, ?_⟩
+        show ltQ (addQ oneQ oneQ) (mulQ (sqrtApproxSeq⦅(∅ : U)⦆) (sqrtApproxSeq⦅(∅ : U)⦆))
+        rw [sqrtApproxSeq_apply_zero]
+        -- Set h = 1/2
+        have hh : invQ (twoQ : U) ∈ (RatSet : U) := invQ_in_RatSet (twoQ : U) twoQ_mem
+        have hh_pos : isPositiveQ (invQ (twoQ : U)) := invQ_pos (twoQ : U) twoQ_mem twoQ_pos
+        have hh_ne : invQ (twoQ : U) ≠ (zeroQ : U) := hh_pos.2.symm
+        have h_2h : mulQ (twoQ : U) (invQ (twoQ : U)) = (oneQ : U) :=
+          mulQ_invQ_right (twoQ : U) twoQ_mem twoQ_ne_zeroQ
+        have h_hh : addQ (invQ (twoQ : U)) (invQ (twoQ : U)) = (oneQ : U) := by
+          rw [← mulQ_two_eq_addSelf (invQ (twoQ : U)) hh]; exact h_2h
+        -- threeHalvesQ = 1 + h
+        have h_3h : (threeHalvesQ : U) = addQ (oneQ : U) (invQ (twoQ : U)) := by
+          show divQ (threeQ : U) (twoQ : U) = addQ (oneQ : U) (invQ (twoQ : U))
+          show mulQ (threeQ : U) (invQ (twoQ : U)) = addQ (oneQ : U) (invQ (twoQ : U))
+          show mulQ (addQ (oneQ : U) (twoQ : U)) (invQ (twoQ : U)) = addQ (oneQ : U) (invQ (twoQ : U))
+          rw [mulQ_addQ_distrib_right (oneQ : U) (twoQ : U) (invQ (twoQ : U))
+                oneQ_mem_RatSet twoQ_mem hh,
+              mulQ_one_left (invQ (twoQ : U)) hh, h_2h,
+              addQ_comm (invQ (twoQ : U)) (oneQ : U) hh oneQ_mem_RatSet]
+        -- (1 + h)² = 2 + h² (algebraic identity)
+        have hone_h : addQ (oneQ : U) (invQ (twoQ : U)) ∈ (RatSet : U) :=
+          addQ_in_RatSet (oneQ : U) (invQ (twoQ : U)) oneQ_mem_RatSet hh
+        have hh_h : mulQ (invQ (twoQ : U)) (invQ (twoQ : U)) ∈ (RatSet : U) :=
+          mulQ_in_RatSet (invQ (twoQ : U)) (invQ (twoQ : U)) hh hh
+        have hsq : mulQ (threeHalvesQ : U) (threeHalvesQ : U) =
+            addQ (twoQ : U) (mulQ (invQ (twoQ : U)) (invQ (twoQ : U))) := by
+          show mulQ (threeHalvesQ : U) (threeHalvesQ : U) =
+            addQ (addQ (oneQ : U) (oneQ : U)) (mulQ (invQ (twoQ : U)) (invQ (twoQ : U)))
+          rw [h_3h,
+              mulQ_addQ_distrib_left (addQ (oneQ : U) (invQ (twoQ : U))) (oneQ : U) (invQ (twoQ : U))
+                hone_h oneQ_mem_RatSet hh,
+              mulQ_one_right (addQ (oneQ : U) (invQ (twoQ : U))) hone_h,
+              mulQ_addQ_distrib_right (oneQ : U) (invQ (twoQ : U)) (invQ (twoQ : U))
+                oneQ_mem_RatSet hh hh,
+              mulQ_one_left (invQ (twoQ : U)) hh,
+              addQ_assoc (oneQ : U) (invQ (twoQ : U))
+                (addQ (invQ (twoQ : U)) (mulQ (invQ (twoQ : U)) (invQ (twoQ : U))))
+                oneQ_mem_RatSet hh
+                (addQ_in_RatSet (invQ (twoQ : U)) (mulQ (invQ (twoQ : U)) (invQ (twoQ : U))) hh hh_h),
+              ← addQ_assoc (invQ (twoQ : U)) (invQ (twoQ : U))
+                (mulQ (invQ (twoQ : U)) (invQ (twoQ : U))) hh hh hh_h,
+              h_hh,
+              ← addQ_assoc (oneQ : U) (oneQ : U) (mulQ (invQ (twoQ : U)) (invQ (twoQ : U)))
+                oneQ_mem_RatSet oneQ_mem_RatSet hh_h]
+        rw [hsq]
+        -- Now: ltQ twoQ (addQ twoQ (h*h)). h*h > 0 since h ≠ 0.
+        have hh_h_pos : isPositiveQ (mulQ (invQ (twoQ : U)) (invQ (twoQ : U))) :=
+          mulQ_self_pos_of_ne_zero (invQ (twoQ : U)) hh hh_ne
+        refine ⟨?_, ?_⟩
+        · -- leQ twoQ (twoQ + h*h)
+          have step := addQ_leQ_addQ (zeroQ : U) (mulQ (invQ (twoQ : U)) (invQ (twoQ : U)))
+            (twoQ : U) zeroQ_mem_RatSet hh_h twoQ_mem hh_h_pos.1
+          rw [addQ_zero_left (twoQ : U) twoQ_mem,
+              addQ_comm (mulQ (invQ (twoQ : U)) (invQ (twoQ : U))) (twoQ : U) hh_h twoQ_mem] at step
+          exact step
+        · -- twoQ ≠ twoQ + h*h
+          intro h_eq
+          have h_zero : mulQ (invQ (twoQ : U)) (invQ (twoQ : U)) = (zeroQ : U) := by
+            have step : addQ (negQ (twoQ : U)) (twoQ : U) =
+                addQ (negQ (twoQ : U)) (addQ (twoQ : U) (mulQ (invQ (twoQ : U)) (invQ (twoQ : U)))) :=
+              congrArg (fun y => addQ (negQ (twoQ : U)) y) h_eq
+            rw [negQ_addQ_left (twoQ : U) twoQ_mem,
+                ← addQ_assoc (negQ (twoQ : U)) (twoQ : U)
+                  (mulQ (invQ (twoQ : U)) (invQ (twoQ : U)))
+                  (negQ_in_RatSet (twoQ : U) twoQ_mem) twoQ_mem hh_h,
+                negQ_addQ_left (twoQ : U) twoQ_mem,
+                addQ_zero_left (mulQ (invQ (twoQ : U)) (invQ (twoQ : U))) hh_h] at step
+            exact step.symm
+          exact hh_h_pos.2 h_zero.symm
+      · -- Inductive step
+        intro k hk_S
+        rw [mem_sep_iff] at hk_S ⊢
+        obtain ⟨hk, hk_sq⟩ := hk_S
+        refine ⟨succ_in_Omega k hk, ?_⟩
+        -- IH hk_sq: 2 < f(k)²
+        let fk : U := (sqrtApproxSeq : U)⦅k⦆
+        have hfk : fk ∈ (RatSet : U) := seqTermQ_mem_RatSet sqrtApproxSeq k sqrtApproxSeq_isSeqQ hk
+        have hfk_pos : isPositiveQ fk := sqrtApproxSeq_pos k hk
+        have hfk_ne : fk ≠ (zeroQ : U) := hfk_pos.2.symm
+        have hfk_inv := invQ_in_RatSet fk hfk
+        -- a = h*fk, b = invQ fk
+        have hh : invQ (twoQ : U) ∈ (RatSet : U) := invQ_in_RatSet (twoQ : U) twoQ_mem
+        have hh_ne : invQ (twoQ : U) ≠ (zeroQ : U) :=
+          (invQ_pos (twoQ : U) twoQ_mem twoQ_pos).2.symm
+        have h_2h : mulQ (twoQ : U) (invQ (twoQ : U)) = (oneQ : U) :=
+          mulQ_invQ_right (twoQ : U) twoQ_mem twoQ_ne_zeroQ
+        let a : U := mulQ (invQ (twoQ : U)) fk
+        let b : U := invQ fk
+        have ha : a ∈ (RatSet : U) := mulQ_in_RatSet (invQ (twoQ : U)) fk hh hfk
+        have hb : b ∈ (RatSet : U) := hfk_inv
+        -- f(σk) = a + b
+        have h_fsk_eq : (sqrtApproxSeq : U)⦅σ k⦆ = addQ a b := by
+          rw [sqrtApproxSeq_apply_succ k hk]
+          show divQ (addQ fk (divQ (twoQ : U) fk)) (twoQ : U) = addQ a b
+          show mulQ (addQ fk (divQ (twoQ : U) fk)) (invQ (twoQ : U)) = addQ a b
+          rw [mulQ_addQ_distrib_right fk (divQ (twoQ : U) fk) (invQ (twoQ : U)) hfk
+                (divQ_in_RatSet (twoQ : U) fk twoQ_mem hfk) hh,
+              mulQ_comm fk (invQ (twoQ : U)) hfk hh]
+          show addQ a (mulQ (mulQ (twoQ : U) (invQ fk)) (invQ (twoQ : U))) = addQ a b
+          rw [mulQ_assoc (twoQ : U) (invQ fk) (invQ (twoQ : U)) twoQ_mem hfk_inv hh,
+              mulQ_comm (invQ fk) (invQ (twoQ : U)) hfk_inv hh,
+              ← mulQ_assoc (twoQ : U) (invQ (twoQ : U)) (invQ fk) twoQ_mem hh hfk_inv,
+              h_2h, mulQ_one_left (invQ fk) hfk_inv]
+        -- a*b = h
+        have h_ab_eq : mulQ a b = invQ (twoQ : U) := by
+          show mulQ (mulQ (invQ (twoQ : U)) fk) (invQ fk) = invQ (twoQ : U)
+          rw [mulQ_assoc (invQ (twoQ : U)) fk (invQ fk) hh hfk hfk_inv,
+              mulQ_invQ_right fk hfk hfk_ne,
+              mulQ_one_right (invQ (twoQ : U)) hh]
+        -- 2*(a*b) = 1
+        have h_2ab : mulQ (twoQ : U) (mulQ a b) = (oneQ : U) := by rw [h_ab_eq]; exact h_2h
+        -- (a+b)+(a+b) = (a+b)+(a+b) ... actually we just need (ab+ab) = 1
+        have h_abab : addQ (mulQ a b) (mulQ a b) = (oneQ : U) := by
+          rw [← mulQ_two_eq_addSelf (mulQ a b) (mulQ_in_RatSet a b ha hb)]
+          exact h_2ab
+        -- Helper: (a+b)*(a+b) = aa + bb + 1
+        have hab := mulQ_in_RatSet a b ha hb
+        have haa := mulQ_in_RatSet a a ha ha
+        have hbb := mulQ_in_RatSet b b hb hb
+        have h_lhs : mulQ (addQ a b) (addQ a b) =
+            addQ (addQ (mulQ a a) (mulQ b b)) (oneQ : U) := by
+          rw [mulQ_addQ_distrib_left (addQ a b) a b (addQ_in_RatSet a b ha hb) ha hb,
+              mulQ_addQ_distrib_right a b a ha hb ha,
+              mulQ_addQ_distrib_right a b b ha hb hb,
+              mulQ_comm b a hb ha]
+          -- (aa + ab) + (ab + bb) = aa + ab + ab + bb
+          rw [addQ_assoc (mulQ a a) (mulQ a b) (addQ (mulQ a b) (mulQ b b))
+                haa hab (addQ_in_RatSet (mulQ a b) (mulQ b b) hab hbb),
+              ← addQ_assoc (mulQ a b) (mulQ a b) (mulQ b b) hab hab hbb,
+              h_abab,
+              addQ_comm (oneQ : U) (mulQ b b) oneQ_mem_RatSet hbb,
+              ← addQ_assoc (mulQ a a) (mulQ b b) (oneQ : U) haa hbb oneQ_mem_RatSet]
+        -- Helper: (a-b)*(a-b) = aa + bb + (-1)
+        have h_rhs_subQ : mulQ (subQ a b) (subQ a b) =
+            addQ (addQ (mulQ a a) (mulQ b b)) (negQ (oneQ : U)) := by
+          show mulQ (addQ a (negQ b)) (addQ a (negQ b)) = _
+          rw [mulQ_addQ_distrib_left (addQ a (negQ b)) a (negQ b)
+                (addQ_in_RatSet a (negQ b) ha (negQ_in_RatSet b hb)) ha (negQ_in_RatSet b hb),
+              mulQ_addQ_distrib_right a (negQ b) a ha (negQ_in_RatSet b hb) ha,
+              mulQ_addQ_distrib_right a (negQ b) (negQ b) ha (negQ_in_RatSet b hb) (negQ_in_RatSet b hb),
+              mulQ_comm (negQ b) a (negQ_in_RatSet b hb) ha,
+              ← negQ_mulQ_right a b ha hb,
+              ← negQ_mulQ_left b (negQ b) hb (negQ_in_RatSet b hb),
+              ← negQ_mulQ_right b b hb hb,
+              negQ_negQ (mulQ b b) hbb]
+          -- (aa + (-ab)) + ((-ab) + bb)
+          rw [addQ_assoc (mulQ a a) (negQ (mulQ a b)) (addQ (negQ (mulQ a b)) (mulQ b b))
+                haa (negQ_in_RatSet (mulQ a b) hab)
+                (addQ_in_RatSet (negQ (mulQ a b)) (mulQ b b) (negQ_in_RatSet (mulQ a b) hab) hbb),
+              ← addQ_assoc (negQ (mulQ a b)) (negQ (mulQ a b)) (mulQ b b)
+                (negQ_in_RatSet (mulQ a b) hab) (negQ_in_RatSet (mulQ a b) hab) hbb]
+          -- now: aa + ((-ab + -ab) + bb)
+          -- want to show -ab + -ab = -1
+          have h_neg_abab : addQ (negQ (mulQ a b)) (negQ (mulQ a b)) = negQ (oneQ : U) := by
+            -- (-ab) + (-ab) = -(ab+ab) = -1
+            have h_ne_ab := negQ_in_RatSet (mulQ a b) hab
+            have h_neg_pair : addQ (negQ (mulQ a b)) (negQ (mulQ a b)) ∈ (RatSet : U) :=
+              addQ_in_RatSet _ _ h_ne_ab h_ne_ab
+            have hcancel : addQ (oneQ : U) (addQ (negQ (mulQ a b)) (negQ (mulQ a b))) = (zeroQ : U) := by
+              rw [← h_abab,
+                  addQ_assoc (mulQ a b) (mulQ a b) (addQ (negQ (mulQ a b)) (negQ (mulQ a b)))
+                    hab hab h_neg_pair,
+                  ← addQ_assoc (mulQ a b) (negQ (mulQ a b)) (negQ (mulQ a b))
+                    hab h_ne_ab h_ne_ab,
+                  negQ_addQ_right (mulQ a b) hab,
+                  addQ_zero_left (negQ (mulQ a b)) h_ne_ab,
+                  negQ_addQ_right (mulQ a b) hab]
+            -- From 1 + (-ab + -ab) = 0, conclude -ab + -ab = -1.
+            -- Step: (-ab)+(-ab) = 0 + ((-ab)+(-ab)) = (-1 + 1) + ... = -1 + (1 + ((-ab)+(-ab))) = -1 + 0 = -1
+            calc addQ (negQ (mulQ a b)) (negQ (mulQ a b))
+                = addQ (zeroQ : U) (addQ (negQ (mulQ a b)) (negQ (mulQ a b))) :=
+                    (addQ_zero_left _ h_neg_pair).symm
+              _ = addQ (addQ (negQ (oneQ : U)) (oneQ : U))
+                    (addQ (negQ (mulQ a b)) (negQ (mulQ a b))) := by
+                    rw [negQ_addQ_left (oneQ : U) oneQ_mem_RatSet]
+              _ = addQ (negQ (oneQ : U)) (addQ (oneQ : U)
+                    (addQ (negQ (mulQ a b)) (negQ (mulQ a b)))) := by
+                    rw [addQ_assoc (negQ (oneQ : U)) (oneQ : U)
+                        (addQ (negQ (mulQ a b)) (negQ (mulQ a b)))
+                        (negQ_in_RatSet (oneQ : U) oneQ_mem_RatSet) oneQ_mem_RatSet h_neg_pair]
+              _ = addQ (negQ (oneQ : U)) (zeroQ : U) := by rw [hcancel]
+              _ = negQ (oneQ : U) := addQ_zero_right _ (negQ_in_RatSet (oneQ : U) oneQ_mem_RatSet)
+          rw [h_neg_abab,
+              addQ_comm (negQ (oneQ : U)) (mulQ b b)
+                (negQ_in_RatSet (oneQ : U) oneQ_mem_RatSet) hbb,
+              ← addQ_assoc (mulQ a a) (mulQ b b) (negQ (oneQ : U)) haa hbb
+                (negQ_in_RatSet (oneQ : U) oneQ_mem_RatSet)]
+        -- Combine: 2 + (a-b)² = 2 + (aa + bb + (-1)) = (aa + bb) + (2 + (-1)) = (aa + bb) + 1 = (a+b)²
+        have h_2_neg1 : addQ (twoQ : U) (negQ (oneQ : U)) = (oneQ : U) := by
+          show addQ (addQ (oneQ : U) (oneQ : U)) (negQ (oneQ : U)) = (oneQ : U)
+          rw [addQ_assoc (oneQ : U) (oneQ : U) (negQ (oneQ : U)) oneQ_mem_RatSet oneQ_mem_RatSet
+                (negQ_in_RatSet (oneQ : U) oneQ_mem_RatSet),
+              negQ_addQ_right (oneQ : U) oneQ_mem_RatSet,
+              addQ_zero_right (oneQ : U) oneQ_mem_RatSet]
+        have hX := addQ_in_RatSet (mulQ a a) (mulQ b b) haa hbb
+        have hab_sq : mulQ (addQ a b) (addQ a b) =
+            addQ (twoQ : U) (mulQ (subQ a b) (subQ a b)) := by
+          rw [h_lhs, h_rhs_subQ,
+              ← addQ_assoc (twoQ : U) (addQ (mulQ a a) (mulQ b b)) (negQ (oneQ : U))
+                twoQ_mem hX (negQ_in_RatSet (oneQ : U) oneQ_mem_RatSet),
+              addQ_comm (twoQ : U) (addQ (mulQ a a) (mulQ b b)) twoQ_mem hX,
+              addQ_assoc (addQ (mulQ a a) (mulQ b b)) (twoQ : U) (negQ (oneQ : U))
+                hX twoQ_mem (negQ_in_RatSet (oneQ : U) oneQ_mem_RatSet),
+              h_2_neg1]
+        show ltQ (addQ (oneQ : U) (oneQ : U))
+               (mulQ ((sqrtApproxSeq : U)⦅σ k⦆) ((sqrtApproxSeq : U)⦅σ k⦆))
+        rw [h_fsk_eq, hab_sq]
+        -- Now we have ltQ twoQ (twoQ + (subQ a b)²)
+        -- Need subQ a b ≠ 0, equivalently a ≠ b, i.e., h*fk ≠ invQ fk
+        -- which is fk² ≠ twoQ (cross-multiply by fk and twoQ).
+        have h_a_ne_b : a ≠ b := by
+          intro h_eq
+          -- a = b → fk*a = fk*b → fk*(h*fk) = fk*(invQ fk) = 1
+          --       → h*(fk*fk) = 1 → fk*fk = twoQ (multiply by twoQ)
+          -- contradicting hk_sq.2
+          have h1 : mulQ fk a = mulQ fk b := congrArg (mulQ fk) h_eq
+          -- mulQ fk a = mulQ fk (mulQ h fk) = mulQ h (mulQ fk fk)
+          have h2 : mulQ fk a = mulQ (invQ (twoQ : U)) (mulQ fk fk) := by
+            show mulQ fk (mulQ (invQ (twoQ : U)) fk) = mulQ (invQ (twoQ : U)) (mulQ fk fk)
+            rw [← mulQ_assoc fk (invQ (twoQ : U)) fk hfk hh hfk,
+                mulQ_comm fk (invQ (twoQ : U)) hfk hh,
+                mulQ_assoc (invQ (twoQ : U)) fk fk hh hfk hfk]
+          have h3 : mulQ fk b = (oneQ : U) := mulQ_invQ_right fk hfk hfk_ne
+          have h4 : mulQ (invQ (twoQ : U)) (mulQ fk fk) = (oneQ : U) := h2.symm.trans (h1.trans h3)
+          -- Multiply both sides by twoQ on the left
+          have h5 : mulQ (twoQ : U) (mulQ (invQ (twoQ : U)) (mulQ fk fk)) =
+                    mulQ (twoQ : U) (oneQ : U) := congrArg (mulQ (twoQ : U)) h4
+          rw [mulQ_two_invTwo (mulQ fk fk) (mulQ_in_RatSet fk fk hfk hfk),
+              mulQ_one_right (twoQ : U) twoQ_mem] at h5
+          -- h5 : mulQ fk fk = twoQ. But hk_sq.2 says twoQ ≠ mulQ fk fk
+          exact hk_sq.2 h5.symm
+        have h_sub_ne : subQ a b ≠ (zeroQ : U) := by
+          intro h_eq
+          apply h_a_ne_b
+          calc a = addQ a (zeroQ : U) := (addQ_zero_right a ha).symm
+            _ = addQ a (addQ (negQ b) b) := by rw [negQ_addQ_left b hb]
+            _ = addQ (addQ a (negQ b)) b := by
+                rw [← addQ_assoc a (negQ b) b ha (negQ_in_RatSet b hb) hb]
+            _ = addQ (subQ a b) b := rfl
+            _ = addQ (zeroQ : U) b := by rw [h_eq]
+            _ = b := addQ_zero_left b hb
+        have h_sub_mem : subQ a b ∈ (RatSet : U) := addQ_in_RatSet a (negQ b) ha (negQ_in_RatSet b hb)
+        have h_sub_sq_pos : isPositiveQ (mulQ (subQ a b) (subQ a b)) :=
+          mulQ_self_pos_of_ne_zero (subQ a b) h_sub_mem h_sub_ne
+        have h_sub_sq_mem : mulQ (subQ a b) (subQ a b) ∈ (RatSet : U) :=
+          mulQ_in_RatSet _ _ h_sub_mem h_sub_mem
+        refine ⟨?_, ?_⟩
+        · -- leQ twoQ (twoQ + (subQ a b)²)
+          have step := addQ_leQ_addQ (zeroQ : U) (mulQ (subQ a b) (subQ a b)) (twoQ : U)
+            zeroQ_mem_RatSet h_sub_sq_mem twoQ_mem h_sub_sq_pos.1
+          rw [addQ_zero_left (twoQ : U) twoQ_mem,
+              addQ_comm (mulQ (subQ a b) (subQ a b)) (twoQ : U) h_sub_sq_mem twoQ_mem] at step
+          -- step : leQ twoQ (twoQ + (sub a b)²) but the goal has addQ oneQ oneQ in place of twoQ
+          show leQ (addQ (oneQ : U) (oneQ : U)) (addQ (twoQ : U) (mulQ (subQ a b) (subQ a b)))
+          exact step
+        · intro h_eq
+          have h_zero : mulQ (subQ a b) (subQ a b) = (zeroQ : U) := by
+            have step : addQ (negQ (twoQ : U)) (twoQ : U) =
+                addQ (negQ (twoQ : U)) (addQ (twoQ : U) (mulQ (subQ a b) (subQ a b))) :=
+              congrArg (fun y => addQ (negQ (twoQ : U)) y) h_eq
+            rw [negQ_addQ_left (twoQ : U) twoQ_mem,
+                ← addQ_assoc (negQ (twoQ : U)) (twoQ : U) (mulQ (subQ a b) (subQ a b))
+                  (negQ_in_RatSet (twoQ : U) twoQ_mem) twoQ_mem h_sub_sq_mem,
+                negQ_addQ_left (twoQ : U) twoQ_mem,
+                addQ_zero_left (mulQ (subQ a b) (subQ a b)) h_sub_sq_mem] at step
+            exact step.symm
+          exact h_sub_sq_pos.2 h_zero.symm
 
     /-- Every term satisfies f(n) ≥ 1. -/
     theorem sqrtApproxSeq_ge_one (n : U) (hn : n ∈ (ω : U)) :
         leQ (oneQ : U) ((sqrtApproxSeq : U)⦅n⦆) := by
-      sorry
-      /- Proof: from sqrtApproxSeq_pos and sqrtApproxSeq_sq_gt_two.
-         If f(n) > 0 and f(n)² > 2 > 1, then f(n) > 1 ≥ 1.
-         More precisely: if 0 < f(n) < 1, then f(n)² < f(n) < 1 < 2, contradiction.
-         So f(n) ≥ 1.
-         Uses: ltQ_mulQ_pos, ltQ_trans, and the assumption f(n)² > 2. -/
+      let x : U := (sqrtApproxSeq : U)⦅n⦆
+      have hx : x ∈ (RatSet : U) :=
+        seqTermQ_mem_RatSet sqrtApproxSeq n sqrtApproxSeq_isSeqQ hn
+      have hx_pos : isPositiveQ x := sqrtApproxSeq_pos n hn
+      have hxx_gt_two : ltQ (addQ (oneQ : U) (oneQ : U)) (mulQ x x) :=
+        sqrtApproxSeq_sq_gt_two n hn
+      have hxx_mem : mulQ x x ∈ (RatSet : U) := mulQ_in_RatSet x x hx hx
+      have h11 : addQ (oneQ : U) (oneQ : U) ∈ (RatSet : U) :=
+        addQ_in_RatSet (oneQ : U) (oneQ : U) oneQ_mem_RatSet oneQ_mem_RatSet
+      -- 1 < 1+1
+      have h_one_lt_two : ltQ (oneQ : U) (addQ (oneQ : U) (oneQ : U)) := by
+        refine ⟨?_, ?_⟩
+        · have step := addQ_leQ_addQ (zeroQ : U) (oneQ : U) (oneQ : U) zeroQ_mem_RatSet
+            oneQ_mem_RatSet oneQ_mem_RatSet oneQ_pos.1
+          rw [addQ_zero_left (oneQ : U) oneQ_mem_RatSet,
+              addQ_comm (oneQ : U) (oneQ : U) oneQ_mem_RatSet oneQ_mem_RatSet] at step
+          exact step
+        · intro h_eq
+          have h_zero : (oneQ : U) = (zeroQ : U) := by
+            have step : addQ (negQ (oneQ : U)) (oneQ : U) =
+                addQ (negQ (oneQ : U)) (addQ (oneQ : U) (oneQ : U)) :=
+              congrArg (fun y => addQ (negQ (oneQ : U)) y) h_eq
+            rw [negQ_addQ_left (oneQ : U) oneQ_mem_RatSet,
+                ← addQ_assoc (negQ (oneQ : U)) (oneQ : U) (oneQ : U)
+                  (negQ_in_RatSet (oneQ : U) oneQ_mem_RatSet) oneQ_mem_RatSet oneQ_mem_RatSet,
+                negQ_addQ_left (oneQ : U) oneQ_mem_RatSet,
+                addQ_zero_left (oneQ : U) oneQ_mem_RatSet] at step
+            exact step.symm
+          exact oneQ_pos.2 h_zero.symm
+      have h_one_lt_xx : ltQ (oneQ : U) (mulQ x x) :=
+        ltQ_trans (oneQ : U) (addQ (oneQ : U) (oneQ : U)) (mulQ x x)
+          oneQ_mem_RatSet h11 hxx_mem h_one_lt_two hxx_gt_two
+      rcases leQ_total (oneQ : U) x oneQ_mem_RatSet hx with h_ge | h_le
+      · exact h_ge
+      · exfalso
+        -- x ≤ 1 ∧ 0 ≤ x ⇒ x*x ≤ x ≤ 1, contradicting 1 < x*x
+        have h_xx_le_x : leQ (mulQ x x) x := by
+          have h := mulQ_leQ_mulQ_of_nonneg_left x x (oneQ : U) hx hx oneQ_mem_RatSet
+            h_le hx_pos.1
+          rw [mulQ_one_right x hx] at h
+          exact h
+        have h_xx_le_one : leQ (mulQ x x) (oneQ : U) :=
+          leQ_trans (mulQ x x) x (oneQ : U) hxx_mem hx oneQ_mem_RatSet h_xx_le_x h_le
+        exact h_one_lt_xx.2
+          (leQ_antisymm (oneQ : U) (mulQ x x) oneQ_mem_RatSet hxx_mem
+            h_one_lt_xx.1 h_xx_le_one)
 
     /-- sqrtApproxSeq is non-increasing: m ≤ n → f(n) ≤ f(m). -/
     theorem sqrtApproxSeq_nonincreasing : isNonincreasingQ (sqrtApproxSeq : U) := by
-      sorry
-      /- Proof strategy:
-         First prove "strictly decreasing at each step":
-           f(n+1) < f(n) iff (f(n) + 2/f(n))/2 < f(n) iff 2/f(n) < f(n) iff 2 < f(n)².
-         This holds by sqrtApproxSeq_sq_gt_two.
-         Then isNonincreasingQ follows by induction: for m ≤ n (i.e., m ∈ n ∨ m = n),
-         use transitivity of leQ through the chain f(n) ≤ f(n-1) ≤ ... ≤ f(m).
-         Pattern: induction_principle on sep ω P where P(n) = ∀ m ≤ n, leQ f(n) f(m). -/
+      -- Step 1: cada paso decrece estrictamente: ltQ (f(σk)) (f k).
+      have step : ∀ k : U, k ∈ (ω : U) →
+          ltQ ((sqrtApproxSeq : U)⦅σ k⦆) ((sqrtApproxSeq : U)⦅k⦆) := by
+        intro k hk
+        have hx : (sqrtApproxSeq : U)⦅k⦆ ∈ (RatSet : U) :=
+          seqTermQ_mem_RatSet sqrtApproxSeq k sqrtApproxSeq_isSeqQ hk
+        have hx_pos : isPositiveQ ((sqrtApproxSeq : U)⦅k⦆) := sqrtApproxSeq_pos k hk
+        have hx_ne : (sqrtApproxSeq : U)⦅k⦆ ≠ (zeroQ : U) := hx_pos.2.symm
+        have hxx_gt_two :
+            ltQ (addQ (oneQ : U) (oneQ : U))
+              (mulQ ((sqrtApproxSeq : U)⦅k⦆) ((sqrtApproxSeq : U)⦅k⦆)) :=
+          sqrtApproxSeq_sq_gt_two k hk
+        have hxx_mem : mulQ ((sqrtApproxSeq : U)⦅k⦆) ((sqrtApproxSeq : U)⦅k⦆) ∈ (RatSet : U) :=
+          mulQ_in_RatSet _ _ hx hx
+        have h2x_pos : isPositiveQ (mulQ (twoQ : U) ((sqrtApproxSeq : U)⦅k⦆)) :=
+          mulQ_pos_of_pos_pos (twoQ : U) ((sqrtApproxSeq : U)⦅k⦆) twoQ_mem hx twoQ_pos hx_pos
+        have h2x_mem : mulQ (twoQ : U) ((sqrtApproxSeq : U)⦅k⦆) ∈ (RatSet : U) :=
+          mulQ_in_RatSet _ _ twoQ_mem hx
+        have hfsk_mem : (sqrtApproxSeq : U)⦅σ k⦆ ∈ (RatSet : U) :=
+          seqTermQ_mem_RatSet sqrtApproxSeq (σ k) sqrtApproxSeq_isSeqQ (succ_in_Omega k hk)
+        -- Aplicar cancelación: basta con `2*x*f(σk) < 2*x*x`.
+        apply ltQ_of_mulQ_pos_ltQ_left (mulQ (twoQ : U) ((sqrtApproxSeq : U)⦅k⦆))
+          ((sqrtApproxSeq : U)⦅σ k⦆) ((sqrtApproxSeq : U)⦅k⦆)
+          h2x_mem hfsk_mem hx h2x_pos
+        -- Identidad: 2*x*f(σk) = x*x + 2.
+        have h_id : mulQ (mulQ (twoQ : U) ((sqrtApproxSeq : U)⦅k⦆)) ((sqrtApproxSeq : U)⦅σ k⦆) =
+            addQ (mulQ ((sqrtApproxSeq : U)⦅k⦆) ((sqrtApproxSeq : U)⦅k⦆)) (twoQ : U) := by
+          rw [sqrtApproxSeq_apply_succ k hk]
+          show mulQ (mulQ (twoQ : U) ((sqrtApproxSeq : U)⦅k⦆))
+                (mulQ (addQ ((sqrtApproxSeq : U)⦅k⦆)
+                  (mulQ (twoQ : U) (invQ ((sqrtApproxSeq : U)⦅k⦆)))) (invQ (twoQ : U))) =
+                addQ (mulQ ((sqrtApproxSeq : U)⦅k⦆) ((sqrtApproxSeq : U)⦅k⦆)) (twoQ : U)
+          let T : U := (twoQ : U)
+          let X : U := (sqrtApproxSeq : U)⦅k⦆
+          show mulQ (mulQ T X) (mulQ (addQ X (mulQ T (invQ X))) (invQ T)) = addQ (mulQ X X) T
+          have hT : T ∈ (RatSet : U) := twoQ_mem
+          have hX : X ∈ (RatSet : U) := hx
+          have hT_ne : T ≠ (zeroQ : U) := twoQ_ne_zeroQ
+          have hX_ne : X ≠ (zeroQ : U) := hx_ne
+          have hiT := invQ_in_RatSet T hT
+          have hiX := invQ_in_RatSet X hX
+          have hTiX := mulQ_in_RatSet T (invQ X) hT hiX
+          have hZ := addQ_in_RatSet X (mulQ T (invQ X)) hX hTiX
+          have hZiT := mulQ_in_RatSet (addQ X (mulQ T (invQ X))) (invQ T) hZ hiT
+          have hTX := mulQ_in_RatSet T X hT hX
+          have hXX := mulQ_in_RatSet X X hX hX
+          calc mulQ (mulQ T X) (mulQ (addQ X (mulQ T (invQ X))) (invQ T))
+              = mulQ T (mulQ X (mulQ (addQ X (mulQ T (invQ X))) (invQ T))) :=
+                  mulQ_assoc T X (mulQ (addQ X (mulQ T (invQ X))) (invQ T)) hT hX hZiT
+            _ = mulQ T (mulQ (mulQ X (addQ X (mulQ T (invQ X)))) (invQ T)) := by
+                  rw [← mulQ_assoc X (addQ X (mulQ T (invQ X))) (invQ T) hX hZ hiT]
+            _ = mulQ T (mulQ (invQ T) (mulQ X (addQ X (mulQ T (invQ X))))) := by
+                  rw [mulQ_comm (mulQ X (addQ X (mulQ T (invQ X)))) (invQ T)
+                        (mulQ_in_RatSet X (addQ X (mulQ T (invQ X))) hX hZ) hiT]
+            _ = mulQ X (addQ X (mulQ T (invQ X))) := by
+                  rw [← mulQ_assoc T (invQ T) (mulQ X (addQ X (mulQ T (invQ X)))) hT hiT
+                        (mulQ_in_RatSet X (addQ X (mulQ T (invQ X))) hX hZ),
+                      mulQ_invQ_right T hT hT_ne,
+                      mulQ_one_left (mulQ X (addQ X (mulQ T (invQ X))))
+                        (mulQ_in_RatSet X (addQ X (mulQ T (invQ X))) hX hZ)]
+            _ = addQ (mulQ X X) (mulQ X (mulQ T (invQ X))) :=
+                  mulQ_addQ_distrib_left X X (mulQ T (invQ X)) hX hX hTiX
+            _ = addQ (mulQ X X) (mulQ T (mulQ X (invQ X))) := by
+                  rw [← mulQ_assoc X T (invQ X) hX hT hiX,
+                      mulQ_comm X T hX hT,
+                      mulQ_assoc T X (invQ X) hT hX hiX]
+            _ = addQ (mulQ X X) (mulQ T (oneQ : U)) := by
+                  rw [mulQ_invQ_right X hX hX_ne]
+            _ = addQ (mulQ X X) T := by rw [mulQ_one_right T hT]
+        -- Identidad: 2*x*x = (xx) + (xx).
+        have h_rhs : mulQ (mulQ (twoQ : U) ((sqrtApproxSeq : U)⦅k⦆)) ((sqrtApproxSeq : U)⦅k⦆) =
+            addQ (mulQ ((sqrtApproxSeq : U)⦅k⦆) ((sqrtApproxSeq : U)⦅k⦆))
+                 (mulQ ((sqrtApproxSeq : U)⦅k⦆) ((sqrtApproxSeq : U)⦅k⦆)) := by
+          rw [mulQ_assoc (twoQ : U) ((sqrtApproxSeq : U)⦅k⦆) ((sqrtApproxSeq : U)⦅k⦆) twoQ_mem hx hx]
+          exact mulQ_two_eq_addSelf (mulQ ((sqrtApproxSeq : U)⦅k⦆) ((sqrtApproxSeq : U)⦅k⦆)) hxx_mem
+        rw [h_id, h_rhs]
+        -- Goal: ltQ (xx + 2) (xx + xx). Cancela xx por addQ_leQ_addQ + neq por 2 ≠ xx.
+        refine ⟨?_, ?_⟩
+        · -- leQ (xx + 2) (xx + xx). Use addQ_leQ_addQ on left for 2 ≤ xx.
+          have h_le : leQ (addQ (oneQ : U) (oneQ : U))
+                          (mulQ ((sqrtApproxSeq : U)⦅k⦆) ((sqrtApproxSeq : U)⦅k⦆)) := hxx_gt_two.1
+          have step := addQ_leQ_addQ (addQ (oneQ : U) (oneQ : U))
+            (mulQ ((sqrtApproxSeq : U)⦅k⦆) ((sqrtApproxSeq : U)⦅k⦆))
+            (mulQ ((sqrtApproxSeq : U)⦅k⦆) ((sqrtApproxSeq : U)⦅k⦆))
+            (addQ_in_RatSet (oneQ : U) (oneQ : U) oneQ_mem_RatSet oneQ_mem_RatSet)
+            hxx_mem hxx_mem h_le
+          rw [addQ_comm (addQ (oneQ : U) (oneQ : U))
+                (mulQ ((sqrtApproxSeq : U)⦅k⦆) ((sqrtApproxSeq : U)⦅k⦆))
+                (addQ_in_RatSet _ _ oneQ_mem_RatSet oneQ_mem_RatSet) hxx_mem,
+              addQ_comm (mulQ ((sqrtApproxSeq : U)⦅k⦆) ((sqrtApproxSeq : U)⦅k⦆))
+                (mulQ ((sqrtApproxSeq : U)⦅k⦆) ((sqrtApproxSeq : U)⦅k⦆)) hxx_mem hxx_mem] at step
+          exact step
+        · intro h_eq
+          -- xx + 2 = xx + xx → 2 = xx, contradicting hxx_gt_two
+          have h2_eq_xx : (twoQ : U) = mulQ ((sqrtApproxSeq : U)⦅k⦆) ((sqrtApproxSeq : U)⦅k⦆) := by
+            have step : addQ (negQ (mulQ ((sqrtApproxSeq : U)⦅k⦆) ((sqrtApproxSeq : U)⦅k⦆)))
+                          (addQ (mulQ ((sqrtApproxSeq : U)⦅k⦆) ((sqrtApproxSeq : U)⦅k⦆)) (twoQ : U)) =
+                        addQ (negQ (mulQ ((sqrtApproxSeq : U)⦅k⦆) ((sqrtApproxSeq : U)⦅k⦆)))
+                          (addQ (mulQ ((sqrtApproxSeq : U)⦅k⦆) ((sqrtApproxSeq : U)⦅k⦆))
+                            (mulQ ((sqrtApproxSeq : U)⦅k⦆) ((sqrtApproxSeq : U)⦅k⦆)))  :=
+              congrArg
+                (fun y => addQ (negQ (mulQ ((sqrtApproxSeq : U)⦅k⦆) ((sqrtApproxSeq : U)⦅k⦆))) y)
+                h_eq
+            rw [← addQ_assoc
+                  (negQ (mulQ ((sqrtApproxSeq : U)⦅k⦆) ((sqrtApproxSeq : U)⦅k⦆)))
+                  (mulQ ((sqrtApproxSeq : U)⦅k⦆) ((sqrtApproxSeq : U)⦅k⦆))
+                  (twoQ : U)
+                  (negQ_in_RatSet _ hxx_mem) hxx_mem twoQ_mem,
+                ← addQ_assoc
+                  (negQ (mulQ ((sqrtApproxSeq : U)⦅k⦆) ((sqrtApproxSeq : U)⦅k⦆)))
+                  (mulQ ((sqrtApproxSeq : U)⦅k⦆) ((sqrtApproxSeq : U)⦅k⦆))
+                  (mulQ ((sqrtApproxSeq : U)⦅k⦆) ((sqrtApproxSeq : U)⦅k⦆))
+                  (negQ_in_RatSet _ hxx_mem) hxx_mem hxx_mem,
+                negQ_addQ_left (mulQ ((sqrtApproxSeq : U)⦅k⦆) ((sqrtApproxSeq : U)⦅k⦆)) hxx_mem,
+                addQ_zero_left (twoQ : U) twoQ_mem,
+                addQ_zero_left (mulQ ((sqrtApproxSeq : U)⦅k⦆) ((sqrtApproxSeq : U)⦅k⦆)) hxx_mem] at step
+            exact step
+          -- twoQ = mulQ X X but ltQ (addQ oneQ oneQ) (mulQ X X) means 2 ≠ XX.
+          -- Note twoQ = addQ oneQ oneQ definitionally, so hxx_gt_two.2 says addQ oneQ oneQ ≠ XX.
+          exact hxx_gt_two.2 h2_eq_xx
+      -- Step 2: Estrictamente decreciente: m ∈ n → ltQ (f n) (f m).
+      have strict : isStrictlyDecreasingQ (sqrtApproxSeq : U) := by
+        -- Inducción sobre n.
+        intro m n hm hn hmn
+        let P : U → Prop := fun nn => ∀ mm : U, mm ∈ (ω : U) → mm ∈ nn →
+          ltQ ((sqrtApproxSeq : U)⦅nn⦆) ((sqrtApproxSeq : U)⦅mm⦆)
+        let S := sep (ω : U) P
+        suffices hS : S = (ω : U) by
+          have hmem : n ∈ S := by rw [hS]; exact hn
+          exact ((mem_sep_iff (ω : U) n P).mp hmem).2 m hm hmn
+        apply induction_principle S
+        · exact fun x hx => ((mem_sep_iff (ω : U) x P).mp hx).1
+        · -- Base: n = ∅. ∀ m ∈ ω, m ∈ ∅ → ...  vacuous.
+          rw [mem_sep_iff]
+          refine ⟨zero_in_Omega, ?_⟩
+          intro mm _ hmm_in
+          exact absurd hmm_in (EmptySet_is_empty mm)
+        · -- Inductivo
+          intro k hk_S
+          rw [mem_sep_iff] at hk_S ⊢
+          obtain ⟨hk, hk_P⟩ := hk_S
+          refine ⟨succ_in_Omega k hk, ?_⟩
+          intro mm hmm hmm_in
+          -- mm ∈ σ k = k ∪ {k}, so mm ∈ k or mm = k.
+          rcases mem_succ_iff k mm |>.mp hmm_in with hmm_lt | hmm_eq
+          · -- mm ∈ k: by IH, f(k) < f(mm). And f(σ k) < f(k). So f(σ k) < f(mm).
+            have h1 : ltQ ((sqrtApproxSeq : U)⦅σ k⦆) ((sqrtApproxSeq : U)⦅k⦆) := step k hk
+            have h2 : ltQ ((sqrtApproxSeq : U)⦅k⦆) ((sqrtApproxSeq : U)⦅mm⦆) :=
+              hk_P mm hmm hmm_lt
+            exact ltQ_trans ((sqrtApproxSeq : U)⦅σ k⦆) ((sqrtApproxSeq : U)⦅k⦆)
+              ((sqrtApproxSeq : U)⦅mm⦆)
+              (seqTermQ_mem_RatSet sqrtApproxSeq (σ k) sqrtApproxSeq_isSeqQ
+                (succ_in_Omega k hk))
+              (seqTermQ_mem_RatSet sqrtApproxSeq k sqrtApproxSeq_isSeqQ hk)
+              (seqTermQ_mem_RatSet sqrtApproxSeq mm sqrtApproxSeq_isSeqQ hmm)
+              h1 h2
+          · -- mm = k: directo de step.
+            subst hmm_eq
+            exact step mm hmm
+      exact strictlyDecreasing_isNonincreasing (sqrtApproxSeq : U) sqrtApproxSeq_isSeqQ strict
 
     -- =========================================================================
     -- Section 5: sqrtApproxSeq is Cauchy
