@@ -121,9 +121,16 @@ Todo lo demás se parece mucho a la situcación de los múmeros constructibles.
 Podemos definir un polinomio en una indeterminada $X$ de grado $n$ como una tupla de $n+1$ números racionales $\left< a₀, a₁, ..., aₙ \right>$ que representa el polinomio $a₀ + a₁X + a₂X² + ... + aₙXⁿ$, o incluso más fácil como una tupla de enteros multiplicada por un un racional positivo tipo $1 / n$ dónde $n ∈ \mathbb{N}_1$. Las operaciones de suma y producto de polinomios se pueden definir de manera estándar utilizando las operaciones de los coeficientes racionales. La división de polinomios se puede definir utilizando el algoritmo de división de polinomios, que también se basa en las operaciones con los coeficientes racionales.
 
 ```lean
+-- La idea de la definción es que se le pasa un natural n como grado del monomio, 
+-- y se le pasa un entero (numerador) y un natural no nulo (denominador) como coeficiente 
+-- del monomio. En caso de pasarle el coeficiente como un racional, se le pasaría el 
+-- numerador como entero y el denominador como natural no nulo.
 inductive Monomial (n : ℕ₀) : Type where
   | mk : Nat → Integer → Nat → Monomial n
   | mk_from_rat : Rat → Nat → Monomial n
+-- Habría que definir los monomios constantes cero, uno y menos uno.
+-- Ahora se definirían las sumas y el producto de monomios, también definiremos el grado de un monomio, la exponenciación de un monomio a un número natural, la resta y la división de monomios (esta última solo si el divisor es el monomio no nulo).
+--
 inductive Polynomial (n : ℕ₀) : Type where
   | mk : Tuple (n+2) Integer → Polynomial n
   | mk_from_rats : Tuple (n+1) Rat → Polynomial n

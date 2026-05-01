@@ -98,6 +98,5 @@ ZFC/BoolAlg/Representation.lean
 ZFC/Cardinal/FinitePowerSet.lean
 ZFC/Nat/Div.lean
 ZFC/Nat/Gcd.lean
-ZFC/Nat/Primes.lean
 ZFC/Int/Abs.lean
 ZFC/Int/Order.lean
