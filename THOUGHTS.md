@@ -106,11 +106,11 @@ $$
 Así obtenemos la situación de la sucesión aproximación:
 
 $$
-x_0 = \text{IntitialApproximation } (c, h) \newline
+x_0 = \text{InitialApproximation } (c, h) \newline
 x_{n+1} = (\frac 1 n) * ((n-1) * x_n + \frac c {x_{n}^{(n-1)}})
 $$
 
-Todo lo demás se parece mucho a la situcación de los múmeros constructibles.
+Todo lo demás se parece mucho a la situación de los números constructibles.
 
 [10.] SOBRE LOS NÚMEROS CONSTRUCTIBLES Y RADICALES: Ambos cuerpos no son completos, ya que hay sucesiones de Cauchy de números constructibles o radicales que no convergen a ningún número constructible o radical. Por ejemplo, la sucesión dada por el método de Newton para aproximar $\sqrt{2}$ es una sucesión de Cauchy de números racionales (que son constructibles), pero su límite $\sqrt{2}$ no es un número racional, por lo que no es un número constructible. Sin embargo, $\sqrt{2}$ sí es un número radical, ya que se puede expresar como la raíz cuadrada de 2, que es un número constructible. Habrá que demostrar que ambos cuerpos no son completos. Esto también habrá de hacerse con los números computables.
 
