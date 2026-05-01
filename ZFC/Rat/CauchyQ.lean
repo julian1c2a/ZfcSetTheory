@@ -955,6 +955,81 @@ namespace ZFC
       rw [hg_eq m hm, hg_eq n hn]
       exact hN_c (φ⦅m⦆) (φ⦅n⦆) hφm hφn hN_φm hN_φn
 
+    /-- If f is Cauchy, g is a subsequence of f via φ, and g → L, then f → L.
+        Proof: given ε > 0, apply Cauchy criterion at ε/2 (get Nf) and g→L at ε/2 (get Ng).
+        For n ≥ max(Nf,Ng): φ(n) ≥ n ≥ Nf, so |f(n)−f(φ(n))| < ε/2, and
+        |f(φ(n))−L| = |g(n)−L| < ε/2. Triangle inequality gives |f(n)−L| < ε. -/
+    theorem cauchyQ_of_convergent_subseq (f g L : U)
+        (hf : IsSeqQ f) (hg : IsSeqQ g)
+        (hL : L ∈ (RatSet : U))
+        (hf_cauchy : IsCauchyQ f)
+        (hg_sub : IsSubseqOf g f)
+        (hg_conv : convergesToQ g L) :
+        convergesToQ f L := by
+      obtain ⟨φ, hφ_fn, hφ_incr, hg_eq⟩ := hg_sub
+      have φ_mem : ∀ k, k ∈ (ω : U) → (φ⦅k⦆) ∈ (ω : U) := fun k hk =>
+        ((OrderedPair_mem_CartesianProduct k (φ⦅k⦆) (ω : U) (ω : U)).mp
+          (hφ_fn.1 _ (apply_mem φ k (hφ_fn.2 k hk)))).2
+      intro ε hε hε_pos
+      let ε₂ : U := halfQ' ε
+      have hε₂ : ε₂ ∈ (RatSet : U) := halfQ'_mem ε hε
+      have hε₂_pos : isPositiveQ ε₂ := halfQ'_pos ε hε hε_pos
+      have half_add : addQ ε₂ ε₂ = ε := half_add_half' ε hε
+      obtain ⟨Nf, hNf, hNf_cauchy⟩ := hf_cauchy ε₂ hε₂ hε₂_pos
+      obtain ⟨Ng, hNg, hNg_conv⟩ := hg_conv ε₂ hε₂ hε₂_pos
+      let N := maxOf Nf Ng
+      have hN := maxOf_in_Omega Nf Ng hNf hNg
+      refine ⟨N, hN, fun n hn h_ge => ?_⟩
+      have hNf_n : Nf ∈ n ∨ Nf = n :=
+        omega_le_trans' Nf N n hNf hN hn (le_maxOf_left Nf Ng hNf hNg) h_ge
+      have hNg_n : Ng ∈ n ∨ Ng = n :=
+        omega_le_trans' Ng N n hNg hN hn (le_maxOf_right Nf Ng hNf hNg) h_ge
+      have hφn : (φ⦅n⦆) ∈ (ω : U) := φ_mem n hn
+      have hNf_φn : Nf ∈ (φ⦅n⦆) ∨ Nf = (φ⦅n⦆) :=
+        omega_le_trans' Nf n (φ⦅n⦆) hNf hn hφn hNf_n
+          (strictly_increasing_ge' φ hφ_fn hφ_incr n hn)
+      have h_cauchy : ltQ (absQ (subQ (f⦅n⦆) (f⦅φ⦅n⦆⦆))) ε₂ :=
+        hNf_cauchy n (φ⦅n⦆) hn hφn hNf_n hNf_φn
+      have h_conv : ltQ (absQ (subQ (f⦅φ⦅n⦆⦆) L)) ε₂ := by
+        have := hNg_conv n hn hNg_n
+        rwa [hg_eq n hn] at this
+      have hfn  := seqTermQ_mem_RatSet f n hf hn
+      have hfφn := seqTermQ_mem_RatSet f (φ⦅n⦆) hf hφn
+      have hfn_sub_fφn : subQ (f⦅n⦆) (f⦅φ⦅n⦆⦆) ∈ (RatSet : U) :=
+        addQ_in_RatSet _ _ hfn (negQ_in_RatSet _ hfφn)
+      have hfφn_sub_L : subQ (f⦅φ⦅n⦆⦆) L ∈ (RatSet : U) :=
+        addQ_in_RatSet _ _ hfφn (negQ_in_RatSet L hL)
+      -- f(n) - L = (f(n) - f(φ(n))) + (f(φ(n)) - L)
+      have h_sub_eq : subQ (f⦅n⦆) L =
+          addQ (subQ (f⦅n⦆) (f⦅φ⦅n⦆⦆)) (subQ (f⦅φ⦅n⦆⦆) L) :=
+        calc addQ (f⦅n⦆) (negQ L)
+            = addQ (f⦅n⦆) (addQ (addQ (negQ (f⦅φ⦅n⦆⦆)) (f⦅φ⦅n⦆⦆)) (negQ L)) := by
+                  rw [negQ_addQ_left (f⦅φ⦅n⦆⦆) hfφn,
+                      addQ_zero_left (negQ L) (negQ_in_RatSet L hL)]
+          _ = addQ (f⦅n⦆) (addQ (negQ (f⦅φ⦅n⦆⦆)) (addQ (f⦅φ⦅n⦆⦆) (negQ L))) := by
+                  rw [addQ_assoc (negQ (f⦅φ⦅n⦆⦆)) (f⦅φ⦅n⦆⦆) (negQ L)
+                        (negQ_in_RatSet (f⦅φ⦅n⦆⦆) hfφn) hfφn (negQ_in_RatSet L hL)]
+          _ = addQ (addQ (f⦅n⦆) (negQ (f⦅φ⦅n⦆⦆))) (addQ (f⦅φ⦅n⦆⦆) (negQ L)) := by
+                  rw [← addQ_assoc (f⦅n⦆) (negQ (f⦅φ⦅n⦆⦆)) (addQ (f⦅φ⦅n⦆⦆) (negQ L))
+                        hfn (negQ_in_RatSet (f⦅φ⦅n⦆⦆) hfφn)
+                        (addQ_in_RatSet (f⦅φ⦅n⦆⦆) (negQ L) hfφn (negQ_in_RatSet L hL))]
+      -- |f(n) - L| ≤ |f(n) - f(φ(n))| + |f(φ(n)) - L|
+      have h_tri : leQ (absQ (subQ (f⦅n⦆) L))
+          (addQ (absQ (subQ (f⦅n⦆) (f⦅φ⦅n⦆⦆))) (absQ (subQ (f⦅φ⦅n⦆⦆) L))) := by
+        rw [h_sub_eq]
+        exact absQ_triangle _ _ hfn_sub_fφn hfφn_sub_L
+      -- |f(n)-f(φ(n))| + |f(φ(n))-L| < ε/2 + ε/2 = ε
+      have h_sum_lt : ltQ (addQ (absQ (subQ (f⦅n⦆) (f⦅φ⦅n⦆⦆))) (absQ (subQ (f⦅φ⦅n⦆⦆) L))) ε := by
+        have h_lt := ltQ_add_of_leQ_ltQ' _ _ ε₂ ε₂
+          (absQ_in_RatSet _ hfn_sub_fφn) (absQ_in_RatSet _ hfφn_sub_L) hε₂ hε₂
+          h_cauchy.1 h_conv
+        rwa [half_add] at h_lt
+      -- Triangle: |f(n) - L| < ε
+      exact leQ_ltQ_trans' _ _ ε
+        (absQ_in_RatSet _ (addQ_in_RatSet (f⦅n⦆) (negQ L) hfn (negQ_in_RatSet L hL)))
+        (addQ_in_RatSet _ _ (absQ_in_RatSet _ hfn_sub_fφn) (absQ_in_RatSet _ hfφn_sub_L))
+        hε h_tri h_sum_lt
+
     -- =========================================================================
     -- Section 8: Cauchy equivalence relation
     -- =========================================================================
@@ -1104,6 +1179,7 @@ export ZFC.Rat.CauchyQ (
   cauchyQ_const_mul
   cauchyQ_mul
   subseq_of_cauchyQ
+  cauchyQ_of_convergent_subseq
   CauchyEquivQ
   cauchyQ_equiv_refl
   cauchyQ_equiv_symm

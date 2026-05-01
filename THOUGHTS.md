@@ -121,6 +121,7 @@ Todo lo demás se parece mucho a la situación de los números constructibles.
 **Idea básica.** En ZFC una "n-tupla" sobre un conjunto $\Omega$ con coordenadas $a_0, a_1, \dots, a_{n-1}$ se identifica con su gráfica como función $\{0,1,\dots,n-1\} \to \Omega$. Como $\sigma n = \{0, 1, \dots, n-1, n\} \setminus \{n\}$ no nos sirve directamente, conviene fijar el dominio $n$ (el natural de Von Neumann, que coincide con $\{0,1,\dots,n-1\}$) o bien $\sigma n$ si queremos $n+1$ coordenadas indexadas $0, \dots, n$. Eligiremos esta segunda variante por simetría con la notación $\langle a_0, \dots, a_n\rangle$ ("tupla de grado $n$" para polinomios de grado $n$).
 
 **Infraestructura ya disponible en el proyecto.**
+
 - Axioma de separación: `sep S P` (`ZFC/Axiom/Specification.lean`).
 - Pares ordenados Kuratowski: `⟨a, b⟩`, `fst`, `snd`, `OrderedPair_eq_iff` (`ZFC/SetOps/OrderedPair.lean`).
 - Producto cartesiano: `A ×ₛ B`, `OrderedPair_mem_CartesianProduct` (`ZFC/SetOps/CartesianProduct.lean`).
@@ -152,6 +153,7 @@ $$
 Una n-tupla **es** una función con dominio $\sigma n$ y codominio $\Omega$. Esto reusa toda la maquinaria de funciones sin definiciones nuevas: el "elemento $i$-ésimo" es $t\!⦅i⦆$, la igualdad de tuplas se hereda de igualdad de funciones (extensionalidad), etc. **Recomiendo esta vía como definición primaria** y reservar `tuple n f Ω` como _constructor_ a partir de una función dada.
 
 **Lemas mínimos a probar (esqueleto).**
+
 1. `tuple_isFunction : IsFunction (tuple n f Ω) (σ n) Ω` — usando `mem_succ_iff` y `apply_eq` por el patrón de `addSeqQ_isSeqQ`.
 2. `tuple_apply : ∀ k ∈ σ n, (tuple n f Ω)⦅k⦆ = f⦅k⦆` — patrón de `addSeqQ_apply`.
 3. `tuple_ext : IsTuple t₁ n Ω → IsTuple t₂ n Ω → (∀ k ∈ σ n, t₁⦅k⦆ = t₂⦅k⦆) → t₁ = t₂` — extensionalidad de funciones.
@@ -159,27 +161,30 @@ Una n-tupla **es** una función con dominio $\sigma n$ y codominio $\Omega$. Est
 5. `tuple_succ_eq_union : tuple (σ n) f Ω = tuple n f Ω ∪ {⟨σ n, f⦅σ n⦆⟩}` — paso recursivo (puente entre las dos definiciones).
 
 **Concatenación y operaciones derivadas (para polinomios).**
+
 - `concat (s n) (t m) := s ∪ shift_by (σ n) t` donde `shift_by k t := { ⟨add k i, v⟩ : ⟨i, v⟩ ∈ t }` — concatena una tupla de longitud $n+1$ con una de longitud $m+1$ para dar una de longitud $n+m+2$. Necesita `add` en $\omega$ (ya lo tenemos: `ZFC/Nat/Add.lean`).
 - `head : tuple → Ω`, `tail : tuple → tuple` — útiles para polinomios mediante el isomorfismo recursivo $\Omega^{n+1} \cong \Omega \times \Omega^n$.
 - `update t i v := (t \setminus \{⟨i, t⦅i⦆⟩\}) ∪ \{⟨i, v⟩\}` — modificar una coordenada.
 
 **Ubicación sugerida en el árbol de módulos.**
+
 - `ZFC/SetOps/Tuple.lean` (nuevo): definiciones `tuple`, `IsTuple`, lemas básicos 1–5.
 - `ZFC/SetOps/TupleOps.lean` (nuevo): `concat`, `head`, `tail`, `update`, `shift_by`, isomorfismos.
 - Importar desde `ZFC/SetOps.lean` y desde donde se necesite (futuro `ZFC/Algebra/Polynomial.lean`).
 
 **Notación informal sugerida (sintaxis Lean).**
+
 - `⟨a₀, a₁, …, aₙ⟩ₜ` (subíndice `ₜ` para distinguir del par ordenado de Kuratowski). Implementable como macro de Lean que despliega a `tuple n (constructed from list)` o directamente como union iterada de singletons.
 - `t⦅i⦆` ya disponible para acceso por índice (porque las tuplas serán funciones).
 
 **Cuidado con el dominio.** Dos convenios posibles, **fija uno y mantenlo en todo el proyecto**:
+
 - (A) "Tupla de grado $n$" = tupla de longitud $n+1$, dominio $\sigma n = \{0,\dots,n\}$. Encaja con polinomios de grado $n$.
 - (B) "Tupla de longitud $n$", dominio $n = \{0,\dots,n-1\}$. Encaja con la convención clásica $\Omega^n$.
 
 Recomiendo **(A)** para polinomios (`tuple n f` ≡ polinomio de grado $\le n$ con coeficientes $f(0),\dots,f(n)$), y un alias `tupleOfLength k f := tuple (predecessor k) f` para casos en que se piense en longitud.
 
 **Compatibilidad con `RecursiveFn`.** Como `RecursiveFn` ya construye funciones $\omega \to A$ a partir de un valor inicial y un paso, una n-tupla puede obtenerse "truncando" una sucesión: `tuple n (RecursiveFn …) Ω`. Esto unifica el tratamiento con sucesiones y simplifica las pruebas.
-
 
 [13.] DESARROLLO DE POLINOMIOS: Para desarrollar la teoría de los números algebraicos, necesitaremos una teoría de polinomios. Esto incluirá la definición de polinomios, operaciones con polinomios (suma, producto, división), el concepto de raíz de un polinomio, el teorema del residuo, el teorema de factorización, y la definición de polinomio mínimo. Además, habrá que demostrar que el conjunto de números algebraicos es cerrado bajo las operaciones de suma, resta, multiplicación y división (excepto por cero), lo que implica que forman un cuerpo.
 
@@ -298,7 +303,15 @@ def mainCoefficient (P : Polynomial) : Rat :=
 
 [15.] Tenemos que completar el Teorema de Wilson (vendrá de Peano)
 
-[16.] Tenemos que probar `cauchyQ_of_convergent_subseq f g L`
+[16.] ✅ HECHO — `cauchyQ_of_convergent_subseq f g L` demostrado: si $f$ es de Cauchy, $g$ es subsucesión de $f$ y $g \to L$, entonces $f \to L$ (argumento $\varepsilon/2$).
+
+[17.] **Irracionalidad generalizada.** Hemos demostrado que $\sqrt{2} \notin \mathbb{Q}$ en `SqrtApprox.lean` (`sqrt2_irrational`). Naturalmente queremos generalizar:
+
+- **Primo $p$**: $\sqrt{p} \notin \mathbb{Q}$ para todo primo $p$. El argumento es idéntico: si $a^2 = p \cdot b^2$ con $\gcd(a,b)=1$, entonces $p \mid a$, luego $a = p \cdot c$ y $p^2 c^2 = p b^2$, así $p \mid b^2$ y $p \mid b$, contradicción con $\gcd(a,b)=1$. Necesita `IsPrime` de `Nat/Primes.lean` y divisibilidad de `Int/Div.lean`.
+
+- **Entero $n$ que no es cuadrado perfecto**: $\sqrt{n} \notin \mathbb{Q}$ cuando $n$ no es cuadrado perfecto. Estrategia: factorizar $n$ en primos; algún primo $p$ aparece con exponente impar; una extensión del argumento de Cauchy implica que $\sqrt{n} \notin \mathbb{Q}$. Necesita factorización prima completa (`Nat/Primes.lean`, TFA).
+
+- **Meta**: `prime_sqrt_irrational (p : U) (hp : IsPrime p) : ¬∃ a b : IntSet, b ≠ zeroZ ∧ mulZ a a = mulZ (natToInt p) (mulZ b b)` y `nonsquare_sqrt_irrational (n : U) (hn : ¬IsSquare n) : ...`.
 
 ---
 
@@ -398,21 +411,27 @@ Ambas construcciones proporcionan modelos puramente conjuntistas de un álgebra 
 
 ---
 
-## 🔄 EN PROGRESO — Phase 6: Racionales ℚ (comenzando 2026-04-23)
+## ✅ COMPLETADO — Phase 6: Racionales ℚ (terminada 2026-05-01)
 
-Módulos planificados en `ZFC/Rat/`:
+Módulos en `ZFC/Rat/`:
 
 | # | Módulo | Contenido |
 |---|--------|-----------|
-| 1 | `Rat/Equiv.lean` | RatEquivRel en ℤ × ℤ*, reflexividad, simetría, transitividad |
-| 2 | `Rat/Basic.lean` | RatSet := (ℤ × ℤ*) / ~, ratClass, zeroQ, oneQ, representante canónico |
-| 3 | `Rat/Add.lean` | addQ con buena definición, clausura, conmutatividad, asociatividad |
-| 4 | `Rat/Neg.lean` | negQ, subQ, inversos aditivos |
-| 5 | `Rat/Mul.lean` | mulQ, conmutatividad, asociatividad, identidades, inverso multiplicativo |
-| 6 | `Rat/Order.lean` | leQ, ltQ, orden total, compatibilidad con +/× |
-| 7 | `Rat/Embedding.lean` | inyección ℤ → ℚ, preserva +/×/≤ |
-| 8 | `Rat/Field.lean` | ℚ es cuerpo ordenado, propiedad Arquimediana, densidad |
-| 9 | `Rat/Abs.lean` | absQ, signQ, desigualdad triangular |
+| 1 | `Rat/Equiv.lean` | ✅ RatEquivRel en ℤ × ℤ*, reflexividad, simetría, transitividad |
+| 2 | `Rat/Basic.lean` | ✅ RatSet := (ℤ × ℤ*) / ~, ratClass, zeroQ, oneQ, representante canónico |
+| 3 | `Rat/Add.lean` | ✅ addQ con buena definición, clausura, conmutatividad, asociatividad |
+| 4 | `Rat/Neg.lean` | ✅ negQ, subQ, inversos aditivos |
+| 5 | `Rat/Mul.lean` | ✅ mulQ, conmutatividad, asociatividad, identidades, inverso multiplicativo |
+| 6 | `Rat/Order.lean` | ✅ leQ, ltQ, orden total, compatibilidad con +/× |
+| 7 | `Rat/Embedding.lean` | ✅ inyección ℤ → ℚ, preserva +/×/≤ |
+| 8 | `Rat/Field.lean` | ✅ ℚ es cuerpo ordenado, propiedad Arquimediana, densidad |
+| 9 | `Rat/Abs.lean` | ✅ absQ, signQ, desigualdad triangular |
+| 10 | `Rat/MaxMin.lean` | ✅ maxQ, minQ, propiedades |
+| 11 | `Rat/Sequences.lean` | ✅ IsSeqQ, constSeqQ, addSeqQ, mulSeqQ, negSeqQ, absSeqQ |
+| 12 | `Rat/Convergence.lean` | ✅ convergesToQ, subsucesiones, aritmética de límites, invSeqQ, tailSeqQ, shiftSeqQ, strictly_increasing_ge |
+| 13 | `Rat/CauchyQ.lean` | ✅ IsCauchyQ, CauchyEquivQ, cauchyQ_of_convergent_subseq |
+| 14 | `Rat/Monotone.lean` | ✅ sucesiones monótonas acotadas |
+| 15 | `Rat/SqrtApprox.lean` | ✅ sqrt2_irrational (0 sorry, 0 errores) |
 
 Relación de equivalencia: $(a, b) \sim (c, d) \iff a \cdot d = b \cdot c$ en $\mathbb{Z} \times \mathbb{Z}^*$.
 
@@ -477,7 +496,26 @@ Vamos a hacer nuevas construcciones que cumplen que son cuerpos ordenados que co
 
 ---
 
-## 📋 PRÓXIMO — Phase 7: Reales ℝ
+## 📋 PRÓXIMO — Phase 7: Tuplas e Infraestructura
+
+Antes de polinomios necesitamos un tipo de tupla finita bien fundada en ZFC:
+
+- `SetOps/Tuple.lean`: `IsTuple t n Ω` (t es función de {0,...,n} a Ω), `tuple : (Fin n → U) → U`, `tuple_isFunction`, `tuple_apply`, `tuple_ext` (igualdad punto a punto)
+  - Convención A: una tupla de grado $n$ tiene dominio $\sigma n = \{0, \ldots, n\}$ (nota: $n+1$ elementos)
+- `SetOps/TupleOps.lean`: `concat` (concatenación de tuplas), `head`, `tail`, `update` (modificar índice), `shift_by` (desplazar dominio)
+
+## 📋 Phase 8 (futura): Monomios y Polinomios
+
+- `Algebra/Monomial.lean`: monomial = par ordenado ⟨grado n∈ω, coeficiente q∈RatSet⟩
+- `Algebra/Polynomial.lean`: `IsPolyQ p n ↔ IsTuple p n RatSet`; `polyEval p x` (evaluación); grado, coeficiente líder, algoritmo de división de polinomios
+- Teorema: ℚ[X] es dominio de integridad; algoritmo de Euclides para polinomios
+
+## 📋 Phase 9 (futura): Campos Intermedios / Irracionalidad Generalizada
+
+- Generalizar `sqrt2_irrational` a `prime_sqrt_irrational` y `nonsquare_sqrt_irrational` (ver punto [17.] arriba)
+- Construir extensiones algebraicas mínimas: ℚ(√p) para p primo
+
+## 📋 Phase 10 (futura): Reales ℝ
 
 Construcción vía sucesiones de Cauchy de racionales:
 
@@ -485,7 +523,7 @@ Construcción vía sucesiones de Cauchy de racionales:
 - `Real/Basic.lean`: ℝ := Cauchy(ℚ) / ~, completitud
 - `Real/Add.lean`, `Neg.lean`, `Mul.lean`, `Order.lean`, `Embedding.lean`
 - `Real/Field.lean`: ℝ es cuerpo ordenado completo, propiedad Arquimediana
-- `Real/Sequences.lean`: convergencia, sucesiones monótonas acotadas
+- `Real/Sequences.lean`: convergencia, sucesiones monótonas acotadas, criterio de Bolzano-Weierstrass
 - `Real/Topology.lean`: abiertos, cerrados, compactos (Heine-Borel)
 - `Real/Continuity.lean`: Bolzano, Weierstrass
 - `Real/Differentiability.lean`: derivada, regla de la cadena, Rolle, valor medio
@@ -526,4 +564,4 @@ Construcción vía sucesiones de Cauchy de racionales:
 
 ---
 
-*Última actualización: 2026-04-23. Phase 5 (ℤ) 100% completa. Comenzando Phase 6 (ℚ).*
+_Última actualización: 2026-04-23. Phase 5 (ℤ) 100% completa. Comenzando Phase 6 (ℚ)._

@@ -207,12 +207,38 @@
 
 ---
 
-## Phase 7: Cuerpos Ordenados Intermedios entre ℚ y ℝ — 📋 Planificado
+## Phase 7: Tuplas e Infraestructura Algebraica — 📋 Planificado
+
+**Motivación**: Antes de definir polinomios necesitamos un tipo de tupla finita bien fundada en ZFC puro (sin Mathlib). Una tupla de grado $n$ es una función $t: \sigma n \to \Omega$ (dominio $\{0,\ldots,n\}$, $n+1$ elementos).
+
+| Módulo | Contenido principal |
+|--------|---------------------|
+| `SetOps/Tuple.lean` | `IsTuple t n Ω` (t función de {0,...,n} a Ω), `tuple` (construcción), `tuple_isFunction`, `tuple_apply`, `tuple_ext` |
+| `SetOps/TupleOps.lean` | `concat` (concatenación), `head`, `tail`, `update` (modificar un índice), `shift_by` (desplazar dominio) |
+
+**Convención**: grado $n$ $\Rightarrow$ dominio $\sigma n = \{0, \ldots, n\}$ ($n+1$ elementos). Esto alinea con la codificación von Neumann de $\omega$.
+
+---
+
+## Phase 8: Monomios y Polinomios — 📋 Planificado
+
+**Pre-requisito**: Phase 7 (tuplas).
+
+| Módulo | Contenido principal |
+|--------|---------------------|
+| `Algebra/Monomial.lean` | Monomial como par $\langle n, q \rangle$ con grado $n \in \omega$ y coeficiente $q \in \text{RatSet}$; suma/producto de monomios |
+| `Algebra/Polynomial.lean` | `IsPolyQ p n \leftrightarrow \text{IsTuple}\ p\ n\ \text{RatSet}` (polinomio de grado $\leq n$); `polyEval p x` (evaluación); grado, coeficiente líder |
+| `Algebra/PolyArith.lean` | Suma, producto, negación de polinomios; $\mathbb{Q}[X]$ es dominio de integridad |
+| `Algebra/PolyDiv.lean` | Algoritmo de división de Euclides para polinomios; `polyGcd`; TFA en $\mathbb{Q}[X]$ |
+
+---
+
+## Phase 9: Cuerpos Ordenados Intermedios entre ℚ y ℝ — 📋 Planificado
 
 **Pre-requisito**: Phase 6.5 completa (sucesiones de Cauchy en ℚ definidas y con ejemplos)  
 **Motivación**: Entre ℚ y ℝ existen cuerpos ordenados que contienen ℚ pero no son completos. Su formalización ilustra el rol esencial de la propiedad del supremo en la construcción de ℝ.
 
-### Phase 7a: Números Computables — `ZFC/Computable/`
+### Phase 9a: Números Computables — `ZFC/Computable/`
 
 | Módulo | Contenido principal |
 |--------|---------------------|
@@ -221,21 +247,21 @@
 | `Computable/Embedding.lean` | ℚ ↪ Computables (sucesiones constantes); inyectividad, preserva orden |
 | `Computable/NotComplete.lean` | `sqrtApprox` es computable pero no tiene límite computable: incompletitud de Computables |
 
-### Phase 7b: Números Constructibles — `ZFC/Constructible/`
+### Phase 9b: Números Constructibles — `ZFC/Constructible/`
 
 | Módulo | Contenido principal |
 |--------|---------------------|
 | `Constructible/Basic.lean` | `ConstructSet`: cierre mínimo de ℚ bajo +, −, ·, ÷ y √(x) para x>0; cada elemento es algebraico de grado potencia de 2 |
 | `Constructible/NotComplete.lean` | No completo: sucesión de Cauchy en ConstructSet sin límite constructible (ej. ∑ 1/n! ∉ ConstructSet) |
 
-### Phase 7c: Números Radicales — `ZFC/Radical/`
+### Phase 9c: Números Radicales — `ZFC/Radical/`
 
 | Módulo | Contenido principal |
 |--------|---------------------|
 | `Radical/Basic.lean` | `RadicalSet`: cierre de ℚ bajo +, −, ·, ÷ y raíces n-ésimas para cualquier n∈ℕ positivo |
 | `Radical/NotComplete.lean` | No completo: existen sucesiones de Cauchy de radicales sin límite radical |
 
-### Phase 7d: Números Algebraicos — `ZFC/Algebraic/`
+### Phase 9d: Números Algebraicos — `ZFC/Algebraic/`
 
 | Módulo | Contenido principal |
 |--------|---------------------|
@@ -244,7 +270,7 @@
 
 ---
 
-## Phase 8: Reales ℝ — 📋 Planificado
+## Phase 10: Reales ℝ — 📋 Planificado
 
 **Pre-requisito**: Phase 6.5 completa (sucesiones de Cauchy en ℚ — base directa de la construcción de ℝ)
 
@@ -289,13 +315,15 @@
 | 6: Racionales ℚ | ✅ Completo | 9 | 90 |
 | 6.5: Sucesiones en ℚ | ✅ Completo | 7/7 | ~111 |
 | 6.6: Incompletitud de ℚ | ✅ Completo (sqrt2 irracional + sqrtApproxSeq no converge) | 1 | 2 |
-| 7a: Computables | 📋 Planificado | 0/4 | — |
-| 7b: Constructibles | 📋 Planificado | 0/2 | — |
-| 7c: Radicales | 📋 Planificado | 0/2 | — |
-| 7d: Algebraicos | 📋 Planificado | 0/2 | — |
-| 8: Reales ℝ | 📋 Planificado | 0/15 | — |
+| 7: Tuplas e infraestructura | 📋 Planificado | 0/2 | — |
+| 8: Monomios y polinomios | 📋 Planificado | 0/4 | — |
+| 9a: Computables | 📋 Planificado | 0/4 | — |
+| 9b: Constructibles | 📋 Planificado | 0/2 | — |
+| 9c: Radicales | 📋 Planificado | 0/2 | — |
+| 9d: Algebraicos | 📋 Planificado | 0/2 | — |
+| 10: Reales ℝ | 📋 Planificado | 0/15 | — |
 | Futuro | 🔮 Lejano | — | — |
 
 ---
 
-*Última actualización: 2026-05-01 (sesión 11). `Rat/SqrtApprox.lean` y `Rat/SqrtIrrational.lean` completados (0 sorry). Phase 6.5 finalizada (7/7) y Phase 6.6 (incompletitud de ℚ) cerrada: `sqrt2_irrational` + `sqrtApproxSeq_not_convergent`. REFERENCE.md actualizado (secciones 4.65, 4.66, 6.66, 6.67). 89 módulos totales, **0 sorry, 0 errores**.*
+*Última actualización: 2026-05-01 (sesión 12). REFERENCE.md actualizado con nuevos exports de Convergence.lean (strictly_increasing_ge, invSeqQ, tailSeqQ, shiftSeqQ familia) y CauchyQ.lean (cauchyQ_of_convergent_subseq). Phases reestructuradas: Tuples (7) y Polynomials (8) insertadas; antiguas 7/8 pasan a 9/10. THOUGHTS.md actualizado: [16.] marcado ✅, [17.] añadido (irracionalidad generalizada), Phase 6 marcada completa. 89 módulos totales, **0 sorry, 0 errores**.*

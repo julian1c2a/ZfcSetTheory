@@ -28,6 +28,7 @@ import ZFC.Rat.Sequences
 import ZFC.Rat.Abs
 import ZFC.Rat.Field
 import ZFC.Nat.MaxMin
+import ZFC.Nat.Add
 
 namespace ZFC
   open Classical
@@ -44,6 +45,7 @@ namespace ZFC
   open ZFC.SetOps.Functions
   open ZFC.Nat.Basic
   open ZFC.Nat.MaxMin
+  open ZFC.Nat.Add
   open ZFC.Int.Basic
   open ZFC.Int.Mul
   open ZFC.Int.Order
@@ -415,7 +417,7 @@ namespace ZFC
         (∀ n : U, n ∈ (ω : U) → g⦅n⦆ = f⦅φ⦅n⦆⦆)
 
     /-- Strictly increasing functions φ: ω → ω satisfy φ(n) ≥ n for all n ∈ ω -/
-    private theorem strictly_increasing_ge (φ : U)
+    theorem strictly_increasing_ge (φ : U)
         (hφ : IsFunction φ (ω : U) (ω : U))
         (hφ_incr : ∀ m n : U, m ∈ (ω : U) → n ∈ (ω : U) → m ∈ n → (φ⦅m⦆) ∈ (φ⦅n⦆))
         (n : U) (hn : n ∈ (ω : U)) :
@@ -1697,6 +1699,85 @@ namespace ZFC
             exact invSeqQ_isSeqQ g hg)
         h₁ hInvg_conv
 
+    -- =========================================================================
+    -- Section 11: Shift sequences (general k-shift)
+    -- =========================================================================
+
+    /-- n ≤ n + k in ω for all n, k ∈ ω (proved by induction on k). -/
+    private theorem le_add_right_Omega (n k : U) (hn : n ∈ (ω : U)) (hk : k ∈ (ω : U)) :
+        n ∈ add n k ∨ n = add n k := by
+      let P : U → Prop := fun j => n ∈ add n j ∨ n = add n j
+      have hS_eq : sep (ω : U) P = (ω : U) := by
+        apply induction_principle
+        · intro x hx; exact ((mem_sep_iff (ω : U) x P).mp hx).1
+        · rw [mem_sep_iff]; exact ⟨zero_in_Omega, Or.inr (add_zero n hn).symm⟩
+        · intro j hj_S
+          have hj_mem := (mem_sep_iff (ω : U) j P).mp hj_S
+          have hj  := hj_mem.1
+          have hIH := hj_mem.2
+          rw [mem_sep_iff]
+          refine ⟨succ_in_Omega j hj, ?_⟩
+          show n ∈ add n (σ j) ∨ n = add n (σ j)
+          rw [add_succ n j hn hj]
+          cases hIH with
+          | inl h => exact Or.inl ((mem_succ_iff (add n j) n).mpr (Or.inl h))
+          | inr h => exact Or.inl ((mem_succ_iff (add n j) n).mpr (Or.inr h))
+      exact ((mem_sep_iff (ω : U) k P).mp (by rw [hS_eq]; exact hk)).2
+
+    /-- The k-shift of a sequence f: (shiftSeqQ k f)(n) = f(n + k). -/
+    noncomputable def shiftSeqQ (k f : U) : U :=
+      sep ((ω : U) ×ₛ (RatSet : U)) (fun p => snd p = f⦅add (fst p) k⦆)
+
+    private theorem shiftSeqQ_mem_iff (k f p : U) :
+        p ∈ shiftSeqQ k f ↔
+        p ∈ (ω : U) ×ₛ (RatSet : U) ∧ snd p = f⦅add (fst p) k⦆ := by
+      unfold shiftSeqQ; exact mem_sep_iff _ p _
+
+    /-- shiftSeqQ k f is a sequence in ℚ whenever f is. -/
+    theorem shiftSeqQ_isSeqQ (k f : U) (hk : k ∈ (ω : U)) (hf : IsSeqQ f) :
+        IsSeqQ (shiftSeqQ k f) := by
+      unfold IsSeqQ
+      constructor
+      · intro p hp; exact ((shiftSeqQ_mem_iff k f p).mp hp).1
+      · intro n hn
+        have hank : add n k ∈ (ω : U) := add_in_Omega n k hn hk
+        have hfank := seqTermQ_mem_RatSet f (add n k) hf hank
+        refine ⟨f⦅add n k⦆, ?_, ?_⟩
+        · show ⟨n, f⦅add n k⦆⟩ ∈ shiftSeqQ k f
+          rw [shiftSeqQ_mem_iff]
+          refine ⟨(OrderedPair_mem_CartesianProduct n _ (ω : U) RatSet).mpr ⟨hn, hfank⟩, ?_⟩
+          rw [fst_of_ordered_pair, snd_of_ordered_pair]
+        · intro z hz
+          show z = f⦅add n k⦆
+          have h := ((shiftSeqQ_mem_iff k f ⟨n, z⟩).mp hz).2
+          rw [fst_of_ordered_pair, snd_of_ordered_pair] at h
+          exact h
+
+    /-- Computation rule: (shiftSeqQ k f)(n) = f(n + k). -/
+    theorem shiftSeqQ_apply (k f : U) (hk : k ∈ (ω : U)) (hf : IsSeqQ f)
+        (n : U) (hn : n ∈ (ω : U)) :
+        (shiftSeqQ k f)⦅n⦆ = f⦅add n k⦆ := by
+      apply apply_eq _ n _ ((shiftSeqQ_isSeqQ k f hk hf).2 n hn)
+      show ⟨n, f⦅add n k⦆⟩ ∈ shiftSeqQ k f
+      rw [shiftSeqQ_mem_iff]
+      have hank : add n k ∈ (ω : U) := add_in_Omega n k hn hk
+      have hfank := seqTermQ_mem_RatSet f (add n k) hf hank
+      refine ⟨(OrderedPair_mem_CartesianProduct n _ (ω : U) RatSet).mpr ⟨hn, hfank⟩, ?_⟩
+      rw [fst_of_ordered_pair, snd_of_ordered_pair]
+
+    /-- If f → L then (shiftSeqQ k f) → L for any k ∈ ω. -/
+    theorem convergesToQ_shiftSeqQ (f L : U) (hf : IsSeqQ f)
+        (k : U) (hk : k ∈ (ω : U)) (h : convergesToQ f L) :
+        convergesToQ (shiftSeqQ k f) L := by
+      intro ε hε hε_pos
+      obtain ⟨N, hN, hN_conv⟩ := h ε hε hε_pos
+      refine ⟨N, hN, fun n hn h_ge => ?_⟩
+      rw [shiftSeqQ_apply k f hk hf n hn]
+      have hank : add n k ∈ (ω : U) := add_in_Omega n k hn hk
+      have hN_ank : N ∈ add n k ∨ N = add n k :=
+        omega_le_trans N n (add n k) hN hn hank h_ge (le_add_right_Omega n k hn hk)
+      exact hN_conv (add n k) hank hN_ank
+
   end Rat.Convergence
 
 end ZFC
@@ -1705,6 +1786,7 @@ export ZFC.Rat.Convergence (
   convergesToQ
   hasLimitQ
   IsSubseqOf
+  strictly_increasing_ge
   convergesToQ_const
   limit_unique
   subseq_convergent
@@ -1728,4 +1810,8 @@ export ZFC.Rat.Convergence (
   tailSeqQ_isSeqQ
   tailSeqQ_apply
   convergesToQ_tail
+  shiftSeqQ
+  shiftSeqQ_isSeqQ
+  shiftSeqQ_apply
+  convergesToQ_shiftSeqQ
 )

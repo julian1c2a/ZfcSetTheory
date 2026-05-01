@@ -5401,7 +5401,7 @@ noncomputable def intToRat (n : U) : U := ratClass n oneZ
 2. **`hasLimitQ f`** — $f$ tiene límite en ℚ: $\exists L \in \mathbb{Q}, \text{convergesToQ}\ f\ L$.
 3. **`IsSubseqOf g f`** — $g$ es subsucesión de $f$: $\exists \phi: \omega \to \omega$ estrictamente creciente tal que $\forall n \in \omega, g(n) = f(\phi(n))$.
 
-**Exports**: `convergesToQ`, `hasLimitQ`, `IsSubseqOf`, `convergesToQ_const`, `limit_unique`, `subseq_convergent`, `convergesToQ_add`, `convergesToQ_mul_bounded`, `convergesToQ_sub`, `convergesToQ_of_dominated`, `squeeze_theorem`, `convergesToQ_of_eventually_eq`, `convergesToQ_const_mul`, `convergesToQ_abs`, `convergesToQ_zero_of_abs`, `convergesToQ_iff_abs`, `convergesToQ_mul`
+**Exports**: `convergesToQ`, `hasLimitQ`, `IsSubseqOf`, `strictly_increasing_ge`, `convergesToQ_const`, `limit_unique`, `subseq_convergent`, `convergesToQ_add`, `convergesToQ_mul_bounded`, `convergesToQ_sub`, `convergesToQ_of_dominated`, `squeeze_theorem`, `convergesToQ_of_eventually_eq`, `convergesToQ_const_mul`, `convergesToQ_abs`, `convergesToQ_zero_of_abs`, `convergesToQ_iff_abs`, `convergesToQ_mul`, `convergesToQ_inv`, `convergesToQ_div`, `invSeqQ`, `invSeqQ_isSeqQ`, `invSeqQ_apply`, `tailSeqQ`, `tailSeqQ_isSeqQ`, `tailSeqQ_apply`, `convergesToQ_tail`, `shiftSeqQ`, `shiftSeqQ_isSeqQ`, `shiftSeqQ_apply`, `convergesToQ_shiftSeqQ`
 
 ---
 
@@ -5410,14 +5410,14 @@ noncomputable def intToRat (n : U) : U := ratClass n oneZ
 **Módulo**: `ZFC.Rat.CauchyQ`
 **Namespace**: `ZFC.Rat.CauchyQ`
 **Dependencias**: `ZFC.Rat.Convergence`, `ZFC.Rat.Field`, `ZFC.Rat.MaxMin` + anteriores
-**Estrategia**: Define sucesiones de Cauchy en ℚ y establece toda la aritmética de Cauchy. `cauchy_bounded` se demuestra por inducción en ω: el predicado $Q(n) := \exists M \in \mathbb{Q}^+, \forall k \leq n, |f(k)| \leq M$ es hereditario (paso: $M' = \max(M, |f(\sigma n)|)$); extrae la cota para $N_0$ y usa tricotomía $n$ vs $N_0$. `cauchyQ_mul` usa `cauchy_bounded` para acotar ambas sucesiones y divide $\varepsilon$ por $M = M_f + M_g$. `subseq_of_cauchyQ` usa `strictly_increasing_ge'` para levantar la cota $N$ de $f$ a la subsucesión. `CauchyEquivQ f g` se define como convergencia de $f - g$ a $0$; la simetría se prueba por $\varepsilon$-$N$ directo usando `absQ_negQ`. **0 sorry, 0 errores** — compilación verificada 2026-04-29.
+**Estrategia**: Define sucesiones de Cauchy en ℚ y establece toda la aritmética de Cauchy. `cauchy_bounded` se demuestra por inducción en ω: el predicado $Q(n) := \exists M \in \mathbb{Q}^+, \forall k \leq n, |f(k)| \leq M$ es hereditario (paso: $M' = \max(M, |f(\sigma n)|)$); extrae la cota para $N_0$ y usa tricotomía $n$ vs $N_0$. `cauchyQ_mul` usa `cauchy_bounded` para acotar ambas sucesiones y divide $\varepsilon$ por $M = M_f + M_g$. `subseq_of_cauchyQ` usa `strictly_increasing_ge'` para levantar la cota $N$ de $f$ a la subsucesión. `cauchyQ_of_convergent_subseq` demuestra el recíproco parcial: si $f$ es de Cauchy, $g$ es subsucesión de $f$ y $g \to L$, entonces $f \to L$ (argumento $\varepsilon/2$ triangular). `CauchyEquivQ f g` se define como convergencia de $f - g$ a $0$; la simetría se prueba por $\varepsilon$-$N$ directo usando `absQ_negQ`. **0 sorry, 0 errores** — compilación verificada 2026-05-01.
 
 **Definiciones públicas**:
 
 1. **`IsCauchyQ f`** — $f$ es sucesión de Cauchy: $\forall \varepsilon > 0 \in \mathbb{Q}, \exists N \in \omega, \forall m, n \in \omega, N \leq m \Rightarrow N \leq n \Rightarrow |f(m) - f(n)| < \varepsilon$.
 2. **`CauchyEquivQ f g`** — equivalencia de Cauchy: $\text{convergesToQ}\ (f - g)\ 0$, es decir, $f - g \to 0$ en ℚ.
 
-**Exports**: `IsCauchyQ`, `cauchy_of_convergentQ`, `cauchy_bounded`, `constSeqQ_isCauchy`, `cauchyQ_neg`, `cauchyQ_add`, `cauchyQ_sub`, `cauchyQ_const_mul`, `cauchyQ_mul`, `subseq_of_cauchyQ`, `CauchyEquivQ`, `cauchyQ_equiv_refl`, `cauchyQ_equiv_symm`, `cauchyQ_equiv_trans`
+**Exports**: `IsCauchyQ`, `cauchy_of_convergentQ`, `cauchy_bounded`, `constSeqQ_isCauchy`, `cauchyQ_neg`, `cauchyQ_add`, `cauchyQ_sub`, `cauchyQ_const_mul`, `cauchyQ_mul`, `subseq_of_cauchyQ`, `cauchyQ_of_convergent_subseq`, `CauchyEquivQ`, `cauchyQ_equiv_refl`, `cauchyQ_equiv_symm`, `cauchyQ_equiv_trans`
 
 ---
 
@@ -16287,6 +16287,20 @@ theorem seqTermQ_mem_RatSet (f : U) (hf : IsSeqQ f) (n : U) (hn : n ∈ (ω : U)
 - `convergesToQ_zero_of_abs`: high — (|f|→0) ⟹ f→0
 - `convergesToQ_iff_abs`: high — f→L ↔ |f−L|→0
 - `convergesToQ_mul`: high — (f→L₁, g→L₂) ⟹ f·g→L₁·L₂
+- `convergesToQ_inv`: high — (f→L, L≠0) ⟹ 1/f→1/L (con cota eventual)
+- `convergesToQ_div`: high — (f→L₁, g→L₂, L₂≠0) ⟹ f/g→L₁/L₂
+- `invSeqQ`: medium — sucesión inversa: (invSeqQ f)(n) = 1/f(n)
+- `invSeqQ_isSeqQ`: medium — inversa es sucesión racional
+- `invSeqQ_apply`: high — (invSeqQ f)(n) = invQ (f(n))
+- `tailSeqQ`: medium — cola de sucesión: (tailSeqQ f)(n) = f(σn)
+- `tailSeqQ_isSeqQ`: medium — cola es sucesión racional
+- `tailSeqQ_apply`: high — (tailSeqQ f)(n) = f(σn)
+- `convergesToQ_tail`: high — f→L ⟹ tailSeqQ f → L
+- `strictly_increasing_ge`: high — función estrictamente creciente ω→ω satisface φ(n) ≥ n
+- `shiftSeqQ`: medium — sucesión desplazada k posiciones: (shiftSeqQ k f)(n) = f(n+k)
+- `shiftSeqQ_isSeqQ`: medium — desplazada es sucesión racional
+- `shiftSeqQ_apply`: high — (shiftSeqQ k f)(n) = f(n+k)
+- `convergesToQ_shiftSeqQ`: high — f→L ⟹ shiftSeqQ k f → L
 
 #### Sucesión Constante Converge (convergesToQ_const)
 
@@ -16520,6 +16534,206 @@ theorem convergesToQ_mul (f g L₁ L₂ : U)
 **Importancia**: high
 **Estrategia**: $M_1 = |L_1| + 1$, $M_2 = |L_2| + 1$; $\varepsilon_1 = \varepsilon/(2M_2)$, $\varepsilon_2 = \varepsilon/(2M_1)$; acotación de $|g(n)|$ por $M_2$ (inline, sin usar `CauchyQ.cauchy_bounded` para evitar importación circular); identidad $f(n)g(n) - L_1L_2 = (f(n)-L_1)g(n) + L_1(g(n)-L_2)$; desigualdad triangular + `half_add_half`.
 
+#### Convergencia de la Inversa (convergesToQ_inv)
+
+**Enunciado Matemático**: Si $f \to L$ y $L \neq 0$, entonces existe $N_0 \in \omega$ tal que $f(n) \neq 0$ para $n \geq N_0$ y $1/f \to 1/L$.
+
+**Firma Lean4**:
+
+```lean
+theorem convergesToQ_inv (f L : U)
+    (hL : L ∈ (RatSet : U)) (hf : IsSeqQ f)
+    (hL_nz : L ≠ (zeroQ : U))
+    (h : convergesToQ f L) :
+    ∃ N₀ : U, N₀ ∈ (ω : U) ∧
+      (∀ n : U, n ∈ (ω : U) → N₀ ∈ n ∨ N₀ = n → f⦅n⦆ ≠ (zeroQ : U)) ∧
+      convergesToQ (invSeqQ f) (invQ L)
+```
+
+**Importancia**: high
+**Estrategia**: $\varepsilon_0 = |L|/2 > 0$. Se toma $N_0$ con $|f(n)-L| < \varepsilon_0$ para $n \geq N_0$; entonces $|f(n)| \geq \varepsilon_0$. Para el límite: $|1/f(n) - 1/L| = |f(n)-L|/(|L||f(n)|) \leq |f(n)-L|/\varepsilon_0^2$; eligiendo $\delta = \varepsilon \varepsilon_0^2$ se concluye la convergencia. Usa `invQ_antitone` de `Rat.Field`.
+
+#### Convergencia del Cociente (convergesToQ_div)
+
+**Enunciado Matemático**: Si $f \to L_1$, $g \to L_2$ y $L_2 \neq 0$, entonces $f/g \to L_1/L_2$.
+
+**Firma Lean4**:
+
+```lean
+theorem convergesToQ_div (f g L₁ L₂ : U)
+    (hL₁ : L₁ ∈ (RatSet : U)) (hL₂ : L₂ ∈ (RatSet : U))
+    (hf : IsSeqQ f) (hg : IsSeqQ g)
+    (hL₂_nz : L₂ ≠ (zeroQ : U))
+    (h₁ : convergesToQ f L₁) (h₂ : convergesToQ g L₂) :
+    ∃ N₀ : U, N₀ ∈ (ω : U) ∧
+      convergesToQ (mulSeqQ f (invSeqQ g)) (divQ L₁ L₂)
+```
+
+**Importancia**: high
+**Estrategia**: Se reduce a `convergesToQ_inv` (para $g \to 1/L_2$) y `convergesToQ_mul` (para $f \cdot (1/g) \to L_1 \cdot (1/L_2) = L_1/L_2$).
+
+#### Sucesión Inversa (invSeqQ)
+
+**Enunciado Matemático**: Definición de la sucesión inversa: $(\text{invSeqQ}\ f)(n) = 1/f(n)$.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def invSeqQ (f : U) : U :=
+    sep ((ω : U) ×ₛ (RatSet : U)) (fun p => snd p = invQ (f⦅fst p⦆))
+```
+
+**Importancia**: medium
+
+#### Inversa es Sucesión Racional (invSeqQ_isSeqQ)
+
+**Enunciado Matemático**: Si $f$ es sucesión racional, entonces `invSeqQ f` también lo es.
+
+**Firma Lean4**:
+
+```lean
+theorem invSeqQ_isSeqQ (f : U) (hf : IsSeqQ f) : IsSeqQ (invSeqQ f)
+```
+
+**Importancia**: medium
+
+#### Aplicación de la Inversa (invSeqQ_apply)
+
+**Enunciado Matemático**: $(\text{invSeqQ}\ f)(n) = 1/f(n)$ para todo $n \in \omega$.
+
+**Firma Lean4**:
+
+```lean
+theorem invSeqQ_apply (f : U) (hf : IsSeqQ f)
+    (n : U) (hn : n ∈ (ω : U)) :
+    (invSeqQ f)⦅n⦆ = invQ (f⦅n⦆)
+```
+
+**Importancia**: high
+
+#### Cola de Sucesión (tailSeqQ)
+
+**Enunciado Matemático**: Definición de la cola de una sucesión: $(\text{tailSeqQ}\ f)(n) = f(\sigma n)$.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def tailSeqQ (f : U) : U :=
+    sep ((ω : U) ×ₛ (RatSet : U)) (fun p => snd p = f⦅σ (fst p)⦆)
+```
+
+**Importancia**: medium
+
+#### Cola es Sucesión Racional (tailSeqQ_isSeqQ)
+
+**Enunciado Matemático**: Si $f$ es sucesión racional, entonces `tailSeqQ f` también lo es.
+
+**Firma Lean4**:
+
+```lean
+theorem tailSeqQ_isSeqQ (f : U) (hf : IsSeqQ f) : IsSeqQ (tailSeqQ f)
+```
+
+**Importancia**: medium
+
+#### Aplicación de la Cola (tailSeqQ_apply)
+
+**Enunciado Matemático**: $(\text{tailSeqQ}\ f)(n) = f(\sigma n)$ para todo $n \in \omega$.
+
+**Firma Lean4**:
+
+```lean
+theorem tailSeqQ_apply (f : U) (hf : IsSeqQ f)
+    (n : U) (hn : n ∈ (ω : U)) :
+    (tailSeqQ f)⦅n⦆ = f⦅σ n⦆
+```
+
+**Importancia**: high
+
+#### Convergencia de la Cola (convergesToQ_tail)
+
+**Enunciado Matemático**: Si $f \to L$ entonces $\text{tailSeqQ}\ f \to L$.
+
+**Firma Lean4**:
+
+```lean
+theorem convergesToQ_tail (f L : U) (hf : IsSeqQ f)
+    (h : convergesToQ f L) : convergesToQ (tailSeqQ f) L
+```
+
+**Importancia**: high
+**Nota**: Caso especial de `convergesToQ_shiftSeqQ` con $k = 1$. La prueba usa que $N \leq n \Rightarrow N \leq \sigma n$ vía `mem_succ_iff`.
+
+#### Función Estrictamente Creciente Domina Índice (strictly_increasing_ge)
+
+**Enunciado Matemático**: Si $\varphi: \omega \to \omega$ es estrictamente creciente (i.e., $n \in m \Rightarrow \varphi(n) \in \varphi(m)$), entonces $n \in \varphi(n)$ o $n = \varphi(n)$ para todo $n \in \omega$.
+
+**Firma Lean4**:
+
+```lean
+theorem strictly_increasing_ge (φ : U) (hφ : IsFunction φ ω ω)
+    (hincr : ∀ n m, n ∈ (ω : U) → m ∈ (ω : U) → n ∈ m → φ⦅n⦆ ∈ φ⦅m⦆)
+    (n : U) (hn : n ∈ (ω : U)) : n ∈ φ⦅n⦆ ∨ n = φ⦅n⦆
+```
+
+**Importancia**: high
+**Nota**: Prueba por inducción en $\omega$ sobre $P(n) := (n \in \varphi(n) \vee n = \varphi(n))$. Paso inductivo: $P(n)$ y $\varphi(n) \in \varphi(\sigma n)$ (por ser estrictamente creciente) implican $\sigma n \in \varphi(\sigma n) \vee \sigma n = \varphi(\sigma n)$ por tricotomía en $\omega$. Clave para `subseq_convergent` y `cauchyQ_of_convergent_subseq`.
+
+#### Sucesión Desplazada (shiftSeqQ)
+
+**Enunciado Matemático**: Definición de la sucesión desplazada $k$ posiciones: $(\text{shiftSeqQ}\ k\ f)(n) = f(n+k)$.
+
+**Firma Lean4**:
+
+```lean
+noncomputable def shiftSeqQ (k f : U) : U :=
+    sep ((ω : U) ×ₛ (RatSet : U)) (fun p => snd p = f⦅add (fst p) k⦆)
+```
+
+**Importancia**: medium
+
+#### Desplazada es Sucesión Racional (shiftSeqQ_isSeqQ)
+
+**Enunciado Matemático**: Si $f$ es sucesión racional y $k \in \omega$, entonces $\text{shiftSeqQ}\ k\ f$ es sucesión racional.
+
+**Firma Lean4**:
+
+```lean
+theorem shiftSeqQ_isSeqQ (k f : U) (hk : k ∈ (ω : U)) (hf : IsSeqQ f) :
+    IsSeqQ (shiftSeqQ k f)
+```
+
+**Importancia**: medium
+
+#### Aplicación de la Desplazada (shiftSeqQ_apply)
+
+**Enunciado Matemático**: $(\text{shiftSeqQ}\ k\ f)(n) = f(n + k)$ para $n \in \omega$, $k \in \omega$.
+
+**Firma Lean4**:
+
+```lean
+theorem shiftSeqQ_apply (k f : U) (hk : k ∈ (ω : U)) (hf : IsSeqQ f)
+    (n : U) (hn : n ∈ (ω : U)) :
+    (shiftSeqQ k f)⦅n⦆ = f⦅add n k⦆
+```
+
+**Importancia**: high
+
+#### Convergencia de la Desplazada (convergesToQ_shiftSeqQ)
+
+**Enunciado Matemático**: Si $f \to L$ entonces $\text{shiftSeqQ}\ k\ f \to L$ para cualquier $k \in \omega$.
+
+**Firma Lean4**:
+
+```lean
+theorem convergesToQ_shiftSeqQ (f L : U) (hf : IsSeqQ f)
+    (k : U) (hk : k ∈ (ω : U)) (h : convergesToQ f L) :
+    convergesToQ (shiftSeqQ k f) L
+```
+
+**Importancia**: high
+**Nota**: Para $n \geq N$, se tiene $n + k \geq N$ (por `le_add_right_Omega`, lema privado), luego $|f(n+k) - L| < \varepsilon$.
+
 ---
 
 ### 4.63 Rat.CauchyQ.lean
@@ -16535,6 +16749,7 @@ theorem convergesToQ_mul (f g L₁ L₂ : U)
 - `cauchyQ_const_mul`: high — múltiplo escalar de Cauchy es Cauchy
 - `cauchyQ_mul`: high — producto de Cauchy es Cauchy
 - `subseq_of_cauchyQ`: high — subsucesión de Cauchy es Cauchy
+- `cauchyQ_of_convergent_subseq`: high — Cauchy con subsucesión convergente ⟹ convergente
 - `CauchyEquivQ`: critical — definición de equivalencia de Cauchy
 - `cauchyQ_equiv_refl`: high — reflexividad
 - `cauchyQ_equiv_symm`: high — simetría
@@ -16674,6 +16889,24 @@ theorem subseq_of_cauchyQ (f g : U)
 
 **Importancia**: high
 **Nota**: Si $g(n) = f(\varphi(n))$ con $\varphi$ estrictamente creciente, entonces $\varphi(n) \geq n$ (por `strictly_increasing_ge'`), luego para $m, n \geq N$ se tiene $\varphi(m), \varphi(n) \geq N$ y se aplica la condición de Cauchy de $f$.
+
+#### Cauchy con Subsucesión Convergente implica Convergencia (cauchyQ_of_convergent_subseq)
+
+**Enunciado Matemático**: Si $f$ es de Cauchy, $g$ es subsucesión de $f$, y $g \to L$, entonces $f \to L$.
+
+**Firma Lean4**:
+
+```lean
+theorem cauchyQ_of_convergent_subseq (f g L : U)
+    (hf : IsSeqQ f) (hg : IsSeqQ g)
+    (hL : L ∈ (RatSet : U))
+    (hf_cauchy : IsCauchyQ f) (hg_sub : IsSubseqOf g f)
+    (hg_conv : convergesToQ g L) :
+    convergesToQ f L
+```
+
+**Importancia**: high
+**Nota**: Estrategia $\varepsilon/2$: dado $\varepsilon > 0$, tomar $N_1$ con $|f(m)-f(n)| < \varepsilon/2$ para $m,n \geq N_1$ (Cauchy); tomar $N_2$ con $|g(k)-L| < \varepsilon/2$ para $k \geq N_2$. Sea $N = \max(N_1, N_2)$ y $k \geq N$ con $g(k) = f(\varphi(k))$ y $\varphi(k) \geq k \geq N$ (por `strictly_increasing_ge`). Entonces $|f(n) - L| \leq |f(n) - f(\varphi(k))| + |g(k) - L| < \varepsilon/2 + \varepsilon/2 = \varepsilon$.
 
 #### Equivalencia de Cauchy (CauchyEquivQ)
 
