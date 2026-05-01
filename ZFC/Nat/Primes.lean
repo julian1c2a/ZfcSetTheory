@@ -330,6 +330,32 @@ namespace ZFC
         -- 7) Apply IH at k₁ to k₂: k₁ = 𝟘. Contradicts hk₁_ne.
         exact hk₁_ne (IH k₁ h_k1_lt_m k₂ h_k1_eq)
 
+    /-- ω-version of the descent lemma:
+        if `A · A = (σ σ ∅) · (B · B)` in ω, then `A = ∅`.
+        This is the bridge between Peano and ω used by `sqrt2_irrational`. -/
+    theorem omega_descent_two_squares
+        (A B : U) (hA : A ∈ (ω : U)) (hB : B ∈ (ω : U))
+        (h : mul A A = mul (σ (σ (∅ : U))) (mul B B)) :
+        A = ∅ := by
+      -- Pull A, B back to Peano via fromPeano_surjective.
+      have hA_nat : IsNat A := mem_Omega_is_Nat A hA
+      have hB_nat : IsNat B := mem_Omega_is_Nat B hB
+      obtain ⟨a, ha_eq⟩ := fromPeano_surjective A hA_nat
+      obtain ⟨b, hb_eq⟩ := fromPeano_surjective B hB_nat
+      -- Rewrite equation in ω in terms of fromPeano
+      rw [← ha_eq, ← hb_eq, ← fromPeano_two_eq] at h
+      -- Use fromPeano_mul to push everything inside fromPeano
+      rw [← fromPeano_mul, ← fromPeano_mul, ← fromPeano_mul] at h
+      -- Now h : fromPeano (a * a) = fromPeano (𝟚 * (b * b))
+      have h_peano : Peano.Mul.mul a a = Peano.Mul.mul 𝟚 (Peano.Mul.mul b b) :=
+        fromPeano_injective h
+      -- Apply Peano descent
+      have ha0 : a = 𝟘 := peano_descent_two_squares a b h_peano
+      -- Translate back to ω: A = fromPeano a = fromPeano 𝟘 = ∅
+      rw [← ha_eq, ha0]
+      -- fromPeano 𝟘 = ∅
+      simp only [fromPeano]
+
   end Nat.Primes
 
   export Nat.Primes (
@@ -353,6 +379,7 @@ namespace ZFC
     isPrime_two
     two_dvd_of_two_dvd_mul_self
     peano_descent_two_squares
+    omega_descent_two_squares
   )
 
 end ZFC
