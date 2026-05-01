@@ -3,19 +3,44 @@
 [![Lean 4](https://img.shields.io/badge/Lean-v4.29.0-blue)](https://leanprover.github.io/)
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](REFERENCE.md)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![Modules](https://img.shields.io/badge/módulos-87-blue)](REFERENCE.md)
+[![Modules](https://img.shields.io/badge/módulos-89-blue)](REFERENCE.md)
 [![Sorry](https://img.shields.io/badge/sorry-0-brightgreen)](REFERENCE.md)
 
 Una implementación formal de la **Teoría de Conjuntos de Zermelo-Fraenkel (ZFC)** en Lean 4, sin dependencias de Mathlib.
 
-> **Estado actual** (2026-04-29): 87 módulos activos · **0 sorry** · 0 errores.
-> Phase 6 (ℚ) 100% completa — 9 módulos. Phase 6.5 (Sucesiones en ℚ) — 6/7 módulos, 0 sorry.
+> **Estado actual** (2026-05-01): 89 módulos activos · **0 sorry** · 0 errores.
+> Phase 6 (ℚ), 6.5 (Sucesiones) y 6.6 (Incompletitud de ℚ, √2 irracional) 100% completas.
 
 ---
 
-## ¿Qué hace este proyecto?
+## Visión del Proyecto
 
-Construye las matemáticas desde los axiomas de ZFC hacia arriba, en Lean 4 puro (sin Mathlib):
+Este no es un proyecto para reproducir Mathlib desde cero, sino para construir matemática
+formal **desde los fundamentos lógicos**, dejando visible la arquitectura de conceptos.
+El objetivo a largo plazo es una jerarquía de sistemas formales mutuamente conectados:
+
+```
+Peano / Aczel-CZF (computable, sin Infinito)
+        ↓  embedding ΠZ
+  ZFC (este proyecto)  ←  AczelSetTheory (HF sets)
+        ↓  embedding futuro
+    MK (Morse-Kelley, con clases propias)
+        ↓  embedding futuro
+   TG (Teoría de Grothendieck, universos)
+        ↓
+ Teoría de Categorías (fundamentos categóricos)
+```
+
+El principio es que **cada sistema contiene al anterior como subestructura interpretable**,
+y los embeddings son el vehículo para transferir resultados entre niveles. La
+computabilidad (Peano/Aczel) queda separada de la infinitud actual (ZFC), y ambas
+queda separadas de los grandes cardinales (MK/TG).
+
+La elección de ir construyendo **infraestructura algebraica y topológica explícita**
+(en lugar de tomar atajos) no es un lujo: es la única forma de que los embeddings
+futuros tengan algo firme donde aterrizar.
+
+**Lo que hace el proyecto ahora** (2026-05-01):
 
 1. **Axiomas ZFC** — Extensionalidad, Vacío, Separación, Par, Unión, Potencia, Infinito
 2. **Teoría de conjuntos** — Pares ordenados, producto cartesiano, relaciones, funciones, equipotencia
@@ -25,8 +50,9 @@ Construye las matemáticas desde los axiomas de ZFC hacia arriba, en Lean 4 puro
 6. **Álgebras de Boole** — Teorema de representación de Stone; correspondencia BR ↔ BA; cardinalidad 2^n
 7. **Cardinalidad** — Cantor, Cantor-Schröder-Bernstein
 8. **Enteros ℤ** — Construcción completa: +, −, ×, ÷ euclídea, ^, GCD, LCM, Bézout, TFA, valor absoluto, signo, orden total, inducción
-9. **Racionales ℚ** — Construcción completa: equivalencia en ℤ×ℤ*, +, −, ×, ÷, |·|, orden total, embedding ℤ↪ℚ, propiedad arquimediana, axiomas de cuerpo
-10. **Sucesiones en ℚ** — IsSeqQ, convergencia ε-N, límite único, aritmética de límites, sucesiones de Cauchy, acotamiento, monotonía; `nondecreasing_bounded_isCauchy` y `nonincreasing_bounded_isCauchy` por argumento arquimediano
+9. **Racionales ℚ** — Construcción completa: equivalencia en ℤ×ℤ\*, +, −, ×, ÷, |·|, orden total, embedding ℤ↪ℚ, propiedad arquimediana, cuerpo ordenado
+10. **Sucesiones en ℚ** — convergencia ε-N, Cauchy, acotamiento, monotonía, subsucesiones, invSeqQ, tailSeqQ, shiftSeqQ
+11. **Incompletitud de ℚ** — `sqrt2_irrational` + `sqrtApproxSeq_not_convergent`: ℚ no es secuencialmente completo
 
 ---
 
@@ -191,8 +217,10 @@ ZfcSetTheory/
 ├── ZFC.lean                    # Módulo raíz
 ├── lakefile.lean               # Configuración Lake
 ├── lean-toolchain              # Lean v4.29.0
-├── REFERENCE.md                # Referencia técnica completa (17000+ líneas)
-├── NEXT-STEPS.md               # Hoja de ruta
+├── REFERENCE.md                # Referencia técnica completa (~19500 líneas)
+├── PLANNING.md                 # Estrategia, decisiones y roadmap completo
+├── NEXT-STEPS.md               # Hoja de ruta detallada (fase a fase)
+├── THOUGHTS.md                 # Notas de diseño y reflexiones matemáticas
 └── ZFC/
     ├── Axiom/                  # 7 axiomas ZFC
     ├── Core/                   # Prelim (ExistsUnique)
@@ -203,7 +231,7 @@ ZfcSetTheory/
     ├── BoolAlg/                # Álgebras de Boole (11 módulos)
     ├── Cardinal/               # Cardinalidad (2 módulos)
     ├── Int/                    # ℤ completo (16 módulos, incl. MaxMin)
-    └── Rat/                    # ℚ + Sucesiones (14 módulos)
+    └── Rat/                    # ℚ + Sucesiones + Cauchy + SqrtApprox (15 módulos)
 ```
 
 ---
@@ -212,9 +240,10 @@ ZfcSetTheory/
 
 | Documento | Contenido |
 |-----------|-----------|
-| [REFERENCE.md](REFERENCE.md) | Referencia técnica completa: 18000+ líneas, todas las definiciones y teoremas con firma Lean4, anotaciones `@importance` |
-| [NEXT-STEPS.md](NEXT-STEPS.md) | Hoja de ruta detallada: Phase 6 (ℚ), Phase 7 (ℝ), futuro |
-| [THOUGHTS.md](THOUGHTS.md) | Notas de diseño y reflexiones; qué está hecho, en progreso y en el futuro lejano |
+| [REFERENCE.md](REFERENCE.md) | Referencia técnica completa (~19500 líneas): todas las definiciones y teoremas con firma Lean 4, anotaciones `@importance` y `@axiom_system` |
+| [PLANNING.md](PLANNING.md) | Estrategia a largo plazo: jerarquía de sistemas formales, plan de embedding, áreas matemáticas pendientes, decisiones arquitectónicas, branching git |
+| [NEXT-STEPS.md](NEXT-STEPS.md) | Hoja de ruta detallada fase a fase (véase también PLANNING.md para el contexto estratégico) |
+| [THOUGHTS.md](THOUGHTS.md) | Notas de diseño, reflexiones matemáticas, borradores de definiciones en progreso |
 | [NAMING-CONVENTIONS.md](NAMING-CONVENTIONS.md) | Convenciones de nombres estilo Mathlib |
 | [CHANGELOG.md](CHANGELOG.md) | Historial de cambios |
 

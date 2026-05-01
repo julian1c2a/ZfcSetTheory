@@ -2,6 +2,11 @@
 
 **Last updated**: 2026-05-01
 
+> Este documento detalla la hoja de ruta fase a fase (trabajo inmediato y próximos meses).
+> Para la estrategia a largo plazo —embeddings entre sistemas formales, jerarquía
+> Peano/ZFC/MK/TG/Categorías, plan de documentación y decisiones arquitectónicas—
+> véase [PLANNING.md](PLANNING.md).
+
 ---
 
 ## Milestones completados
