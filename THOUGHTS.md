@@ -125,13 +125,78 @@ Podemos definir un polinomio en una indeterminada $X$ de grado $n$ como una tupl
 -- y se le pasa un entero (numerador) y un natural no nulo (denominador) como coeficiente 
 -- del monomio. En caso de pasarle el coeficiente como un racional, se le pasaría el 
 -- numerador como entero y el denominador como natural no nulo.
-inductive Monomial (n : ℕ₀) : Type where
-  | mk : Nat → Integer → Nat → Monomial n
-  | mk_from_rat : Rat → Nat → Monomial n
+inductive Monomial  : Type where
+  | mk_nat (n : ℕ₀) : Monomial -- grado 0, coeficiente n
+  | mk_int (z : IntSet) : Monomial -- grado 0
+  | mk_rat (q : Rat) : Monomial  -- grado 0
+  | mk (n : ℕ₀) (z : IntSet) (d : ℕ₀) (hneq0 : d ≠ 0) : Monomial -- grado n, coeficiente z/d
+  | mk_from_rat (n : ℕ₀) (s : Rat) : Monomial -- grado n, coeficiente s
+
+-- Primero vamos a hacer las funciones extractoras de grado y coeficiente de un monomio.
+def grado : Monomial → ℕ₀
+    | Monomial.mk_nat _ => 0
+    | Monomial.mk_int _ => 0
+    | Monomial.mk_rat _ => 0
+    | Monomial.mk n _ _ _ => n
+    | Monomial.mk_from_rat n _ => n
+
+def coeficiente : Monomial → Rat
+    | Monomial.mk_nat n => rat (int n)
+    | Monomial.mk_int z => rat z
+    | Monomial.mk_rat q => q
+    | Monomial.mk _ z d _ => rat z (natToInteger d)
+    | Monomial.mk_from_rat _ s => s
+
 -- Habría que definir los monomios constantes cero, uno y menos uno.
--- Ahora se definirían las sumas y el producto de monomios, también definiremos el grado de un monomio, la exponenciación de un monomio a un número natural, la resta y la división de monomios (esta última solo si el divisor es el monomio no nulo).
+def zeroMonomial : Monomial := Monomial.mk_nat 0
+def oneMonomial : Monomial := Monomial.mk_nat 1
+def negOneMonomial : Monomial := Monomial.mk_int (-1)
+
+-- Ahora se definirían las sumas (de monomios del mismo grado) y 
+-- el producto de monomios cualquiera, 
+-- la potencia de un monomio a un número natural, 
+-- la resta y 
+-- la división de monomios (esta última solo si el divisor es el monomio no nulo).
+
+def addMonomial (m1 : Monomial) (m2 : Monomial) (heq : grado m1 = grado m2) : Monomial := 
+    let n := grado m1
+    let c1 := coeficiente m1
+    let c2 := coeficiente m2
+    Monomial.mk_from_rat n (c1 + c2)
+
+def subMonomial (m1 : Monomial) (m2 : Monomial) (heq : grado m1 = grado m2) : Monomial := 
+    let n := grado m1
+    let c1 := coeficiente m1
+    let c2 := coeficiente m2
+    Monomial.mk_from_rat n (c1 - c2)
+
+def negMonomial (m : Monomial) : Monomial := 
+    let n := grado m
+    let c := coeficiente m
+    Monomial.mk_from_rat n (-c)
+
+def mulMonomial (m1 : Monomial) (m2 : Monomial) : Monomial := 
+    let n1 := grado m1
+    let n2 := grado m2
+    let c1 := coeficiente m1
+    let c2 := coeficiente m2
+    Monomial.mk_from_rat (n1 + n2) (c1 * c2)
+
+def powMonomial (m : Monomial) (k : ℕ₀) : Monomial := 
+    let n := grado m
+    let c := coeficiente m
+    Monomial.mk_from_rat (n * k) (c ^ k)
+
+def divMonomial (m1 : Monomial) (m2 : Monomial) (hneq0 : coeficiente m2 ≠ 0) : Monomial := 
+    let n1 := grado m1
+    let n2 := grado m2
+    let c1 := coeficiente m1
+    let c2 := coeficiente m2
+    Monomial.mk_from_rat (n1 - n2) (c1 / c2)
+
 --
-inductive Polynomial (n : ℕ₀) : Type where
+inductive Polynomial : Type where
+  | mk_from_monoms (mon : Monomial) : Polynomial
   | mk : Tuple (n+2) Integer → Polynomial n
   | mk_from_rats : Tuple (n+1) Rat → Polynomial n
 ```

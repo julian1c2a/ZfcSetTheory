@@ -87,6 +87,7 @@ namespace ZFC
 
   namespace Rat.SqrtApprox
 
+
     -- =========================================================================
     -- Section 1: Private rational constants
     -- =========================================================================
@@ -1026,44 +1027,13 @@ namespace ZFC
     -- Section 6: ℚ incompleteness
     -- =========================================================================
 
-    /-- √2 is irrational: no rational L satisfies L · L = 2.
-
-        Proof sketch (2-adic argument on integers):
-        If L = p/q in lowest terms (gcd(p,q)=1) and (p/q)² = 2, then p² = 2q².
-        This means 2 | p², hence 2 | p (since 2 is prime). Write p = 2k.
-        Then 4k² = 2q², so q² = 2k², hence 2 | q² and 2 | q.
-        But gcd(p,q) = 1 and 2 | p and 2 | q is a contradiction. -/
-    theorem sqrt2_irrational :
-        ¬ ∃ L : U, L ∈ (RatSet : U) ∧ mulQ L L = addQ (oneQ : U) (oneQ : U) := by
-      sorry
-      /- Full proof requires:
-         1. L ∈ RatSet means L = ratClass ⟪p, q⟫ for some p ∈ IntSet, q ∈ NonZeroIntSet
-            (existence of irreducible representative via gcdZ and dividesZ_antisymm).
-         2. mulQ L L = twoQ gives (in terms of integer reps): p·p = 2·(q·q).
-         3. Integer 2-adic argument: 2 | p → p = 2k → 4k² = 2q² → 2 | q → gcd(|p|,|q|)≥2.
-         4. Contradiction with gcd = 1 in reduced representative.
-         Requires: ZFC.Int.Div (gcdZ, dividesZ, tfa_Z), ZFC.Int.Mul. -/
-
-    /-- The Newton–Raphson sequence sqrtApproxSeq has no limit in ℚ.
-        This shows ℚ is not (sequentially) complete. -/
-    theorem sqrtApproxSeq_not_convergent :
-        ¬ ∃ L : U, L ∈ (RatSet : U) ∧ convergesToQ (sqrtApproxSeq : U) L := by
-      sorry
-      /- Proof:
-         Assume convergesToQ sqrtApproxSeq L for some L ∈ ℚ.
-         Step 1: L > 0.
-           From sqrtApproxSeq_ge_one and le_limit_of_bounded_below: L ≥ 1 > 0.
-         Step 2: The shifted sequence n ↦ f(σn) also converges to L.
-           f(σn) is a subsequence of f (via φ(n) = σn, strictly increasing),
-           so convergesToQ (fun n => sqrtApproxSeq⦅σn⦆) L by subseq_convergent.
-         Step 3: The sequence n ↦ (f(n) + 2/f(n))/2 converges to (L + 2/L)/2.
-           By convergesToQ_add, convergesToQ_inv (L ≠ 0), and convergesToQ_const_mul.
-         Step 4: The sequences in Steps 2 and 3 are equal term-by-term
-           (by sqrtApproxSeq_apply_succ). By convergesToQ_of_eventually_eq, both
-           converge to L AND to (L + 2/L)/2. By limit_unique: L = (L + 2/L)/2.
-         Step 5: Algebraic manipulation.
-           L = (L + 2/L)/2 → 2L = L + 2/L → L = 2/L → L·L = 2.
-         Step 6: Contradiction with sqrt2_irrational. -/
+    -- The theorems `sqrt2_irrational` and `sqrtApproxSeq_not_convergent`
+    -- live in `ZFC/Rat/SqrtIrrational.lean`. They were placed in a separate
+    -- file because their proofs require importing `ZFC.Nat.Primes`, which
+    -- transitively brings in `PeanoNatLib.PeanoNatArith` — declaring a
+    -- global `notation:50 a " ∈ " l => DList.Mem a l` that shadows the ZFC
+    -- `mem` notation `∈` and breaks parsing of expressions of the form
+    -- `p ∈ X ↔ p ∈ Y ∧ ...` used throughout this file.
 
   end Rat.SqrtApprox
 
@@ -1079,6 +1049,4 @@ export ZFC.Rat.SqrtApprox (
   sqrtApproxSeq_ge_one
   sqrtApproxSeq_nonincreasing
   sqrtApproxSeq_isCauchy
-  sqrt2_irrational
-  sqrtApproxSeq_not_convergent
 )
