@@ -3,13 +3,13 @@
 [![Lean 4](https://img.shields.io/badge/Lean-v4.29.0-blue)](https://leanprover.github.io/)
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](REFERENCE.md)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![Modules](https://img.shields.io/badge/módulos-89-blue)](REFERENCE.md)
+[![Modules](https://img.shields.io/badge/módulos-91-blue)](REFERENCE.md)
 [![Sorry](https://img.shields.io/badge/sorry-0-brightgreen)](REFERENCE.md)
 
 Una implementación formal de la **Teoría de Conjuntos de Zermelo-Fraenkel (ZFC)** en Lean 4, sin dependencias de Mathlib.
 
-> **Estado actual** (2026-05-01): 89 módulos activos · **0 sorry** · 0 errores.
-> Phase 6 (ℚ), 6.5 (Sucesiones) y 6.6 (Incompletitud de ℚ, √2 irracional) 100% completas.
+> **Estado actual** (2026-05-07): 91 módulos activos · **0 sorry** · 0 errores.
+> Phase 6 (ℚ), 6.5 (Sucesiones), 6.6 (Incompletitud de ℚ) y **Phase 7 (Tuplas ZFC)** 100% completas.
 
 ---
 
@@ -87,6 +87,8 @@ futuros tengan algo firme donde aterrizar.
 | `SetOps/FiniteSets.lean` | isFiniteSet, equipotencia refl/symm/trans |
 | `SetOps/SetOrder.lean` | Retículos, órdenes parciales |
 | `SetOps/SetStrictOrder.lean` | Órdenes estrictos |
+| `SetOps/Tuple.lean` | IsTuple, tupleGraph, tuple_ext, zero_mem_sigma |
+| `SetOps/TupleOps.lean` | tupleHead, tupleLast, constTuple, tupleUpdate, tupleTail, concat |
 | `Induction/Recursion.lean` | Teorema de Recursión sobre ω |
 | `Nat/Basic.lean` | ω como ordinales de von Neumann |
 | `Nat/Add.lean` | Suma en ω, puente fromPeano_add |
@@ -154,17 +156,25 @@ futuros tengan algo firme donde aterrizar.
 | `Rat/Embedding.lean` | intToRat, homomorfismo +/−/×/≤/<, intToRat_injective, archQ |
 | `Rat/Field.lean` | mulQ_eq_zero_iff, mulQ_left_cancel, invQ_invQ, invQ_mulQ, divQ_self, distribQ |
 
-### Phase 6.5: Sucesiones en ℚ (🔄 En progreso — 6/7, 0 sorry)
+### Phase 6.5 y 6.6: Sucesiones en ℚ e Incompletitud (✅ Completo — 8/8, 0 sorry)
 
 | Módulo | Exports clave |
 |--------|---------------|
 | `Int/MaxMin.lean` | maxZ, minZ, 18 teoremas de retículo en ℤ |
 | `Rat/MaxMin.lean` | maxQ, minQ, 18 teoremas de retículo en ℚ |
 | `Rat/Sequences.lean` | IsSeqQ, constSeqQ, addSeqQ, negSeqQ, mulSeqQ |
-| `Rat/Convergence.lean` | convergesToQ, hasLimitQ, IsSubseqOf, limit_unique, convergesToQ_add, convergesToQ_mul_bounded, subseq_convergent |
-| `Rat/CauchyQ.lean` | IsCauchyQ, cauchy_of_convergentQ, cauchy_bounded, constSeqQ_isCauchy |
-| `Rat/Monotone.lean` | isNondecreasingQ, isNonincreasingQ, isBoundedQ, nondecreasing_bounded_isCauchy, nonincreasing_bounded_isCauchy, convergent_isBounded |
-| `Rat/SqrtApprox.lean` | *(no iniciado — prueba de incompletitud de ℚ)* |
+| `Rat/Convergence.lean` | convergesToQ, hasLimitQ, IsSubseqOf, limit_unique, aritmética completa de límites (add/sub/mul/inv/div/abs/squeeze) |
+| `Rat/CauchyQ.lean` | IsCauchyQ, cauchy_of_convergentQ, cauchy_bounded, CauchyEquivQ |
+| `Rat/Monotone.lean` | isNondecreasingQ, isNonincreasingQ, isBoundedQ, nondecreasing_bounded_isCauchy, convergent_isBounded |
+| `Rat/SqrtApprox.lean` | twoQ, sqrtApproxSeq, sqrtApproxSeq_isCauchy, sqrtApproxSeq_sq_gt_two |
+| `Rat/SqrtIrrational.lean` | sqrt2_irrational, sqrtApproxSeq_not_convergent (**ℚ no es secuencialmente completo**) |
+
+### Phase 7: Tuplas ZFC (✅ Completo — 2/2, 0 sorry)
+
+| Módulo | Exports clave |
+|--------|---------------|
+| `SetOps/Tuple.lean` | IsTuple, tupleGraph, tupleGraph_isTuple, tupleGraph_apply, tuple_ext, zero_mem_sigma |
+| `SetOps/TupleOps.lean` | tupleHead, tupleLast, constTuple, tupleUpdate, tupleTail, concat + `_isTuple` para cada uno |
 
 ---
 
@@ -224,14 +234,14 @@ ZfcSetTheory/
 └── ZFC/
     ├── Axiom/                  # 7 axiomas ZFC
     ├── Core/                   # Prelim (ExistsUnique)
-    ├── SetOps/                 # Pares, cartesiano, relaciones, funciones, conjuntos finitos
+    ├── SetOps/                 # Pares, cartesiano, relaciones, funciones, conjuntos finitos, tuplas
     ├── Induction/              # Teorema de recursión
     ├── Nat/                    # ℕ completo (14 módulos)
     ├── Peano/                  # Puentes Peano ↔ von Neumann (4 módulos)
     ├── BoolAlg/                # Álgebras de Boole (11 módulos)
     ├── Cardinal/               # Cardinalidad (2 módulos)
     ├── Int/                    # ℤ completo (16 módulos, incl. MaxMin)
-    └── Rat/                    # ℚ + Sucesiones + Cauchy + SqrtApprox (15 módulos)
+    └── Rat/                    # ℚ + Sucesiones + Cauchy + SqrtApprox/SqrtIrrational (16 módulos)
 ```
 
 ---

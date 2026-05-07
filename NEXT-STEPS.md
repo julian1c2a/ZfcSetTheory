@@ -23,7 +23,7 @@
 - ✅ **Sucesiones en ℚ** (Phase 6.5, 7/7 módulos): `Int/MaxMin`, `Rat/MaxMin`, `Rat/Sequences`, `Rat/Convergence`, `Rat/CauchyQ`, `Rat/Monotone`, `Rat/SqrtApprox` — **0 sorry, 0 errores**.
 - ✅ **Incompletitud secuencial de ℚ** (Phase 6.6, 1 módulo): `Rat/SqrtIrrational` — `sqrt2_irrational` y `sqrtApproxSeq_not_convergent` — **0 sorry**. Combinado con `sqrtApproxSeq_isCauchy`, demuestra que $(\mathbb{Q}, |\cdot|_\mathbb{Q})$ no es secuencialmente completo.
 
-**Estado**: 89 módulos, **0 sorry**, **0 errores de compilación** (verificado 2026-05-01).
+**Estado**: 91 módulos, **0 sorry**, **0 errores de compilación** (verificado 2026-05-07).
 
 ---
 
@@ -212,16 +212,18 @@
 
 ---
 
-## Phase 7: Tuplas e Infraestructura Algebraica — 📋 Planificado
+## Phase 7: Tuplas e Infraestructura Algebraica — ✅ COMPLETA (2026-05-07)
 
 **Motivación**: Antes de definir polinomios necesitamos un tipo de tupla finita bien fundada en ZFC puro (sin Mathlib). Una tupla de grado $n$ es una función $t: \sigma n \to \Omega$ (dominio $\{0,\ldots,n\}$, $n+1$ elementos).
 
-| Módulo | Contenido principal |
-|--------|---------------------|
-| `SetOps/Tuple.lean` | `IsTuple t n Ω` (t función de {0,...,n} a Ω), `tuple` (construcción), `tuple_isFunction`, `tuple_apply`, `tuple_ext` |
-| `SetOps/TupleOps.lean` | `concat` (concatenación), `head`, `tail`, `update` (modificar un índice), `shift_by` (desplazar dominio) |
+| Módulo | Contenido principal | Estado |
+|--------|---------------------|--------|
+| `SetOps/Tuple.lean` | `IsTuple t n Ω`, `tupleGraph`, `tuple_apply_mem`, `tupleGraph_isTuple`, `tupleGraph_apply`, `tuple_ext`, `zero_mem_sigma` | ✅ **COMPLETO** |
+| `SetOps/TupleOps.lean` | `tupleHead`, `tupleLast`, `constTuple`, `tupleUpdate`, `tupleTail`, `concat` + `_isTuple` para cada operación | ✅ **COMPLETO** |
 
-**Convención**: grado $n$ $\Rightarrow$ dominio $\sigma n = \{0, \ldots, n\}$ ($n+1$ elementos). Esto alinea con la codificación von Neumann de $\omega$.
+**Convención D9**: grado $n$ $\Rightarrow$ dominio $\sigma n = \{0, \ldots, n\}$ ($n+1$ elementos). Esto alinea con la codificación von Neumann de $\omega$.
+
+**Estado**: 2/2 módulos · 21 exports · **0 sorry · 0 errores** (verificado 2026-05-07)
 
 ---
 
@@ -320,7 +322,7 @@
 | 6: Racionales ℚ | ✅ Completo | 9 | 90 |
 | 6.5: Sucesiones en ℚ | ✅ Completo | 7/7 | ~111 |
 | 6.6: Incompletitud de ℚ | ✅ Completo (sqrt2 irracional + sqrtApproxSeq no converge) | 1 | 2 |
-| 7: Tuplas e infraestructura | 📋 Planificado | 0/2 | — |
+| 7: Tuplas e infraestructura | ✅ Completo | 2/2 | 21 |
 | 8: Monomios y polinomios | 📋 Planificado | 0/4 | — |
 | 9a: Computables | 📋 Planificado | 0/4 | — |
 | 9b: Constructibles | 📋 Planificado | 0/2 | — |
@@ -331,4 +333,6 @@
 
 ---
 
-*Última actualización: 2026-05-01 (sesión 12). REFERENCE.md actualizado con nuevos exports de Convergence.lean (strictly_increasing_ge, invSeqQ, tailSeqQ, shiftSeqQ familia) y CauchyQ.lean (cauchyQ_of_convergent_subseq). Phases reestructuradas: Tuples (7) y Polynomials (8) insertadas; antiguas 7/8 pasan a 9/10. THOUGHTS.md actualizado: [16.] marcado ✅, [17.] añadido (irracionalidad generalizada), Phase 6 marcada completa. 89 módulos totales, **0 sorry, 0 errores**.*
+*Última actualización: 2026-05-07 (sesión 13). Phase 7 (Tuplas) completada: SetOps/Tuple.lean + SetOps/TupleOps.lean — 2 módulos, 21 exports, 0 sorry, 0 errores. REFERENCE.md actualizado con §3.69–§3.70, §4.67–§4.68, §6.68–§6.69. 91 módulos totales, **0 sorry, 0 errores**.*
+
+*Actualización anterior: 2026-05-01 (sesión 12). REFERENCE.md actualizado con nuevos exports de Convergence.lean (strictly_increasing_ge, invSeqQ, tailSeqQ, shiftSeqQ familia) y CauchyQ.lean (cauchyQ_of_convergent_subseq). Phases reestructuradas: Tuples (7) y Polynomials (8) insertadas; antiguas 7/8 pasan a 9/10. THOUGHTS.md actualizado: [16.] marcado ✅, [17.] añadido (irracionalidad generalizada), Phase 6 marcada completa. 89 módulos totales, **0 sorry, 0 errores**.*

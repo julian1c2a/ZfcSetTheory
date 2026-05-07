@@ -160,6 +160,8 @@ Este documento cumple con todos los requisitos especificados en [AI-GUIDE.md](AI
 | `Rat/Field.lean` | `ZFC.Rat.Field` | `Rat.Mul`, `Rat.Order` + anteriores | ✅ Completo |
 | `Rat/SqrtApprox.lean` | `ZFC.Rat.SqrtApprox` | `Rat.CauchyQ`, `Rat.Monotone`, `Rat.Field` + anteriores | ✅ Completo (2026-05-01) |
 | `Rat/SqrtIrrational.lean` | `ZFC.Rat.SqrtIrrational` | `Rat.SqrtApprox`, `Nat.Primes` | ✅ Completo (2026-05-01) — 0 sorry |
+| `SetOps/Tuple.lean` | `ZFC.SetOps.Tuple` | `SetOps.Functions`, `Axiom.Infinity` | ✅ Completo (2026-05-07) |
+| `SetOps/TupleOps.lean` | `ZFC.SetOps.TupleOps` | `SetOps.Tuple`, `Nat.Add`, `Nat.Sub` | ✅ Completo (2026-05-07) |
 
 ### 1.2 Axiomas ZFC por Módulo
 
@@ -229,6 +231,8 @@ Cada módulo usa transitivamente un subconjunto de los 7 axiomas ZFC del proyect
 - `BoolAlg.FiniteBA`
 - `Int/Equiv`, `Int/Basic`, `Int/Add`, `Int/Neg`, `Int/Mul`, `Int/Ring`, `Int/Sub`, `Int/Pow`, `Int/DivMod`, `Int/Order`, `Int/Embedding`, `Int/Abs`, `Int/Induction`, `Int/Units`, `Int/Div`
 - `Rat/Embedding`, `Rat/Field`
+- `Rat/SqrtApprox`, `Rat/SqrtIrrational`
+- `SetOps.Tuple`, `SetOps.TupleOps`
 
 **Nota**: `BoolAlg.Representation` (teorema de Stone) usa solo 6 axiomas — no requiere Infinito. `BoolAlg.FiniteBA` sí requiere los 7 porque importa `Cardinal.FinitePowerSet`.
 
@@ -5437,6 +5441,81 @@ noncomputable def intToRat (n : U) : U := ratClass n oneZ
 5. **`isBoundedAboveByQ f M`** — acotada superiormente por $M$: $\forall n \in \omega, f(n) \leq_\mathbb{Q} M$.
 6. **`isBoundedBelowByQ f M`** — acotada inferiormente por $M$: $\forall n \in \omega, M \leq_\mathbb{Q} f(n)$.
 7. **`isBoundedQ f`** — acotada: $\exists M \in \mathbb{Q}^+, \forall n \in \omega, |f(n)| \leq_\mathbb{Q} M$.
+
+---
+
+### 3.69 SetOps.Tuple.lean
+
+**Módulo**: `ZFC.SetOps.Tuple`
+**Namespace**: `ZFC.SetOps.Tuple`
+**Dependencias**: `ZFC.SetOps.Functions`, `ZFC.Axiom.Infinity`
+**Convención D9**: una tupla de grado $n$ es una función con dominio $\sigma n = \{0, 1, \ldots, n\}$ ($n+1$ elementos). Representada como grafo funcional ZFC.
+
+**Definiciones públicas**:
+
+1. **`IsTuple t n Ω`** — predicado: $n \in \omega$ y $t$ es función con dominio $\sigma n$ y codominio $\Omega$.
+
+```lean
+def IsTuple (t n Ω : U) : Prop := n ∈ (ω : U) ∧ IsFunction t (σ n) Ω
+```
+
+2. **`tupleGraph n Ω vals`** — construye la gráfica de una tupla a partir de `vals : U → U`: $\{ \langle i, \text{vals}(i) \rangle \mid i \in \sigma n,\ \text{vals}(i) \in \Omega \}$.
+
+```lean
+noncomputable def tupleGraph (n Ω : U) (vals : U → U) : U :=
+  sep (σ n ×ₛ Ω) (fun p => snd p = vals (fst p))
+```
+
+---
+
+### 3.70 SetOps.TupleOps.lean
+
+**Módulo**: `ZFC.SetOps.TupleOps`
+**Namespace**: `ZFC.SetOps.TupleOps`
+**Dependencias**: `ZFC.SetOps.Tuple`, `ZFC.Nat.Add`, `ZFC.Nat.Sub`
+
+**Definiciones públicas**:
+
+1. **`tupleHead t`** — primer elemento: $t\langle\emptyset\rangle = t^{\lfloor 0 \rfloor}$.
+
+```lean
+noncomputable def tupleHead (t : U) : U := t⦅∅⦆
+```
+
+2. **`tupleLast t n`** — último elemento de una $n$-tupla: $t\langle n \rangle$.
+
+```lean
+noncomputable def tupleLast (t n : U) : U := t⦅n⦆
+```
+
+3. **`constTuple n a Ω`** — tupla constante: todos los índices $i \in \sigma n$ mapean al mismo valor $a \in \Omega$.
+
+```lean
+noncomputable def constTuple (n a Ω : U) : U :=
+  tupleGraph n Ω (fun _ => a)
+```
+
+4. **`tupleUpdate t n Ω i v`** — actualizar el índice $i$ con el valor $v$; los demás índices mantienen su valor.
+
+```lean
+noncomputable def tupleUpdate (t n Ω i v : U) : U :=
+  tupleGraph n Ω (fun j => if j = i then v else t⦅j⦆)
+```
+
+5. **`tupleTail t n Ω`** — cola: elimina el elemento 0 y desplaza los índices restantes hacia abajo. Requiere $n \neq \emptyset$ para que `predecessor n` sea un grado válido.
+
+```lean
+noncomputable def tupleTail (t n Ω : U) : U :=
+  tupleGraph (predecessor n) Ω (fun i => t⦅σ i⦆)
+```
+
+6. **`concat t₁ n₁ t₂ n₂ Ω`** — concatenación: $t_1$ (grado $n_1$) seguido de $t_2$ (grado $n_2$). El resultado tiene grado $n_1 + \sigma n_2 = n_1 + n_2 + 1$. Los índices $0,\ldots,n_1$ provienen de $t_1$; los índices $\sigma n_1,\ldots,n_1+n_2+1$ provienen de $t_2$ desplazados por $\sigma n_1$.
+
+```lean
+noncomputable def concat (t₁ n₁ t₂ n₂ Ω : U) : U :=
+  tupleGraph (add n₁ (σ n₂)) Ω
+    (fun j => if j ∈ σ n₁ then t₁⦅j⦆ else t₂⦅sub j (σ n₁)⦆)
+```
 
 ---
 
@@ -17155,6 +17234,182 @@ una sucesión de Cauchy (`sqrtApproxSeq_isCauchy`) sin límite racional.
 
 ---
 
+### 4.67 SetOps.Tuple.lean
+
+**Módulo**: `ZFC.SetOps.Tuple`
+**Namespace**: `ZFC.SetOps.Tuple`
+**Dependencias**: `ZFC.SetOps.Functions`, `ZFC.Axiom.Infinity`
+
+**Importancia por teorema**:
+
+- `isTuple_degree_mem_omega`: medium — proyección del grado sobre $\omega$
+- `isTuple_isFunction`: medium — proyección de la propiedad de función
+- `isTuple_subset`: medium — la tupla es subconjunto del producto cartesiano
+- `tuple_apply_mem`: high — $t\langle i \rangle \in \Omega$ siempre que $i \in \sigma n$
+- `tupleGraph_mem_iff`: high — caracterización de membresía en `tupleGraph`
+- `tupleGraph_isTuple`: high — la construcción produce un `IsTuple` válido
+- `tupleGraph_apply`: high — `(tupleGraph n Ω vals)⦅i⦆ = vals i`
+- `tuple_ext`: high — extensionalidad: igualdad puntual implica igualdad como conjuntos
+- `zero_mem_sigma`: medium — el índice 0 ($\emptyset$) siempre pertenece a $\sigma n$
+
+#### Membresía en la gráfica (tupleGraph_mem_iff)
+
+**Enunciado Matemático**: $p \in \text{tupleGraph}(n, \Omega, \text{vals})$ ssi $p$ es par ordenado con primera componente en $\sigma n$, segunda en $\Omega$, y $\text{snd}(p) = \text{vals}(\text{fst}(p))$.
+
+**Firma Lean4**:
+
+```lean
+theorem tupleGraph_mem_iff (n Ω : U) (vals : U → U) (p : U) :
+    p ∈ tupleGraph n Ω vals ↔
+    isOrderedPair p ∧ fst p ∈ σ n ∧ snd p ∈ Ω ∧ snd p = vals (fst p)
+```
+
+**Importancia**: high
+
+#### Valor de la aplicación (tuple_apply_mem)
+
+**Enunciado Matemático**: Si $t$ es una $n$-tupla con valores en $\Omega$ y $i \in \sigma n$, entonces $t\langle i \rangle \in \Omega$.
+
+**Firma Lean4**:
+
+```lean
+theorem tuple_apply_mem (t n Ω i : U) (ht : IsTuple t n Ω) (hi : i ∈ σ n) :
+    t⦅i⦆ ∈ Ω
+```
+
+**Importancia**: high
+
+#### Construcción produce tupla (tupleGraph_isTuple)
+
+**Enunciado Matemático**: Si `vals` mapea $\sigma n$ en $\Omega$, entonces `tupleGraph n Ω vals` es una $n$-tupla válida.
+
+**Firma Lean4**:
+
+```lean
+theorem tupleGraph_isTuple (n Ω : U) (vals : U → U)
+    (hn : n ∈ (ω : U))
+    (hvals : ∀ i, i ∈ σ n → vals i ∈ Ω) :
+    IsTuple (tupleGraph n Ω vals) n Ω
+```
+
+**Importancia**: high
+
+#### Aplicación de gráfica (tupleGraph_apply)
+
+**Enunciado Matemático**: La aplicación de `tupleGraph n Ω vals` en $i \in \sigma n$ devuelve exactamente `vals i`.
+
+**Firma Lean4**:
+
+```lean
+theorem tupleGraph_apply (n Ω : U) (vals : U → U)
+    (hn : n ∈ (ω : U)) (i : U) (hi : i ∈ σ n)
+    (hvals : ∀ i, i ∈ σ n → vals i ∈ Ω) :
+    (tupleGraph n Ω vals)⦅i⦆ = vals i
+```
+
+**Importancia**: high
+
+#### Extensionalidad de tuplas (tuple_ext)
+
+**Enunciado Matemático**: Dos $n$-tuplas con valores en $\Omega$ que coinciden en todos los índices son iguales como conjuntos ZFC.
+
+**Firma Lean4**:
+
+```lean
+theorem tuple_ext (t₁ t₂ n Ω : U)
+    (ht₁ : IsTuple t₁ n Ω) (ht₂ : IsTuple t₂ n Ω)
+    (h : ∀ i, i ∈ σ n → t₁⦅i⦆ = t₂⦅i⦆) : t₁ = t₂
+```
+
+**Importancia**: high
+
+#### Índice 0 siempre presente (zero_mem_sigma)
+
+**Enunciado Matemático**: Para todo $n \in \omega$, $\emptyset \in \sigma n$ (el primer índice existe siempre).
+
+**Firma Lean4**:
+
+```lean
+theorem zero_mem_sigma (n : U) (hn : n ∈ (ω : U)) : (∅ : U) ∈ σ n
+```
+
+**Importancia**: medium
+
+---
+
+### 4.68 SetOps.TupleOps.lean
+
+**Módulo**: `ZFC.SetOps.TupleOps`
+**Namespace**: `ZFC.SetOps.TupleOps`
+**Dependencias**: `ZFC.SetOps.Tuple`, `ZFC.Nat.Add`, `ZFC.Nat.Sub`
+
+**Importancia por teorema**:
+
+- `constTuple_isTuple`: high — la tupla constante es un `IsTuple` válido
+- `tupleUpdate_isTuple`: high — la tupla actualizada es un `IsTuple` válido
+- `tupleTail_isTuple`: high — la cola (grado `predecessor n`) es un `IsTuple` válido
+- `concat_isTuple`: high — la concatenación (grado $n_1 + \sigma n_2$) es un `IsTuple` válido
+
+#### Tupla Constante (constTuple_isTuple)
+
+**Enunciado Matemático**: Si $a \in \Omega$ y $n \in \omega$, entonces la tupla constante de valor $a$ en $\sigma n$ es un `IsTuple`.
+
+**Firma Lean4**:
+
+```lean
+theorem constTuple_isTuple (n a Ω : U) (hn : n ∈ (ω : U)) (ha : a ∈ Ω) :
+    IsTuple (constTuple n a Ω) n Ω
+```
+
+**Importancia**: high
+
+#### Actualización de Índice (tupleUpdate_isTuple)
+
+**Enunciado Matemático**: Si $t$ es una $n$-tupla con valores en $\Omega$ y $v \in \Omega$, entonces la tupla obtenida reemplazando el índice $i$ por $v$ es una $n$-tupla válida.
+
+**Firma Lean4**:
+
+```lean
+theorem tupleUpdate_isTuple (t n Ω i v : U)
+    (ht : IsTuple t n Ω) (hv : v ∈ Ω) :
+    IsTuple (tupleUpdate t n Ω i v) n Ω
+```
+
+**Importancia**: high
+
+#### Cola de Tupla (tupleTail_isTuple)
+
+**Enunciado Matemático**: Si $t$ es una $n$-tupla con $n \neq \emptyset$, entonces la cola (índices $1,\ldots,n$ renumerados como $0,\ldots,n-1$) es una `predecessor n`-tupla.
+
+**Firma Lean4**:
+
+```lean
+theorem tupleTail_isTuple (t n Ω : U)
+    (ht : IsTuple t n Ω) (hne : n ≠ ∅) :
+    IsTuple (tupleTail t n Ω) (predecessor n) Ω
+```
+
+**Importancia**: high
+
+#### Concatenación (concat_isTuple)
+
+**Enunciado Matemático**: Si $t_1$ es una $n_1$-tupla y $t_2$ es una $n_2$-tupla, ambas con valores en $\Omega$, entonces su concatenación es una $(n_1 + \sigma n_2)$-tupla. El dominio resultante $\sigma(n_1 + n_2 + 1)$ tiene $n_1 + n_2 + 2$ elementos.
+
+**Firma Lean4**:
+
+```lean
+theorem concat_isTuple (t₁ n₁ t₂ n₂ Ω : U)
+    (hn₁ : n₁ ∈ (ω : U)) (hn₂ : n₂ ∈ (ω : U))
+    (ht₁ : IsTuple t₁ n₁ Ω) (ht₂ : IsTuple t₂ n₂ Ω) :
+    IsTuple (concat t₁ n₁ t₂ n₂ Ω) (add n₁ (σ n₂)) Ω
+```
+
+**Esquema**: Los índices $j \in \sigma n_1$ se sirven desde $t_1$ directamente. Los índices $j \notin \sigma n_1$ (con $j \in \sigma(n_1 + \sigma n_2)$) se sirven desde $t_2$ con índice desplazado $j - \sigma n_1$. La llave aritmética es la acumulación `sub_mem_sigma_of_not_in_sigma` (lema privado), que prueba $j - \sigma n_1 \in \sigma n_2$ usando tricotomía, `add_k_sub_k_Omega` y `add_lt_of_lt_Omega`.
+
+**Importancia**: high
+
+---
+
 ## 5. Notación y Sintaxis
 
 ### 5.1 Operadores Básicos
@@ -19263,6 +19518,51 @@ export ZFC.Rat.SqrtIrrational (
 )
 ```
 
+### 6.68 SetOps.Tuple.lean
+
+**Namespace**: `ZFC.SetOps.Tuple` (exportado a `ZFC`)
+**Última modificación**: 2026-05-07
+**Dependencias**: `ZFC.SetOps.Functions`, `ZFC.Axiom.Infinity`
+**Nota**: 11 exports — convenio D9 (tupla de grado $n$ = función con dominio $\sigma n$). 0 sorry.
+
+```lean
+export ZFC.SetOps.Tuple (
+  IsTuple
+  isTuple_degree_mem_omega
+  isTuple_isFunction
+  isTuple_subset
+  tuple_apply_mem
+  tupleGraph
+  tupleGraph_mem_iff
+  tupleGraph_isTuple
+  tupleGraph_apply
+  tuple_ext
+  zero_mem_sigma
+)
+```
+
+### 6.69 SetOps.TupleOps.lean
+
+**Namespace**: `ZFC.SetOps.TupleOps` (exportado a `ZFC`)
+**Última modificación**: 2026-05-07
+**Dependencias**: `ZFC.SetOps.Tuple`, `ZFC.Nat.Add`, `ZFC.Nat.Sub`
+**Nota**: 10 exports — operaciones sobre tuplas ZFC: cabeza, cola, constante, actualización, concatenación. 0 sorry.
+
+```lean
+export ZFC.SetOps.TupleOps (
+  tupleHead
+  tupleLast
+  constTuple
+  constTuple_isTuple
+  tupleUpdate
+  tupleUpdate_isTuple
+  tupleTail
+  tupleTail_isTuple
+  concat
+  concat_isTuple
+)
+```
+
 ## 7. Estado de Proyección por Módulo
 
 ### 7.1 Leyenda de Estados
@@ -19344,6 +19644,10 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `Rat/CauchyQ.lean` - Sucesiones de Cauchy en ℚ: IsCauchyQ, cauchy_of_convergentQ (convergente⟹Cauchy), cauchy_bounded (Cauchy⟹acotada), constSeqQ_isCauchy. 1 definición + 3 teoremas + 4 exports
 - `Rat/Convergence.lean` - Convergencia en ℚ: convergesToQ (def ε-N), hasLimitQ, IsSubseqOf; aritmética completa de límites (const, add, sub, mul_bounded, of_dominated, squeeze, of_eventually_eq, const_mul, abs, zero_of_abs, iff_abs, mul), subseq_convergent. 3 definiciones + 14 teoremas + 17 exports. **0 sorry.**
 - `Rat/Monotone.lean` - Monotonía y acotamiento en ℚ: isNondecreasingQ/isNonincreasingQ/isStrictlyIncreasingQ/isStrictlyDecreasingQ, isBoundedAboveByQ/isBoundedBelowByQ/isBoundedQ, propiedades de interacción con límites, nondecreasing/nonincreasing_bounded_isCauchy, convergent_isBounded. 7 definiciones + 10 teoremas + 18 exports. **0 sorry.**
+- `Rat/SqrtApprox.lean` - Sucesión Newton–Raphson para $\sqrt{2}$ en ℚ: twoQ (2∈ℚ), sqrtApproxSeq (recurrencia f(0)=2, f(σn)=(f(n)+2/f(n))/2), clausura, positividad, f(n)²>2, no-creciente, Cauchy. 2 definiciones + 9 teoremas + 13 exports. **0 sorry.**
+- `Rat/SqrtIrrational.lean` - Incompletitud secuencial de ℚ: sqrt2_irrational (¬∃L∈ℚ, L²=2, vía descenso 2-ádico), sqrtApproxSeq_not_convergent (la sucesión Cauchy no converge en ℚ). 0 definiciones + 2 teoremas + 2 exports. **0 sorry.**
+- `SetOps/Tuple.lean` - Tuplas ZFC (Convención D9): IsTuple t n Ω (n∈ω ∧ t función σn→Ω), tupleGraph (construcción desde función Lean), tupleGraph_mem_iff, tupleGraph_isTuple, tupleGraph_apply, tuple_ext (extensionalidad), zero_mem_sigma (∅∈σn). 2 definiciones + 7 teoremas + 11 exports. **0 sorry.**
+- `SetOps/TupleOps.lean` - Operaciones sobre tuplas ZFC: tupleHead/tupleLast (primer/último elemento), constTuple (tupla constante), tupleUpdate (actualizar índice), tupleTail (cola, grado predecessor n), concat (concatenación, grado n₁+σn₂). 6 definiciones + 4 teoremas IsTuple + 10 exports. **0 sorry.**
 
 ### 7.3 Archivos Parcialmente Proyectados
 
@@ -19363,11 +19667,15 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 
 ### 7.5 Archivos Completos Pendientes de Proyectar
 
-(Ninguno — 70/70 módulos proyectados)
+(Ninguno — 91/91 módulos proyectados)
 
 ---
 
-*Última actualización: 2026-04-29 (sessions 9–10) — Rat.Convergence.lean completado: 9 nuevos teoremas añadidos (convergesToQ_sub, of_dominated, squeeze_theorem, of_eventually_eq, const_mul, abs, zero_of_abs, iff_abs, mul); §3.66, §4.62 y §6.63 actualizados (3 def + 14 teoremas + 17 exports). **0 sorry en todo el proyecto.** 72/72 módulos proyectados.*
+*Última actualización: 2026-05-07 — Phase 7 (Tuplas) completada: SetOps.Tuple.lean (§3.69, §4.67, §6.68: 2 def + 7 teoremas + 11 exports, IsTuple/tupleGraph/tuple_ext/zero_mem_sigma) y SetOps.TupleOps.lean (§3.70, §4.68, §6.69: 6 def + 4 teoremas + 10 exports, constTuple/tupleUpdate/tupleTail/concat). §1.1: 2 filas añadidas. §1.2: SetOps.Tuple/TupleOps en grupo 7-axiomas. §7.2: SqrtApprox.lean, SqrtIrrational.lean, Tuple.lean y TupleOps.lean añadidos. 91/91 módulos proyectados, **0 sorry, 0 errores**.*
+
+*Actualización anterior: 2026-05-01 — SqrtApprox.lean (§4.65, §6.66: 2 def + 9 teoremas + 13 exports) y SqrtIrrational.lean (§4.66, §6.67: 2 teoremas + 2 exports). Phase 6.6 completa: ℚ no es secuencialmente completo.*
+
+*Actualización anterior: 2026-04-29 (sessions 9–10) — Rat.Convergence.lean completado: 9 nuevos teoremas añadidos (convergesToQ_sub, of_dominated, squeeze_theorem, of_eventually_eq, const_mul, abs, zero_of_abs, iff_abs, mul); §3.66, §4.62 y §6.63 actualizados (3 def + 14 teoremas + 17 exports). **0 sorry en todo el proyecto.** 72/72 módulos proyectados.*
 
 *Actualización anterior: 2026-04-29 — Eliminación de todos los sorry: Rat.Convergence.lean (0 sorry, §6.63 y §3.66 actualizados), Rat.Monotone.lean (0 sorry, `convergent_isBounded` probado vía `cauchy_bounded ∘ cauchy_of_convergentQ`, `nondecreasing/nonincreasing_bounded_isCauchy` por argumento arquimediano directo, §6.65, §3.68 y §4.64 actualizados). Ambos módulos movidos de §7.4 a §7.2. **0 sorry en todo el proyecto.** 72/72 módulos proyectados (Phase 6.5: 6 módulos, pendiente SqrtApprox.lean).*
 

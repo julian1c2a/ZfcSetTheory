@@ -1,6 +1,6 @@
 # Changelog
 
-**Última actualización:** 2026-05-01
+**Última actualización:** 2026-05-07
 **Autor**: Julián Calderón Almendros
 
 Todos los cambios notables de este proyecto serán documentados en este archivo.
@@ -9,6 +9,31 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Añadido (2026-05-07 — sesión 13)
+
+- **Phase 7 — Tuplas ZFC (Convención D9) — COMPLETA (0 sorry)**:
+  - ✅ **`SetOps/Tuple.lean`** — Tuplas como funciones ZFC con dominio $\sigma n = \{0,\ldots,n\}$:
+    - `IsTuple t n Ω` — predicado: $n \in \omega$ y $t$ es función con dominio $\sigma n$ y codominio $\Omega$.
+    - `tupleGraph n Ω vals` — construcción de la gráfica desde función Lean: $\{ \langle i, \text{vals}(i) \rangle \mid i \in \sigma n \}$.
+    - `tuple_apply_mem` — $t\langle i \rangle \in \Omega$ siempre que $i \in \sigma n$.
+    - `tupleGraph_isTuple` — `tupleGraph` produce un `IsTuple` válido.
+    - `tupleGraph_apply` — `(tupleGraph n Ω vals)⦅i⦆ = vals i`.
+    - `tuple_ext` — extensionalidad: dos tuplas iguales en todos los índices son iguales como conjuntos ZFC.
+    - `zero_mem_sigma` — $\emptyset \in \sigma n$ para todo $n \in \omega$ (el índice 0 siempre existe).
+    - Namespace `ZFC.SetOps.Tuple` (exportado a `ZFC`, **11 exports**).
+  - ✅ **`SetOps/TupleOps.lean`** — Operaciones sobre tuplas:
+    - `tupleHead t` — primer elemento $t\langle\emptyset\rangle$.
+    - `tupleLast t n` — último elemento $t\langle n \rangle$.
+    - `constTuple n a Ω` — tupla constante; `constTuple_isTuple` demuestra validez.
+    - `tupleUpdate t n Ω i v` — actualizar un índice; `tupleUpdate_isTuple` demuestra validez.
+    - `tupleTail t n Ω` — cola (grado `predecessor n`, índices $1,\ldots,n$ renumerados); `tupleTail_isTuple` demuestra validez.
+    - `concat t₁ n₁ t₂ n₂ Ω` — concatenación (grado $n_1 + \sigma n_2$); `concat_isTuple` demuestra validez. Lema aritmético clave: `sub_mem_sigma_of_not_in_sigma` (privado, usa tricotomía + `add_k_sub_k_Omega`).
+    - Namespace `ZFC.SetOps.TupleOps` (exportado a `ZFC`, **10 exports**).
+  - ✅ `ZFC/SetOps.lean` barrel actualizado con ambos módulos.
+  - ✅ **REFERENCE.md** actualizado: §1.1 (2 filas), §1.2 (grupo 7-axiomas), §3.69–§3.70 (definiciones), §4.67–§4.68 (teoremas), §6.68–§6.69 (exports), §7.2 (entradas completas para SqrtApprox, SqrtIrrational, Tuple, TupleOps), §7.5 (91/91 módulos proyectados).
+  - ✅ **NEXT-STEPS.md** actualizado: Phase 7 marcada ✅ COMPLETA, tabla de resumen actualizada (2/2 módulos, 21 exports).
+  - **Estado**: 91 módulos · **0 sorry** · **0 errores de compilación** (verificado 2026-05-07).
 
 ### Añadido (2026-05-01 — sesión 11)
 

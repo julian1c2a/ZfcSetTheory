@@ -14,3 +14,5 @@ import ZFC.SetOps.Functions
 import ZFC.SetOps.SetOrder
 import ZFC.SetOps.SetStrictOrder
 import ZFC.SetOps.FiniteSets
+import ZFC.SetOps.Tuple
+import ZFC.SetOps.TupleOps
