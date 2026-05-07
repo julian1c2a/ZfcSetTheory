@@ -235,6 +235,92 @@ namespace ZFC
         exact tuple_apply_mem t₂ n₂ Ω (sub j (σ n₁)) ht₂
           (sub_mem_sigma_of_not_in_sigma j n₁ n₂ hn₁ hn₂ hj_dom h)
 
+    /-! ============================================================ -/
+    /-! ### APPLY THEOREMS ### -/
+    /-! ============================================================ -/
+
+    /-- Applying a constant tuple always returns a. -/
+    theorem constTuple_apply (n a Ω i : U)
+        (hn : n ∈ (ω : U)) (hi : i ∈ σ n) (ha : a ∈ Ω) :
+        (constTuple n a Ω)⦅i⦆ = a := by
+      unfold constTuple
+      exact tupleGraph_apply n Ω (fun _ => a) hn i hi (fun _ _ => ha)
+
+    /-- Applying a tupleUpdate at the updated index returns the new value. -/
+    theorem tupleUpdate_apply_eq (t n Ω i v : U)
+        (ht : IsTuple t n Ω) (hi : i ∈ σ n) (hv : v ∈ Ω) :
+        (tupleUpdate t n Ω i v)⦅i⦆ = v := by
+      unfold tupleUpdate
+      have hvals : ∀ k, k ∈ σ n → (if k = i then v else t⦅k⦆) ∈ Ω := fun k hk => by
+        rcases Classical.em (k = i) with h | h
+        · rw [if_pos h]; exact hv
+        · rw [if_neg h]; exact tuple_apply_mem t n Ω k ht hk
+      rw [tupleGraph_apply n Ω (fun k => if k = i then v else t⦅k⦆) ht.1 i hi hvals]
+      exact if_pos rfl
+
+    /-- Applying a tupleUpdate at a different index returns the original value. -/
+    theorem tupleUpdate_apply_ne (t n Ω i v j : U)
+        (ht : IsTuple t n Ω) (hj : j ∈ σ n) (hv : v ∈ Ω) (hne : j ≠ i) :
+        (tupleUpdate t n Ω i v)⦅j⦆ = t⦅j⦆ := by
+      unfold tupleUpdate
+      have hvals : ∀ k, k ∈ σ n → (if k = i then v else t⦅k⦆) ∈ Ω := fun k hk => by
+        rcases Classical.em (k = i) with h | h
+        · rw [if_pos h]; exact hv
+        · rw [if_neg h]; exact tuple_apply_mem t n Ω k ht hk
+      rw [tupleGraph_apply n Ω (fun k => if k = i then v else t⦅k⦆) ht.1 j hj hvals,
+          if_neg hne]
+
+    /-- Applying tupleTail at index i returns t⦅σ i⦆. -/
+    theorem tupleTail_apply (t n Ω i : U)
+        (ht : IsTuple t n Ω) (hne : n ≠ ∅) (hi : i ∈ σ (predecessor n)) :
+        (tupleTail t n Ω)⦅i⦆ = t⦅σ i⦆ := by
+      unfold tupleTail
+      have hn_omega := ht.1
+      have hn_nat := mem_Omega_is_Nat n hn_omega
+      have hpred_omega := predecessor_mem_omega n hn_omega hne
+      have h_succ_pred := succ_predecessor_eq n hn_omega hne
+      exact tupleGraph_apply (predecessor n) Ω (fun j => t⦅σ j⦆) hpred_omega i hi
+        (fun j hj => by
+          rw [h_succ_pred] at hj
+          exact tuple_apply_mem t n Ω (σ j) ht
+            (mem_succ_of_lt' j n (nat_element_is_nat n j hn_nat hj) hn_nat hj))
+
+    /-- Applying concat at an index from the left segment returns t₁⦅j⦆. -/
+    theorem concat_apply_left (t₁ n₁ t₂ n₂ Ω j : U)
+        (hn₁ : n₁ ∈ (ω : U)) (hn₂ : n₂ ∈ (ω : U))
+        (ht₁ : IsTuple t₁ n₁ Ω) (ht₂ : IsTuple t₂ n₂ Ω)
+        (hj : j ∈ σ n₁) :
+        (concat t₁ n₁ t₂ n₂ Ω)⦅j⦆ = t₁⦅j⦆ := by
+      unfold concat
+      have hadd : add n₁ (σ n₂) ∈ (ω : U) :=
+        add_in_Omega n₁ (σ n₂) hn₁ (succ_in_Omega n₂ hn₂)
+      have hj_dom : j ∈ σ (add n₁ (σ n₂)) :=
+        mem_sigma_n1_implies_mem_sigma_add j n₁ n₂ hn₁ hn₂ hj
+      have hvals : ∀ k, k ∈ σ (add n₁ (σ n₂)) →
+          (if k ∈ σ n₁ then t₁⦅k⦆ else t₂⦅sub k (σ n₁)⦆) ∈ Ω := fun k hk => by
+        rcases Classical.em (k ∈ σ n₁) with h | h
+        · rw [if_pos h]; exact tuple_apply_mem t₁ n₁ Ω k ht₁ h
+        · rw [if_neg h]; exact tuple_apply_mem t₂ n₂ Ω _ ht₂
+            (sub_mem_sigma_of_not_in_sigma k n₁ n₂ hn₁ hn₂ hk h)
+      rw [tupleGraph_apply (add n₁ (σ n₂)) Ω _ hadd j hj_dom hvals, if_pos hj]
+
+    /-- Applying concat at an index from the right segment returns t₂⦅sub j (σ n₁)⦆. -/
+    theorem concat_apply_right (t₁ n₁ t₂ n₂ Ω j : U)
+        (hn₁ : n₁ ∈ (ω : U)) (hn₂ : n₂ ∈ (ω : U))
+        (ht₁ : IsTuple t₁ n₁ Ω) (ht₂ : IsTuple t₂ n₂ Ω)
+        (hj_dom : j ∈ σ (add n₁ (σ n₂))) (hj_not : j ∉ σ n₁) :
+        (concat t₁ n₁ t₂ n₂ Ω)⦅j⦆ = t₂⦅sub j (σ n₁)⦆ := by
+      unfold concat
+      have hadd : add n₁ (σ n₂) ∈ (ω : U) :=
+        add_in_Omega n₁ (σ n₂) hn₁ (succ_in_Omega n₂ hn₂)
+      have hvals : ∀ k, k ∈ σ (add n₁ (σ n₂)) →
+          (if k ∈ σ n₁ then t₁⦅k⦆ else t₂⦅sub k (σ n₁)⦆) ∈ Ω := fun k hk => by
+        rcases Classical.em (k ∈ σ n₁) with h | h
+        · rw [if_pos h]; exact tuple_apply_mem t₁ n₁ Ω k ht₁ h
+        · rw [if_neg h]; exact tuple_apply_mem t₂ n₂ Ω _ ht₂
+            (sub_mem_sigma_of_not_in_sigma k n₁ n₂ hn₁ hn₂ hk h)
+      rw [tupleGraph_apply (add n₁ (σ n₂)) Ω _ hadd j hj_dom hvals, if_neg hj_not]
+
   end SetOps.TupleOps
 
   export SetOps.TupleOps (
@@ -242,12 +328,18 @@ namespace ZFC
     tupleLast
     constTuple
     constTuple_isTuple
+    constTuple_apply
     tupleUpdate
     tupleUpdate_isTuple
+    tupleUpdate_apply_eq
+    tupleUpdate_apply_ne
     tupleTail
     tupleTail_isTuple
+    tupleTail_apply
     concat
     concat_isTuple
+    concat_apply_left
+    concat_apply_right
   )
 
 end ZFC

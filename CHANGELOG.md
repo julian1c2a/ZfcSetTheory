@@ -10,6 +10,28 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ## [Unreleased]
 
+### Añadido (2026-05-07 — sesión 14)
+
+- **Apply lemmas para tuplas (6 nuevos teoremas en `SetOps/TupleOps.lean`)**:
+  - `constTuple_apply` — `(constTuple n a Ω)⦅i⦆ = a`.
+  - `tupleUpdate_apply_eq` — índice actualizado devuelve el nuevo valor.
+  - `tupleUpdate_apply_ne` — índice distinto devuelve el original.
+  - `tupleTail_apply` — `(tupleTail t n Ω)⦅i⦆ = t⦅σ i⦆`.
+  - `concat_apply_left` — índice del segmento izquierdo: `(concat ...)⦅j⦆ = t₁⦅j⦆`.
+  - `concat_apply_right` — índice del segmento derecho: `(concat ...)⦅j⦆ = t₂⦅sub j (σ n₁)⦆`.
+  - `TupleOps`: 10 → **16 exports**.
+
+- **`Rat/TupleSeq.lean` — Sumas y productos de sucesiones racionales — NUEVO (0 sorry)**:
+  - Implementa `seqSumQ` y `seqProdQ` mediante `RecursionTheoremWithStep` sobre `RatSet`.
+  - Función escalón guardada: `sumQStepFn`/`prodQStepFn` son funciones `ω ×ₛ RatSet → RatSet` sin hipótesis sobre `t` (usa `if t⦅k⦆ ∈ RatSet then ... else zeroQ/oneQ` para el caso fuera de dominio).
+  - `seqSumQ t ∅ = zeroQ` · `seqSumQ t (σ k) = addQ (seqSumQ t k) (t⦅k⦆)` cuando `t⦅k⦆ ∈ RatSet`.
+  - `seqProdQ t ∅ = oneQ` · `seqProdQ t (σ k) = mulQ (seqProdQ t k) (t⦅k⦆)` cuando `t⦅k⦆ ∈ RatSet`.
+  - `seqSumQ_mem_RatSet`, `seqProdQ_mem_RatSet` — clausura para cualquier `n ∈ ω`.
+  - `seqSumQ_singleton`, `seqProdQ_singleton` — base de la inducción por tuplas.
+  - Namespace `ZFC.Rat.TupleSeq` (exportado a `ZFC`, **22 exports**).
+  - `ZFC/Rat.lean` barrel actualizado con `import ZFC.Rat.TupleSeq`.
+  - **Estado**: 92 módulos · **0 sorry** · **0 errores de compilación** (verificado 2026-05-07).
+
 ### Añadido (2026-05-07 — sesión 13)
 
 - **Phase 7 — Tuplas ZFC (Convención D9) — COMPLETA (0 sorry)**:

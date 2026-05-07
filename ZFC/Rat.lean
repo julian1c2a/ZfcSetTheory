@@ -23,3 +23,4 @@ import ZFC.Rat.CauchyQ
 import ZFC.Rat.Monotone
 import ZFC.Rat.SqrtApprox
 import ZFC.Rat.SqrtIrrational
+import ZFC.Rat.TupleSeq

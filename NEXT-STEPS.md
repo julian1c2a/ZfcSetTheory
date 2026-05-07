@@ -23,7 +23,7 @@
 - ✅ **Sucesiones en ℚ** (Phase 6.5, 7/7 módulos): `Int/MaxMin`, `Rat/MaxMin`, `Rat/Sequences`, `Rat/Convergence`, `Rat/CauchyQ`, `Rat/Monotone`, `Rat/SqrtApprox` — **0 sorry, 0 errores**.
 - ✅ **Incompletitud secuencial de ℚ** (Phase 6.6, 1 módulo): `Rat/SqrtIrrational` — `sqrt2_irrational` y `sqrtApproxSeq_not_convergent` — **0 sorry**. Combinado con `sqrtApproxSeq_isCauchy`, demuestra que $(\mathbb{Q}, |\cdot|_\mathbb{Q})$ no es secuencialmente completo.
 
-**Estado**: 91 módulos, **0 sorry**, **0 errores de compilación** (verificado 2026-05-07).
+**Estado**: 92 módulos, **0 sorry**, **0 errores de compilación** (verificado 2026-05-07).
 
 ---
 
@@ -217,13 +217,14 @@
 **Motivación**: Antes de definir polinomios necesitamos un tipo de tupla finita bien fundada en ZFC puro (sin Mathlib). Una tupla de grado $n$ es una función $t: \sigma n \to \Omega$ (dominio $\{0,\ldots,n\}$, $n+1$ elementos).
 
 | Módulo | Contenido principal | Estado |
-|--------|---------------------|--------|
-| `SetOps/Tuple.lean` | `IsTuple t n Ω`, `tupleGraph`, `tuple_apply_mem`, `tupleGraph_isTuple`, `tupleGraph_apply`, `tuple_ext`, `zero_mem_sigma` | ✅ **COMPLETO** |
-| `SetOps/TupleOps.lean` | `tupleHead`, `tupleLast`, `constTuple`, `tupleUpdate`, `tupleTail`, `concat` + `_isTuple` para cada operación | ✅ **COMPLETO** |
+| ------ | ------------------- | ------ |
+| `SetOps/Tuple.lean` | `IsTuple t n Ω`, `tupleGraph`, `tuple_apply_mem`, `tupleGraph_isTuple`, `tupleGraph_apply`, `tuple_ext`, `zero_mem_sigma` | ✅ **COMPLETO** (11 exports) |
+| `SetOps/TupleOps.lean` | `tupleHead`, `tupleLast`, `constTuple`, `tupleUpdate`, `tupleTail`, `concat` + `_isTuple`/`_apply` para cada operación | ✅ **COMPLETO** (16 exports) |
+| `Rat/TupleSeq.lean` | `seqSumQ`, `seqProdQ` via `RecursionTheoremWithStep` sobre `RatSet`; función escalón guardada para clausura sin hipótesis sobre dominio de `t` | ✅ **COMPLETO** (22 exports) |
 
 **Convención D9**: grado $n$ $\Rightarrow$ dominio $\sigma n = \{0, \ldots, n\}$ ($n+1$ elementos). Esto alinea con la codificación von Neumann de $\omega$.
 
-**Estado**: 2/2 módulos · 21 exports · **0 sorry · 0 errores** (verificado 2026-05-07)
+**Estado**: 3/3 módulos · 49 exports · **0 sorry · 0 errores** (verificado 2026-05-07)
 
 ---
 
