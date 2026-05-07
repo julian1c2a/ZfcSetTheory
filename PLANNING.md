@@ -113,6 +113,79 @@ ordenado existe y es efectivo, pero su estructura de orden no tiene algoritmo.
 
 ## 4. Nuevas Áreas Matemáticas
 
+### 4.0 Monomios y Polinomios (Phase 8)
+
+**Motivación**: los polinomios sobre ℚ son la herramienta central de las Phases 9a–9d.
+Un número algebraico es raíz de un polinomio con coeficientes racionales;
+los constructibles son raíces de polinomios de grado ≤ 2; los radicales, raíces de
+`x^n − a`; los computables admiten una representación en términos de sucesiones
+racionales que aproximan raíces de polinomios.
+Además, el anillo ℚ[x] es el caso prototípico del álgebra abstracta (Phase 11):
+dominio de integridad euclídeo que ilustra todos los conceptos relevantes.
+
+**Representación — Decisión D11**: un polinomio de grado n se representa como una
+tupla `p : σn → RatSet` (función con dominio `σn = {0, …, n}` y codominio ⊆ RatSet).
+Se escribe `p⦅k⦆` para el coeficiente de `x^k`. Esta elección reutiliza la
+infraestructura de Phase 7 (`IsTuple`, `tupleGraph`, `tupleUpdate`, …) sin introducir
+ningún nuevo mecanismo de representación. Un polinomio "no nulo" exige adicionalmente
+`p⦅n⦆ ≠ zeroQ` (coeficiente líder distinto de cero).
+
+**Prerequisito de Phase 8** — `Rat/Pow.lean`:
+la evaluación `polyEval p n x = ∑_{k=0}^{n} p⦅k⦆ · x^k` requiere potenciación racional
+`powRatQ x n` (x^n para x ∈ RatSet, n ∈ ω). Se implementa como módulo auxiliar
+independiente antes de `Algebra/Polynomial.lean`, por recursión sobre ω con el patrón
+`RecursiveFn` estándar del proyecto.
+
+**Módulos propuestos — `ZFC/Algebra/`**:
+
+| Módulo | Contenido principal | Exports estimados |
+|--------|---------------------|-------------------|
+| `Rat/Pow.lean` *(prereq)* | `powRatQ x n`; `powRatQ_zero`, `powRatQ_succ`, `powRatQ_mem_RatSet`, `powRatQ_one`, `powRatQ_add_exp`, `powRatQ_mul_base` | ~10 |
+| `Algebra/Polynomial.lean` | `IsPoly p n` (tupla con coefs en RatSet); `PolySet n`; `polyCoeff`; `polyEval`; `IsRoot`; `zeroPoly n`; `constPoly c`; `linearPoly a b`; `leadCoeff`; `IsNonzeroPoly`; `IsMonic`; `IsIrreduciblePoly` (solo definición) | ~20 |
+| `Algebra/Monomial.lean` | `IsMonom p c k n`: `p` es tupla de grado `n` con `p⦅k⦆ = c` y cero en el resto; `monomEval`; `polyEval_monomial`; `poly_as_sum_of_monomials` | ~10 |
+| `Algebra/PolyArith.lean` | `polyAdd p n q m`; `polyNeg p n`; `polySub`; `polyScalarMul c p n`; `polyMul p n q m` (grado n+m, convolución); propiedades: conmutatividad, asociatividad, distributividad; `polyMul_leadCoeff`; `polyEval_add`, `polyEval_mul`, `polyEval_neg` | ~25 |
+| `Algebra/PolyDiv.lean` | `polyDivMod p n q m`: par (cociente, resto) por división euclídea; `RemainderThm`: `IsRoot p n a ↔ ∃ q, p = polyMul (linearPoly oneQ (negQ a)) q`; `roots_le_degree`: número de raíces distintas ≤ n; `RationalRootThm`: si `evalQ (a/b) = 0` (fracción irred.) entonces `a ∣ p⦅0⦆` y `b ∣ p⦅n⦆` | ~20 |
+| `Algebra/PolyGcd.lean` | `polyContent p n` (MCD de coeficientes); `IsPrimitivePoly`; `GaussLemma`; `polyGcd p n q m`; algoritmo de Euclides para polinomios; `IsMinPoly p n α`: mónico, irreducible, menor grado con α raíz; `minPoly_unique`; `minPoly_divides` | ~15 |
+
+**Orden de implementación**:
+
+1. `Rat/Pow.lean` — potenciación racional, independiente del resto
+2. `Algebra/Polynomial.lean` — definiciones base, depende de Pow + SetOps/Tuple
+3. `Algebra/Monomial.lean` — caso especial de polinomio, depende de Polynomial
+4. `Algebra/PolyArith.lean` — aritmética completa, depende de Polynomial
+5. `Algebra/PolyDiv.lean` — división euclídea, depende de PolyArith
+6. `Algebra/PolyGcd.lean` — GCD y polinomio mínimo, depende de PolyDiv
+
+**Retos técnicos anticipados**:
+
+- **`polyEval` con `seqSumQ`**: la suma `∑_{k=0}^{n} p⦅k⦆ · x^k` se expresa como
+  `seqSumQ (fun k => mulQ (polyCoeff p k) (powRatQ x k)) n`, reutilizando
+  `Rat/TupleSeq.lean`. Requiere verificar que la función interior toma valores en RatSet.
+
+- **`polyMul` (convolución)**: el coeficiente `(p·q)⦅j⦆ = ∑_{i=0}^{j} p⦅i⦆ · q⦅j−i⦆`
+  para j ∈ σ(n+m). Se construye con `seqSumQ` indexado sobre j, con índice desplazado.
+  Es el paso más complejo de la fase.
+
+- **`polyDivMod`**: división de p (grado n) por q (grado m ≤ n) con coeficiente
+  líder invertible (siempre en ℚ). Se formaliza por inducción decreciente sobre n − m:
+  en cada paso se resta el monomio `(leadCoeff p / leadCoeff q) · x^(n−m) · q`.
+
+- **`polyContent` y Lema de Gauss**: el contenido es el MCD de los coeficientes vistos
+  como enteros (numeradores y denominadores). Se apoya en `gcdOf` de `ZFC/Nat/Gcd.lean`
+  via el puente de enteros y la inclusión ℤ → ℚ de `Rat/Embedding.lean`.
+
+**Exports clave para Phase 9**:
+
+- `IsPoly p n`, `polyEval p n x`, `IsRoot p n x`
+- `IsNonzeroPoly p n`, `IsMonic p n`, `IsIrreduciblePoly p n`
+- `IsMinPoly p n α`, `minPoly_unique`, `minPoly_divides`
+- `polyMul`, `polyGcd`, `RemainderThm`, `roots_le_degree`
+
+**Barril**: nuevo archivo `ZFC/Algebra.lean` con imports de todos los módulos de esta fase;
+`Rat/Pow.lean` se añade al barril existente `ZFC/Rat.lean`.
+
+---
+
 ### 4.1 Álgebra Abstracta (Phase 11)
 
 **Motivación**: la infraestructura algebraica genérica en ZFC es necesaria para:
