@@ -12,6 +12,7 @@ import ZFC.Rat.Basic
 import ZFC.Rat.Add
 import ZFC.Rat.Neg
 import ZFC.Rat.Mul
+import ZFC.Rat.Pow
 import ZFC.Rat.Order
 import ZFC.Rat.MaxMin
 import ZFC.Rat.Abs
