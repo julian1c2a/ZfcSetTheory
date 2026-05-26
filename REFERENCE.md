@@ -1,6 +1,6 @@
 # Referencia Técnica - ZfcSetTheory
 
-*Última actualización: 2026-05-01 (sesión 9)*
+*Última actualización: 2026-05-26 — proyectados Rat.Pow.lean (§3.71/§4.69/§6.70) y Rat.TupleSeq.lean (§3.72/§4.70/§6.71); §3 de SqrtApprox/SqrtIrrational completado. Build: 114 jobs, 0 errores, 0 sorry.*
 **Autor**: Julián Calderón Almendros
 
 ## 0. Guía de Convenciones de Nombres para el Estudioso
@@ -156,12 +156,14 @@ Este documento cumple con todos los requisitos especificados en [AI-GUIDE.md](AI
 | `Int/Div.lean` | `ZFC.Int.Div` | `Int.Abs`, `Int.DivMod`, `Nat.Div`, `Nat.Gcd` | ✅ Completo |
 | `Int/Induction.lean` | `ZFC.Int.Induction` | `Int.Basic` + anteriores | ✅ Completo |
 | `Int/Units.lean` | `ZFC.Int.Ring` | `Int.Ring`, `Int.Mul` + anteriores | ✅ Completo |
+| `Rat/Pow.lean` | `ZFC.Rat.Pow` | `Rat.Mul`, `Nat.Add` + anteriores | ✅ Completo (2026-05-08) |
 | `Rat/Embedding.lean` | `ZFC.Rat.Embedding` | `Rat.Abs`, `Int.Embedding`, `Int.Induction` + anteriores | ✅ Completo |
 | `Rat/Field.lean` | `ZFC.Rat.Field` | `Rat.Mul`, `Rat.Order` + anteriores | ✅ Completo |
 | `Rat/SqrtApprox.lean` | `ZFC.Rat.SqrtApprox` | `Rat.CauchyQ`, `Rat.Monotone`, `Rat.Field` + anteriores | ✅ Completo (2026-05-01) |
 | `Rat/SqrtIrrational.lean` | `ZFC.Rat.SqrtIrrational` | `Rat.SqrtApprox`, `Nat.Primes` | ✅ Completo (2026-05-01) — 0 sorry |
 | `SetOps/Tuple.lean` | `ZFC.SetOps.Tuple` | `SetOps.Functions`, `Axiom.Infinity` | ✅ Completo (2026-05-07) |
 | `SetOps/TupleOps.lean` | `ZFC.SetOps.TupleOps` | `SetOps.Tuple`, `Nat.Add`, `Nat.Sub` | ✅ Completo (2026-05-07) |
+| `Rat/TupleSeq.lean` | `ZFC.Rat.TupleSeq` | `Rat.Mul`, `Rat.Add`, `SetOps.TupleOps` | ✅ Completo (2026-05-07) |
 
 ### 1.2 Axiomas ZFC por Módulo
 
@@ -5516,6 +5518,142 @@ noncomputable def concat (t₁ n₁ t₂ n₂ Ω : U) : U :=
   tupleGraph (add n₁ (σ n₂)) Ω
     (fun j => if j ∈ σ n₁ then t₁⦅j⦆ else t₂⦅sub j (σ n₁)⦆)
 ```
+
+---
+
+### 3.71 Rat.Pow.lean
+
+**Módulo**: `ZFC.Rat.Pow`
+**Namespace**: `ZFC.Rat.Pow`
+**Dependencias**: `ZFC.Rat.Mul`, `ZFC.Nat.Add` + anteriores
+**Estrategia**: Define la exponenciación racional $x^n$ ($x \in \mathbb{Q}$, $n \in \omega$) mediante `RecursionTheoremWithStep` sobre `RatSet`, con base $1_\mathbb{Q}$ y paso $\langle k, v\rangle \mapsto v \cdot x$ (multiplicación a derecha). La función de paso usa una guarda (`if x ∈ RatSet then x else oneQ`) para garantizar clausura en $\mathbb{Q}$ con independencia de si $x \in \mathbb{Q}$. Mismo patrón que `Rat.TupleSeq`.
+
+**Definiciones públicas**:
+
+1. **`powRatQStepFn x`** — función de paso de la recursión: $\langle k, v\rangle \mapsto v \cdot x$ (con guarda de clausura). Función ZFC de $\omega \times_s \mathbb{Q}$ en $\mathbb{Q}$.
+
+   ```lean
+   noncomputable def powRatQStepFn (x : U) : U :=
+     sep ((ω ×ₛ (RatSet : U)) ×ₛ (RatSet : U))
+       (fun p => ∃ k v, k ∈ (ω : U) ∧ v ∈ (RatSet : U) ∧
+         p = ⟨⟨k, v⟩, mulQ v (if x ∈ (RatSet : U) then x else (oneQ : U))⟩)
+   ```
+
+2. **`powRatQFn x`** — función ZFC $\omega \to \mathbb{Q}$ que computa las potencias de $x$: la única $F$ con $F(\emptyset) = 1_\mathbb{Q}$ y $F(\sigma k) = F(k) \cdot x$.
+
+   ```lean
+   noncomputable def powRatQFn (x : U) : U :=
+     Classical.choose (ExistsUnique.exists
+       (RecursionTheoremWithStep (RatSet : U) (oneQ : U) (powRatQStepFn x)
+         oneQ_mem_RatSet (powRatQStepFn_is_function x)))
+   ```
+
+3. **`powRatQ x n`** — potencia racional $x^n \in \mathbb{Q}$ para $x \in \mathbb{Q}$, $n \in \omega$.
+
+   ```lean
+   noncomputable def powRatQ (x n : U) : U := (powRatQFn x)⦅n⦆
+   ```
+
+**Computabilidad**: No computable (las tres definiciones).
+
+---
+
+### 3.72 Rat.TupleSeq.lean
+
+**Módulo**: `ZFC.Rat.TupleSeq`
+**Namespace**: `ZFC.Rat.TupleSeq`
+**Dependencias**: `ZFC.Rat.Mul`, `ZFC.Rat.Add`, `ZFC.SetOps.TupleOps`
+**Estrategia**: Define sumatorio (`seqSumQ`) y productorio (`seqProdQ`) sobre tuplas con valores en ℚ, vía `RecursionTheoremWithStep` sobre `RatSet`. Las funciones de paso usan una guarda `if t⦅k⦆ ∈ RatSet then t⦅k⦆ else zeroQ/oneQ` para permanecer en `RatSet` para todo $k \in \omega$, incluso cuando $t$ solo tiene dominio $\sigma n \neq \omega$ (no se requiere hipótesis sobre $t$). Mismo patrón que `Rat.Pow`.
+
+**Definiciones públicas**:
+
+1. **`sumQStepFn t`** — función de paso del sumatorio: $\langle k, v\rangle \mapsto v + t\langle k\rangle$ (guardada con `zeroQ`). Función ZFC $\omega \times_s \mathbb{Q} \to \mathbb{Q}$.
+
+   ```lean
+   noncomputable def sumQStepFn (t : U) : U :=
+     sep ((ω ×ₛ (RatSet : U)) ×ₛ (RatSet : U))
+       (fun p => ∃ k v, k ∈ (ω : U) ∧ v ∈ (RatSet : U) ∧
+         p = ⟨⟨k, v⟩, addQ v (if t⦅k⦆ ∈ (RatSet : U) then t⦅k⦆ else (zeroQ : U))⟩)
+   ```
+
+2. **`seqSumQFn t`** — función ZFC $\omega \to \mathbb{Q}$ de sumas parciales: única $F$ con $F(\emptyset) = 0_\mathbb{Q}$ y $F(\sigma k) = F(k) + t\langle k\rangle$.
+
+   ```lean
+   noncomputable def seqSumQFn (t : U) : U :=
+     Classical.choose (ExistsUnique.exists
+       (RecursionTheoremWithStep (RatSet : U) (zeroQ : U) (sumQStepFn t)
+         zeroQ_mem_RatSet (sumQStepFn_is_function t)))
+   ```
+
+3. **`seqSumQ t n`** — suma parcial racional $\sum_{i < n} t(i) \in \mathbb{Q}$.
+
+   ```lean
+   noncomputable def seqSumQ (t n : U) : U := (seqSumQFn t)⦅n⦆
+   ```
+
+4. **`prodQStepFn t`** — función de paso del productorio: $\langle k, v\rangle \mapsto v \cdot t\langle k\rangle$ (guardada con `oneQ`).
+
+   ```lean
+   noncomputable def prodQStepFn (t : U) : U :=
+     sep ((ω ×ₛ (RatSet : U)) ×ₛ (RatSet : U))
+       (fun p => ∃ k v, k ∈ (ω : U) ∧ v ∈ (RatSet : U) ∧
+         p = ⟨⟨k, v⟩, mulQ v (if t⦅k⦆ ∈ (RatSet : U) then t⦅k⦆ else (oneQ : U))⟩)
+   ```
+
+5. **`seqProdQFn t`** — función ZFC $\omega \to \mathbb{Q}$ de productos parciales: única $F$ con $F(\emptyset) = 1_\mathbb{Q}$ y $F(\sigma k) = F(k) \cdot t\langle k\rangle$.
+
+   ```lean
+   noncomputable def seqProdQFn (t : U) : U :=
+     Classical.choose (ExistsUnique.exists
+       (RecursionTheoremWithStep (RatSet : U) (oneQ : U) (prodQStepFn t)
+         oneQ_mem_RatSet (prodQStepFn_is_function t)))
+   ```
+
+6. **`seqProdQ t n`** — producto parcial racional $\prod_{i < n} t(i) \in \mathbb{Q}$.
+
+   ```lean
+   noncomputable def seqProdQ (t n : U) : U := (seqProdQFn t)⦅n⦆
+   ```
+
+**Computabilidad**: No computable (las seis definiciones).
+
+---
+
+### 3.73 Rat.SqrtApprox.lean
+
+**Módulo**: `ZFC.Rat.SqrtApprox`
+**Namespace**: `ZFC.Rat.SqrtApprox`
+**Dependencias**: `ZFC.Rat.CauchyQ`, `ZFC.Rat.Monotone`, `ZFC.Rat.Field` + anteriores
+**Estrategia**: Construye la sucesión de Newton–Raphson para $\sqrt 2$ en ℚ ($f(0) = 3/2$, $f(n+1) = (f(n) + 2/f(n))/2$) vía `RecursiveFn` y demuestra que es de Cauchy con $f(n)^2 > 2$ siempre. Constantes `threeQ`, `threeHalvesQ` y la función de paso `sqrtStepFn` son privadas.
+
+**Definiciones públicas**:
+
+1. **`twoQ`** — el racional $2_\mathbb{Q} = 1_\mathbb{Q} + 1_\mathbb{Q}$.
+
+   ```lean
+   noncomputable def twoQ : U := addQ (oneQ : U) (oneQ : U)
+   ```
+
+2. **`sqrtApproxSeq`** — sucesión de Newton–Raphson para $\sqrt 2$: $f(0) = 3/2$, $f(n+1) = (f(n) + 2/f(n))/2$.
+
+   ```lean
+   noncomputable def sqrtApproxSeq : U :=
+     RecursiveFn (RatSet : U) (threeHalvesQ : U) (sqrtStepFn : U)
+       threeHalvesQ_mem sqrtStepFn_is_function
+   ```
+
+**Computabilidad**: No computable (ambas definiciones).
+
+---
+
+### 3.74 Rat.SqrtIrrational.lean
+
+**Módulo**: `ZFC.Rat.SqrtIrrational`
+**Namespace**: `ZFC.Rat.SqrtIrrational`
+**Dependencias**: `ZFC.Rat.SqrtApprox`, `ZFC.Nat.Primes`
+**Estrategia**: Demuestra `sqrt2_irrational` (¬∃ $p, q \in \mathbb{Z}$, $q \neq 0 \wedge p^2 = 2q^2$) por descenso 2-ádico vía Peano, y `sqrtApproxSeq_not_convergent` (la sucesión de Cauchy de `SqrtApprox` no converge en ℚ): incompletitud secuencial de ℚ.
+
+*(Sin nuevas definiciones públicas.)*
 
 ---
 
@@ -17410,6 +17548,156 @@ theorem concat_isTuple (t₁ n₁ t₂ n₂ Ω : U)
 
 ---
 
+### 4.69 Rat.Pow.lean
+
+**Módulo**: `ZFC.Rat.Pow`
+**Namespace**: `ZFC.Rat.Pow`
+**Dependencias**: `ZFC.Rat.Mul`, `ZFC.Nat.Add` + anteriores
+
+**Importancia por teorema**:
+
+- `powRatQStepFn_is_function`: medium — la función de paso es una función ZFC bien definida $\omega \times_s \mathbb{Q} \to \mathbb{Q}$
+- `powRatQStepFn_apply`: medium — evaluación de la función de paso en $\langle k, v\rangle$
+- `powRatQFn_is_function`: high — la función de potencias es función $\omega \to \mathbb{Q}$
+- `powRatQ_zero`: high — caso base $x^\emptyset = 1_\mathbb{Q}$
+- `powRatQ_succ`: high — paso recursivo $x^{\sigma n} = x^n \cdot x$
+- `powRatQ_mem_RatSet`: high — clausura $x^n \in \mathbb{Q}$
+- `powRatQ_one`: medium — $x^{\sigma\emptyset} = x$
+- `powRatQ_zero_base`: medium — $0_\mathbb{Q}^n = 0_\mathbb{Q}$ para $n \neq \emptyset$
+- `powRatQ_one_base`: medium — $1_\mathbb{Q}^n = 1_\mathbb{Q}$
+- `powRatQ_add_exp`: high — ley de exponentes $x^{n+m} = x^n \cdot x^m$
+- `powRatQ_mul_base`: high — distributividad sobre la base $(x\cdot y)^n = x^n \cdot y^n$
+
+#### Caso base (powRatQ_zero)
+
+**Enunciado Matemático**: Para todo $x$, $x^\emptyset = 1_\mathbb{Q}$.
+
+**Firma Lean4**:
+
+```lean
+theorem powRatQ_zero (x : U) : powRatQ x ∅ = (oneQ : U)
+```
+
+**Importancia**: high
+
+#### Paso recursivo (powRatQ_succ)
+
+**Enunciado Matemático**: Para $x \in \mathbb{Q}$ y $n \in \omega$, $x^{\sigma n} = x^n \cdot x$.
+
+**Firma Lean4**:
+
+```lean
+theorem powRatQ_succ (x n : U) (hx : x ∈ (RatSet : U)) (hn : n ∈ (ω : U)) :
+    powRatQ x (σ n) = mulQ (powRatQ x n) x
+```
+
+**Importancia**: high
+
+#### Clausura (powRatQ_mem_RatSet)
+
+**Enunciado Matemático**: Para todo $n \in \omega$, $x^n \in \mathbb{Q}$.
+
+**Firma Lean4**:
+
+```lean
+theorem powRatQ_mem_RatSet (x n : U) (hn : n ∈ (ω : U)) :
+    powRatQ x n ∈ (RatSet : U)
+```
+
+**Importancia**: high
+
+#### Ley de exponentes (powRatQ_add_exp)
+
+**Enunciado Matemático**: Para $x \in \mathbb{Q}$ y $n, m \in \omega$, $x^{n+m} = x^n \cdot x^m$.
+
+**Firma Lean4**:
+
+```lean
+theorem powRatQ_add_exp (x n m : U) (hx : x ∈ (RatSet : U))
+    (hn : n ∈ (ω : U)) (hm : m ∈ (ω : U)) :
+    powRatQ x (add n m) = mulQ (powRatQ x n) (powRatQ x m)
+```
+
+**Esquema**: Inducción sobre $m$ vía `sep ω P` + `nat_in_inductive_set`. Caso base usa `add_zero` y `mulQ_one_right`; paso usa `add_succ`, `powRatQ_succ`, asociatividad de `mulQ` y reescritura inversa de `powRatQ_succ`.
+
+**Importancia**: high
+
+#### Distributividad sobre la base (powRatQ_mul_base)
+
+**Enunciado Matemático**: Para $x, y \in \mathbb{Q}$ y $n \in \omega$, $(x\cdot y)^n = x^n \cdot y^n$.
+
+**Firma Lean4**:
+
+```lean
+theorem powRatQ_mul_base (x y n : U) (hx : x ∈ (RatSet : U)) (hy : y ∈ (RatSet : U))
+    (hn : n ∈ (ω : U)) :
+    powRatQ (mulQ x y) n = mulQ (powRatQ x n) (powRatQ y n)
+```
+
+**Esquema**: Inducción sobre $n$; el paso usa el lema privado `mulQ_mul4_swap` ($(a\cdot b)\cdot(c\cdot d) = (a\cdot c)\cdot(b\cdot d)$) para reordenar los factores conmutativamente.
+
+**Importancia**: high
+
+---
+
+### 4.70 Rat.TupleSeq.lean
+
+**Módulo**: `ZFC.Rat.TupleSeq`
+**Namespace**: `ZFC.Rat.TupleSeq`
+**Dependencias**: `ZFC.Rat.Mul`, `ZFC.Rat.Add`, `ZFC.SetOps.TupleOps`
+
+**Importancia por teorema**:
+
+- `sumQStepFn_is_function` / `prodQStepFn_is_function`: medium — funciones de paso bien definidas $\omega \times_s \mathbb{Q} \to \mathbb{Q}$
+- `sumQStepFn_apply` / `prodQStepFn_apply`: medium — evaluación de la función de paso
+- `seqSumQFn_is_function` / `seqProdQFn_is_function`: high — funciones $\omega \to \mathbb{Q}$
+- `seqSumQ_zero` / `seqProdQ_zero`: high — caso base ($\sum_\emptyset = 0_\mathbb{Q}$, $\prod_\emptyset = 1_\mathbb{Q}$)
+- `seqSumQ_succ` / `seqProdQ_succ`: high — paso recursivo
+- `seqSumQ_mem_RatSet` / `seqProdQ_mem_RatSet`: high — clausura en ℚ
+- `seqSumQ_singleton` / `seqProdQ_singleton`: medium — valor del segmento unitario
+
+#### Recursión del sumatorio (seqSumQ_zero, seqSumQ_succ)
+
+**Enunciado Matemático**: $\sum_{i<\emptyset} t(i) = 0_\mathbb{Q}$; y para $k \in \omega$ con $t\langle k\rangle \in \mathbb{Q}$, $\sum_{i<\sigma k} t(i) = \left(\sum_{i<k} t(i)\right) + t\langle k\rangle$.
+
+**Firma Lean4**:
+
+```lean
+theorem seqSumQ_zero (t : U) : seqSumQ t ∅ = (zeroQ : U)
+
+theorem seqSumQ_succ (t k : U) (hk : k ∈ (ω : U)) (htk : t⦅k⦆ ∈ (RatSet : U)) :
+    seqSumQ t (σ k) = addQ (seqSumQ t k) (t⦅k⦆)
+
+theorem seqSumQ_mem_RatSet (t n : U) (hn : n ∈ (ω : U)) : seqSumQ t n ∈ (RatSet : U)
+
+theorem seqSumQ_singleton (t : U) (htk : t⦅(∅ : U)⦆ ∈ (RatSet : U)) :
+    seqSumQ t (σ ∅) = t⦅(∅ : U)⦆
+```
+
+**Importancia**: high
+
+#### Recursión del productorio (seqProdQ_zero, seqProdQ_succ)
+
+**Enunciado Matemático**: $\prod_{i<\emptyset} t(i) = 1_\mathbb{Q}$; y para $k \in \omega$ con $t\langle k\rangle \in \mathbb{Q}$, $\prod_{i<\sigma k} t(i) = \left(\prod_{i<k} t(i)\right) \cdot t\langle k\rangle$.
+
+**Firma Lean4**:
+
+```lean
+theorem seqProdQ_zero (t : U) : seqProdQ t ∅ = (oneQ : U)
+
+theorem seqProdQ_succ (t k : U) (hk : k ∈ (ω : U)) (htk : t⦅k⦆ ∈ (RatSet : U)) :
+    seqProdQ t (σ k) = mulQ (seqProdQ t k) (t⦅k⦆)
+
+theorem seqProdQ_mem_RatSet (t n : U) (hn : n ∈ (ω : U)) : seqProdQ t n ∈ (RatSet : U)
+
+theorem seqProdQ_singleton (t : U) (htk : t⦅(∅ : U)⦆ ∈ (RatSet : U)) :
+    seqProdQ t (σ ∅) = t⦅(∅ : U)⦆
+```
+
+**Importancia**: high
+
+---
+
 ## 5. Notación y Sintaxis
 
 ### 5.1 Operadores Básicos
@@ -19563,6 +19851,77 @@ export ZFC.SetOps.TupleOps (
 )
 ```
 
+### 6.70 Rat.Pow.lean
+
+**Namespace**: `ZFC.Rat.Pow` (exportado a `ZFC`)
+**Última modificación**: 2026-05-08
+**Dependencias**: `ZFC.Rat.Mul`, `ZFC.Nat.Add`
+**Nota**: 16 exports — exponenciación racional $x^n$ vía `RecursionTheoremWithStep` (base $1_\mathbb{Q}$, paso $v \mapsto v\cdot x$). Prerequisito de la Phase 8 (polinomios). 0 sorry.
+
+```lean
+export ZFC.Rat.Pow (
+  -- Sección 1: función de paso
+  powRatQStepFn
+  mem_powRatQStepFn
+  powRatQStepFn_is_function
+  powRatQStepFn_apply
+  -- Sección 2: powRatQ
+  powRatQFn
+  powRatQFn_is_function
+  powRatQ
+  powRatQ_zero
+  powRatQ_succ
+  powRatQ_mem_RatSet
+  -- Sección 3: propiedades básicas
+  powRatQ_one
+  powRatQ_zero_base_succ
+  powRatQ_zero_base
+  powRatQ_one_base
+  -- Sección 4: adición de exponentes
+  powRatQ_add_exp
+  -- Sección 5: multiplicación de la base
+  powRatQ_mul_base
+)
+```
+
+### 6.71 Rat.TupleSeq.lean
+
+**Namespace**: `ZFC.Rat.TupleSeq` (exportado a `ZFC`)
+**Última modificación**: 2026-05-07
+**Dependencias**: `ZFC.Rat.Mul`, `ZFC.Rat.Add`, `ZFC.SetOps.TupleOps`
+**Nota**: 22 exports — sumatorio/productorio sobre tuplas racionales vía `RecursionTheoremWithStep` (paso guardado para clausura sin hipótesis sobre $t$). 0 sorry.
+
+```lean
+export ZFC.Rat.TupleSeq (
+  -- Sección 1: función de paso del sumatorio
+  sumQStepFn
+  mem_sumQStepFn
+  sumQStepFn_is_function
+  sumQStepFn_apply
+  -- Sección 2: sumatorio
+  seqSumQFn
+  seqSumQFn_is_function
+  seqSumQ
+  seqSumQ_zero
+  seqSumQ_succ
+  seqSumQ_mem_RatSet
+  seqSumQ_singleton
+  -- Sección 3: función de paso del productorio
+  prodQStepFn
+  mem_prodQStepFn
+  prodQStepFn_is_function
+  prodQStepFn_apply
+  -- Sección 4: productorio
+  seqProdQFn
+  seqProdQFn_is_function
+  seqProdQ
+  seqProdQ_zero
+  seqProdQ_succ
+  seqProdQ_mem_RatSet
+  seqProdQ_singleton
+)
+```
+
 ## 7. Estado de Proyección por Módulo
 
 ### 7.1 Leyenda de Estados
@@ -19648,6 +20007,8 @@ Los siguientes archivos están **completamente documentados** con todas sus defi
 - `Rat/SqrtIrrational.lean` - Incompletitud secuencial de ℚ: sqrt2_irrational (¬∃L∈ℚ, L²=2, vía descenso 2-ádico), sqrtApproxSeq_not_convergent (la sucesión Cauchy no converge en ℚ). 0 definiciones + 2 teoremas + 2 exports. **0 sorry.**
 - `SetOps/Tuple.lean` - Tuplas ZFC (Convención D9): IsTuple t n Ω (n∈ω ∧ t función σn→Ω), tupleGraph (construcción desde función Lean), tupleGraph_mem_iff, tupleGraph_isTuple, tupleGraph_apply, tuple_ext (extensionalidad), zero_mem_sigma (∅∈σn). 2 definiciones + 7 teoremas + 11 exports. **0 sorry.**
 - `SetOps/TupleOps.lean` - Operaciones sobre tuplas ZFC: tupleHead/tupleLast (primer/último elemento), constTuple (tupla constante), tupleUpdate (actualizar índice), tupleTail (cola, grado predecessor n), concat (concatenación, grado n₁+σn₂). 6 definiciones + 4 teoremas IsTuple + 10 exports. **0 sorry.**
+- `Rat/Pow.lean` - Exponenciación racional $x^n$ ($x\in\mathbb{Q}$, $n\in\omega$): powRatQ vía RecursionTheoremWithStep (base $1_\mathbb{Q}$, paso $v\mapsto v\cdot x$), $x^\emptyset=1_\mathbb{Q}$, $x^{\sigma n}=x^n\cdot x$, clausura en ℚ, $0_\mathbb{Q}^n=0_\mathbb{Q}$ ($n\neq\emptyset$), $1_\mathbb{Q}^n=1_\mathbb{Q}$, leyes de exponentes $x^{n+m}=x^n\cdot x^m$ y $(x\cdot y)^n=x^n\cdot y^n$. Prerequisito de la Phase 8. 3 definiciones + 13 teoremas + 16 exports. **0 sorry.**
+- `Rat/TupleSeq.lean` - Sumatorio y productorio sobre tuplas racionales: seqSumQ ($\sum_{i<n} t(i)$) y seqProdQ ($\prod_{i<n} t(i)$) vía RecursionTheoremWithStep (funciones de paso guardadas para clausura sin hipótesis sobre $t$); ecuaciones de recursión zero/succ, clausura en ℚ, valor del segmento unitario (singleton). 6 definiciones + 16 teoremas + 22 exports. **0 sorry.**
 
 ### 7.3 Archivos Parcialmente Proyectados
 
@@ -19667,11 +20028,15 @@ Los siguientes archivos están **casi completos** pero contienen algunos `sorry`
 
 ### 7.5 Archivos Completos Pendientes de Proyectar
 
-(Ninguno — 91/91 módulos proyectados)
+- `Algebra/Monomial.lean` — completo en código (Phase 8: `zeroMonom`/`monomMk`/`IsMonom`, `monomCoeff`/`monomExp`/`monomDeg` (grado WithBot ω), `monomEval`; 24 exports, 0 sorry). Pendiente de proyectar; se agrupará con `Algebra/Polynomial.lean`.
 
 ---
 
-*Última actualización: 2026-05-07 — Phase 7 (Tuplas) completada: SetOps.Tuple.lean (§3.69, §4.67, §6.68: 2 def + 7 teoremas + 11 exports, IsTuple/tupleGraph/tuple_ext/zero_mem_sigma) y SetOps.TupleOps.lean (§3.70, §4.68, §6.69: 6 def + 4 teoremas + 10 exports, constTuple/tupleUpdate/tupleTail/concat). §1.1: 2 filas añadidas. §1.2: SetOps.Tuple/TupleOps en grupo 7-axiomas. §7.2: SqrtApprox.lean, SqrtIrrational.lean, Tuple.lean y TupleOps.lean añadidos. 91/91 módulos proyectados, **0 sorry, 0 errores**.*
+*Última actualización: 2026-05-26 (b) — Cierre de gaps de proyección: `Rat.TupleSeq.lean` proyectado completo (§1.1 fila, §3.72: 6 def, §4.70: 16 teoremas, §6.71: 22 exports, §7.2 bullet). Añadidas las definiciones faltantes de `Rat.SqrtApprox.lean` (§3.73: `twoQ`, `sqrtApproxSeq`) y stub de `Rat.SqrtIrrational.lean` (§3.74, 0 def). §7.5 vacío. Build: 114 jobs, 0 errores, 0 sorry.*
+
+*Última actualización: 2026-05-26 (a) — Proyección de Rat.Pow.lean (§3.71, §4.69, §6.70: 3 def + 13 teoremas + 16 exports, exponenciación racional $x^n$ vía `RecursionTheoremWithStep`, leyes $x^{n+m}=x^n x^m$ y $(xy)^n=x^n y^n$). Fila añadida a §1.1 y bullet a §7.2. Prerequisito de la Phase 8 (polinomios). Build: 114 jobs, 0 errores, 0 sorry.*
+
+*Actualización anterior: 2026-05-07 — Phase 7 (Tuplas) completada: SetOps.Tuple.lean (§3.69, §4.67, §6.68: 2 def + 7 teoremas + 11 exports, IsTuple/tupleGraph/tuple_ext/zero_mem_sigma) y SetOps.TupleOps.lean (§3.70, §4.68, §6.69: 6 def + 4 teoremas + 10 exports, constTuple/tupleUpdate/tupleTail/concat). §1.1: 2 filas añadidas. §1.2: SetOps.Tuple/TupleOps en grupo 7-axiomas. §7.2: SqrtApprox.lean, SqrtIrrational.lean, Tuple.lean y TupleOps.lean añadidos. 91/91 módulos proyectados, **0 sorry, 0 errores**.*
 
 *Actualización anterior: 2026-05-01 — SqrtApprox.lean (§4.65, §6.66: 2 def + 9 teoremas + 13 exports) y SqrtIrrational.lean (§4.66, §6.67: 2 teoremas + 2 exports). Phase 6.6 completa: ℚ no es secuencialmente completo.*
 

@@ -4,7 +4,7 @@ Documento de planificación estratégica. Recoge decisiones de arquitectura,
 estrategia de documentación, plan de ramificación y hoja de ruta a largo plazo.
 Se mantiene actualizado sesión a sesión como registro permanente de decisiones tomadas.
 
-*Última actualización: 2026-05-01 (sesión 13).*
+*Última actualización: 2026-05-26 (sesión 15).*
 
 ---
 
@@ -30,17 +30,19 @@ fundamentos del siglo XX (Turing, Gödel, Bishop).
 
 ---
 
-## 2. Estado Actual (2026-05-01)
+## 2. Estado Actual (2026-05-26)
 
 | Área | Módulos | Sorry | Errores |
 |------|---------|-------|---------|
-| Axiomas y SetOps (Core, Axiom/, SetOps/) | ~22 | 0 | 0 |
+| Axiomas y SetOps (Core, Axiom/, SetOps/, incl. Tuple/TupleOps) | ~24 | 0 | 0 |
 | ω, BoolAlg, Cardinal, Peano bridge | ~28 | 0 | 0 |
 | Enteros ℤ | 15 | 0 | 0 |
-| Racionales ℚ + sucesiones + Cauchy | 15 | 0 | 0 |
+| Racionales ℚ + sucesiones + Cauchy + Pow + TupleSeq | 18 | 0 | 0 |
 | Incompletitud de ℚ (√2 irracional) | 1 | 0 | 0 |
 | Puente Peano (rama master de PeanoNatLib) | 4 | 0 | 0 |
-| **Total** | **89** | **0** | **0** |
+| **Total** | **93** | **0** | **0** |
+
+*(+ barrel `ZFC/Algebra.lean` placeholder; `lake build`: 114 jobs.)*
 
 ---
 
@@ -130,17 +132,17 @@ infraestructura de Phase 7 (`IsTuple`, `tupleGraph`, `tupleUpdate`, …) sin int
 ningún nuevo mecanismo de representación. Un polinomio "no nulo" exige adicionalmente
 `p⦅n⦆ ≠ zeroQ` (coeficiente líder distinto de cero).
 
-**Prerequisito de Phase 8** — `Rat/Pow.lean`:
+**Prerequisito de Phase 8** — `Rat/Pow.lean` — ✅ **COMPLETO (2026-05-08)**:
 la evaluación `polyEval p n x = ∑_{k=0}^{n} p⦅k⦆ · x^k` requiere potenciación racional
-`powRatQ x n` (x^n para x ∈ RatSet, n ∈ ω). Se implementa como módulo auxiliar
-independiente antes de `Algebra/Polynomial.lean`, por recursión sobre ω con el patrón
-`RecursiveFn` estándar del proyecto.
+`powRatQ x n` (x^n para x ∈ RatSet, n ∈ ω). Implementado como módulo auxiliar
+independiente antes de `Algebra/Polynomial.lean`, por recursión sobre ω con
+`RecursionTheoremWithStep` (base `oneQ`, paso $v \mapsto v \cdot x$). 16 exports, 0 sorry.
 
 **Módulos propuestos — `ZFC/Algebra/`**:
 
 | Módulo | Contenido principal | Exports estimados |
 |--------|---------------------|-------------------|
-| `Rat/Pow.lean` *(prereq)* | `powRatQ x n`; `powRatQ_zero`, `powRatQ_succ`, `powRatQ_mem_RatSet`, `powRatQ_one`, `powRatQ_add_exp`, `powRatQ_mul_base` | ~10 |
+| `Rat/Pow.lean` *(prereq)* ✅ | `powRatQ x n`; `powRatQ_zero`, `powRatQ_succ`, `powRatQ_mem_RatSet`, `powRatQ_one`, `powRatQ_zero_base`, `powRatQ_one_base`, `powRatQ_add_exp`, `powRatQ_mul_base` | **16 (hecho)** |
 | `Algebra/Polynomial.lean` | `IsPoly p n` (tupla con coefs en RatSet); `PolySet n`; `polyCoeff`; `polyEval`; `IsRoot`; `zeroPoly n`; `constPoly c`; `linearPoly a b`; `leadCoeff`; `IsNonzeroPoly`; `IsMonic`; `IsIrreduciblePoly` (solo definición) | ~20 |
 | `Algebra/Monomial.lean` | `IsMonom p c k n`: `p` es tupla de grado `n` con `p⦅k⦆ = c` y cero en el resto; `monomEval`; `polyEval_monomial`; `poly_as_sum_of_monomials` | ~10 |
 | `Algebra/PolyArith.lean` | `polyAdd p n q m`; `polyNeg p n`; `polySub`; `polyScalarMul c p n`; `polyMul p n q m` (grado n+m, convolución); propiedades: conmutatividad, asociatividad, distributividad; `polyMul_leadCoeff`; `polyEval_add`, `polyEval_mul`, `polyEval_neg` | ~25 |
@@ -149,8 +151,8 @@ independiente antes de `Algebra/Polynomial.lean`, por recursión sobre ω con el
 
 **Orden de implementación**:
 
-1. `Rat/Pow.lean` — potenciación racional, independiente del resto
-2. `Algebra/Polynomial.lean` — definiciones base, depende de Pow + SetOps/Tuple
+1. ✅ `Rat/Pow.lean` — potenciación racional, independiente del resto (**hecho 2026-05-08**)
+2. `Algebra/Polynomial.lean` — definiciones base, depende de Pow + SetOps/Tuple ← **siguiente**
 3. `Algebra/Monomial.lean` — caso especial de polinomio, depende de Polynomial
 4. `Algebra/PolyArith.lean` — aritmética completa, depende de Polynomial
 5. `Algebra/PolyDiv.lean` — división euclídea, depende de PolyArith

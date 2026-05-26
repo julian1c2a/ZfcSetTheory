@@ -1,11 +1,14 @@
 # Next Steps — ZfcSetTheory Project
 
-**Last updated**: 2026-05-01
+**Last updated**: 2026-05-26
 
 > Este documento detalla la hoja de ruta fase a fase (trabajo inmediato y próximos meses).
 > Para la estrategia a largo plazo —embeddings entre sistemas formales, jerarquía
 > Peano/ZFC/MK/TG/Categorías, plan de documentación y decisiones arquitectónicas—
 > véase [PLANNING.md](PLANNING.md).
+>
+> El detalle teorema-a-teorema de las fases ya cerradas vive en [REFERENCE.md](REFERENCE.md)
+> (proyección §3/§4/§6). Aquí solo se conserva el resumen y la planificación viva.
 
 ---
 
@@ -17,13 +20,14 @@
 - ✅ **Cardinalidad** (2 módulos): Cantor, CSB, |𝒫(F)|=2^n
 - ✅ **Álgebras de Boole** (11 módulos): Basic, Ring, PowerSetAlgebra, GenDeMorgan, GenDistributive, Atomic, Complete, Representation, FiniteCofinite, FiniteBA, BoolRingBA
 - ✅ **Reorganización Fases 1–3**: namespaces `ZFC`, convenciones Mathlib (185 renames)
-- ✅ **Anotaciones REFERENCE.md** (Phase 4): @axiom_system, @importance, ~280 teoremas anotados
 - ✅ **Enteros ℤ** (Phase 5, 15 módulos): 190 exports, 0 sorry, 0 errores
 - ✅ **Racionales ℚ** (Phase 6, 9 módulos): `Equiv`, `Basic`, `Add`, `Neg`, `Mul`, `Order`, `Abs`, `Embedding`, `Field` — 0 sorry, 0 errores
-- ✅ **Sucesiones en ℚ** (Phase 6.5, 7/7 módulos): `Int/MaxMin`, `Rat/MaxMin`, `Rat/Sequences`, `Rat/Convergence`, `Rat/CauchyQ`, `Rat/Monotone`, `Rat/SqrtApprox` — **0 sorry, 0 errores**.
+- ✅ **Sucesiones en ℚ** (Phase 6.5, 7 módulos): `Int/MaxMin`, `Rat/MaxMin`, `Rat/Sequences`, `Rat/Convergence`, `Rat/CauchyQ`, `Rat/Monotone`, `Rat/SqrtApprox` — **0 sorry, 0 errores**.
 - ✅ **Incompletitud secuencial de ℚ** (Phase 6.6, 1 módulo): `Rat/SqrtIrrational` — `sqrt2_irrational` y `sqrtApproxSeq_not_convergent` — **0 sorry**. Combinado con `sqrtApproxSeq_isCauchy`, demuestra que $(\mathbb{Q}, |\cdot|_\mathbb{Q})$ no es secuencialmente completo.
+- ✅ **Tuplas ZFC** (Phase 7, 3 módulos): `SetOps/Tuple`, `SetOps/TupleOps`, `Rat/TupleSeq` — convención D9 (tupla de grado $n$ = función con dominio $\sigma n$), `seqSumQ`/`seqProdQ`. **0 sorry**.
+- 🔶 **Exponenciación racional** (Phase 8, prerequisito): `Rat/Pow` — `powRatQ` ($x^n$) vía `RecursionTheoremWithStep`, leyes de exponentes $x^{n+m}=x^n x^m$ y $(xy)^n=x^n y^n$. **0 sorry**.
 
-**Estado**: 92 módulos, **0 sorry**, **0 errores de compilación** (verificado 2026-05-07).
+**Estado**: 93 módulos activos (+ barrel `Algebra` placeholder), **0 sorry**, **0 errores** (`lake build`: 114 jobs, verificado 2026-05-26).
 
 ---
 
@@ -69,146 +73,24 @@
 
 ---
 
-## Phase 6.5: Sucesiones en ℚ — � En progreso
+## Phase 6.5: Sucesiones en ℚ — ✅ COMPLETA (2026-05-01)
 
-**Pre-requisito**: Phase 6 completa (ℚ cuerpo ordenado arquimediano)  
-**Directorio**: `ZFC/Rat/` y `ZFC/Int/`
+**Pre-requisito**: Phase 6 completa (ℚ cuerpo ordenado arquimediano).
+**Directorios**: `ZFC/Rat/` y `ZFC/Int/`. Detalle teorema-a-teorema proyectado en REFERENCE.md (§3.63–§3.68, §4.59–§4.66, §6.60–§6.67).
 
 | # | Módulo | Exports clave | Estado |
 |---|--------|---------------|--------|
-| 0a | `Int/MaxMin.lean` | `maxZ`, `minZ`, 18 teoremas | ✅ **COMPLETO** |
-| 0b | `Rat/MaxMin.lean` | `maxQ`, `minQ`, 18 teoremas | ✅ **COMPLETO** |
-| 1 | `Rat/Sequences.lean` | `IsSeqQ`, `constSeqQ`, `addSeqQ`, `negSeqQ`, `mulSeqQ` | ✅ **COMPLETO** |
-| 2 | `Rat/Convergence.lean` | 17 exports: `convergesToQ`, `limit_unique`, `add`, `sub`, `mul_bounded`, `mul`, `const_mul`, `abs`, `zero_of_abs`, `iff_abs`, `of_dominated`, `squeeze`, `subseq`, `of_eventually_eq` + 3 def | ✅ **COMPLETO** |
-| 3 | `Rat/CauchyQ.lean` | 14 exports: `IsCauchyQ`, `cauchy_of_convergentQ`, `cauchy_bounded`, `constSeqQ_isCauchy`, `cauchyQ_neg/add/sub/const_mul/mul`, `subseq_of_cauchyQ`, `CauchyEquivQ`, `cauchyQ_equiv_refl/symm/trans` | ✅ **COMPLETO** |
-| 4 | `Rat/Monotone.lean` | `isNondecreasingQ`, `isBoundedQ`, `limit_le_of_bounded_above`, `convergent_isBounded`, `nondecreasing_bounded_isCauchy`, `nonincreasing_bounded_isCauchy` | ✅ **COMPLETO** |
-| 5 | `Rat/SqrtApprox.lean` | `sqrtApproxSeq`, `sqrtApproxSeq_isCauchy`, `sqrtApproxSeq_pos/sq_gt_two/ge_one/nonincreasing`, `twoQ` (público) | ✅ **COMPLETO** (2026-05-01) |
-| 6 | `Rat/SqrtIrrational.lean` | `sqrt2_irrational`, `sqrtApproxSeq_not_convergent` | ✅ **COMPLETO** (2026-05-01) |
+| 0a | `Int/MaxMin.lean` | `maxZ`, `minZ`, 18 teoremas de retículo | ✅ |
+| 0b | `Rat/MaxMin.lean` | `maxQ`, `minQ`, 18 teoremas de retículo | ✅ |
+| 1 | `Rat/Sequences.lean` | `IsSeqQ`, `constSeqQ`, `addSeqQ`, `negSeqQ`, `mulSeqQ` | ✅ |
+| 2 | `Rat/Convergence.lean` | `convergesToQ`, `limit_unique`, aritmética completa de límites (add/sub/mul/inv/div/abs/squeeze/subseq) | ✅ |
+| 3 | `Rat/CauchyQ.lean` | `IsCauchyQ`, `cauchy_of_convergentQ`, `cauchy_bounded`, `CauchyEquivQ` (refl/symm/trans) | ✅ |
+| 4 | `Rat/Monotone.lean` | `isNondecreasingQ`, `isBoundedQ`, `convergent_isBounded`, `nondecreasing/nonincreasing_bounded_isCauchy` | ✅ |
+| 5 | `Rat/SqrtApprox.lean` | `twoQ`, `sqrtApproxSeq`, `sqrtApproxSeq_isCauchy`, `sqrtApproxSeq_sq_gt_two` | ✅ |
+| 6 | `Rat/SqrtIrrational.lean` | `sqrt2_irrational`, `sqrtApproxSeq_not_convergent` (**ℚ no es secuencialmente completo**) | ✅ |
 
-**Nota (2026-04-30 — sesiones 9–10)**: `Rat/Convergence.lean` completado con 9 nuevos teoremas (sesiones 9–10): `convergesToQ_sub`, `convergesToQ_of_dominated`, `squeeze_theorem`, `convergesToQ_of_eventually_eq` (sesión 9), y `convergesToQ_const_mul`, `convergesToQ_abs`, `convergesToQ_zero_of_abs`, `convergesToQ_iff_abs`, `convergesToQ_mul` (sesión 10). `Rat/CauchyQ.lean` completado: aritmética completa `cauchyQ_neg/add/sub/const_mul/mul`, subsucesiones, y relación de equivalencia `CauchyEquivQ` con pruebas refl/symm/trans. **Phase 6.5 está al 6/7 módulos, 0 sorry, 0 errores de compilación (88 módulos totales).** Pendiente: `Rat/SqrtApprox.lean`.
-
-**Teoremas clave de `Rat/Convergence.lean`** (plan detallado):
-
-### Casos base
-
-1. `convergesToQ_const` — la sucesión constante converge a su valor (**✅ probado**)
-2. `limit_unique f L₁ L₂` — si f→L₁ y f→L₂ entonces L₁=L₂. (**✅ probado**)
-   *Estrategia*: por contradicción; si L₁≠L₂ tomar ε=|L₁−L₂|/2 > 0;
-   para n suficientemente grande `|L₁−L₂| ≤ |f(n)−L₁| + |f(n)−L₂| < ε+ε = |L₁−L₂|`;
-   contradicción. Requiere `halfQ` (lema: ε>0 → ε/2 > 0) + `absQ_triangle`.
-
-### Aritmética de límites
-
-1. `convergesToQ_neg f L` — si f→L entonces (−f)→−L. (**✅ probado** — `|(−f)(n)−(−L)| = |subQ L f(n)| = |f(n)−L|` via `absQ_symm`)
-2. `convergesToQ_add f g L₁ L₂` — si f→L₁ y g→L₂ entonces (f+g)→L₁+L₂. (**✅ probado**)
-   *Estrategia*: dado ε>0, tomar N₁ (para ε/2 sobre f) y N₂ (para ε/2 sobre g);
-   para n≥max(N₁,N₂): `|(f+g)(n)−(L₁+L₂)| ≤ |f(n)−L₁| + |g(n)−L₂| < ε/2+ε/2 = ε`.
-   Requiere `halfQ`, `maxOf`, `absQ_triangle`, `addQ_ltQ_ltQ`.
-3. `convergesToQ_sub f g L₁ L₂` — si f→L₁ y g→L₂ entonces (f−g)→L₁−L₂. (**✅ probado** — corolario de `convergesToQ_add` + `convergesToQ_neg`)
-4. `convergesToQ_const_mul c f L` — si f→L entonces (c·f)→c·L (c ∈ ℚ fija). (**✅ PROBADO**)
-   *Estrategia*: si c=0 trivial; si c≠0, dado ε>0 usar ε/|c| como umbral para f.
-   Requiere `isPositiveQ_invQ` y `mulQ_absQ`.
-5. `convergesToQ_mul_bounded f g L` — si f→0 y g es acotada entonces (f·g)→0. (**✅ PROBADO** — estrategia ε/M con `divQ_mulQ_cancel` + `mulQ_right_cancel**)
-6. `convergesToQ_mul f g L₁ L₂` — si f→L₁ y g→L₂ entonces (f·g)→L₁·L₂. (**✅ PROBADO**)
-   *Estrategia*: `f·g − L₁·L₂ = (f−L₁)·g + L₁·(g−L₂)`;
-   usar `convergesToQ_mul_bounded` (para (f−L₁)·g, g acotada inline)
-   y `convergesToQ_const_mul` (para L₁·(g−L₂)).
-   **Nota**: `cauchy_bounded` de `CauchyQ.lean` no se puede importar (circular); demostrar acotación inline.
-7. `convergesToQ_inv f L` — si f→L y L≠0 entonces (1/f)→1/L. ❌ **NO HECHO**
-   *Estrategia*: mostrar que f(n)≠0 eventualmente; luego `1/f(n)−1/L = (L−f(n))/(L·f(n))`;
-   acotar |L·f(n)| desde abajo por |L|/2 para n≥N.
-   Requiere `archQ` para el control de denominadores.
-8. `convergesToQ_div f g L₁ L₂` — si f→L₁, g→L₂, L₂≠0 entonces (f/g)→L₁/L₂. ❌ **NO HECHO**
-    *Estrategia*: corolario de `convergesToQ_mul` + `convergesToQ_inv`.
-9. `convergesToQ_abs f L` — si f→L entonces |f|→|L|. (**✅ PROBADO**)
-    *Estrategia*: `||f(n)|−|L|| ≤ |f(n)−L|` (desigualdad triangular inversa). Necesita `absSeqQ` (definir inline en Convergence.lean).
-
-### Reformulaciones equivalentes
-
-1. `convergesToQ_zero_of_abs f` — |f|→0 ↔ f→0. (**✅ PROBADO**)
-    *Estrategia*: `||f(n)|−0| = |f(n)| = |f(n)−0|`. Necesita `absSeqQ` inline.
-2. `convergesToQ_iff_abs f L` — f→L ↔ (n↦|f(n)−L|)→0. (**✅ PROBADO**)
-    *Estrategia*: reformulación directa de la definición ε-N.
-
-### Colas y equivalencias eventuales
-
-1. `convergesToQ_tail f L k` — f→L ↔ (n↦f(n+k))→L para cualquier k∈ω. ❌ **NO HECHO**
-    *Estrategia*: usar `subseq_convergent` con φ(n)=n+k (estrictamente creciente), o demostrar directo.
-    **Pendiente**: requiere definir sucesión cola o verificar φ(n)=n+k es estrictamente creciente en ZFC.
-2. `convergesToQ_of_eventually_eq f g L` — f(n)=g(n) para n≥N y f→L ⟹ g→L. (**✅ PROBADO** — max(N, N₀) como umbral)
-
-### Teorema del emparedado (squeeze)
-
-1. `squeeze_theorem a f b L` — a(n)≤f(n)≤b(n), a→L, b→L ⟹ f→L. (**✅ probado** — argumento ε directo: −ε < a(n)−L ≤ f(n)−L ≤ b(n)−L < ε implica |f(n)−L| < ε via `absQ_lt_of_bounds`)
-2. `convergesToQ_of_dominated f g L` — |f(n)−L|≤g(n) y g→0 ⟹ f→L. (**✅ probado** — mismo N de g; g(n) ≥ 0 automático, |g(n)|=g(n) < ε)
-
-### Subsucesiones
-
-1. `IsSubseqOf g f` — predicado: ∃ φ: ω→ω estrictamente creciente tal que g(n)=f(φ(n)) ∀n∈ω.
-2. `strictly_increasing_ge φ n` — φ: ω→ω estrictamente creciente ⟹ φ(n)≥n (inducción).
-3. `subseq_convergent f g L` — si f→L y g es subsucesión de f, entonces g→L. (**✅ probado**)
-    *Estrategia*: dado ε>0, tomar N de la convergencia de f; para n≥N, como φ es
-    estrictamente creciente, φ(n)≥n≥N (por `strictly_increasing_ge` vía inducción con `sep ω P`), así |g(n)−L|=|f(φ(n))−L|<ε.
-
-### Acotamiento y monotonía (en `Rat/Monotone.lean`)
-
-1. `nondecreasing_bounded_isCauchy` — gₙ no-decreciente + acotada superiormente ⟹ Cauchy. (**✅ probado** — demostración directa por propiedad arquimediana en ℚ; inducción + `archQ`; no requiere Real.Completeness)
-2. `nonincreasing_bounded_isCauchy` — gₙ no-creciente + acotada inferiormente ⟹ Cauchy. (**✅ probado** — dual de `nondecreasing_bounded_isCauchy`; argumento arquimediano simétrico)
-3. `limit_le_of_bounded_above f L M` — f→L, ∀n f(n)≤M ⟹ L≤M. (**✅ probado**)
-4. `le_limit_of_bounded_below f L M` — f→L, ∀n M≤f(n) ⟹ M≤L. (**✅ probado**)
-5. `convergent_isBounded f L` — f→L ⟹ f está acotada (superior e inferiormente). (**✅ probado** vía `cauchy_bounded f hf (cauchy_of_convergentQ f L hf hL hconv)`)
-
-**Teoremas clave de `Rat/CauchyQ.lean`** (plan detallado):
-
-### Casos base
-
-1. `constSeqQ_isCauchy a` — la sucesión constante es de Cauchy (**✅ PROBADO** vía `cauchy_of_convergentQ`)
-2. `cauchy_of_convergentQ f L` — si f→L entonces f es de Cauchy. (**✅ PROBADO**)
-   *Estrategia*: dado ε>0, tomar N tal que ∀n≥N, |f(n)−L|<ε/2;
-   para m,n≥N: `|f(m)−f(n)| ≤ |f(m)−L| + |L−f(n)| < ε/2+ε/2 = ε`.
-   Requiere `halfQ`, `absQ_triangle_sub` (`|a−c|≤|a−b|+|b−c|`).
-3. `cauchy_bounded f` — toda sucesión de Cauchy en ℚ está acotada. (**✅ PROBADO** vía inducción con `maxQ` sobre segmento inicial [0,N₀])
-   *Estrategia implementada*: ε=1; N₀ de Cauchy; Q(n) = ∃M, ∀k≤n, |f(k)|≤M; inducción en ω da Q(N₀); M = addQ M₀ oneQ; tricotomía n vs N₀.
-
-### Aritmética de Cauchy
-
-1. `cauchyQ_neg f` — f Cauchy ⟹ (−f) Cauchy. (**✅ PROBADO**)
-   *Estrategia*: `|(−f)(m)−(−f)(n)| = |f(m)−f(n)|`; mismo N.
-2. `cauchyQ_add f g` — f,g Cauchy ⟹ (f+g) Cauchy. (**✅ PROBADO**)
-   *Estrategia*: dado ε>0, tomar Nf (para ε/2 sobre f) y Ng (para ε/2 sobre g);
-   para m,n≥max(Nf,Ng): `|(f+g)(m)−(f+g)(n)| ≤ |f(m)−f(n)| + |g(m)−g(n)| < ε`.
-3. `cauchyQ_sub f g` — f,g Cauchy ⟹ (f−g) Cauchy. (**✅ PROBADO** — corolario de `cauchyQ_add` + `cauchyQ_neg`)
-4. `cauchyQ_const_mul c f` — c∈ℚ, f Cauchy ⟹ (c·f) Cauchy. (**✅ PROBADO**)
-   *Estrategia*: si c=0 trivial; si c≠0, usar umbral ε/|c| para f.
-5. `cauchyQ_mul f g` — f,g Cauchy ⟹ (f·g) Cauchy. (**✅ PROBADO**)
-   *Estrategia*: `f(m)g(m)−f(n)g(n) = (f(m)−f(n))g(m) + f(n)(g(m)−g(n))`;
-   acotar con `cauchy_bounded` para f y g. Requiere `cauchy_bounded`.
-
-### Subsucesiones y Cauchy
-
-1. `subseq_of_cauchyQ f g` — g subsucesión de f Cauchy ⟹ g Cauchy. (**✅ PROBADO**)
-   *Estrategia*: el mismo N de f funciona porque φ es creciente (φ(n) ≥ n via `strictly_increasing_ge'`).
-2. `cauchyQ_of_convergent_subseq f g L` — f Cauchy + g subsucesión de f con g→L ⟹ f→L. ❌ **NO HECHO**
-    *Estrategia*: dado ε>0, tomar Nf (Cauchy de f, umbral ε/2) y Ng (convergencia de g, umbral ε/2);
-    para n≥max(Nf,Ng): |f(n)−L| ≤ |f(n)−f(φ(n))| + |f(φ(n))−L| < ε/2+ε/2.
-    **Teorema clave para la completitud de ℝ.**
-
-### Equivalencia de Cauchy
-
-1. `CauchyEquivQ f g` — def: `convergesToQ (f − g) 0`. (**✅ PROBADO**)
-2. `cauchyQ_equiv_refl f` — `CauchyEquivQ f f`. (**✅ PROBADO**)
-3. `cauchyQ_equiv_symm f g` — `CauchyEquivQ f g → CauchyEquivQ g f`. (**✅ PROBADO** — prueba ε-N directa con `absQ_negQ`)
-4. `cauchyQ_equiv_trans f g h` — transitiva. (**✅ PROBADO** vía `convergesToQ_add` + `convergesToQ_of_eventually_eq`)
-
-**Teoremas clave de `Rat/SqrtApprox.lean`** (prueba completa de incompletitud de ℚ):
-
-1. `sqrtApprox_in_RatSet` — f(n) ∈ ℚ para todo n (inducción sobre la recurrencia)
-2. `sqrtApprox_positive` — f(n) > 0 para todo n
-3. `sqrtApprox_sq_gt_2` — f(n)² > 2 para todo n (identidad: f(n+1)²−2 = (f(n)²−2)²/(4f(n)²))
-4. `sqrtApprox_decreasing` — f(n+1) < f(n) para todo n (monótona decreciente)
-5. `sqrtApprox_is_cauchy` — IsCauchyQ sqrtApprox (convergencia cuadrática de Newton-Raphson)
-6. `sqrt2_irrational` — ¬∃ p q : ℤ, q≠0 ∧ p·p = 2·(q·q) (irracionalidad de √2, argumento 2-ádico)
-7. `sqrtApprox_not_convergent` — ¬∃ L∈ℚ, convergesToQ sqrtApprox L (**incompletitud de ℚ**)
+> **Nota**: `cauchyQ_of_convergent_subseq` (Cauchy + subsucesión convergente ⟹ convergente)
+> y `convergesToQ_tail` están **implementados y exportados** (útiles para la completitud de ℝ en Phase 10).
 
 ---
 
@@ -218,32 +100,39 @@
 
 | Módulo | Contenido principal | Estado |
 | ------ | ------------------- | ------ |
-| `SetOps/Tuple.lean` | `IsTuple t n Ω`, `tupleGraph`, `tuple_apply_mem`, `tupleGraph_isTuple`, `tupleGraph_apply`, `tuple_ext`, `zero_mem_sigma` | ✅ **COMPLETO** (11 exports) |
-| `SetOps/TupleOps.lean` | `tupleHead`, `tupleLast`, `constTuple`, `tupleUpdate`, `tupleTail`, `concat` + `_isTuple`/`_apply` para cada operación | ✅ **COMPLETO** (16 exports) |
-| `Rat/TupleSeq.lean` | `seqSumQ`, `seqProdQ` via `RecursionTheoremWithStep` sobre `RatSet`; función escalón guardada para clausura sin hipótesis sobre dominio de `t` | ✅ **COMPLETO** (22 exports) |
+| `SetOps/Tuple.lean` | `IsTuple t n Ω`, `tupleGraph`, `tuple_apply_mem`, `tupleGraph_isTuple`, `tupleGraph_apply`, `tuple_ext`, `zero_mem_sigma` | ✅ (11 exports) |
+| `SetOps/TupleOps.lean` | `tupleHead`, `tupleLast`, `constTuple`, `tupleUpdate`, `tupleTail`, `concat` + `_isTuple`/`_apply` | ✅ (16 exports) |
+| `Rat/TupleSeq.lean` | `seqSumQ`, `seqProdQ` vía `RecursionTheoremWithStep` sobre `RatSet`; función escalón guardada | ✅ (22 exports) |
 
-**Convención D9**: grado $n$ $\Rightarrow$ dominio $\sigma n = \{0, \ldots, n\}$ ($n+1$ elementos). Esto alinea con la codificación von Neumann de $\omega$.
+**Convención D9**: grado $n$ $\Rightarrow$ dominio $\sigma n = \{0, \ldots, n\}$ ($n+1$ elementos), alineado con la codificación von Neumann de $\omega$.
 
-**Estado**: 3/3 módulos · 49 exports · **0 sorry · 0 errores** (verificado 2026-05-07)
+> **Nota de documentación**: `Rat/TupleSeq.lean` está completo y **proyectado** en REFERENCE.md (§3.72/§4.70/§6.71).
 
 ---
 
-## Phase 8: Monomios y Polinomios — 📋 Planificado
+## Phase 8: Monomios y Polinomios — 🔶 EN PROGRESO
 
-**Pre-requisito**: Phase 7 (tuplas).
+**Pre-requisito**: Phase 7 (tuplas) + `Rat/Pow`. Barrel `ZFC/Algebra.lean` activo.
 
-| Módulo | Contenido principal |
-|--------|---------------------|
-| `Algebra/Monomial.lean` | Monomial como par $\langle n, q \rangle$ con grado $n \in \omega$ y coeficiente $q \in \text{RatSet}$; suma/producto de monomios |
-| `Algebra/Polynomial.lean` | `IsPolyQ p n \leftrightarrow \text{IsTuple}\ p\ n\ \text{RatSet}` (polinomio de grado $\leq n$); `polyEval p x` (evaluación); grado, coeficiente líder |
-| `Algebra/PolyArith.lean` | Suma, producto, negación de polinomios; $\mathbb{Q}[X]$ es dominio de integridad |
-| `Algebra/PolyDiv.lean` | Algoritmo de división de Euclides para polinomios; `polyGcd`; TFA en $\mathbb{Q}[X]$ |
+| Módulo | Contenido principal | Estado |
+|--------|---------------------|--------|
+| `Rat/Pow.lean` | `powRatQ x n = x^n` vía `RecursionTheoremWithStep`; `powRatQ_zero/succ/mem_RatSet/one`, `powRatQ_zero_base`, `powRatQ_one_base`, `powRatQ_add_exp`, `powRatQ_mul_base` (16 exports) | ✅ **COMPLETO** (prerequisito) |
+| `Algebra/Monomial.lean` | Monomio: nulo = `∅` (centinela); no nulo = `⟨n,q⟩`, `n∈ω`, `q∈ℚ`, `q≠0`. `monomMk`, `IsMonom`, `monomCoeff`, `monomExp`, `monomDeg` (**grado WithBot ω**: `−∞↦∅`, `n↦σn`), `monomEval` (24 exports) | ✅ **COMPLETO** (proyección REFERENCE pendiente) |
+| `Algebra/Polynomial.lean` | `IsPolyQ p n := IsTuple p n RatSet` (grado $\leq n$); `polyCoeff`, `polyEval p n x = seqSumQ (tupleGraph n RatSet (fun k => mulQ (p⦅k⦆) (powRatQ x k))) (σ n)`; `leadCoeff`, `IsMonic`, `IsRoot` | 🔜 **SIGUIENTE** |
+| `Algebra/PolyArith.lean` | Suma, producto (convolución), negación de polinomios; $\mathbb{Q}[X]$ es dominio de integridad | 📋 Planificado |
+| `Algebra/PolyDiv.lean` | Algoritmo de división de Euclides para polinomios; `polyGcd`; TFA en $\mathbb{Q}[X]$ | 📋 Planificado |
+
+**Próximo paso inmediato**: crear `ZFC/Algebra/Polynomial.lean` (`namespace ZFC.Algebra.Polynomial`),
+conectarlo al barrel `ZFC/Algebra.lean`. La evaluación reutilizará `powRatQ` (de `Rat/Pow`)
+y `seqSumQ` (de `Rat/TupleSeq`), envolviendo `fun k => mulQ (p⦅k⦆) (powRatQ x k)` en `tupleGraph`.
+Reto técnico: probar `p⦅k⦆·x^k ∈ RatSet` para `k ∈ σn` (de `IsPolyQ p n` + `powRatQ_mem_RatSet`).
+Después: proyectar `Monomial` + `Polynomial` juntos en REFERENCE (`proyecta`).
 
 ---
 
 ## Phase 9: Cuerpos Ordenados Intermedios entre ℚ y ℝ — 📋 Planificado
 
-**Pre-requisito**: Phase 6.5 completa (sucesiones de Cauchy en ℚ definidas y con ejemplos)  
+**Pre-requisito**: Phase 6.5 completa (sucesiones de Cauchy en ℚ definidas y con ejemplos)
 **Motivación**: Entre ℚ y ℝ existen cuerpos ordenados que contienen ℚ pero no son completos. Su formalización ilustra el rol esencial de la propiedad del supremo en la construcción de ℝ.
 
 ### Phase 9a: Números Computables — `ZFC/Computable/`
@@ -321,10 +210,10 @@
 | 4: Anotaciones | ✅ Completo | — | — |
 | 5: Enteros ℤ | ✅ Completo | 15 | 190 |
 | 6: Racionales ℚ | ✅ Completo | 9 | 90 |
-| 6.5: Sucesiones en ℚ | ✅ Completo | 7/7 | ~111 |
-| 6.6: Incompletitud de ℚ | ✅ Completo (sqrt2 irracional + sqrtApproxSeq no converge) | 1 | 2 |
-| 7: Tuplas e infraestructura | ✅ Completo | 2/2 | 21 |
-| 8: Monomios y polinomios | 📋 Planificado | 0/4 | — |
+| 6.5: Sucesiones en ℚ | ✅ Completo | 7 | ~111 |
+| 6.6: Incompletitud de ℚ | ✅ Completo | 1 | 2 |
+| 7: Tuplas e infraestructura | ✅ Completo | 3 | ~49 |
+| 8: Monomios y polinomios | 🔶 En progreso | 2/5 (Pow ✅, Monomial ✅) | 40 |
 | 9a: Computables | 📋 Planificado | 0/4 | — |
 | 9b: Constructibles | 📋 Planificado | 0/2 | — |
 | 9c: Radicales | 📋 Planificado | 0/2 | — |
@@ -334,6 +223,10 @@
 
 ---
 
-*Última actualización: 2026-05-07 (sesión 13). Phase 7 (Tuplas) completada: SetOps/Tuple.lean + SetOps/TupleOps.lean — 2 módulos, 21 exports, 0 sorry, 0 errores. REFERENCE.md actualizado con §3.69–§3.70, §4.67–§4.68, §6.68–§6.69. 91 módulos totales, **0 sorry, 0 errores**.*
+*Última actualización: 2026-05-26 (sesión 15c). Phase 8 avanza: `Algebra/Monomial.lean` completo (24 exports, 0 sorry, compiló a la primera). Monomio nulo = `∅` (centinela), grado en codificación WithBot ω (`−∞↦∅`, `n↦σn`). Barrel `ZFC/Algebra.lean` activo. 95 archivos `.lean` bajo `ZFC/`, **0 sorry, 0 errores, 0 warnings ZFC** (115 jobs). Siguiente: `Algebra/Polynomial.lean`.*
 
-*Actualización anterior: 2026-05-01 (sesión 12). REFERENCE.md actualizado con nuevos exports de Convergence.lean (strictly_increasing_ge, invSeqQ, tailSeqQ, shiftSeqQ familia) y CauchyQ.lean (cauchyQ_of_convergent_subseq). Phases reestructuradas: Tuples (7) y Polynomials (8) insertadas; antiguas 7/8 pasan a 9/10. THOUGHTS.md actualizado: [16.] marcado ✅, [17.] añadido (irracionalidad generalizada), Phase 6 marcada completa. 89 módulos totales, **0 sorry, 0 errores**.*
+*Actualización anterior: 2026-05-26 (sesión 15b). Cierre de gaps de proyección: `Rat/TupleSeq.lean` proyectado en REFERENCE.md (§3.72/§4.70/§6.71) + §3 de SqrtApprox/SqrtIrrational. Limpieza de código: docstring "Left as sorry" corregido en `Rat/Monotone.lean`; 0 warnings en ZFC (corregidas variables sin usar en Int/MaxMin, Rat/MaxMin, Convergence, CauchyQ y simp redundantes en los `_comm`). **0 sorry, 0 errores, 0 warnings ZFC** (114 jobs).*
+
+*Actualización anterior: 2026-05-26 (sesión 15a). Phase 8 iniciada: `Rat/Pow.lean` completo (exponenciación racional, 16 exports, proyectado en REFERENCE.md §3.71/§4.69/§6.70). Barrel `ZFC/Algebra.lean` creado como placeholder y conectado a `ZFC.lean`. Limpieza de NEXT-STEPS: eliminados los planes teorema-a-teorema ya cumplidos de Phase 6.5 (ahora en REFERENCE.md), Phase 6.5 marcada COMPLETA. 93 módulos activos, **0 sorry, 0 errores** (114 jobs).*
+
+*Actualización anterior: 2026-05-07 (sesión 13). Phase 7 (Tuplas) completada: SetOps/Tuple.lean + SetOps/TupleOps.lean + Rat/TupleSeq.lean. 92 módulos totales, **0 sorry, 0 errores**.*

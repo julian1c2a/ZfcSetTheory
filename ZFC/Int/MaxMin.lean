@@ -96,7 +96,7 @@ namespace ZFC
     -- =========================================================================
 
     theorem leZ_maxZ_left (x y : U)
-        (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) :
+        (hx : x ∈ (IntSet : U)) (_hy : y ∈ (IntSet : U)) :
         leZ x (maxZ x y) := by
       unfold maxZ
       by_cases h : leZ x y
@@ -115,7 +115,7 @@ namespace ZFC
         · exact h_ge
 
     theorem maxZ_leZ (x y z : U)
-        (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) (hz : z ∈ (IntSet : U))
+        (_hx : x ∈ (IntSet : U)) (_hy : y ∈ (IntSet : U)) (_hz : z ∈ (IntSet : U))
         (hxz : leZ x z) (hyz : leZ y z) :
         leZ (maxZ x y) z := by
       unfold maxZ
@@ -135,7 +135,7 @@ namespace ZFC
         · exact h_ge
 
     theorem minZ_leZ_right (x y : U)
-        (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) :
+        (_hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) :
         leZ (minZ x y) y := by
       unfold minZ
       by_cases h : leZ x y
@@ -143,7 +143,7 @@ namespace ZFC
       · simp only [if_neg h]; exact leZ_refl y hy
 
     theorem leZ_minZ (x y z : U)
-        (hx : x ∈ (IntSet : U)) (hy : y ∈ (IntSet : U)) (hz : z ∈ (IntSet : U))
+        (_hx : x ∈ (IntSet : U)) (_hy : y ∈ (IntSet : U)) (_hz : z ∈ (IntSet : U))
         (hzx : leZ z x) (hzy : leZ z y) :
         leZ z (minZ x y) := by
       unfold minZ
@@ -162,7 +162,7 @@ namespace ZFC
       by_cases hxy : leZ x y <;> by_cases hyx : leZ y x
       · -- x ≤ y and y ≤ x: antisymmetry gives x = y
         have heq := leZ_antisymm x y hx hy hxy hyx
-        simp only [if_pos hxy, if_pos hyx, heq]
+        simp only [heq]
       · simp only [if_pos hxy, if_neg hyx]
       · simp only [if_neg hxy, if_pos hyx]
       · -- ¬(x ≤ y) and ¬(y ≤ x): impossible by totality
@@ -177,7 +177,7 @@ namespace ZFC
       unfold minZ
       by_cases hxy : leZ x y <;> by_cases hyx : leZ y x
       · have heq := leZ_antisymm x y hx hy hxy hyx
-        simp only [if_pos hxy, if_pos hyx, heq]
+        simp only [heq]
       · simp only [if_pos hxy, if_neg hyx]
       · simp only [if_neg hxy, if_pos hyx]
       · have htot := leZ_total x y hx hy

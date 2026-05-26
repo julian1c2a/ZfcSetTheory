@@ -1,6 +1,6 @@
 # Known Issues — ZfcSetTheory Project
 
-**Last updated**: 2026-07-22
+**Last updated**: 2026-05-26
 
 ---
 
@@ -40,4 +40,19 @@ Problemas descubiertos durante el desarrollo de `BoolAlg.Representation.lean`. S
 
 ## Otros problemas conocidos
 
-_(Ninguno por ahora.)_
+### 5. Warnings benignos de `linter.unusedVariables` / `simp` sin usar
+
+**Problema**: `lake build` (114 jobs, 0 errores, 0 sorry) emite varios *warnings* cosméticos:
+
+- `ZFC/Int/MaxMin.lean` y `ZFC/Rat/MaxMin.lean` — argumentos `simp` sin usar y variables `hx`/`hy` sin usar.
+- `ZFC/Rat/Convergence.lean` (líneas ~486, ~957) y `ZFC/Rat/CauchyQ.lean` (líneas ~937, ~963) — hipótesis sin usar (`hL`, `hf`, `hg`, `hx`, `hC`).
+
+**Impacto**: ninguno sobre la corrección (no afectan a la compilación ni introducen `sorry`).
+
+**Solución**: prefijar las variables con `_` o eliminar los `simp` redundantes cuando se reabra cada módulo. No es urgente.
+
+### 6. Comentario obsoleto "Left as sorry" en `Rat/Monotone.lean`
+
+**Problema**: el docstring de `convergent_isBounded` (`ZFC/Rat/Monotone.lean:1067-1070`) dice "Left as sorry", pero el teorema **está completamente probado** vía `cauchy_bounded f hf (cauchy_of_convergentQ f L hf hL hconv)`. El comentario quedó obsoleto tras completar la prueba.
+
+**Solución**: actualizar el docstring para reflejar la prueba real. Pendiente (cambio de comentario, no de lógica).

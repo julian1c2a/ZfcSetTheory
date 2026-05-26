@@ -1,6 +1,6 @@
 # Diagrama de Dependencias - ZfcSetTheory
 
-**Última actualización:** 2026-04-29
+**Última actualización:** 2026-05-26
 **Autor**: Julián Calderón Almendros
 
 > **Nota (Fase 3, 2026-04-02):** Los identificadores del proyecto han sido renombrados según convenciones Mathlib. Los nombres en las secciones "Exports por Módulo" pueden reflejar nombres anteriores; consultar REFERENCE.md §0 para la tabla completa de renombramientos.
@@ -85,21 +85,26 @@ ZfcSetTheory/
     │   ├── Induction.lean               # Inducción en ℤ por |·|, descenso
     │   ├── Units.lean                   # isUnitZ, unitZ_iff (unidades = {±1})
     │   └── MaxMin.lean                  # maxZ, minZ, 18 teoremas de retículo
-    └── Rat/
-        ├── Equiv.lean                   # RatEquivRel en ℤ×ℤ*
-        ├── Basic.lean                   # RatSet, ratClass, zeroQ, oneQ
-        ├── Add.lean                     # addQ, grupo abeliano
-        ├── Neg.lean                     # negQ, subQ, inverso aditivo
-        ├── Mul.lean                     # mulQ, invQ, divQ, cuerpo
-        ├── Order.lean                   # leQ, ltQ, orden total, densidad
-        ├── Abs.lean                     # absQ, signQ, desigualdad triangular
-        ├── Embedding.lean               # intToRat : ℤ ↪ ℚ, archQ
-        ├── Field.lean                   # Axiomas de cuerpo ordenado
-        ├── MaxMin.lean                  # maxQ, minQ, 18 teoremas de retículo
-        ├── Sequences.lean               # IsSeqQ, constSeqQ, addSeqQ, negSeqQ, mulSeqQ
-        ├── Convergence.lean             # convergesToQ, limit_unique, subseq_convergent
-        ├── CauchyQ.lean                 # IsCauchyQ, cauchy_bounded
-        └── Monotone.lean                # nondecreasing/nonincreasing_bounded_isCauchy
+    ├── Rat/
+    │   ├── Equiv.lean                   # RatEquivRel en ℤ×ℤ*
+    │   ├── Basic.lean                   # RatSet, ratClass, zeroQ, oneQ
+    │   ├── Add.lean                     # addQ, grupo abeliano
+    │   ├── Neg.lean                     # negQ, subQ, inverso aditivo
+    │   ├── Mul.lean                     # mulQ, invQ, divQ, cuerpo
+    │   ├── Pow.lean                     # powRatQ (x^n), leyes de exponentes  [Phase 8 prereq]
+    │   ├── Order.lean                   # leQ, ltQ, orden total, densidad
+    │   ├── Abs.lean                     # absQ, signQ, desigualdad triangular
+    │   ├── Embedding.lean               # intToRat : ℤ ↪ ℚ, archQ
+    │   ├── Field.lean                   # Axiomas de cuerpo ordenado
+    │   ├── MaxMin.lean                  # maxQ, minQ, 18 teoremas de retículo
+    │   ├── Sequences.lean               # IsSeqQ, constSeqQ, addSeqQ, negSeqQ, mulSeqQ
+    │   ├── Convergence.lean             # convergesToQ, limit_unique, subseq_convergent
+    │   ├── CauchyQ.lean                 # IsCauchyQ, cauchy_bounded
+    │   ├── Monotone.lean                # nondecreasing/nonincreasing_bounded_isCauchy
+    │   ├── SqrtApprox.lean              # twoQ, sqrtApproxSeq (Newton-Raphson √2)
+    │   ├── SqrtIrrational.lean          # sqrt2_irrational, sqrtApproxSeq_not_convergent
+    │   └── TupleSeq.lean                # seqSumQ, seqProdQ (sumas/productos de tuplas ℚ)
+    └── Algebra.lean                     # Phase 8 barrel (placeholder; submódulos Algebra/* pendientes)
 ```
 
 ## Diagrama de Dependencias
@@ -251,6 +256,7 @@ graph TD
     RB --> RA[Rat/Add.lean]
     RA --> RN[Rat/Neg.lean]
     RN --> RM[Rat/Mul.lean]
+    RM --> RPow[Rat/Pow.lean]
     RM --> RO[Rat/Order.lean]
     RO --> RAbs[Rat/Abs.lean]
     RAbs --> REmb[Rat/Embedding.lean]

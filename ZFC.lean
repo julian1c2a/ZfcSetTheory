@@ -17,3 +17,4 @@ import ZFC.Peano
 import ZFC.Cardinal
 import ZFC.Int
 import ZFC.Rat
+import ZFC.Algebra

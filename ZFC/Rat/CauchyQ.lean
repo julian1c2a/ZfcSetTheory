@@ -934,7 +934,7 @@ namespace ZFC
 
     /-- Any subsequence of a Cauchy sequence is Cauchy. -/
     theorem subseq_of_cauchyQ (f g : U)
-        (hf : IsSeqQ f) (hg : IsSeqQ g)
+        (_hf : IsSeqQ f) (_hg : IsSeqQ g)
         (hf_c : IsCauchyQ f) (hsub : IsSubseqOf g f) :
         IsCauchyQ g := by
       obtain ⟨φ, hφ_fn, hφ_incr, hg_eq⟩ := hsub
@@ -960,7 +960,7 @@ namespace ZFC
         For n ≥ max(Nf,Ng): φ(n) ≥ n ≥ Nf, so |f(n)−f(φ(n))| < ε/2, and
         |f(φ(n))−L| = |g(n)−L| < ε/2. Triangle inequality gives |f(n)−L| < ε. -/
     theorem cauchyQ_of_convergent_subseq (f g L : U)
-        (hf : IsSeqQ f) (hg : IsSeqQ g)
+        (hf : IsSeqQ f) (_hg : IsSeqQ g)
         (hL : L ∈ (RatSet : U))
         (hf_cauchy : IsCauchyQ f)
         (hg_sub : IsSubseqOf g f)

@@ -104,7 +104,7 @@ namespace ZFC
     -- =========================================================================
 
     theorem leQ_maxQ_left (x y : U)
-        (hx : x ∈ (RatSet : U)) (hy : y ∈ (RatSet : U)) :
+        (hx : x ∈ (RatSet : U)) (_hy : y ∈ (RatSet : U)) :
         leQ x (maxQ x y) := by
       unfold maxQ
       by_cases h : leQ x y
@@ -123,7 +123,7 @@ namespace ZFC
         · exact h_ge
 
     theorem maxQ_leQ (x y z : U)
-        (hx : x ∈ (RatSet : U)) (hy : y ∈ (RatSet : U)) (_hz : z ∈ (RatSet : U))
+        (_hx : x ∈ (RatSet : U)) (_hy : y ∈ (RatSet : U)) (_hz : z ∈ (RatSet : U))
         (hxz : leQ x z) (hyz : leQ y z) :
         leQ (maxQ x y) z := by
       unfold maxQ
@@ -143,7 +143,7 @@ namespace ZFC
         · exact h_ge
 
     theorem minQ_leQ_right (x y : U)
-        (hx : x ∈ (RatSet : U)) (hy : y ∈ (RatSet : U)) :
+        (_hx : x ∈ (RatSet : U)) (hy : y ∈ (RatSet : U)) :
         leQ (minQ x y) y := by
       unfold minQ
       by_cases h : leQ x y
@@ -151,7 +151,7 @@ namespace ZFC
       · simp only [if_neg h]; exact leQ_refl y hy
 
     theorem leQ_minQ (x y z : U)
-        (hx : x ∈ (RatSet : U)) (hy : y ∈ (RatSet : U)) (_hz : z ∈ (RatSet : U))
+        (_hx : x ∈ (RatSet : U)) (_hy : y ∈ (RatSet : U)) (_hz : z ∈ (RatSet : U))
         (hzx : leQ z x) (hzy : leQ z y) :
         leQ z (minQ x y) := by
       unfold minQ
@@ -169,7 +169,7 @@ namespace ZFC
       unfold maxQ
       by_cases hxy : leQ x y <;> by_cases hyx : leQ y x
       · have heq := leQ_antisymm x y hx hy hxy hyx
-        simp only [if_pos hxy, if_pos hyx, heq]
+        simp only [heq]
       · simp only [if_pos hxy, if_neg hyx]
       · simp only [if_neg hxy, if_pos hyx]
       · have htot := leQ_total x y hx hy
@@ -183,7 +183,7 @@ namespace ZFC
       unfold minQ
       by_cases hxy : leQ x y <;> by_cases hyx : leQ y x
       · have heq := leQ_antisymm x y hx hy hxy hyx
-        simp only [if_pos hxy, if_pos hyx, heq]
+        simp only [heq]
       · simp only [if_pos hxy, if_neg hyx]
       · simp only [if_neg hxy, if_pos hyx]
       · have htot := leQ_total x y hx hy

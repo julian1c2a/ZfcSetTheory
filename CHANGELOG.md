@@ -1,6 +1,6 @@
 # Changelog
 
-**Última actualización:** 2026-05-07
+**Última actualización:** 2026-05-26
 **Autor**: Julián Calderón Almendros
 
 Todos los cambios notables de este proyecto serán documentados en este archivo.
@@ -9,6 +9,59 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Añadido (2026-05-26 — sesión 15c)
+
+- **Phase 8 — `Algebra/Monomial.lean` (monomios sobre ℚ) — NUEVO (0 sorry)**:
+  - Representación: monomio nulo = `∅` (centinela canónico; ningún par Kuratowski `⟨n,q⟩` es `∅`); monomio no nulo = `⟨n, q⟩` con exponente `n ∈ ω` y coeficiente `q ∈ ℚ`, `q ≠ 0`.
+  - `monomMk n q` — constructor que normaliza coeficiente 0 al nulo canónico; `IsMonom`, `IsZeroMonom`.
+  - **Grado con codificación WithBot ω** (decisión de diseño): `monomDeg` con `−∞ ↦ ∅` y `n ↦ σ n`, de modo que el orden `≼` de ω da el orden de grados con `∅` como fondo. `monomExp` = exponente literal (junk 0 para el nulo) usado en la evaluación.
+  - `monomEval m x = monomCoeff m · x^(monomExp m)` vía `powRatQ`; correcto incluso para el nulo (el coeficiente 0 absorbe el exponente basura).
+  - Lemas clave: `monomMk_isMonom`, `monomCoeff_mk` (incondicional), `monomExp_mk`, `monomDeg_mk`, clausuras (`monomCoeff_mem_RatSet`, `monomExp_mem_omega`, `monomDeg_mem_omega`), `monomEval_zero`, `monomEval_mk`, `monomEval_mem_RatSet`.
+  - Namespace `ZFC.Algebra.Monomial` (exportado a `ZFC`, **24 exports**); barrel `ZFC/Algebra.lean` activado con `import ZFC.Algebra.Monomial`.
+  - Compiló sin errores ni warnings al primer intento.
+  - **Pendiente**: proyección en REFERENCE.md (se agrupará con `Algebra/Polynomial.lean`; registrado en §7.5).
+
+- **Estado**: 95 archivos `.lean` bajo `ZFC/` (incl. 11 barrels) · **0 sorry · 0 errores · 0 warnings ZFC** (`lake build`: 115 jobs).
+
+### Proyectado y corregido (2026-05-26 — sesión 15b)
+
+- **Cierre de gaps de proyección en REFERENCE.md**:
+  - **`Rat/TupleSeq.lean`** proyectado completo (Phase 7, antes sin documentar): §1.1 (fila), §3.72 (6 definiciones: `sumQStepFn`/`seqSumQFn`/`seqSumQ` + análogos de producto), §4.70 (16 teoremas: ecuaciones de recursión, clausura, singleton), §6.71 (22 exports), §7.2 (bullet). §7.5 queda vacío.
+  - **`Rat/SqrtApprox.lean`**: añadido §3.73 con las definiciones públicas que faltaban (`twoQ`, `sqrtApproxSeq`).
+  - **`Rat/SqrtIrrational.lean`**: añadido §3.74 (stub, sin definiciones públicas).
+
+- **Limpieza de código (0 warnings en ZFC)**:
+  - `Rat/Monotone.lean`: corregido el docstring obsoleto "Left as sorry" de `convergent_isBounded` (el teorema está probado vía `cauchy_bounded ∘ cauchy_of_convergentQ`).
+  - `Int/MaxMin.lean` y `Rat/MaxMin.lean`: hipótesis de clausura sin usar prefijadas con `_` (`maxZ_leZ`/`leZ_minZ`/`leQ_maxQ_left`/`maxQ_leQ`/…) y eliminados los `if_pos hxy`/`if_pos hyx` redundantes en `maxZ_comm`/`minZ_comm`/`maxQ_comm`/`minQ_comm` (solo `heq` es necesario).
+  - `Rat/Convergence.lean` (`subseq_convergent`, `absQ_le_of_bounds`) y `Rat/CauchyQ.lean` (`subseq_of_cauchyQ`, `cauchyQ_of_convergent_subseq`): hipótesis sin usar prefijadas con `_`.
+  - Resultado: **0 warnings en módulos `ZFC/`** (queda 1 warning en la dependencia `PeanoNatLib`, fuera de este repo).
+
+- **Verificación**: `cauchyQ_of_convergent_subseq` y `convergesToQ_tail` confirmados **implementados y exportados** (corrige una nota errónea previa en NEXT-STEPS).
+
+- **Estado**: 93 módulos activos (+ barrel `Algebra`) · **0 sorry · 0 errores · 0 warnings ZFC** (`lake build`: 114 jobs).
+
+### Añadido (2026-05-26 — sesión 15a)
+
+- **Phase 8 iniciada — `Rat/Pow.lean` (exponenciación racional) — NUEVO (0 sorry)**:
+  - `powRatQ x n = x^n` para $x \in \mathbb{Q}$, $n \in \omega$, vía `RecursionTheoremWithStep` sobre `RatSet` (base $1_\mathbb{Q}$, paso $\langle k, v\rangle \mapsto v \cdot x$).
+  - Función escalón guardada `powRatQStepFn` (usa `if x ∈ RatSet then x else oneQ` para clausura sin hipótesis sobre $x$), análoga al patrón de `Rat/TupleSeq`.
+  - `powRatQ_zero` ($x^\emptyset = 1_\mathbb{Q}$), `powRatQ_succ` ($x^{\sigma n} = x^n \cdot x$), `powRatQ_mem_RatSet` (clausura).
+  - `powRatQ_one` ($x^{\sigma\emptyset} = x$), `powRatQ_zero_base` ($0_\mathbb{Q}^n = 0_\mathbb{Q}$ para $n \neq \emptyset$), `powRatQ_one_base` ($1_\mathbb{Q}^n = 1_\mathbb{Q}$).
+  - `powRatQ_add_exp` ($x^{n+m} = x^n \cdot x^m$), `powRatQ_mul_base` ($(x\cdot y)^n = x^n \cdot y^n$).
+  - Namespace `ZFC.Rat.Pow` (exportado a `ZFC`, **16 exports**); `ZFC/Rat.lean` barrel incluye `import ZFC.Rat.Pow`.
+
+- **Barrel `ZFC/Algebra.lean` — NUEVO (placeholder Phase 8)**:
+  - Archivo paraguas para la Phase 8 (monomios y polinomios); aún sin submódulos `Algebra/*` (imports comentados).
+  - Conectado a la raíz `ZFC.lean` (`import ZFC.Algebra`).
+
+- **Documentación sincronizada**:
+  - **REFERENCE.md**: proyectado `Rat.Pow.lean` — §1.1 (fila), §3.71 (3 definiciones), §4.69 (13 teoremas), §6.70 (16 exports), §7.2 (bullet). Detectado y registrado en §7.5 que `Rat/TupleSeq.lean` sigue pendiente de proyectar.
+  - **README.md**: badge 91 → 93 módulos, estado a 2026-05-26, sección Phase 8, árbol de directorios (Rat 18 módulos + `Algebra/`).
+  - **NEXT-STEPS.md**: Phase 6.5 marcada COMPLETA, eliminados los planes teorema-a-teorema ya cumplidos (ahora en REFERENCE.md), Phase 8 promovida a 🔶 en progreso.
+  - **Corrección detectada** (aplicada en sesión 15b): comentario obsoleto "Left as sorry" en `Rat/Monotone.lean:1070` — `convergent_isBounded` está probado vía `cauchy_bounded`.
+
+- **Estado**: 93 módulos activos (+ barrel `Algebra`) · **0 sorry** · **0 errores** (`lake build`: 114 jobs, verificado 2026-05-26).
 
 ### Añadido (2026-05-07 — sesión 14)
 

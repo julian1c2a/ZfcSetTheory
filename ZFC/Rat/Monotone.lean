@@ -1065,9 +1065,9 @@ namespace ZFC
       nonincreasing_convergent_limit_le f L hf hL hmon hconv
 
     /-- Every convergent sequence in ℚ is bounded.
-        Proof sketch: if f → L, take ε = 1. Get N s.t. for n ≥ N, |f(n)| ≤ |L| + 1.
-        The bound for n < N requires a finite maximum over f(0),...,f(N-1),
-        which needs additional finite-set infrastructure. Left as sorry. -/
+        Proof: a convergent sequence is Cauchy (`cauchy_of_convergentQ`), and every
+        Cauchy sequence in ℚ is bounded (`cauchy_bounded`, which handles the initial
+        segment f(0),...,f(N₀) via a finite maximum `maxQ` by induction over ω). -/
     theorem convergent_isBounded (f L : U)
         (hf : IsSeqQ f) (hL : L ∈ (RatSet : U))
         (hconv : convergesToQ f L) :

@@ -4,6 +4,19 @@ Notas de diseño, reflexiones y hoja de ruta del proyecto.
 
 ---
 
+## 📌 Estado de las reflexiones (actualizado 2026-05-26)
+
+- **[1.] / [2.] — RESUELTO**: toda la aritmética de límites en ℚ está implementada y proyectada
+  (`convergesToQ_neg/sub/const_mul/mul/inv/div/abs/of_eventually_eq`, `squeeze_theorem`,
+  `convergesToQ_of_dominated`, `IsSubseqOf`, `strictly_increasing_ge`, `subseq_convergent`,
+  `CauchyEquivQ` refl/symm/trans). Lo hecho/no-hecho está marcado en `NEXT-STEPS.md` (Phase 6.5 ✅).
+  Quedan pendientes (no bloqueantes, para Phase 10): `cauchyQ_of_convergent_subseq` y `convergesToQ_tail`.
+- **[3.]–[8.] — VIGENTE**: el diseño de Computables/Constructibles (Phase 9) sigue abierto y es
+  la referencia para esa fase. Antes está la **Phase 8 (polinomios)**, cuyo prerequisito
+  `Rat/Pow.lean` (`powRatQ x n`) ya está completo (0 sorry, 16 exports).
+
+---
+
 ## 🧠 REFLEXIONES 22:17/27-04-2026
 
 [1.] ACLÁRAME: Ejemplo de teoremas que no sé si están implementados: 'convergesToQ_neg f L', 'convergesToQ_sub f g L₁ L₂', 'convergesToQ_const_mul c f L', 'convergesToQ_mul f g L₁ L₂', 'convergesToQ_inv f L', 'convergesToQ_div f g L₁ L₂', 'convergesToQ_abs f L', 'convergesToQ_abs f L', 'convergesToQ_of_eventually_eq f g L', 'squeeze_theorem a f b L', convergesToQ_of_dominated f g L, IsSubseqOf g f, strictly_increasing_ge φ n, subseq_convergent f g L, cualquier subsucesión de cauchy es de cauchy, y establecemos que dos sucesiones de Cauchy, f, g, son equivalentes f ~ g \<=> f-g converge a 0

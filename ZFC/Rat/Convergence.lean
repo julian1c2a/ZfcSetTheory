@@ -483,7 +483,7 @@ namespace ZFC
         (proved by induction: φ(0) ≥ 0 trivially; φ(n+1) > φ(n) ≥ n implies φ(n+1) ≥ n+1).
         So for n ≥ N we get φ(n) ≥ n ≥ N, hence |g(n) − L| = |f(φ(n)) − L| < ε. -/
     theorem subseq_convergent (f g L : U)
-        (hL : L ∈ (RatSet : U)) (hf : IsSeqQ f) (hg : IsSeqQ g)
+        (_hL : L ∈ (RatSet : U)) (_hf : IsSeqQ f) (_hg : IsSeqQ g)
         (hconv : convergesToQ f L) (hsub : IsSubseqOf g f) :
         convergesToQ g L := by
       obtain ⟨φ, hφ_fn, hφ_incr, hg_eq⟩ := hsub
@@ -954,7 +954,7 @@ namespace ZFC
 
     /-- If x ≤ C and −x ≤ C then |x| ≤ C. -/
     private theorem absQ_le_of_bounds (x C : U)
-        (hx : x ∈ (RatSet : U)) (hC : C ∈ (RatSet : U))
+        (_hx : x ∈ (RatSet : U)) (_hC : C ∈ (RatSet : U))
         (h1 : leQ x C) (h2 : leQ (negQ x) C) : leQ (absQ x) C := by
       by_cases h : leQ (zeroQ : U) x
       · rw [show absQ x = x from if_pos h]; exact h1
